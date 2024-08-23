@@ -51,7 +51,7 @@ Imagens tomográficas pulmonares são muito relevantes no contexto diagnóstico 
 ## Cronograma
 > Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
 - Cronograma:
-- 10/09: leitura de artigo + familiarização com a DB/visualizar/ver se tem como identificar imagens com covid/sem
+- 10/09: leitura de artigo + familiarização com a DB/visualizar/ver se tem como identificar imagens com covid/sem + familiarização com GAN(medium post)
 - 24/09: primeira versão da GAN (inspirada em https://www.sciencedirect.com/science/article/abs/pii/S0957417422023685)
 - 07/10: estrutura de avaliação delimitada
 - 08/10: E2
