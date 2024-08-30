@@ -6,12 +6,11 @@
 O presente projeto foi originado no contexto das atividades da disciplina de pós-graduação *IA376N - IA generativa: de modelos a aplicações multimodais*, 
 oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra. Paula Dornhofer Paro Costa, do Departamento de Engenharia de Computação e Automação (DCA) da Faculdade de Engenharia Elétrica e de Computação (FEEC).
 
-> Incluir nome RA e foco de especialização de cada membro do grupo. Os grupos devem ter no máximo três integrantes.
-> |Nome  | RA | Especialização|
-> |--|--|--|
-> | Arthur Matheus Do Nascimento | 290906 | Eng. Elétrica |
-> | Júlia Castro de Paula | 219193 | Eng. Eletrica |
-> | Letícia Levin Diniz | 201428  | Eng. Elétrica |
+ |Nome  | RA | Especialização|
+ |--|--|--|
+ | Arthur Matheus Do Nascimento | 290906 | Eng. Elétrica |
+ | Júlia Castro de Paula | 219193 | Eng. Eletrica |
+ | Letícia Levin Diniz | 201428  | Eng. Elétrica |
 
 
 ## Descrição Resumida do Projeto
@@ -32,13 +31,18 @@ Imagens tomográficas pulmonares são muito relevantes no contexto diagnóstico 
 - multi-site
 > * Quais abordagens de modelagem generativa o grupo já enxerga como interessantes de serem estudadas.
 - GAN (devido as referências principais)
+
 > * Artigos de referência já identificados e que serão estudados ou usados como parte do planejamento do projeto
-- https://www.sciencedirect.com/science/article/abs/pii/S0957417422023685
-> * Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
-- Pytorch
-- MLFlow
-- Wand AI
-- Google Colab
+
+- Refêrencia inicial principal: https://www.sciencedirect.com/science/article/abs/pii/S0957417422023685
+- Demais referências podem ser encontradas em: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
+
+>* Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
+
+- Para desenvolvimento da arquitetura dos modelos e treinamento: Pytorch
+- Para colaboração entre os integrantes do grupo: Google Colab
+- Para histórico de versões e ajustes de hiperparâmetros: Wandb AI
+
 > * Resultados esperados
 - Gerar amostras de imagens onde seja possível realizar a segmentação das vias aéreas
 - Se tudo der certo... evoluir de imagens para volumes
@@ -51,15 +55,15 @@ Imagens tomográficas pulmonares são muito relevantes no contexto diagnóstico 
 ## Cronograma
 > Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
 - Cronograma:
-- 10/09: leitura de artigo + familiarização com a DB/visualizar/ver se tem como identificar imagens com covid/sem + familiarização com GAN(medium post)
-- 24/09: primeira versão da GAN (inspirada em https://www.sciencedirect.com/science/article/abs/pii/S0957417422023685)
-- 07/10: estrutura de avaliação delimitada
-- 08/10: E2
-- 15/10: ter os primeiros resultados com imagens segmentadas e valores para validação 
-- 29/10: fine-tuning, aperfeiçoamento do modelo
-- 05/11: para frente: se os resultados estiverem minimamente decentes-> 3D
-         senão: melhorar até ficar minimanete decente
+- 10/09: Leitura de artigos, familiarização com a base de dados (conseguir visualizar e descobrir se é possível identificar imagens com evidências de Covid e sem), e familiarização com GANs (ler artigo no Medium)
+- 24/09: Primeira versão da GAN (inspirada no artigo de refêrencia).
+- 07/10: Estrutura de avaliação bem delimitada.
+- 08/10: E2.
+- 15/10: Esperamos ter os primeiros resultados com imagens segmentadas e valores para validação
+- 29/10: Fine-tuning e aperfeiçoamento do modelo.
+- 05/11: Para frente: se os resultados estiverem aceitáveis, evoluir para redes 3D, do contrário, continuar a aperfeiçoar o modelo até termos resultados aceitáveis.
+- 25/11: E3.
 
 ## Referências Bibliográficas
 > Apontar nesta seção as referências bibliográficas adotadas no projeto.
-- Doc ref: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit
+- Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
