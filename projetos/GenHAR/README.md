@@ -84,16 +84,9 @@ Cada uma dessas abordagens possui características distintas e pode oferecer dif
 
 ### Artigos de referência já identificados e que serão estudados ou usados como parte do planejamento do projetos
 
-#### GAN
+ [Exploração Inicial de Artigos](https://docs.google.com/spreadsheets/d/11BbbEDeG4cv7K1L7JYR9OeDJNw42FOrAKeA-v5RNAUY/edit?usp=sharing)
 
-Chan, M. H.; Noor,M. H. M. A unified generative model using generative adversarial network for activity recognition. Journal of Ambient Intelligence and Humanized Computing. 2020
-
-**Modelos de difusão**
-
-Unsupervised Statistical Feature-Guided Diffusion Model for Sensor-based Human Activity Recognition
-
-DiffAR: Adaptive Conditional Diffusion Model for Temporal-augmented Human Activity Recognition
-
+Clique no link acima para acessar o documento com a exploração inicial de alguns artigos relevantes para o projeto.
 
 ### ### Ferramentas 
 
@@ -137,18 +130,7 @@ Além das técnicas mencionadas, serão utilizadas outras abordagens para uma an
 
 ## Cronograma do Projeto
 
-# Cronograma do Projeto
-
 O cronograma é dividido em quatro fases, cada uma com suas respectivas atividades e períodos estimados.
-
-## Cronograma
-
-| Fase                                          | 02/09 | 09/09 | 16/09 | 23/09 | 30/09 | 07/10 | 14/10 | 21/10 | 28/10 | 04/11 | 11/11 | 18/11 | 25/11 |
-|-----------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
-| **Fase 1: Estudo de Artigos sobre Geração de Sinais Temporais** |   X   |   X   |   X   |   X   |      |       |       |       |       |       |       |       |       |
-| **Fase 2: Reprodução de Artigos**             |       |       |       |       |   X   |   X   |   X   |   X   |       |       |       |       |       |
-| **Fase 3: Adequação para HAR (Reconhecimento de Atividades Humanas)** |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |       |       |
-| **Fase 4: Avaliações e Comparações**          |       |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |   X   |
 
 ## Metodologia
 
@@ -189,3 +171,13 @@ O cronograma é dividido em quatro fases, cada uma com suas respectivas atividad
 - **27/10 a 28/10:** Definição de critérios de avaliação e métricas. Realização das avaliações das técnicas adaptadas usando as métricas estabelecidas.
 - **29/10 a 11/11:** Ajustes necessários para obter um bom resultado.
 - **12/11 a 25/11:** Análise e comparação dos resultados das avaliações. Preparação da apresentação final com conclusões e recomendações.
+
+### Cronograma
+
+| Fase                                          | 02/09 | 09/09 | 16/09 | 23/09 | 30/09 | 07/10 | 14/10 | 21/10 | 28/10 | 04/11 | 11/11 | 18/11 | 25/11 |
+|-----------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+| **Fase 1: Estudo de Artigos sobre Geração de Sinais Temporais** |   X   |   X   |   X   |   X   |      |       |       |       |       |       |       |       |       |
+| **Fase 2: Reprodução de Artigos**             |       |       |       |       |   X   |   X   |   X   |   X   |       |       |       |       |       |
+| **Fase 3: Adequação para HAR (Reconhecimento de Atividades Humanas)** |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |       |       |
+| **Fase 4: Avaliações e Comparações**          |       |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |   X   |
+
