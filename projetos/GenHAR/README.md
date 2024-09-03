@@ -15,19 +15,23 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Descrição Resumida do Projeto
 
-Tema do projeto: Geração de dados de sensores para HAR
-
-Contexto gerador: Projeto do HIAAC
+O projeto tem como tema a geração de dados sintéticos de sensores para utilização em tarefas de reconhecimento de atividades humanas (HAR).
+Esse trabalho surge no contexto do Hub de Inteligência Artificial e Arquiteturas Cognitivas (HIAAC) do qual os integrantes do grupo fazem parte.
+Um dos objetos de estudos do HIAAC tem sido da tarefa de reconhecimento de atividades a partir de sensores de smartphones e foi observado a discordância enre diferentes datasets e metodologias da área. Assim, foi identificado uma oportunidade de avanço da área na criação de novos datasets e métodos de geração de dados sintéticos para aprimorar o desempenho de modelos para HAR
 
 ### Motivação: 
-- **Falta de Dados:** A escassez de dados relevantes e diversos é um desafio significativo para o treinamento e avaliação de modelos de HAR.
-- **Heterogeneidade:** A variabilidade nas classes de atividade, na posição dos sensores e nas características das pessoas cria dificuldades para criar um dataset representativo e generalizável.
+
+- **Falta de Dados:** A escassez de dados relevantes e diversos é um desafio significativo para o treinamento e avaliação de modelos de HAR. A coleta desse tipo de dados requer a participação de diversas pessoas em diferentes cenários e atividades. Embora a janela de tempo de cada captura de dados seja relativamente pequena (cerca de 1 a 15 minutos) o tempo de preparo do participante e deslocamento entre os locais em que as atividades são realizadas pode ser grande. Além disso, deve-se garantir que todos os sensores funcionem corretamente durante o experimento e que os dados sejam coretamente sincronizados e anonimizados. Diferentemente de dados como imagens, áudios e textos que são abundantemente presentes na internet, dados de sensores são mais escassos.
+- **Heterogeneidade:** A variabilidade nas classes de atividade, na posição dos sensores e nas características das pessoas cria dificuldades para criar um dataset representativo e generalizável. A quantidade de atividades que uma pessoa pode realizar é imensa (subir escadas, pular, nadar, andar, correr) e pode ser modulada por diferentes fatores externos (clima, elevação, angulação do chão). Além disso, as características físicas do participante (altura, idade, peso, etc.) influenciam o comportamento dos dados. Esses fatores tornam difícil a construção de um dataset com classes bem definidas e variedade de participantes de forma a ser representativo o suficiente para generalização de modelos de aprendizado.
 
 ### Objetivo principal: 
-Modelo que gere dados de sensores de acelerômetro e giroscópio (possivelmente expandir para outras modalidades)
+
+Diante do contexto e motivação apresentados, temos como objetivo a implementação e avaliação de um modelo que gere dados de sensores de acelerômetro e giroscópio (e possivelmente expandir para outras modalidades) correspondentes a diferentes atividades humanas.
 
 ### Saída do modelo generativo:
-O modelo generativo produzirá amostras de sensores com 6 canais (acelerômetro e giroscópio) em uma janela de 60 unidades de tempo, ou imagens de espectrogramas representando os dados dos sensores.
+
+O modelo generativo produzirá amostras de sensores com 6 canais (3 para acelerômetro e 3 para giroscópio) em uma janela de 60 unidades de tempo.
+Adicionalmente, a depender da arquitetura do modelo escolhido, o modelo pode gerar imagens de espectrogramas representando os dados dos sensores na janela de tempo determinada.
 
 ### link para vídeo de apresentação da proposta do projeto
     video da proposta
@@ -37,7 +41,9 @@ O modelo generativo produzirá amostras de sensores com 6 canais (acelerômetro 
 ### Bases de Dados a Serem Utilizadas
 
 Neste projeto, pretende-se utilizar datasets de ambientes controlados e não controlados para realizar uma comparação entre a performance do modelo generativo em cada cenário.
+
 #### Bases de Dados em ambente controlado
+
 Primeiramente, iremos utilizar o dataset **MotionSense**, escolhido pela sua simplicidade e características:
 
 - **Atividades:** 6 (dws: downstairs, ups: upstairs, sit: sitting, std: standing, wlk: walking, jog: jogging)
@@ -75,7 +81,7 @@ A geração de dados sintéticos para reconhecimento de atividades humanas (HAR)
 
 #### Modelos de Linguagem de Grande Escala (LLMs)
 
--Têm sido adaptados para tarefas de geração de dados além de processamento de texto. Esses modelos podem ser utilizados para gerar dados sintéticos de sensores ao aprender padrões complexos de grandes conjuntos de dados.
+Alguns Modelos de Linguagem de Grande Escala têm sido adaptados para tarefas de geração de dados além de processamento de texto. Esses modelos podem ser utilizados para gerar dados sintéticos de sensores ao aprender padrões complexos de grandes conjuntos de dados.
 
 - **Vantagens:** Capacidade de aprender e gerar padrões complexos a partir de grandes volumes de dados, podendo potencialmente capturar nuances nos dados de sensores.
 - **Desvantagens:** Modelos geralmente são muito grandes e requerem recursos significativos para treinamento e inferência.
@@ -88,19 +94,20 @@ Cada uma dessas abordagens possui características distintas e pode oferecer dif
 
 Clique no link acima para acessar o documento com a exploração inicial de alguns artigos relevantes para o projeto.
 
-### ### Ferramentas 
+### Ferramentas 
 
-Para a geração e avaliação de dados sintéticos em HAR, utilizaremos ferramentas como Google Colab, PyTorch e TensorFlow para treinamento de modelos,Pandas,SciPy e NumPy para análise estatística e manipulação de dados, Keras para desenvolvimento de redes neurais, scikit-learn e pandas para modelagem e preparação de dados, Matplotlib, Seaborn e Plotly para visualização, probavlemente Hugging Face Transformers para processamento de linguagem natural, e ProfileReport junto com table_evaluator  e outtros frameworks para avaliação e comparação detalhada entre dados reais e sintéticos.
-
+Para a geração e avaliação de dados sintéticos em HAR, mapeamos diversas possíveis ferramentas a serem utilizadas: **Google Colab**, **PyTorch** e **TensorFlow** para treinamento de modelos, **Pandas**, **SciPy** e **NumPy** para análise estatística e manipulação de dados, **Keras** para desenvolvimento de redes neurais, **scikit-learn** e **Pandas** para modelagem e preparação de dados, **Matplotlib**, **Seaborn** e **Plotly** para visualização, possivelmente **Hugging Face Transformers** para processamento de linguagem natural, e **ProfileReport** junto com outtros frameworks para avaliação e comparação detalhada entre dados reais e sintéticos.
 
 ### Resultados esperados
 
 ### Proposta de avaliação dos resultados de síntese
 
-Para garantir a qualidade e realismo dos dados gerados, serão adotadas várias técnicas de avaliação:
+Várias técnicas de avaliação foram encontradas para garantir a qualidade e realismo dos dados gerados.
+Essas técnicas visam garantir que os dados gerados não possuem incosistências (como valores nulos ou extremos), avaliar a distribuição dos dados síntéticos e avaliar a usabilidade dos dados sintéticos.
+A lista de ferramentas abaixo é extensa porém não exaustiva e busca trazer um panorama das principais formas de avaliação que serão exploradas no trabalho.
 
 #### ProfileReport
-será utilizado para verificar a presença de valores duplicados, incorretos ou inconsistentes no dataset sintético em relação ao dataset real. Essa técnica ajuda a identificar problemas de qualidade nos dados e assegurar que o dataset sintético seja coerente e confiável.
+Será utilizado para verificar a presença de valores duplicados, incorretos ou inconsistentes no dataset sintético em relação ao dataset real. Essa técnica ajuda a identificar problemas de qualidade nos dados e assegurar que o dataset sintético seja coerente e confiável.
 
 
 #### Frameworks Especializados para Comparação de Dados Sintéticos e Reais
@@ -131,8 +138,6 @@ Além das técnicas mencionadas, serão utilizadas outras abordagens para uma an
 ## Cronograma do Projeto
 
 O cronograma é dividido em quatro fases, cada uma com suas respectivas atividades e períodos estimados.
-
-## Metodologia
 
 ### Fase 1: Estudo de Artigos sobre Geração de Sinais Temporais
 **Período:** 02/09 a 23/09
@@ -174,10 +179,10 @@ O cronograma é dividido em quatro fases, cada uma com suas respectivas atividad
 
 ### Cronograma
 
-| Fase                                          | 02/09 | 09/09 | 16/09 | 23/09 | 30/09 | 07/10 | 14/10 | 21/10 | 28/10 | 04/11 | 11/11 | 18/11 | 25/11 |
-|-----------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
-| **Fase 1: Estudo de Artigos sobre Geração de Sinais Temporais** |   X   |   X   |   X   |   X   |      |       |       |       |       |       |       |       |       |
-| **Fase 2: Reprodução de Artigos**             |       |       |       |       |   X   |   X   |   X   |   X   |       |       |       |       |       |
-| **Fase 3: Adequação para HAR (Reconhecimento de Atividades Humanas)** |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |       |       |
-| **Fase 4: Avaliações e Comparações**          |       |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |   X   |
+| Fase                                                                  | 02/09 | 09/09 | 16/09 | 23/09 | 30/09 | 07/10 | 14/10 | 21/10 | 28/10 | 04/11 | 11/11 | 18/11 | 25/11 |
+|-----------------------------------------------                        |-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+| **Fase 1: Estudo de Artigos sobre Geração de Sinais Temporais**       |   X   |   X   |   X   |   X   |       |       |       |       |       |       |       |       |       |
+| **Fase 2: Reprodução de Artigos**                                     |       |       |       |   X   |   X   |   X   |       |       |       |       |       |       |       |
+| **Fase 3: Adequação para HAR (Reconhecimento de Atividades Humanas)** |       |       |       |       |       |   X   |    X  |   X   |   X   |       |       |       |       |
+| **Fase 4: Avaliações e Comparações**                                  |       |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |   X   |
 
