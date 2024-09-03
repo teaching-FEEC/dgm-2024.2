@@ -19,15 +19,23 @@ Tema do projeto: Geração de dados de sensores para HAR
 
 Contexto gerador: Projeto do HIAAC
 
+O projeto tem como tema a geração de dados sintéticos de sensores para utilização em tarefas de reconhecimento de atividades humanas (HAR).
+Esse trabalho surge no contexto do Hub de Inteligência Artificial e Arquiteturas Cognitivas (HIAAC) do qual os integrantes do grupo fazem parte.
+Um dos objetos de estudos do HIAAC tem sido da tarefa de reconhecimento de atividades a partir de sensores de smartphones e foi observado a discordância enre diferentes datasets e metodologias da área. Assim, foi identificado uma oportunidade de avanço da área na criação de novos datasets e métodos de geração de dados sintéticos para aprimorar o desempenho de modelos para HAR
+
 ### Motivação: 
-- **Falta de Dados:** A escassez de dados relevantes e diversos é um desafio significativo para o treinamento e avaliação de modelos de HAR.
-- **Heterogeneidade:** A variabilidade nas classes de atividade, na posição dos sensores e nas características das pessoas cria dificuldades para criar um dataset representativo e generalizável.
+
+- **Falta de Dados:** A escassez de dados relevantes e diversos é um desafio significativo para o treinamento e avaliação de modelos de HAR. A coleta desse tipo de dados requer a participação de diversas pessoas em diferentes cenários e atividades. Embora a janela de tempo de cada captura de dados seja relativamente pequena (cerca de 1 a 15 minutos) o tempo de preparo do participante e deslocamento entre os locais em que as atividades são realizadas pode ser grande. Além disso, deve-se garantir que todos os sensores funcionem corretamente durante o experimento e que os dados sejam coretamente sincronizados e anonimizados. Diferentemente de dados como imagens, áudios e textos que são abundantemente presentes na internet, dados de sensores são mais escassos.
+- **Heterogeneidade:** A variabilidade nas classes de atividade, na posição dos sensores e nas características das pessoas cria dificuldades para criar um dataset representativo e generalizável. A quantidade de atividades que uma pessoa pode realizar é imensa (subir escadas, pular, nadar, andar, correr) e pode ser modulada por diferentes fatores externos (clima, elevação, angulação do chão). Além disso, as características físicas do participante (altura, idade, peso, etc.) influenciam o comportamento dos dados. Esses fatores tornam difícil a construção de um dataset com classes bem definidas e variedade de participantes de forma a ser representativo o suficiente para generalização de modelos de aprendizado.
 
 ### Objetivo principal: 
-Modelo que gere dados de sensores de acelerômetro e giroscópio (possivelmente expandir para outras modalidades)
+
+Diante do contexto e motivação apresentados, temos como objetivo a implementação e avaliação de um modelo que gere dados de sensores de acelerômetro e giroscópio (e possivelmente expandir para outras modalidades) correspondentes a diferentes atividades humanas.
 
 ### Saída do modelo generativo:
-O modelo generativo produzirá amostras de sensores com 6 canais (acelerômetro e giroscópio) em uma janela de 60 unidades de tempo, ou imagens de espectrogramas representando os dados dos sensores.
+
+O modelo generativo produzirá amostras de sensores com 6 canais (3 para acelerômetro e 3 para giroscópio) em uma janela de 60 unidades de tempo.
+Adicionalmente, a depender da arquitetura do modelo escolhido, o modelo pode gerar imagens de espectrogramas representando os dados dos sensores na janela de tempo determinada.
 
 ### link para vídeo de apresentação da proposta do projeto
     video da proposta
@@ -37,7 +45,9 @@ O modelo generativo produzirá amostras de sensores com 6 canais (acelerômetro 
 ### Bases de Dados a Serem Utilizadas
 
 Neste projeto, pretende-se utilizar datasets de ambientes controlados e não controlados para realizar uma comparação entre a performance do modelo generativo em cada cenário.
+
 #### Bases de Dados em ambente controlado
+
 Primeiramente, iremos utilizar o dataset **MotionSense**, escolhido pela sua simplicidade e características:
 
 - **Atividades:** 6 (dws: downstairs, ups: upstairs, sit: sitting, std: standing, wlk: walking, jog: jogging)
