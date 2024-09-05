@@ -35,7 +35,7 @@ Adicionalmente, a depender da arquitetura do modelo escolhido, o modelo pode ger
 
 ### link para a apresentação da proposta do projeto
     
-    [apresentação da proposta](https://docs.google.com/presentation/d/1R7T35wkdfpHdQwyUin0fpVd2mgGM1HDxksFOvnz4lMY/edit?usp=sharing)
+[Apresentação da Proposta](https://docs.google.com/presentation/d/1R7T35wkdfpHdQwyUin0fpVd2mgGM1HDxksFOvnz4lMY/edit?usp=sharing)
 
 ## Metodologia Proposta
 
@@ -52,16 +52,22 @@ Primeiramente, iremos utilizar o dataset **MotionSense**, escolhido pela sua sim
 - **Frequência de Amostragem:** 50Hz
 - **Ambiente Controlado:** Sim
 - **Citações:** 190 (Scholar)
+- [MotionSense Dataset no Kaggle](https://www.kaggle.com/datasets/malekzadeh/motionsense-dataset)
 
 #### Bases de Dados em ambente não controlado
 
 Após isso, queremos analisar (se possível) o comportamento do modelo também em outros datasets, como o **ExtraSensory**, que é um dataset bem complexo e desbalanceado com muitas atividades:
 
 - **Atividades:** 51
+    - Atividades principais: Rótulos descrevendo o movimento ou postura do usuário. Esta categoria é mutuamente exclusiva, e os 7 possíveis valores são: deitado, sentado, parado, parado e se movendo, andando, correndo, andando de bicicleta.
+
+    - Atividades secundária: 109 rótulos adicionais descrevendo contextos mais específicos em diferentes aspectos: esportes (por exemplo, jogando basquete, na academia), transporte (por exemplo, dirigindo – sou o motorista, no ônibus), necessidades básicas (por exemplo, dormindo, comendo, no banheiro), companhia (por exemplo, com a família, com colegas de trabalho), localização (por exemplo, em casa, no trabalho, ao ar livre)   
 - **Participantes:** 60
 - **Frequência de Amostragem:** 40HZ
 - **Ambiente Controlado:** Não
 - **Citações:** 324 (Scholar)
+- [ExtraSensory UCSD](http://extrasensory.ucsd.edu/)
+
 
 
 ### Abordagens de Modelagem Generativa Interessantes para HAR
