@@ -25,17 +25,12 @@ Imagens tomográficas pulmonares são muito relevantes no contexto diagnóstico 
 
 ## Metodologia Proposta
 > Para a primeira entrega, a metodologia proposta deve esclarecer:
-> * Qual(is) base(s) de dado(s) o projeto pretende utilizar, justificando a(s) escolha(s) realizadas.
-- Base de dados principal: ATM'22 -> volumes CT pulmonares, volume com a segmentação das vias aéreas 
-- 500 CT scans (300 for training, 50 for validation, and 150 for testing)
-- multi-site
-> * Quais abordagens de modelagem generativa o grupo já enxerga como interessantes de serem estudadas.
-- GAN (devido as referências principais)
 
-> * Artigos de referência já identificados e que serão estudados ou usados como parte do planejamento do projeto
+Este projeto usará como inspiração inicial o trabalho desenvolvido em [[1]](#1), o qual propõe duas arquiteturas baseadas em GANs para a síntese de imagens CT pulmonares a partir de máscaras binárias que segmentam a região pulmonar. Das arquiteturas propostas, inspirar-se-á na arquitetura Pix2Pix, na qual o gerador é composto de um encoder que aumenta a profundidade da imagem enquanto diminui suas dimensões, seguido de um decoder que realiza o processo oposto. Tal arquitetura também utiliza conexões residuais. Na arquitetura Pix2Pix, o discriminador é composto por cinco camadas convolucionais, onde as quatro primeiras são seguidas por uma camada de ativação **LeakyReLu**, enquanto a última é seguida de uma função sigmoide. 
 
-- Refêrencia inicial principal: https://www.sciencedirect.com/science/article/abs/pii/S0957417422023685
-- Demais referências podem ser encontradas em: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
+Apesar de inspirar-se no artigo [[1]](#1), para o desenvolvimento deste projeto será usada a base de dados ATM'22, a qual possui 500 volumes CTs nos quais as vias aéreas estão completamente anotadas, i.e., delimitadas [[2]](#2). Tal base de dados não foi usada no desenvolvimento do projeto em [[1]](#1), mas foi escolhida no presente projeto devido a sua amplitude e em razão das imagens possuírem a delimitação das vias aéreas obtidas através de especialistas. Os volumes da base ATM'22 foram adquiridos em diferentes clínicas e considerando diferentes contextos clínicos. Construída para a realização de um desafio de segmentação automática de vias aéria utilizando IA, a base de dados está dividida em 300 volumes para treino, 50 para validação e 150 para teste. 
+
+Além do artigo [[1]](#1), também serão considerados os trabalhos realizados em [[3]](#3) e [[4]](#4). No primeiro, desenvolseu-se uma GAN condicional para a geração de imagens CT pulmonares a partir de imagens de ressonância magnética. Já no segundo, utiliza-se um modelo baseado em GAN para a segmentação do pulmão em imagens CT que contém anomalias no tecido pulmonar. Apesar dos objetivos de tais trabalhos não serem os mesmos objetivos propostos para o presente projeto, eles servirão de apoio para proposição de modificações na arquitetura, estratégias de treino e de validação de resultados.   
 
 >* Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
 
@@ -54,16 +49,30 @@ Imagens tomográficas pulmonares são muito relevantes no contexto diagnóstico 
 
 ## Cronograma
 > Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
-- Cronograma:
-- 10/09: Leitura de artigos, familiarização com a base de dados (conseguir visualizar e descobrir se é possível identificar imagens com evidências de Covid e sem), e familiarização com GANs (ler artigo no Medium)
-- 24/09: Primeira versão da GAN (inspirada no artigo de refêrencia).
-- 07/10: Estrutura de avaliação bem delimitada.
-- 08/10: E2.
-- 15/10: Esperamos ter os primeiros resultados com imagens segmentadas e valores para validação
-- 29/10: Fine-tuning e aperfeiçoamento do modelo.
-- 05/11: Para frente: se os resultados estiverem aceitáveis, evoluir para redes 3D, do contrário, continuar a aperfeiçoar o modelo até termos resultados aceitáveis.
-- 25/11: E3.
+
+
+| Nº da Tarefa | Descrição                                                                 | Data Prevista de Finalização | Semanas Entre Etapas |
+|--------------|---------------------------------------------------------------------------|------------------------------|----------------------|
+| 1            | Leitura de artigos, familiarização com a base de dados e GANs              | 10/09                        |                      |
+| 2            | Primeira versão da GAN (inspirada no artigo de referência)                | 24/09                        | 2 semanas            |
+| 3            | Estrutura de avaliação bem delimitada                                     | 07/10                        | 2 semanas            |
+| 4            | E2                                                                        | 08/10                        | 1 dia                |
+| 5            | Primeiros resultados com imagens segmentadas e valores para validação     | 15/10                        | 1 semana             |
+| 6            | Fine-tuning e aperfeiçoamento do modelo                                   | 29/10                        | 2 semanas            |
+| 7            | Evoluir para redes 3D ou continuar aperfeiçoando o modelo                 | 05/11                        | 1 semana             |
+| 8            | E3                                                                        | 25/11                        | 3 semanas            |
+
+
 
 ## Referências Bibliográficas
 > Apontar nesta seção as referências bibliográficas adotadas no projeto.
-- Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
+
+<a id="1">[1]</a> : José Mendes et al., Lung CT image synthesis using GANs, Expert Systems with Applications, vol. 215, 2023, pp. 119350., https://www.sciencedirect.com/science/article/pii/S0957417422023685.
+
+<a id="2">[2]</a> : Minghui Zhang et al., Multi-site, Multi-domain Airway Tree Modeling (ATM'22): A Public Benchmark for Pulmonary Airway Segmentation, https://arxiv.org/abs/2303.05745.
+
+<a id="3">[3]</a> :  Jacopo Lenkowicz et al., A deep learning approach to generate synthetic CT in low field MR-guided radiotherapy for lung cases, Radiotherapy and Oncology, vol. 176, 2022, pp. 31-38, https://www.sciencedirect.com/science/article/pii/S0167814022042608.
+
+<a id="4">[4]</a> : Swati P. Pawar and Sanjay N. Talbar, LungSeg-Net: Lung field segmentation using generative adversarial network, Biomedical Signal Processing and Control, vol. 64, 2021, 102296, https://www.sciencedirect.com/science/article/pii/S1746809420304158.
+
+Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
