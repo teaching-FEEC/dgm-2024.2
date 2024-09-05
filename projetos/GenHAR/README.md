@@ -33,8 +33,9 @@ Diante do contexto e motivação apresentados, temos como objetivo a implementa�
 O modelo generativo produzirá amostras de sensores com 6 canais (3 para acelerômetro e 3 para giroscópio) em uma janela de 60 unidades de tempo.
 Adicionalmente, a depender da arquitetura do modelo escolhido, o modelo pode gerar imagens de espectrogramas representando os dados dos sensores na janela de tempo determinada.
 
-### link para vídeo de apresentação da proposta do projeto
-    video da proposta
+### link para a apresentação da proposta do projeto
+    
+    [apresentação da proposta](https://docs.google.com/presentation/d/1R7T35wkdfpHdQwyUin0fpVd2mgGM1HDxksFOvnz4lMY/edit?usp=sharing)
 
 ## Metodologia Proposta
 
