@@ -9,8 +9,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
  |Nome  | RA | Especialização|
  |--|--|--|
  | Arthur Matheus Do Nascimento | 290906 | Eng. Elétrica |
- | Júlia Castro de Paula | 219193 | Eng. Eletrica |
- | Letícia Levin Diniz | 201428  | Eng. Elétrica |
+ | Júlia Castro de Paula | 219193 | Eng. Elétrica |
+ | Letícia Levin Diniz | 201438  | Eng. Elétrica |
 
 
 ## Descrição Resumida do Projeto
@@ -32,20 +32,17 @@ Apesar de inspirar-se no artigo [[1]](#1), para o desenvolvimento deste projeto 
 
 Além do artigo [[1]](#1), também serão considerados os trabalhos realizados em [[3]](#3) e [[4]](#4). No primeiro, desenvolseu-se uma GAN condicional para a geração de imagens CT pulmonares a partir de imagens de ressonância magnética. Já no segundo, utiliza-se um modelo baseado em GAN para a segmentação do pulmão em imagens CT que contém anomalias no tecido pulmonar. Apesar dos objetivos de tais trabalhos não serem os mesmos objetivos propostos para o presente projeto, eles servirão de apoio para proposição de modificações na arquitetura, estratégias de treino e de validação de resultados.   
 
->* Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
+A ferramenta escolhida para o desenvolvimento da arquitetura dos modelos e de treinamento é o PyTorch, em função de sua relevância na área e familiaridade por parte dos integrantes do grupo.
+Ademais, para o desenvolvimento colaborativo dos modelos entre os estudantes, opta-se pela ferramenta de programação Google Collaboratory.
+Já para o versionamento dos modelos e para ajustar seus hiperparâmetros, decidiu-se pela ferramenta Wandb AI dentre as opções disponíveis no mercado. A ferramenta do GitHub também auxiliará no versionamento dos algoritmos desenvolvidos.
 
-- Para desenvolvimento da arquitetura dos modelos e treinamento: Pytorch
-- Para colaboração entre os integrantes do grupo: Google Colab
-- Para histórico de versões e ajustes de hiperparâmetros: Wandb AI
+Como resultado desta implementação, espera-se gerar amostras de imagens de tomografias pulmonares em 2D realistas o suficiente para possibilitar a segmentação das vias aéreas.
+Caso este resultado se concretize antes do prazo estipulado pelo cronograma e ainda reste tempo para o aprofundamento do projeto, buscar-se-á a geração de imagens 3D de tomografias pulmonares, isto é, espera-se aumentar o escopo do projeto para gerar volumes com a mesma estratégia da síntese de imagens, com as devidas adequações necessárias a esta nova estrutura.
 
-> * Resultados esperados
-- Gerar amostras de imagens onde seja possível realizar a segmentação das vias aéreas
-- Se tudo der certo... evoluir de imagens para volumes
-> * Proposta de avaliação dos resultados de síntese
-- Análise qualitativa: observação das imagens/volumes - GT/sintética
-- Análise quantitativa: das imagens: DICE, SSIM; 
-- Benchmark: segmentação das imagens reais e sintéticas
-    - análise quantitativa da segmentação: DICE, precisão, qntdd ramificações
+Por fim, para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõe-se três tipos de avaliação: análise qualitativa, análise quantitativa e análise frente a um benchmark.
+No caso da análise qualitativa, os próprios estudantes irão observar os resultados sintéticos, sejam eles imagens e/ou  volumes, e compararão com os dados reais esperados.
+Já a análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos DICE (xx) e SSIM (xx), conforme feito pelo artigo xxx.
+Por último, a análise de benchmark (que pode ser considerada um estratégia quantitativa), tem como objetivo passar os dados reais e sintéticos como entrada de uma rede de segmentação já consolidada e, com isto, compara-se ambas as saídas da rede, coletando as seguintes métricas: DICE, precisão e quantidade de ramificações.
 
 ## Cronograma
 > Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
