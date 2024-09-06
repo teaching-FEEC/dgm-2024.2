@@ -9,7 +9,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > Incluir nome RA e foco de especialização de cada membro do grupo. Os grupos devem ter no máximo três integrantes.
 > |Nome  | RA | Especialização|
 > |--|--|--|
-> | Hiuri Santana de Noronha  | 123456  | Eng. Eletricista|
+> | Hiuri Santana de Noronha  | 229961  | Eng. Eletricista|
 > | Thiago Belina Silva Ramos  | 203975  | Eng. Eletricista|
 
 
