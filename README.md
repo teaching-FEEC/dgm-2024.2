@@ -10,11 +10,3 @@ Faculdade de Engenharia Elétrica e de Computação (FEEC)
 
 Universidade Estadual de Campinas (UNICAMP)
 
-
-# OLÁ THIAGO, HIURI AJUSTE 1 (TESTE)
-```
-Nome: Hiuri Santana de Noronha
-RA: 229961
-```
-
-![GIFTeste](projetos/maquinaquevoa/src/5TMy.gif)
