@@ -15,6 +15,8 @@ Para mais detalhes, consulte o texto completo da licença em: [Creative Commons 
 **Uso Comercial**:
 Qualquer uso comercial do material exigirá uma permissão separada dos autores. Para solicitar permissão para uso comercial, entre em contato com os autores.
 
+<img src="docs/src/images/Cc-by-nc-sa_icon.svg.png" width="400px" />
+
 ---
 
 Obrigado por usar e contribuir para a ciência!  
