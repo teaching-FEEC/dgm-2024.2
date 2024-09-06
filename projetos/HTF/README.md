@@ -1,5 +1,5 @@
-# `<Título em Português do Projeto>`
-# `<Project Title in in English>`
+# `<Redes Adversárias Generativas Sociais para previsão de trajetória humana>`
+# `<Social Generative Adversarial Networks for Human Trajectory Forecasting>`
 
 ## Apresentação
 
