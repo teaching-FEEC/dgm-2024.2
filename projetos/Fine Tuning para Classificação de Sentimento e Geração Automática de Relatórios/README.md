@@ -48,18 +48,18 @@ Para a geração de relatórios, serão explorados modelos como o **GPT-3** ou *
 
 **Artigos de Referência:**
 
-> Prottasha, N.J.; Sami, A.A.; Kowsher, M.; Murad, S.A.; Bairagi, A.K.; Masud, M.; Baz, M. Transfer Learning for Sentiment Analysis Using BERT Based Supervised Fine-Tuning. Sensors 2022, 22, 4157. https://doi.org/10.3390/s22114157.
-> > Cantini, R., Cosentino, C., Marozzo, F. (2024). Multi-dimensional Classification on Social Media Data for Detailed Reporting with Large Language Models. In: Maglogiannis, I., Iliadis, L., Macintyre, J., Avlonitis, M., Papaleonidas, A. (eds) Artificial Intelligence Applications and Innovations. AIAI 2024. IFIP Advances in Information and Communication Technology, vol 712. Springer, Cham. https://doi.org/10.1007/978-3-031-63215-0_8.
-> Devlin, J. et al. (2019): BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.
-> Radford, A. et al. (2019): Language Models are Few-Shot Learners.
-> Pang, B., et al. (2002): Thumbs up? Sentiment Classification using Machine Learning Techniques.
+> * Prottasha, N.J.; Sami, A.A.; Kowsher, M.; Murad, S.A.; Bairagi, A.K.; Masud, M.; Baz, M. Transfer Learning for Sentiment Analysis Using BERT Based Supervised Fine-Tuning. Sensors 2022, 22, 4157. https://doi.org/10.3390/s22114157.
+> * Cantini, R., Cosentino, C., Marozzo, F. (2024). Multi-dimensional Classification on Social Media Data for Detailed Reporting with Large Language Models. In: Maglogiannis, I., Iliadis, L., Macintyre, J., Avlonitis, M., Papaleonidas, A. (eds) Artificial Intelligence Applications and Innovations. AIAI 2024. IFIP Advances in Information and Communication Technology, vol 712. Springer, Cham. https://doi.org/10.1007/978-3-031-63215-0_8.
+> * Devlin, J. et al. (2019): BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.
+> * Radford, A. et al. (2019): Language Models are Few-Shot Learners.
+> * Pang, B., et al. (2002): Thumbs up? Sentiment Classification using Machine Learning Techniques.
 
 **Ferramentas:**
 
 As principais ferramentas a serem utilizadas serão:
-> **Python** com bibliotecas de NLP como **Hugging Face Transformers** e **spaCy** para o fine-tuning de modelos.
-> **OpenAI API** e/ou outros modelos de geração de linguagem para os relatórios.
-> **Google Colab** ou **Jupyter Notebooks** para implementação e testes.
+> * **Python** com bibliotecas de NLP como **Hugging Face Transformers** e **spaCy** para o fine-tuning de modelos.
+> * **OpenAI API** e/ou outros modelos de geração de linguagem para os relatórios.
+> * **Google Colab** ou **Jupyter Notebooks** para implementação e testes.
 
 
 **Resultados Esperados:**
