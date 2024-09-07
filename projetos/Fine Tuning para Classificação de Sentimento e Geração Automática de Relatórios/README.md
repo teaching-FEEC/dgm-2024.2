@@ -37,13 +37,39 @@ A saída será um relatório textual automatizado, que sintetizará as análises
 > Incluir nessa seção link para vídeo de apresentação da proposta do projeto (máximo 5 minutos).
 
 ## Metodologia Proposta
-> Para a primeira entrega, a metodologia proposta deve esclarecer:
-> * Qual(is) base(s) de dado(s) o projeto pretende utilizar, justificando a(s) escolha(s) realizadas.
-> * Quais abordagens de modelagem generativa o grupo já enxerga como interessantes de serem estudadas.
-> * Artigos de referência já identificados e que serão estudados ou usados como parte do planejamento do projeto
-> * Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
-> * Resultados esperados
-> * Proposta de avaliação dos resultados de síntese
+
+**Base de dados:**
+
+Inicialmente, tem-se com pretensão utilizar datasets de redes sociais contendo posts anotados com sentimentos, como o **Sentiment140** (tweets anotados) e o **SentiStrength**. Essas bases são adequadas devido à sua linguagem informal e textos curtos, característicos de redes sociais.
+
+**Abordagens de Modelagem Generativa:**
+
+Para a geração de relatórios, serão explorados modelos como o **GPT-3** ou **GPT-4**, devido à sua habilidade de gerar textos coerentes e resumir dados com base em padrões identificados.
+
+**Artigos de Referência:**
+
+> Prottasha, N.J.; Sami, A.A.; Kowsher, M.; Murad, S.A.; Bairagi, A.K.; Masud, M.; Baz, M. Transfer Learning for Sentiment Analysis Using BERT Based Supervised Fine-Tuning. Sensors 2022, 22, 4157. https://doi.org/10.3390/s22114157.
+> > Cantini, R., Cosentino, C., Marozzo, F. (2024). Multi-dimensional Classification on Social Media Data for Detailed Reporting with Large Language Models. In: Maglogiannis, I., Iliadis, L., Macintyre, J., Avlonitis, M., Papaleonidas, A. (eds) Artificial Intelligence Applications and Innovations. AIAI 2024. IFIP Advances in Information and Communication Technology, vol 712. Springer, Cham. https://doi.org/10.1007/978-3-031-63215-0_8.
+> Devlin, J. et al. (2019): BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.
+> Radford, A. et al. (2019): Language Models are Few-Shot Learners.
+> Pang, B., et al. (2002): Thumbs up? Sentiment Classification using Machine Learning Techniques.
+
+**Ferramentas:**
+
+As principais ferramentas a serem utilizadas serão:
+> **Python** com bibliotecas de NLP como **Hugging Face Transformers** e **spaCy** para o fine-tuning de modelos.
+> **OpenAI API** e/ou outros modelos de geração de linguagem para os relatórios.
+> **Google Colab** ou **Jupyter Notebooks** para implementação e testes.
+
+
+**Resultados Esperados:**
+
+Espera-se um sistema que classsifique sentimentos com alta precisão e gere relatórios automáticos que identifiquem padrões de emoções, facilitando decisões informadas.
+
+**Avaliação dos Resultados de Síntese:**
+
+A avaliação será baseada na **precisão** e no **recall** da classificação de sentimentos, além de testes qualitativos e quantitativos para verificar a coerência e relevância dos relatórios.
+
 
 ## Cronograma
 > Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
