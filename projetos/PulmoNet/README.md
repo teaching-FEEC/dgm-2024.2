@@ -45,8 +45,8 @@ Caso este resultado se concretize antes do prazo estipulado pelo cronograma e ai
 
 Por fim, para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõe-se três tipos de avaliação: análise qualitativa, análise quantitativa e análise frente a um benchmark.
 No caso da análise qualitativa, os próprios estudantes irão observar os resultados sintéticos, sejam eles imagens e/ou  volumes, e compararão com os dados reais esperados.
-Já a análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos DICE (xx) e SSIM (xx), conforme feito pelo artigo xxx.
-Por último, a análise de benchmark (que pode ser considerada um estratégia quantitativa), tem como objetivo passar os dados reais e sintéticos como entrada de uma rede de segmentação já consolidada e, com isto, compara-se ambas as saídas da rede, coletando as seguintes métricas: DICE, precisão e quantidade de ramificações.
+Já a análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos Fréchet Inception Distance (FID) e Structural Similarity Index (SSIM). Ambas estratégias foram utilizadas pelos pesquisador do artigo [[1]](#1), o que permite uma avaliação dos nossos resultados frente a esta outra pesquisa.
+Por último, a análise de benchmark (que pode ser considerada um estratégia quantitativa), tem como objetivo passar os dados reais e sintéticos como entrada de uma rede de segmentação já consolidada e, com isto, compara-se ambas as saídas da rede, coletando as seguintes métricas: coeficiente de similaridade DICE (referência do artigo artigo [[2]](#2)), precisão e quantidade de ramificações.
 
 ## Cronograma
 # Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
