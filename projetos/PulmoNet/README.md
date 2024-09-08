@@ -14,14 +14,18 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 
 ## Descrição Resumida do Projeto
-> Descrição do tema do projeto, incluindo contexto gerador, motivação. 
-> Descrição do objetivo principal do projeto.
-> Esclarecer qual será a saída do modelo generativo.
+# Descrição do tema do projeto, incluindo contexto gerador, motivação. 
+Esse projeto tem como tema a geração de imagens de tomografia computacional da região torácica, juntamente com a máscara de segmentação das vias aéreas.
+A segmentação das vias aéreas é uma técnica muito utilizada para monitoramento de pacientes que apresentam problemas respiratórios/pulmonares. Por meio dela é possível acompanhar as alterações que a enfermidade ou que possíveis tratamentos estão causando na estrutura, que podem levar a problemas respiratórios mais graves.
+# Descrição do objetivo principal do projeto.
+O objetivo principal do projeto é o de gerar imagens de tomografia computacional torácica com alta fidelidade, no intuito de utilizá-las para alimentar redes de segmentação.
+# Esclarecer qual será a saída do modelo generativo.
+O modelo generativo proposto terá como saída volumes de tomografia computadoriza da região do tórax, ou seja, uma composição 3D da região dos pulmões, que serão formadas por uma sequência de fatias, ou imagens 2D. Além disso, a rede também ira produzir as máscaras das vias aéres pulmonares de cada uma das fatias geradas.
+# A saída do modelo será uma série de fatias/imagens, representando a totalidade de um exame tomográfico.
 Imagens tomográficas pulmonares são muito relevantes no contexto diagnóstico de enfermidades pulmonares e para mapeamento para a realização de processos operatórios na região. A seguimentação das vias-aéreas tem se mostrado um facilitador nesses processos por automatizar a identificação de tais estruturas. No entanto, as arquiteturas atuais dependem de um grande volume de dados para serem eficientes. Devido...
-- porque redes generativas são úteis nesse problema
-- objetivo: gerar imagens sintéticas de CT pulmonar comparáveis as reais
-- saídas: imagem CT e a segmentação das vias-aereas na imagem
-> Incluir nessa seção link para vídeo de apresentação da proposta do projeto (máximo 5 minutos).
+# porque redes generativas são úteis nesse problema
+O corpo humano é extremamente complexo, é muito difícil conseguir um volume de dados suficiente para obter uma real generalização, então até os que possuem grandes bancos de dados acabam tendo dificuldades em casos mais raros, o que pode ser um problema para a aplicação dos sistemas desenvolvidos. Com redes generativas, é possível criar dados de forma a compensar essa escassez, permitindo que essas redes aprendam muito mais detalhes do que utilizando apenas os dados reais.
+# Incluir nessa seção link para vídeo de apresentação da proposta do projeto (máximo 5 minutos).
 
 ## Metodologia Proposta
 > Para a primeira entrega, a metodologia proposta deve esclarecer:
@@ -45,7 +49,7 @@ Já a análise quantitativa trata de uma avaliação sobre as imagens a partir d
 Por último, a análise de benchmark (que pode ser considerada um estratégia quantitativa), tem como objetivo passar os dados reais e sintéticos como entrada de uma rede de segmentação já consolidada e, com isto, compara-se ambas as saídas da rede, coletando as seguintes métricas: DICE, precisão e quantidade de ramificações.
 
 ## Cronograma
-> Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
+# Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
 
 
 | Nº da Tarefa | Descrição                                                                 | Data Prevista de Finalização | Semanas Entre Etapas |
