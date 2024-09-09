@@ -7,8 +7,8 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
  |Nome  | RA | Curso|
  |--|--|--|
- |José Carlos Ferreira.  | 170860  | Eng. Elétrica |
- |Byron Alejandro Acuña Acurio.  | 209428  | Eng. Elétrica |
+ |José Carlos Ferreira  | 170860  | Eng. Elétrica |
+ |Byron Alejandro Acuña Acurio  | 209428  | Eng. Elétrica |
 
 ## Resumo (Abstract)
 
