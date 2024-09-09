@@ -1,5 +1,5 @@
-# `Síntese de Dados Financeiros e Previsão de Ações`
-# `Financial Data Synthesis and Stock Prediction`
+# `Síntese de Dados Financeiros para Otimização de Portfólio`
+# `Financial Data Synthesis for Portfolio Optimization`
 
 ## Apresentação
 
