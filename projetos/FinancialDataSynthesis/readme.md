@@ -15,7 +15,17 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 ## Descrição do Problema/Motivação
 Pesquisas recentes em otimização de portfólios financeiros exploraram várias abordagens para aprimorar estratégias de alocação de ativos. A geração de dados sintéticos surgiu como um método promissor para aumentar conjuntos de dados financeiros limitados, com estudos propondo modelos de regressão sintética[1], e redes adversárias generativas condicionais modificadas[2].
 
+## Metodologia Proposta
+> Para a primeira entrega, a metodologia proposta deve esclarecer:
+> * Qual(is) base(s) de dado(s) o projeto pretende utilizar, justificando a(s) escolha(s) realizadas.
+> * Quais abordagens de modelagem generativa o grupo já enxerga como interessantes de serem estudadas.
+> * Artigos de referência já identificados e que serão estudados ou usados como parte do planejamento do projeto
+> * Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
+> * Resultados esperados
+> * Proposta de avaliação dos resultados de síntese
 
+## Cronograma
+> Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
 
 [1] Li, Gaorong, Lei Huang, Jin Yang, and Wenyang Zhang.  
 "A synthetic regression model for large portfolio allocation."  
