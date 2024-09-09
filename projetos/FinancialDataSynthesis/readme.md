@@ -26,7 +26,8 @@ Pesquisas recentes em otimização de portfólios financeiros exploraram várias
 
 ## Cronograma
 > Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
-
+> 
+## Referências Bibliográficas
 [1] Li, Gaorong, Lei Huang, Jin Yang, and Wenyang Zhang.  
 "A synthetic regression model for large portfolio allocation."  
 *Journal of Business & Economic Statistics* 40, no. 4 (2022): 1665-1677.
