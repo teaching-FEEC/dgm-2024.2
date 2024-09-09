@@ -12,12 +12,14 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 ## Descrição Resumida do Projeto
 
-Dentro da visão computacional a **transferência de estilo** busca criar novas imagens combinando o conteúdo de uma imagem com o estilo de outra imagem (ou conjunto de imagens).
+Dentro da visão computacional a **transferência de estilo** busca criar novas imagens combinando o conteúdo de uma imagem com o estilo de outra imagem (ou conjunto de imagens). Esta área de estudo pode ter diferentes aplicações, de transformar cavalos em zebras, fotos em pinturas, esboços em figuras completas ou imagens noturnas em diurnas.
 
-> Descrição do tema do projeto, incluindo contexto gerador, motivação.
-> Descrição do objetivo principal do projeto.
-> Esclarecer qual será a saída do modelo generativo.
->
+Em 2017 foi apresentada a arquitetura CycleGAN, que conseguiu realizar transferência de estilo em base de dados não pareadas. A partir deste momento foram propostas outras soluções para este problema, alcançando resultados cada vez melhores.
+
+Muitas das arquiteturas mais recentes se baseiam no uso e/ou ajuste fino de modelos de larga escala pré-treinados. O treinamento destas redes requer grande poder computacional e significativo número de amostras.
+
+Este projeto pretende, a partir da arquitetura original da CycleGAN, avaliar o impacto da incorporação de algumas das ideias que foram propostas posteriormente. O objetivo é ter uma arquitetura que possa ser treinada com uma estrutura de hardware mais acessível.
+
 Apresentação da proposta: [slides](https://docs.google.com/presentation/d/1kkJbaO5Ldz5YJYXXRCdzqwaxpyK8gpK8tgvfre5GHNw/edit?usp=sharing).
 
 ## Metodologia Proposta
