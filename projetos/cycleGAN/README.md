@@ -39,13 +39,6 @@ No momento atual, existe uma grande confiança na obtenção do modelo de conver
 
 O resultado esperado ideal seria um modelo capaz de extrair um mapa a partir de uma foto de satélite arbitrária. Um marco interessante seria conseguir extrair um mapa da Unicamp a partir de sua imagem de satélite e, como meta adicional, obter um mapa verossímil a partir de uma vista aérea de drone (e não de satélite). Se o modelo for robusto, é possível que consiga extrair um mapa com deformações mas não tão distante do mapa real.
 
-> * Qual(is) base(s) de dado(s) o projeto pretende utilizar, justificando a(s) escolha(s) realizadas.
-> * Quais abordagens de modelagem generativa o grupo já enxerga como interessantes de serem estudadas.
-> * Artigos de referência já identificados e que serão estudados ou usados como parte do planejamento do projeto
-> * Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
-> * Resultados esperados
-> * Proposta de avaliação dos resultados de síntese
-
 ## Cronograma
 | Data    | Planejamento |
 | --------| ------- |
