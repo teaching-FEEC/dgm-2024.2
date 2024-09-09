@@ -14,14 +14,14 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 
 ## Descrição Resumida do Projeto
-> Descrição do tema do projeto, incluindo contexto gerador, motivação. 
-CTs pulmonares são muito relevantes no contexto diagnóstico de enfermidades pulmonares para mapear a região antes de procedimentos operatórios e para efetuar o acompanhamento de doenças respiratórias ou mesmo de tratamentos com possíveis efeitos colaterais.
 
-O corpo humano é extremamente complexo e diverso, é muito difícil conseguir um volume de dados suficiente para obter uma generalização adequada ao utilizar métodos automatizados de inteligência artificial. Nos aplicados à saúde, é crucial conseguir isso para evitar que pacientes obtenham diagnósticos errados. Com as redes generativas, é possível criar dados de forma a compensar essa escassez, permitindo que essas redes aprendam muito mais detalhes do que utilizando apenas os dados reais.
+As tomografias computadorizadas (CT) pulmonares desempenham um papel crucial no diagnóstico preciso de doenças pulmonares. Ao gerar imagens detalhadas da região torácica, ela permite que médicos mapeiem a anatomia das vias aéreas antes de procedimentos cirúrgicos, avaliando a extensão de lesões e facilitando o acompanhamento da progressão de doenças respiratórias. Além disso, a CT é fundamental para monitorar a eficácia de tratamentos e detectar possíveis efeitos colaterais.
 
-Este projeto visa gerar imagens sintéticas de tomografia computadorizada (CT) da região torácica de alta fidelidade, juntamente com máscaras de segmentação precisas das vias aéreas. O modelo generativo proposto terá como saída volumes de CT da região do tórax, ou seja, uma combinação de fatias que juntas formarão o equivalente a um exame real. Além disso, a rede também ira produzir as máscaras das vias aéres pulmonares de cada um desses volumes.
+A complexidade e diversidade do corpo humano dificultam a obtenção de grandes volumes de dados médicos para treinar modelos de aprendizado de máquina, como as redes neurais. Essa escassez de dados pode levar a diagnósticos imprecisos, comprometendo a qualidade do atendimento aos pacientes. Com as redes generativas é possível criar dados de forma a compensar essa escassez, permitindo que as redes aprendam muito mais detalhes do que utilizando apenas aqueles obtidos de exames reais.
 
-Link para apresentação: 
+Este projeto visa gerar imagens sintéticas de tomografia computadorizada (CT) da região torácica de alta fidelidade, também produzindo máscaras de segmentação das vias aéreas. O modelo generativo proposto terá como saída volumes de CT da região do tórax, ou seja, uma combinação de fatias que juntas formarão o equivalente a um exame real.
+
+Link para apresentação: https://drive.google.com/file/d/1TlpQOlCh_lAI0-jPPMPWOzGZ_werCo3d/view?usp=sharing
 
 ## Metodologia Proposta
 > Para a primeira entrega, a metodologia proposta deve esclarecer:
