@@ -21,7 +21,9 @@ A complexidade e diversidade do corpo humano dificultam a obtenção de grandes 
 
 Este projeto visa gerar imagens sintéticas de tomografia computadorizada (CT) da região torácica de alta fidelidade, também produzindo máscaras de segmentação das vias aéreas. O modelo generativo proposto terá como saída volumes de CT da região do tórax, ou seja, uma combinação de fatias que juntas formarão o equivalente a um exame real.
 
-Link para apresentação: https://drive.google.com/file/d/1TlpQOlCh_lAI0-jPPMPWOzGZ_werCo3d/view?usp=sharing
+[Link para o vídeo de apresentação](https://drive.google.com/file/d/1TlpQOlCh_lAI0-jPPMPWOzGZ_werCo3d/view?usp=sharing)
+
+[Link para a apresentação de slides](https://docs.google.com/presentation/d/1b8W0Cw1eiTbWlJ0CJJ8eMRA4zyu2iLhYvggi55-mOb0/edit?usp=sharing)
 
 ## Metodologia Proposta
 
