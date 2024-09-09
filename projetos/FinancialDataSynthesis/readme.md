@@ -15,6 +15,8 @@ Considere o caso de um investidor que tem acesso a $n$ classes de ativos, cada u
 
 Portanto, neste trabalho vamos fazer síntese de dados tabulares (ou seja, retornos financeiros). O objetivo de usar dados sintéticos é capturar os cenários de retorno potencial que não estavam presentes nos dados históricos, mas são estatisticamente plausíveis.
 
+## Objetivo
+ Propor uma solução baseada em redes neurais adversárias (GAN) para gerar dados financeiros sintéticos, preservando e capturando as características principais dos dados reais para otimização de portfólios e outras aplicações financeiras.
 ## Metodologia Proposta
 ### Base de Dados Utilizadas
 - **Fama-French Datasets** disponivel em [3]. Esta base de dados contém informações sobre fatores de risco sistemático e é amplamente utilizada em estudos de modelagem de retornos financeiros, como no estudo de regressão sintética de Li et al. [1].
@@ -23,9 +25,9 @@ A escolha dessas bases de dados é justificada pelo seu uso comprovado em estudo
 
 ### Abordagens de Modelagem Generativa
 Entre as abordagens de modelagem generativa que o grupo pretende explorar estão:
-- **Redes Adversárias Generativas (GANs)**: Uma abordagem comum para a geração de dados sintéticos, com especial interesse em variantes como as **CTGAN** propostas em [2], onde foi incluida informações contextuais, que se mostram promissoras na síntese de dados tabulares complexos como os retornos financeiros.
+- **Redes Adversárias Generativas (GANs)**: A abordagem usando GANs não assume uma forma funcional pré-definida para os dados. A rede aprende diretamente a distribuição dos dados reais (tanto marginais quanto condicionais) e gera amostras sintéticas que imitam os dados reais..
   
-- **Modelos de Regressão Sintética**: Como proposto por Li et al. [1], esses modelos oferecem uma abordagem mais interpretável para a geração de dados sintéticos, combinando suposições estatísticas com análises baseadas em fatores econômicos.
+- **Modelos de Regressão Sintética**: Como proposto por Li et al. [1], esses modelos oferecem uma abordagem mais interpretável para a geração de dados sintéticos, com base em funções matemáticas e modelos estatísticos para prever o comportamento de variáveis dependentes a partir de um conjunto de variáveis independentes..
 
 ### Artigos de Referência
 Os principais artigos que o grupo já identificou como base para estudo e planejamento do projeto são:
