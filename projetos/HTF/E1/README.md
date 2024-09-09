@@ -45,6 +45,16 @@ A ideia inicial é replicar o trabalho proposto em [1], em que foi desenvolvida 
 
 ## Arquitetura de Rede Neural:
 
+> A arquitetura da SGANv2 é composta por três módulos principais, sendo eles o o módulo de embedding das interações espaciais (SIM - Spatial Interaction Embedding Module), o gerador e o discriminador. 
+
+![objetivo](https://github.com/thbramos/IA376_HTF/blob/main/projetos/HTF/E1/FIG02.png)
+
+
+> O primeiro é esponsavel por modelar as interções espaciais entre os pedestres e caputar as relações existentes entre eles na multidão. O segundo utiliza LSTM (Long-Short Term Memory) encoder-decoder para codificar
+> a sequencia de embeddings ao longo do tempo e produzir as predições de trajetórias multimodais, permitindo que o modelo gere padrões de movimento realistas e diversificados. Por fim, o terceiro é modelado usando
+> transformers e toma a sequencia de trajeorias observadas e futuras, classificando-as como real ou falsa. Portanto, a arquitetura do SGANv2 é uma integração sofisticada de técnicas de modelagem espacial e temporal,
+> projetada para melhorar a acurácia e a segurança das previsões de trajetórias humanas em multidões.
+
 ## Artigos de Referência:
 
 ## Ferramentas a serem utilizadas:
