@@ -1,5 +1,5 @@
-# `<PulmoNet: Rede Neuronal Generativa para Imagens Tomográficas Pulmonares>`
-# `<PulmoNet: Generative Neuronal Network for Pulmonary Tomographic Images>`
+# `PulmoNet: Rede Neuronal Generativa para Imagens Tomográficas Pulmonares`
+# `PulmoNet: Generative Neuronal Network for Pulmonary Tomographic Images`
 
 ## Apresentação
 
@@ -38,18 +38,18 @@ Além do artigo [[1]](#1), também serão considerados os trabalhos realizados e
 
 A ferramenta escolhida para o desenvolvimento da arquitetura dos modelos e de treinamento é o PyTorch, em função de sua relevância na área e familiaridade por parte dos integrantes do grupo.
 Ademais, para o desenvolvimento colaborativo dos modelos entre os estudantes, opta-se pela ferramenta de programação Google Collaboratory.
-Já para o versionamento dos modelos e para ajustar seus hiperparâmetros, decidiu-se pela ferramenta Wandb AI dentre as opções disponíveis no mercado. A ferramenta do GitHub também auxiliará no versionamento dos algoritmos desenvolvidos.
+Já para o versionamento dos modelos e para ajustar seus hiperparâmetros, decidiu-se pela ferramenta Wandb AI dentre as opções disponíveis no mercado. E, além disso, a ferramenta do GitHub também auxiliará no versionamento dos algoritmos desenvolvidos.
 
 Como resultado desta implementação, espera-se gerar amostras de imagens de tomografias pulmonares em 2D realistas o suficiente para possibilitar a segmentação das vias aéreas.
 Caso este resultado se concretize antes do prazo estipulado pelo cronograma e ainda reste tempo para o aprofundamento do projeto, buscar-se-á a geração de imagens 3D de tomografias pulmonares, isto é, espera-se aumentar o escopo do projeto para gerar volumes com a mesma estratégia da síntese de imagens, com as devidas adequações necessárias a esta nova estrutura.
 
 Por fim, para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõe-se três tipos de avaliação: análise qualitativa, análise quantitativa e análise frente a um benchmark.
 No caso da análise qualitativa, os próprios estudantes irão observar os resultados sintéticos, sejam eles imagens e/ou  volumes, e compararão com os dados reais esperados.
-Já a análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos Fréchet Inception Distance (FID) e Structural Similarity Index (SSIM). Ambas estratégias foram utilizadas pelos pesquisador do artigo [[1]](#1), o que permite uma avaliação dos nossos resultados frente a esta outra pesquisa.
-Por último, a análise de benchmark (que pode ser considerada um estratégia quantitativa), tem como objetivo passar os dados reais e sintéticos como entrada de uma rede de segmentação já consolidada e, com isto, compara-se ambas as saídas da rede, coletando as seguintes métricas: coeficiente de similaridade DICE (referência do artigo artigo [[2]](#2)), precisão e quantidade de ramificações.
+Já a análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos Fréchet Inception Distance (FID) e Structural Similarity Index (SSIM), os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite uma avaliação dos nossos resultados frente a esta outra pesquisa.
+Por último, a análise de benchmark, que também pode ser considerada um estratégia quantitativa, tem como proposta a comparação das saídas de uma rede de segmentação já consolidada a partir dos dados gerados pela PulmoNet e de dados reais. Feito isso, compara-se ambas as saídas da rede, por meio do cálculo do coeficiente DICE (obtido a partir da precisão e recall da predição) e da quantidade de ramificações (métricas escolhidas com base na referência do artigo [[2]](#2)) e avalia-se se os dados sintéticos são bons o suficiente em uma aplicação real, isto é, avalia-se a utilidade do modelo generativo proposto.
 
 ## Cronograma
-# Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
+> Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
 
 
 | Nº da Tarefa | Descrição                                                                 | Data Prevista de Finalização | Semanas Entre Etapas |
