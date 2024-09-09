@@ -20,7 +20,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 >
 >
 > Descrição do tema do projeto, incluindo contexto gerador, motivação
-> 
+>
+![objetivo](https://github.com/thbramos/IA376_HTF/blob/main/projetos/HTF/E1/FIG01.png)
 
 > Descrição do objetivo principal do projeto.
 > Esclarecer qual será a saída do modelo generativo.
