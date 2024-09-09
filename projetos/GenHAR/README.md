@@ -33,9 +33,10 @@ Diante do contexto e motivação apresentados, temos como objetivo a implementa�
 O modelo generativo produzirá amostras de sensores com 6 canais (3 para acelerômetro e 3 para giroscópio) em uma janela de 60 unidades de tempo.
 Adicionalmente, a depender da arquitetura do modelo escolhido, o modelo pode gerar imagens de espectrogramas representando os dados dos sensores na janela de tempo determinada.
 
-### link para a apresentação da proposta do projeto
-    
-[Apresentação da Proposta](https://docs.google.com/presentation/d/1R7T35wkdfpHdQwyUin0fpVd2mgGM1HDxksFOvnz4lMY/edit?usp=sharing)
+### Apresentação da proposta do projeto
+
+[Apresentação em Vídeo](https://drive.google.com/file/d/1oWmyNrkao1lpMEhPx_pQXnT7QsJr9HNo/view?usp=sharing)
+[Slides da Apresentação](https://docs.google.com/presentation/d/1R7T35wkdfpHdQwyUin0fpVd2mgGM1HDxksFOvnz4lMY/edit?usp=sharing)
 
 ## Metodologia Proposta
 
@@ -192,4 +193,18 @@ O cronograma é dividido em quatro fases, cada uma com suas respectivas atividad
 | **Fase 2: Reprodução de Artigos**                                     |       |       |       |   X   |   X   |   X   |       |       |       |       |       |       |       |
 | **Fase 3: Adequação para HAR (Reconhecimento de Atividades Humanas)** |       |       |       |       |       |   X   |    X  |   X   |   X   |       |       |       |       |
 | **Fase 4: Avaliações e Comparações**                                  |       |       |       |       |       |       |       |       |   X   |   X   |   X   |   X   |   X   |
+
+## Referências Bibliográficas
+
+HUANG, S.; CHEN, P.-Y.; MCCANN, J. DiffAR: Adaptive Conditional Diffusion Model for Temporal-augmented Human Activity Recognition. Proceedings of the Thirty-Second International Joint Conference on Artificial Intelligence. Anais... Em: THIRTY-SECOND INTERNATIONAL JOINT CONFERENCE ON ARTIFICIAL INTELLIGENCE {IJCAI-23}. Macau, SAR China: International Joint Conferences on Artificial Intelligence Organization, ago. 2023. Disponível em: <https://www.ijcai.org/proceedings/2023/424>
+
+MALEKZADEH, M. et al. Protecting Sensory Data against Sensitive Inferences. Proceedings of the 1st Workshop on Privacy by Design in Distributed Systems. Anais... Em: EUROSYS ’18: THIRTEENTH EUROSYS CONFERENCE 2018. Porto Portugal: ACM, 23 abr. 2018. Disponível em: <https://dl.acm.org/doi/10.1145/3195258.3195260>.
+
+NORGAARD, S. et al. Synthetic Sensor Data Generation for Health Applications: A Supervised Deep Learning Approach. 2018 40th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC). Anais... Em: 2018 40TH ANNUAL INTERNATIONAL CONFERENCE OF THE IEEE ENGINEERING IN MEDICINE AND BIOLOGY SOCIETY (EMBC). Honolulu, HI: IEEE, jul. 2018. Disponível em: <https://ieeexplore.ieee.org/document/8512470/>.
+
+RAVURU, C.; SAKHINANA, S. S.; RUNKANA, V. Agentic Retrieval-Augmented Generation for Time Series Analysis. arXiv, , 18 ago. 2024. Disponível em: <http://arxiv.org/abs/2408.14484>.
+
+VAIZMAN, Y.; ELLIS, K.; LANCKRIET, G. Recognizing Detailed Human Context in the Wild from Smartphones and Smartwatches. IEEE Pervasive Computing, v. 16, n. 4, p. 62–74, out. 2017. 
+
+ydataai/ydata-profiling. YData, , 9 set. 2024. Disponível em: <https://github.com/ydataai/ydata-profiling>.
 
