@@ -14,7 +14,14 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 
 ## Descrição Resumida do Projeto
-> Descrição do tema do projeto, incluindo contexto gerador, motivação.
+> Este projeto tem como objetivo a implementação e a avaliação dos resultados da aplicação de Redes Generativas Adversárias Sociais, SGANs, para predição de trajetórias humanas em multidões. O seu principal desafio
+> é modelar as interações sociais garantindo que as previsões realizadas sejam seguras e realistas.
+>
+>
+>
+> Descrição do tema do projeto, incluindo contexto gerador, motivação
+> 
+
 > Descrição do objetivo principal do projeto.
 > Esclarecer qual será a saída do modelo generativo.
 > 
