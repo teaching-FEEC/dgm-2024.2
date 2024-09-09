@@ -10,8 +10,6 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  |José Carlos Ferreira  | 170860  | Eng. Elétrica |
  |Byron Alejandro Acuña Acurio  | 209428  | Eng. Elétrica |
 
-## Resumo (Abstract)
-
 ## Descrição do Problema/Motivação
 Pesquisas recentes em otimização de portfólios financeiros exploraram várias abordagens para aprimorar estratégias de alocação de ativos. A geração de dados sintéticos surgiu como um método promissor para aumentar conjuntos de dados financeiros limitados, com estudos propondo modelos de regressão sintética[1], e redes adversárias generativas condicionais modificadas[2].
 
