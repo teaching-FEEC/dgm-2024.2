@@ -33,7 +33,9 @@ Desenvolver um sistema que realize o fine-tuning de um modelo de NLP para classi
 
 A saída será um relatório textual automatizado, que sintetizará as análises sentimentais, destacando padrões emocionais e oferecendo recomendações práticas.
 
-**Segue link da [apresentação da proposta](https://drive.google.com/file/d/1zRdguOu8w2gxaxyDLmr0tO2RyHJllme3/view?usp=sharing)**
+**Segue link do [vídeo da apresentação da proposta](https://drive.google.com/file/d/1zRdguOu8w2gxaxyDLmr0tO2RyHJllme3/view?usp=sharing)**
+
+**Segue link da [apresentação da proposta](https://docs.google.com/presentation/d/1GL5_nOH4GDGc8b8daHu7gmjFZpORCX_n/edit?usp=sharing&ouid=104816303294373887499&rtpof=true&sd=true)**
 
 ## Metodologia Proposta
 
