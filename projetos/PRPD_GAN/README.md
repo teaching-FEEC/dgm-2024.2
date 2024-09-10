@@ -25,6 +25,7 @@ Para o desenvolvimento deste projeto, serão geradas imagens sintéticas com bas
 | Surface    | 316   |
 | Noise      | 5     |
 | **Total**  | 950   |
+
 Para a geração dessas imagens, acredita-se que os modelos mais adequados sejam o Generative Adversarial Network (GAN) e o Variational Autoencoder (VAE), uma vez que essas arquiteturas têm se mostrado eficazes na geração de dados sintéticos em cenários semelhantes. O GAN é conhecido por sua capacidade de criar imagens realistas, enquanto o VAE oferece uma abordagem mais interpretável e robusta para a geração de variações plausíveis dos dados.
 
 Ao longo do projeto, a equipe utilizará como base os seguintes artigos que já foram identificados: 
