@@ -23,13 +23,19 @@ Este projeto pretende, a partir da arquitetura original da CycleGAN, avaliar o i
 Apresentação da proposta: [slides](https://docs.google.com/presentation/d/1kkJbaO5Ldz5YJYXXRCdzqwaxpyK8gpK8tgvfre5GHNw/edit?usp=sharing).
 
 ## Metodologia Proposta
-> Para a primeira entrega, a metodologia proposta deve esclarecer:
-> * Qual(is) base(s) de dado(s) o projeto pretende utilizar, justificando a(s) escolha(s) realizadas.
-> * Quais abordagens de modelagem generativa o grupo já enxerga como interessantes de serem estudadas.
-> * Artigos de referência já identificados e que serão estudados ou usados como parte do planejamento do projeto
-> * Ferramentas a serem utilizadas (com base na visão atual do grupo sobre o projeto).
-> * Resultados esperados
-> * Proposta de avaliação dos resultados de síntese
+
+O código será inicialmente baseado na implementação em Pytorch da [Cycle-GAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix), com foco na produção de uma rede treinada em base de dados não pareados. A partir deste código inicial serão feitas modificações incrementais, avaliando o seu impacto nos resultados da síntese.
+
+Foram levantados dois artigos que propõem redes de geração de imagens com transferência de estilo com estruturas que podem ser testadas com a Cycle-GAN. Em [2] é proposta uma rede transformers com uma nova forma de codificação espacial e funções de perda baseadas nos resultados da extração de atributos de uma rede VGG19 pré-treinada. Em [3] é apresentada uma rede que modifica uma rede _stable diffusion_ para receber uma imagem de referência, e faz uso de _skip connections_ para minimizar a perda de informação da imagem de entrada.
+
+A qualidade das saídas da rede serão avaliadas com _inception score_ (**IS**) e _Fréchet inception distance_ (**FID**). As diferentes redes também serão comparadas entre si por meio de avaliação de preferência por usuários. Ainda é preciso buscar novas ideias para a avaliação da qualidade das saídas da rede proposta.
+
+Será feito um levantamento de referências adicionais em busca de outros elementos a testar e de formas de avaliação da qualidade das saídas da rede generativa.
+
+No início será abordado o problema _clássico_ de transformar cavalos em zebras, e zebras em cavalos. Será utilizado o data set `horse2zebra`: 939 imagens de cavalo e 1177 de zebras do [ImageNet](http://www.image-net.org), utilizando as keywords `wild horse` e `zebra`.
+
+A expectativa do grupo é de conseguir propor uma variante da Cycl-GAN que tenha resultados melhores que o do artigo original, e que ao mesmo tempo seja possível realizar o treinamento desta  rede em hardware mais acessível.
+
 
 ## Cronograma
 | Semanas | Etapa | Detalhamento |
@@ -42,14 +48,14 @@ Apresentação da proposta: [slides](https://docs.google.com/presentation/d/1kkJ
 
 ## Referências Bibliográficas
 
-Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks.<br>
+[1] Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks.<br>
 Jun-Yan Zhu, Taesung Park, Phillip Isola, Alexei A. Efros. In ICCV 2017.<br>
 [[Paper]](https://arxiv.org/abs/1703.10593) [[Github]](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)
 
-StyTr²: Image Style Transfer with Transformers.<br>
+[2] StyTr²: Image Style Transfer with Transformers.<br>
 Yingying Deng, Fan Tang, Weiming Dong, Chongyang Ma, Xingjia Pan, Lei Wang, Changsheng Xu. IEEE Conference on Computer Vision and Pattern Recognition (CVPR) 2022.<br>
 [[Paper]](https://arxiv.org/abs/2105.14576) [[Github]](https://github.com/diyiiyiii/StyTR-2)
 
-One-Step Image Translation with Text-to-Image Models.<br>
+[3] One-Step Image Translation with Text-to-Image Models.<br>
 Gaurav Parmar, Taesung Park, Srinivasa Narasimhan, Jun-Yan Zhu. In arXiv 2024.<br>
 [[Paper]](https://arxiv.org/abs/2403.12036) [[Github]](https://github.com/GaParmar/img2img-turbo)
