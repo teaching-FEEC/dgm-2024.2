@@ -25,7 +25,7 @@ A escolha dessas bases de dados é justificada pelo seu uso comprovado em estudo
 
 ### Abordagens de Modelagem Generativa
 Entre as abordagens de modelagem generativa que o grupo pretende explorar estão:
-- **Redes Adversárias Generativas (GANs)**: A abordagem usando GANs não assume uma forma funcional pré-definida para os dados. A rede aprende diretamente a distribuição dos dados reais (tanto marginais quanto condicionais) e gera amostras sintéticas que imitam os dados reais..
+- **Redes Adversárias Generativas (CTGAN)**: A abordagem usando GANs não assume uma forma funcional pré-definida para os dados. A rede aprende diretamente a distribuição dos dados reais (tanto marginais quanto condicionais) e gera amostras sintéticas que imitam os dados reais..
   
 - **Modelos de Regressão Sintética**: Como proposto por Li et al. [1], esses modelos oferecem uma abordagem mais interpretável para a geração de dados sintéticos, com base em funções matemáticas e modelos estatísticos para prever o comportamento de variáveis dependentes a partir de um conjunto de variáveis independentes..
 
@@ -37,6 +37,12 @@ Os principais artigos que o grupo já identificou como base para estudo e planej
 - **Peña et al. (2024)**: "A modified CTGAN-plus-features-based method for optimal asset allocation" [2].
 
 ### Ferramentas
+Existem diversas bibliotecas Python disponíveis para geração de dados sintéticos, cada uma com suas capacidades e recursos distintos. Neste trabalho exploraremos as seguintes bibliotecas CTGAN  e Synthetic Data Vault (SDV).
+
+- **CTGAN** CTGAN é uma coleção de geradores de dados sintéticos baseados em Deep Learning para dados de tabela única, que são capazes de aprender com dados reais e gerar dados sintéticos com alta fidelidade. 
+
+- **SDV (Synthetic Data Vault)** O pacote é focado na geração e avaliação de dados sintéticos tabulares, multitabelas e séries temporais. Aproveitando uma combinação de modelos de aprendizado de máquina, o SDV fornece recursos e síntese de dados, ao mesmo tempo em que garante que os conjuntos de dados gerados se assemelhem aos dados originais em estrutura e propriedades estatísticas. 
+
 - **Python** com bibliotecas como `PyTorch` e `scikit-learn` para implementar os modelos generativos e realizar a síntese de dados.
    
 - **Colab** para colaboração e execução de experimentos em ambientes com suporte a GPU.
@@ -51,11 +57,12 @@ Os principais resultados esperados são:
 - Análise de como os dados sintéticos podem melhorar as estratégias de alocação de ativos, levando em consideração diferentes níveis de risco.
 
 ### Proposta de Avaliação
-A avaliação dos resultados da síntese será baseada em:
+Para a avaliação da qualidade dos nossos geradores de dados sintéticos, vamos considerar várias métricas utilizando amostras reais e sintéticas. As métricas de avaliação se encaixam nas seguintes categorias principais:
 
-- **Métricas Estatísticas**: Comparação entre as distribuições de retornos sintéticos e históricos, usando métricas como distância de Wasserstein e testes de Kolmogorov-Smirnov.
+- **Fidelidade**: Comparação entre as distribuições sintéticos e históricos, usando métricas que capturam os aspectos distribucionais dos dados sintéticos com relação às amostras reais. Neste caso vamos usar o teste Kolmogorov-Smirnov (KS), teste Qui-quadrado (CS) que medem a similaridade para variáveis ​​contínuas e categóricas (colunas) respectivamente. A medidas de divergência distribucional como distância de Jensen-Shannon, Discrepância Média Máxima (MMD) e distância de Wasserstein. Gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos. 
+
   
-- **Desempenho de Alocação de Ativos**: Avaliação do desempenho de diferentes estratégias de alocação com e sem os dados sintéticos, medindo métricas de risco-retorno como o índice de Sharpe e o Value-at-Risk (VaR).
+- **Utilidade**: Avaliação do desempenho de diferentes estratégias de alocação com e sem os dados sintéticos, medindo métricas de risco-retorno como o índice de Sharpe e o Value-at-Risk (VaR). Treinar modelos de regressão usando dados sintéticos e testando os modelos com dados reais.
 
 ## Cronograma
 | Etapa                     | Descrição                                      | Duração Estimada |
