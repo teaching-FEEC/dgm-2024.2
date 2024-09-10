@@ -19,8 +19,20 @@ Portanto, neste trabalho vamos fazer síntese de dados tabulares (ou seja, retor
  Propor uma solução baseada em redes neurais adversárias (GAN) para gerar dados financeiros sintéticos, preservando e capturando as características principais dos dados reais para otimização de portfólios e outras aplicações financeiras.
 ## Metodologia Proposta
 ### Base de Dados Utilizadas
-- **Fama-French Datasets** disponivel em [3]. Esta base de dados contém informações sobre fatores de risco sistemático e é amplamente utilizada em estudos de modelagem de retornos financeiros, como no estudo de regressão sintética de Li et al. [1].
-- **Bloomberg Dataset** conforme utilizado no trabalho de Peña et al. [2]. Esta base de dados inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos.
+- **API do Yahoo Finance** permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real, histórico de preços. Neste trabalhos vamos fazer uso do histórico de preços das seguentes ações Johnson Controls International plc (JCI), Target Corporation (TGT), Comcast Corporation (CMCSA), Campbell Soup Company (CPB), Altria Group, Inc.(MO), APA Corporation (APA), Apple Inc.(AAPL), JPMorgan Chase & Co.(JP), Microsoft Corporation (MSFT).
+- **Fama-French Datasets** disponivel em [3]. Esta base de dados contém informações sobre fatores de risco sistemático e é amplamente utilizada em estudos de modelagem de retornos financeiros, como no estudo de regressão sintética de Li et al. [1]. Neste dataset temos os seguentes fatores de risco sistemático Market Risk Premium (Mkt-RF), Small Minus Big (SMB), High Minus Low (HML), Risk-Free Rate (RF).
+- **Bloomberg Dataset** conforme utilizado no trabalho de Peña et al. [2]. Esta base de dados inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o histórico de preços das seguintes ações:
+    - **us_equities**: Refere-se às ações de empresas sediadas nos Estados Unidos. Esse termo cobre uma ampla gama de ações negociadas nas principais bolsas dos EUA, como a NYSE e a Nasdaq.
+    - **us_equities_tech**: Refere-se especificamente às ações de empresas de tecnologia nos Estados Unidos. Inclui companhias como Apple, Microsoft, Google, e outras gigantes de tecnologia. Esse subsetor costuma ter volatilidade e crescimento mais altos em comparação com o mercado geral.
+    - **global_equities**: Ações de empresas de todo o mundo, abrangendo vários mercados fora dos Estados Unidos. Este grupo inclui tanto economias desenvolvidas quanto emergentes. É uma categoria mais diversificada geograficamente.
+    - **em_equities**: Refere-se a ações de mercados emergentes (EM = Emerging Markets). Esses mercados incluem países como Brasil, Índia, China e outros. Eles tendem a ter maior potencial de crescimento, mas também podem ser mais voláteis e arriscados.
+    - **us_hy**: High Yield Bonds dos EUA, também conhecidos como "junk bonds". São títulos corporativos de empresas com classificação de crédito inferior a "investment grade" (grau de investimento), oferecendo maiores retornos devido ao maior risco de inadimplência.
+    - **us_ig**: Investment Grade Bonds dos EUA, que são títulos de empresas ou governos com alta classificação de crédito, o que implica em menor risco e, geralmente, menor retorno em comparação com os títulos de "high yield".
+    - **em_debt**: Dívida de mercados emergentes, que inclui títulos de dívida emitidos por governos ou empresas de países em desenvolvimento. Esses títulos podem oferecer altos retornos, mas também carregam riscos significativos devido à instabilidade econômica ou política.
+    - **cmdty**: Commodities, que incluem ativos como petróleo, ouro, prata, e outros recursos naturais. Investir em commodities pode fornecer proteção contra a inflação e diversificação, mas também pode ser volátil.
+    - **long_term_treasuries**: Títulos do Tesouro dos EUA com vencimentos de longo prazo, geralmente 10 anos ou mais. Eles são considerados ativos de baixo risco e são sensíveis às mudanças nas taxas de juros. Quando as taxas de juros sobem, o valor desses títulos tende a cair.
+    - **short_term_treasuries**: Títulos do Tesouro dos EUA de curto prazo, geralmente com vencimentos de 1 a 3 anos. São considerados extremamente seguros e menos voláteis que os títulos de longo prazo, sendo usados por investidores que buscam preservar capital.
+
 A escolha dessas bases de dados é justificada pelo seu uso comprovado em estudos anteriores sobre otimização de portfólio e síntese de dados financeiros.
 
 ### Abordagens de Modelagem Generativa
@@ -39,7 +51,7 @@ Os principais artigos que o grupo já identificou como base para estudo e planej
 ### Ferramentas
 Existem diversas bibliotecas Python disponíveis para geração de dados sintéticos, cada uma com suas capacidades e recursos distintos. Neste trabalho exploraremos as seguintes bibliotecas CTGAN  e Synthetic Data Vault (SDV).
 
-- **CTGAN** CTGAN é uma coleção de geradores de dados sintéticos baseados em Deep Learning para dados de tabela única, que são capazes de aprender com dados reais e gerar dados sintéticos com alta fidelidade. 
+- **CTGAN** é uma coleção de geradores de dados sintéticos baseados em Deep Learning para dados de tabela única, que são capazes de aprender com dados reais e gerar dados sintéticos com alta fidelidade. 
 
 - **SDV (Synthetic Data Vault)** O pacote é focado na geração e avaliação de dados sintéticos tabulares, multitabelas e séries temporais. Aproveitando uma combinação de modelos de aprendizado de máquina, o SDV fornece recursos e síntese de dados, ao mesmo tempo em que garante que os conjuntos de dados gerados se assemelhem aos dados originais em estrutura e propriedades estatísticas. 
 
