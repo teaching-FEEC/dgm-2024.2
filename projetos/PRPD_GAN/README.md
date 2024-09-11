@@ -37,14 +37,13 @@ Esses estudos fornecerão suporte teórico e prático para o desenvolvimento das
 
 As ferramentas previstas para o desenvolvimento incluem 
 - Python
-- PyTorch
-- TorchVision
-- Pandas 
-- NumPy
-- Matplotlib
-- Scikit-learn
-- Weights and Biases
-- Optuna
+- Deep Learning: PyTorch 
+- Visão Computacional: TorchVision, OpenCV, Numpy
+- Visualização de dados: Matplotlib, Seaborn
+- Avaliação por métricas: Scikit-learn, Scikit-image
+- Manipulação de dados: Pandas
+- Monitoramento: Weights and Biases
+- Otimização de hiperparâmetros: Optuna
 
 Além de outras bibliotecas essenciais para manipulação de dados e visualização, bem como para otimização de modelos.
 
@@ -69,4 +68,6 @@ Ao final do projeto, espera-se avaliar a qualidade das imagens geradas tanto com
 | 25/11/2024  | Entrega E3                                                  |
 
 ## Referências Bibliográficas
-> Apontar nesta seção as referências bibliográficas adotadas no projeto.
+1. Lv, F., Liu, G., Wang, Q., Lu, X., Lei, S., Wang, S., & Ma, K. (2023). Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN. Journal of Electrical Engineering & Technology, 18(2), 829–841. https://doi.org/10.1007/s42835-022-01260-7
+2. Guo, B., Li, S., Li, N., & Li, P. (2021). A GAN-based Method for the Enhancement of Phase-Resolved Partial Discharge Map Data. Forest Chemicals Review, 1484, 1484–1497.
+3. Zhu, G., Zhou, K., Lu, L., Fu, Y., Liu, Z., & Yang, X. (2023). Partial Discharge Data Augmentation Based on Improved Wasserstein Generative Adversarial Network With Gradient Penalty. IEEE Transactions on Industrial Informatics, 19(5), 6565–6575. https://doi.org/10.1109/TII.2022.3197839
