@@ -17,26 +17,26 @@ Uma das subáreas de IA generativa que obteve alguns dos mais impressionantes re
 
 A motivação pelo estudo desse problema é estudar aplicações menos convencionais de modelos generativos, visto que a síntese de dados já é estudada com frequência. Além disso, mapas são um tipo de dado muito rico em informações diversas, sendo relevantes para problemas distintos, desde criação de rotas até segmentação semântica de vegetações. 
 
-O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão mas traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como corpos d'àgua, parques, etc.
+O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como presença corpos d'àgua, parques, etc.
 
-Como objetivo principal do projeto, tentaremos extrair o mapa da Unicamp de sua foto de satélite e testar a generalização do modelo tentando extrair um mapa a partir de uma imagem de drone.
+Como objetivo principal do projeto, tentaremos extrair o mapa da Unicamp de sua foto de satélite e testar a generalização do modelo tentando extrair o mesmo mapa a partir de uma imagem de drone.
 
 ## Metodologia Proposta
 
 - **Base de dados**: Inicialmente, a base de dados a ser utilizada será a mesma utilizada pelos autores da Pix2Pix e consiste em 2196 pares de imagens da cidade de Nova Iorque. As imagens possuem dimensões 256x256 e são separadas em conjuntos de treino, teste e validação com 1099, 550 e547 imagens, respectivamente. O dataset encontra-se disponibilizado gratuitamente na [internet](http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/). 
 
-    Outras base de dados utilizadas por outros trabalhos até foram encontradas, mas não são disponibilizadas gratuitamente.
+    Outras base de dados utilizadas por outros trabalhos até foram encontradas, mas não são disponibilizadas gratuitamente [[2]](#2)[[5]](#5).
 
 - **Abordagens interessantes**: As duas abordagens escolhidas são baseadas en métodos muito bem estabelecidos na área de I2IT e até hoje são usados como *benchmarks* para novos trabalhos:
     1. Pix2Pix (2016)[[3]](#3): Possivelmente o framework mais amplamente adotado em problemas de I2IT, o modelo consiste em uma GAN condicional onde a condição é a imagem de entrada.
 
-    2. MapGen-GAN (2021): MapGen-GAN é uma implementação da CycleGAN otimizada para o problema de extração de mapas de imagens de satélite. A CycleGAN, proposta pelos mesmos criadores do Pix2Pix, também é uma arquitetura muito utilizada em I2IT e tem um processo de treinamento diferente, buscando otimizar uma loss de "consistência de ciclo" que procura garantir que a imagem original esteja próxima da imagem obtida pelo mapeamento inverso.
+    2. MapGen-GAN (2021)[[2]](#2): MapGen-GAN é uma implementação da CycleGAN otimizada para o problema de extração de mapas de imagens de satélite. A CycleGAN, proposta pelos mesmos criadores do Pix2Pix, também é uma arquitetura muito utilizada em I2IT e tem um processo de treinamento diferente, buscando otimizar uma loss de "consistência de ciclo" que procura garantir que a imagem original seja a mais próxima possível da imagem obtida pelo mapeamento inverso da imagem traduzida.
 
-- **Ferramentas**: As ferramentas utilizadas serão as mais utilizadas na comunidade de Deep Learning atualmente
+- **Ferramentas**: As ferramentas utilizadas serão as mais utilizadas na comunidade de Deep Learning atualmente:
     - Criação e treinamento dos modelos: PyTorch
     - Monitoramento de métricas: WandB 
 
-- **Resultados esperados**: Devido à quantidade limitada de dados disponíveis e aos dados utilizados não corresponderem a paisagens brasileiras ou próximas das paisagens da Unicamp, é de se esperar um enviesamento do modelo à cidade de Nova Iorque. Esse enviesamento provavelmente será refletido até mesmo em aplicações do modelo a paisagens rurais ou litorâneas
+- **Resultados esperados**: Devido à quantidade limitada de dados disponíveis e aos dados utilizados não corresponderem a paisagens brasileiras ou próximas das paisagens da Unicamp, é de se esperar um enviesamento do modelo à cidade de Nova Iorque. Esse enviesamento provavelmente será refletido até mesmo em aplicações do modelo a paisagens rurais ou litorâneas. No entanto, espera-se que o modelo  consiga extrair mapas qualitativamente bons ainda que apresentem algumas distorções, principalmente em áreas mais rurais visto que o *dataset* utilizado será de uma região urbana. 
 
 - **Proposta de avaliação dos resultados de síntese**: As métricas de avaliação encontradas na literatura foram:
 
@@ -58,18 +58,20 @@ Como objetivo principal do projeto, tentaremos extrair o mapa da Unicamp de sua 
 
     onde $c_1$ e $c_2$ são constantes para manter a estabilidade.
 
-    - ACC (Acurácia de pixel): Dado um pixel $i$ com valor verdadeiro $(r_i, g_i, b_i)$ e valor previsto $(r_i', g_i', b_i')$, se $\max{(|r_i - r_i'|, |g_i - g_i'|, |b_i - b_i'|)} < \delta$, onde $\delta=5$ em [[2]](#2).
+    - ACC (Acurácia de pixel): Dado um pixel $i$ com valor verdadeiro $(r_i, g_i, b_i)$ e valor previsto $(r_i', g_i', b_i')$, se $\max{(|r_i - r_i'|, |g_i - g_i'|, |b_i - b_i'|)} < \delta$, onde será utilizado o valor $\delta=5$ para obter resultados comparáveis à literatura [[2]](#2).
 
 ## Cronograma
 TODO: MAKE A COLORED TABLE 
 | Data    | Planejamento |
 | --------| ------- |
 | 17/09   | Definição do tema e definição da bibliografia. |
-| 24/09   | Implementação inicial das CycleGAN + treinamento com conjunto arbitrário de hiperparâmetros. |
-| 08/10   | Etapa 1 concluída com CycleGAN otimizada e produzindo resultados satisfatórios. Início da busca por datasets para a Etapa 2.|
-| 22/10   | Datasets escolhidos e visualizados. Leitura de trabalhos na área e definição de modelo. Início da implementação. |
-| 05/11   | Data prevista para finalização da Etapa 2. O resto do prazo será utilizado para resolver problemas e imprevistos, ou para otimizar os resultados obtidos. |
-| 26/11   | Etapa 2 concluída e funcionando adequadamente. README.md escrito, aplicativo Streamlit / Gradio mostrando o projeto em funcionamento (*). |
+| 24/09   | Implementação inicial dos modelos + treinamento com conjunto arbitrário de hiperparâmetros. Visualização, análise e pré-processamento dos dados |
+| 08/10   | Implementação preliminar concluída com modelos otimizados e produzindo resultados qualitativamente satisfatórios.|
+| 22/10   | Implementação das métricas e avaliação quantitativa dos resultados obtidos. |
+| 12/11   | Segunda rodada de otimização dos modelos visando melhorar as métricas quantitativas. Possivelmente os modelos podem já estar concluídos nessa data.  |
+| 26/11   | Duas semanas de "folga" para resolver eventuais problemas que possam aparecer. README.md escrito explicando em detalhes o funcionamento do projeto e documentando os resultados obtidos. Aplicativo Streamlit / Gradio mostrando o projeto em funcionamento (*). |
+
+(*): Esses recursos só serão implementados caso o projeto esteja funcionando adequadamente e os resultados quantitativos já tenham sido coletados. 
 
 ## Referências Bibliográficas
 <a id="1">[1]</a>
