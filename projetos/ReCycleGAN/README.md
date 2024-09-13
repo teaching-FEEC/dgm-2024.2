@@ -70,11 +70,15 @@ Para acompanhar as diferentes redes treinadas será utilizada a plataforma [Weig
 
 ### Referências
 
-Foram levantados dois artigos que propõem redes de geração de imagens com transferência de estilo com estruturas que podem ser testadas com a CycleGAN. Em [2] é proposta uma rede transformers com uma nova forma de codificação espacial e funções de perda baseadas nos resultados da extração de atributos de uma rede VGG19 pré-treinada. Em [3] é apresentada uma rede que modifica uma rede _stable diffusion_ para receber uma imagem de referência, e faz uso de _skip connections_ para minimizar a perda de informação da imagem de entrada.
+Foram levantados artigos que propõem redes de geração de imagens com transferência de estilo com estruturas que podem ser testadas com a CycleGAN:
+
+* Em [2] é proposta uma rede transformers com uma nova forma de codificação espacial e funções de perda baseadas nos resultados da extração de atributos de uma rede VGG19 pré-treinada.
+* Em [3] é proposta uma função de perda que compara atributos extraídos de uma rede _Vision Transformers_ pré-treinada.
+* Em [4] é apresentada uma rede que modifica uma rede _stable diffusion_ para receber uma imagem de referência, e faz uso de _skip connections_ para minimizar a perda de informação da imagem de entrada.
 
 ### Avaliação
 
-A qualidade das saídas da rede serão avaliadas com _inception score_ (**IS**) e _Fréchet inception distance_ (**FID**). As diferentes redes também serão comparadas entre si por meio de avaliação de preferência por usuários. Ainda é preciso buscar novas ideias para a avaliação da qualidade das saídas da rede proposta.
+A qualidade das saídas da rede serão avaliadas com _Fréchet inception distance_ (**FID**) e métricas propostas em artigos. As diferentes redes também serão comparadas entre si por meio de avaliação de preferência por usuários. Ainda é preciso buscar novas ideias para a avaliação da qualidade das saídas da rede proposta.
 
 A expectativa do grupo é de conseguir propor uma variante da `Cycle-GAN` que tenha resultados melhores que o do artigo original, e que ao mesmo tempo seja possível realizar o treinamento desta  rede em hardware mais acessível.
 
@@ -105,6 +109,10 @@ Jun-Yan Zhu, Taesung Park, Phillip Isola, Alexei A. Efros. In ICCV 2017.<br>
 Yingying Deng, Fan Tang, Weiming Dong, Chongyang Ma, Xingjia Pan, Lei Wang, Changsheng Xu. IEEE Conference on Computer Vision and Pattern Recognition (CVPR) 2022.<br>
 [[Paper]](https://arxiv.org/abs/2105.14576) [[Github]](https://github.com/diyiiyiii/StyTR-2)
 
-[3] One-Step Image Translation with Text-to-Image Models.<br>
+[3] Splicing ViT Features for Semantic Appearance Transfer.<br>
+Narek Tumanyan, Omer Bar-Tal, Shai Bagon, Tali Dekel. IEEE Conference on Computer Vision and Pattern Recognition (CVPR) 2022.<br>
+[[Paper]](https://arxiv.org/abs/2201.00424) [[Github]](https://github.com/omerbt/Splice) [[Site]](https://splice-vit.github.io/)
+
+[4] One-Step Image Translation with Text-to-Image Models.<br>
 Gaurav Parmar, Taesung Park, Srinivasa Narasimhan, Jun-Yan Zhu. In arXiv 2024.<br>
 [[Paper]](https://arxiv.org/abs/2403.12036) [[Github]](https://github.com/GaParmar/img2img-turbo)
