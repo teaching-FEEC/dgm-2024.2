@@ -14,7 +14,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 ## Descrição Resumida do Projeto
 Phase-Resolved Partial Discharge (PRPD) é uma representação gráfica da atividade de descargas parciais (PD) ao longo dos 360º de um ciclo de corrente alternada (CA), amplamente utilizada no diagnóstico de falhas em motores elétricos. Embora existam fontes que apresentam tipos de falhas e suas representações gráficas, é difícil encontrar bases de dados de qualidade, devido à natureza especializada dos dados, conflitos por segurança e privacidade, acceso aos equipamentos, etc. Além disso, grandes conjuntos de dados são necessários para treinar modelos de deep learning de forma eficaz. Dada a escassez de bases de dados adequadas, a geração sintética de imagens se apresenta como uma solução viável para esse problema. O objetivo deste projeto é desenvolver uma base de dados sintética por meio de arquiteturas generativas e avaliá-las, permitindo que essa abordagem seja utilizada por outros pesquisadores no contexto de estudos sobre descargas parciais.
 > 
-> Incluir nessa seção link para vídeo de apresentação da proposta do projeto (máximo 5 minutos).
+> Incluir nessa seção link para vídeo de apresentação da proposta do projeto (máximo 5 minutos). [Link para o slide](https://docs.google.com/presentation/d/10h3jkcC1OpaIp1o4AaWeLi4mIFBhb0lt0KU67_mCWE8/edit?usp=sharing)
 
 ## Metodologia Proposta
 
@@ -29,10 +29,12 @@ Para o desenvolvimento deste projeto, serão geradas imagens sintéticas com bas
 | **Total**  | 950                   |                                                                     |
 
 ### Separação de dados
-O dataset vai ser separado em três grupos: treino, validação e teste. O primeiro conjunto vai ser usado para treinar as arquiteturas escolhidas, o segundo conjunto vai ser para otimizar os hiperparâmetros e terceiro para comparar o desempenho dos modelos treinados.
+O dataset será separado em três grupos: treino, validação e teste. O primeiro conjunto será utilizado para treinar as arquiteturas escolhidas, o segundo para otimizar os hiperparâmetros, e o terceiro para avaliar o desempenho dos modelos treinados.
 
 ### Modelos generativos
 Para a geração dessas imagens, acredita-se que os modelos mais adequados sejam o Generative Adversarial Network (GAN) e o Variational Autoencoder (VAE), uma vez que essas arquiteturas têm se mostrado eficazes na geração de dados sintéticos em cenários semelhantes. O GAN é conhecido por sua capacidade de criar imagens realistas, enquanto o VAE oferece uma abordagem mais interpretável e robusta para a geração de variações plausíveis dos dados.
+
+### Referências Bibliográficas
 
 Ao longo do projeto, a equipe utilizará como base os seguintes artigos que já foram identificados: 
 - "A GAN-based Method for the Enhancement of Phase-Resolved Partial Discharge Map Data"
@@ -53,7 +55,7 @@ As ferramentas previstas para o desenvolvimento incluem
 - Otimização de hiperparâmetros: Optuna
 
 ### Avaliação dos modelos
-Ao final do projeto, espera-se avaliar a qualidade das imagens geradas tanto com métricas quantitativas quanto qualitativas. Vamos usar uma avaliação baseada em três aspectos: comparação da distribuição dos datasets, morfologia das imagens e inspecção visual. Essas métricas permitirão avaliar de maneira robusta o desempenho dos modelos generativos e a qualidade das imagens sintéticas produzidas.
+Espera-se avaliar a qualidade das imagens geradas tanto com métricas quantitativas quanto qualitativas. Vamos usar uma avaliação baseada em três aspectos: comparação da distribuição dos datasets, morfologia das imagens e inspecção visual. Essas métricas permitirão avaliar de maneira robusta o desempenho dos modelos generativos e a qualidade das imagens sintéticas produzidas.
 
 Avaliação da distribuição dos datasets
 - Frétchet Inception Distance (FID)
@@ -67,7 +69,7 @@ Avaliação visual dos dados
 - UMAP
 
 ### Resultados esperados
-Se espera ter como resultados uma base de dados sintética de PRPDs baseada em uma avaliaçaõ quantitativa e qualitativa, ter código público e propor uma abordagem para comparar imagens sintéticas no contexto de detecção de falhas em motores.
+Ao final, planeja-se ter como resultados uma base de dados sintética de PRPDs baseada em uma avaliaçaõ quantitativa e qualitativa, ter código público e propor uma abordagem para comparar imagens sintéticas no contexto de detecção de falhas em motores.
 
 ## Cronograma do Projeto
 
