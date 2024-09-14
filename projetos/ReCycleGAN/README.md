@@ -75,6 +75,7 @@ Foram levantados artigos que propõem redes de geração de imagens com transfer
 * Em [2] é proposta uma rede transformers com uma nova forma de codificação espacial e funções de perda baseadas nos resultados da extração de atributos de uma rede VGG19 pré-treinada.
 * Em [3] é proposta uma função de perda que compara atributos extraídos de uma rede _Vision Transformers_ pré-treinada.
 * Em [4] é apresentada uma rede que modifica uma rede _stable diffusion_ para receber uma imagem de referência, e faz uso de _skip connections_ para minimizar a perda de informação da imagem de entrada.
+* Em [5] é proposto que _perceptual path length_ (PPL) é um bom indicador de qualidade da imagem gerada. A redução do PPL é conseguida com um termo de regularização que suavida o gerador.
 
 ### Avaliação
 
@@ -116,3 +117,7 @@ Narek Tumanyan, Omer Bar-Tal, Shai Bagon, Tali Dekel. IEEE Conference on Compute
 [4] One-Step Image Translation with Text-to-Image Models.<br>
 Gaurav Parmar, Taesung Park, Srinivasa Narasimhan, Jun-Yan Zhu. In arXiv 2024.<br>
 [[Paper]](https://arxiv.org/abs/2403.12036) [[Github]](https://github.com/GaParmar/img2img-turbo)
+
+[5] Analyzing and Improving the Image Quality of StyleGAN.<br>
+Tero Karras, Samuli Laine, Miika Aittala, Janne Hellsten, Jaakko Lehtinen, Timo Aila. IEEE Conference on Computer Vision and Pattern Recognition (CVPR) 2022.<br>
+[[Paper]](https://arxiv.org/abs/1912.04958) [[Github]](https://github.com/NVlabs/stylegan2)
