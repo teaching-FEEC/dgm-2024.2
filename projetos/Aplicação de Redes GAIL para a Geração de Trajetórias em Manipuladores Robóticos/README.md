@@ -65,7 +65,17 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
     
 
 ## Cronograma
-> Proposta de cronograma. Procure estimar quantas semanas serão gastas para cada etapa do projeto.
+
+| **Etapa**                                    | **Atividades**                                                                                                 | **Duração (semanas)** |
+|----------------------------------------------|---------------------------------------------------------------------------------------------------------------|-----------------------|
+| Revisão de Literatura e Pesquisa             | - Revisão de artigos sobre GAIL e aprendizado por imitação.<br> - Definição de arquiteturas e metodologias.     | 2  (até dia 17/09)                   |
+| Geração dos Dados Especialistas              | - Criação de trajetórias utilizando CoppeliaSim.<br> - Coleta de configurações de juntas e coordenadas.         | 2   (até dia 24/09)                  |
+| Implementação do Modelo GAIL                 | - Implementação da rede geradora e discriminadora.<br> - Definição de funções de perda.<br> - Integração dos dados. | 3 (até dia 08/10 - E2)                     |
+| Treinamento e Ajustes do Modelo              | - Treinamento do modelo com dados.<br> - Ajustes de hiperparâmetros e monitoramento de métricas.                | 3   (até dia 22/10)                  |
+| Simulação e Validação das Trajetórias        | - Testes de trajetórias no CoppeliaSim.<br> - Comparação com trajetórias especialistas.<br> - Ajustes no modelo. | 3   (até dia 12/11)                 |
+| Avaliação Final e Documentação               | - Geração de relatórios e gráficos.<br> - Documentação e apresentação final.                                    | 2     (até dia 25/11 - E3)            |
+
+
 
 ## Referências Bibliográficas
 
