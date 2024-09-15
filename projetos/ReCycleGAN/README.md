@@ -44,7 +44,7 @@ O objetivo deste projeto é, a partir da arquitetura original da CycleGAN, inves
 
 **Apresentação da proposta**:
 
-[[slides]](https://docs.google.com/presentation/d/1kkJbaO5Ldz5YJYXXRCdzqwaxpyK8gpK8tgvfre5GHNw/edit?usp=sharing)
+[[slides]](https://docs.google.com/presentation/d/11GfqeSx0cfEgmkaK85Abg1vAqVeyjwtpq9zFc_-PA94/edit?usp=sharing)
 [[video]](https://link.fake)
 
 ## Metodologia Proposta
