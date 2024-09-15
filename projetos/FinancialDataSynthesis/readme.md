@@ -10,6 +10,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  |José Carlos Ferreira  | 170860  | Eng. Elétrica |
  |Byron Alejandro Acuña Acurio  | 209428  | Eng. Elétrica |
 
+LINK DOS SLIDES: https://docs.google.com/presentation/d/1bETsdaZOJDIBiyRV0t87tP7LU9r7ZH9-kDMQtxbuoEY/edit#slide=id.g2d2fd855179_0_106
 ## Descrição do Problema/Motivação
 Considere o caso de um investidor que tem acesso a $n$ classes de ativos, cada uma representada por um índice de preço adequado. Definimos o problema de otimização de portfólio como um problema de alocação de ativos no qual o investidor busca maximizar o retorno selecionando a quantidade apropriada para cada classe de ativos, mantendo o risco geral do portfólio abaixo de um nível de tolerância predefinido. Pesquisas recentes em otimização de portfólios financeiros exploraram várias abordagens para aprimorar estratégias de alocação de ativos. A geração de dados sintéticos surgiu como um método promissor para aumentar conjuntos de dados financeiros limitados, com estudos propondo modelos de regressão sintética[1], e redes adversárias generativas condicionais modificadas[2]. 
 
