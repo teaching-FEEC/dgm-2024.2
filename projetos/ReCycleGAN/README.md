@@ -47,8 +47,8 @@ Muitas das arquiteturas mais recentes se baseiam no uso e/ou ajuste fino de mode
 
 O objetivo deste projeto é, a partir da arquitetura original da CycleGAN, investigar e avaliar o impacto da incorporação de algumas das ideias que foram propostas posteriormente, aplicados a dois problemas específicos: a tradução dia-noite de imagens de trânsito e a remoção de ruídos para melhoria na qualidade. Especificamente, os objetivos são:
 
-* Investigar e reproduzir a CycleGAN _vanilla_ e avaliar o obter uma _baseline_ de resultados na resolução dos dois problemas previamente mencionados.
-* Investigar e reproduzir propostas mais recentes de modificações na CycleGAN e compará-las com a CycleGAN tradicional em relação a dois dos problemas mencionados.
+* Investigar e reproduzir a `CycleGAN _vanilla_` e avaliar o obter uma _baseline_ de resultados na resolução dos dois problemas previamente mencionados.
+* Investigar e `reproduzir propostas mais recentes` de modificações na CycleGAN e compará-las com a CycleGAN tradicional em relação aos dois dos problemas propostos.
 * Investigar e incorporar `novas métricas` de avaliação quantitativa e qualitativa das saídas da rede.
 * Fazer `comparativo` entre as arquiteturas propostas e redes pré-treinadas propostas na literatura, buscando entender criticamente qual variação melhor performa para cada classe de problema.
 
@@ -71,7 +71,7 @@ A base de dados a ser utilizada é a [Nexet 2017](https://www.kaggle.com/dataset
 
 #### Remoção de ruído
 
-Um segunda aplicação é a tarefa de remoção de ruídos em imagens. Para isso, serão utilizadas as seguintes bases de dados:
+Um segunda aplicação é a tarefa de `remoção de ruídos` em imagens. Para isso, serão utilizadas as seguintes bases de dados:
 
 * [**O-HAZE**](https://data.vision.ee.ethz.ch/cvl/ntire18//o-haze/): Introduzido por Ancuti et al. no artigo [O-HAZE: A Dehazing Benchmark with Real Hazy and Haze-Free Outdoor Images [4]](https://arxiv.org/pdf/1804.05101v1). O dataset O-Haze contém 35 imagens embaçadas (tamanho 2833×4657 pixels) para treinamento. Além disso, o conjunto inclui 5 imagens embaçadas para validação, juntamente com suas respectivas imagens de referência.
 
