@@ -165,3 +165,5 @@ temp/
 no_sync/
 
 .vscode/
+
+data/*

@@ -18,8 +18,8 @@ Algumas das abordagens práticas deste problemas é o estudo da transformação 
 
 <div>
 <p align="center">
-<img src='assets/horse2zebra.gif' align="center" alt="Cavalo para zebra" width=400px style="margin-right:10px;">
-<img src='assets/day2night_results_crop.jpg' align="center" alt="Dia para noite" width=400px>
+<img src='docs/assets/horse2zebra.gif' align="center" alt="Cavalo para zebra" width=400px style="margin-right:10px;">
+<img src='docs/assets/day2night_results_crop.jpg' align="center" alt="Dia para noite" width=400px>
 </p>
 </div>
 
@@ -31,7 +31,7 @@ E no ínterim deste problema de tradução imagem-imagem, em 2017 foi apresentad
 
 <div>
 <p align="center">
-<img src='assets/CycleGAN.png' align="center" alt="CycleGAN" width=600px>
+<img src='docs/assets/CycleGAN.png' align="center" alt="CycleGAN" width=600px>
 </p>
 </div>
 
@@ -112,10 +112,10 @@ Para complementar a avaliação quantitativa, será realizada uma comparação q
 
 | Etapa\|Semana         | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 |
 |-----------------------|----|----|----|----|----|----|----|----|----|----|
-| Investigação          | ⬤  | ⬤  | ⬤  | ⬤  |    |    |    |    |    |    |
+| Investigação          | ⬤  | ⬤  | ⬤  |   |    |    |    |    |    |    |
 | Testes e experimentos |    |    | ⬤  | ⬤  | ⬤  | ⬤  |    |    |    |    |
-| Avaliação             |    |    |    |    | ⬤  | ⬤  | ⬤  |    |    |    |
-| Conclusão             |    |    |    |    |    |    | ⬤  | ⬤  | ⬤  | ⬤  |
+| Avaliação             |    |    |    |    | ⬤  | ⬤  | ⬤  |  ⬤  |    |    |
+| Conclusão             |    |    |    |    |    |    |   |   | ⬤  | ⬤  |
 
 **Semanas 1-3: Investigação**
 
@@ -136,7 +136,7 @@ Para complementar a avaliação quantitativa, será realizada uma comparação q
 * Comparação das imagens geradas pela rede proposta com saídas de redes estabelecidas na literatura.
 * Avaliação quantitativa usando métricas como FID, PSNR, SSIM, e LPIPS para medir a qualidade e o realismo das imagens.
 
-**Semanas 9-10: Finalização**
+**Semanas 9-10: Conclusão**
 
 * Organização final e empacotamento do código
 * Elaboração do relatório final, documentando todos os experimentos realizados, os resultados obtidos, e as conclusões finais.
