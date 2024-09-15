@@ -29,6 +29,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 # Saída do Modelo Generativo
   A saída do modelo generativo será um conjunto de trajetórias no formato de configurações de juntas e coordenadas cartesianas (incluindo orientação). Essas trajetórias serão comparadas com as trajetórias fornecidas pelos dados especialistas, e a rede discriminadora verificará se a trajetória gerada é válida e realista. O objetivo final é que o modelo seja capaz de gerar trajetórias válidas.
 
+# Slides e Vídeo apresentando o projeto
+
 [Link para os slides](https://docs.google.com/presentation/d/1kVJqEns709zHCL8CGmtcWwi-9ul1a_NBjgTD9ov3QMI/edit#slide=id.p1)
 
 [Link para o vídeo](https://drive.google.com/file/d/10UU3tbpaLdKtSWHwaHwwuAelCnEYYyK1/view?usp=sharing)
