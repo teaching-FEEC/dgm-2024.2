@@ -110,25 +110,6 @@ Para complementar a avaliação quantitativa, será realizada uma comparação q
 
 ## Cronograma
 
-<style>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  th, td {
-    padding: 8px;
-    text-align: center;
-    border: 1px solid #ddd;
-  }
-  th {
-    background-color: #f4f4f4;
-  }
-  .active {
-    background-color: #dcdcdc; /* Light Gray */
-    color: #333333; /* Darker Gray */
-  }
-</style>
-
 | Etapa\|Semana         | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10 |
 |-----------------------|----|----|----|----|----|----|----|----|----|----|
 | Investigação          | ⬤  | ⬤  | ⬤  | ⬤  |    |    |    |    |    |    |
