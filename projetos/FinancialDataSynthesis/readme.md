@@ -1,5 +1,5 @@
-# `Síntese de Dados Financeiros para Otimização de Portfólio`
-# `Financial Data Synthesis for Portfolio Optimization`
+# `Síntese de Dados Financeiros`
+# `Financial Data Synthesis`
 ## Link dos slides
 https://docs.google.com/presentation/d/1bETsdaZOJDIBiyRV0t87tP7LU9r7ZH9-kDMQtxbuoEY/edit#slide=id.g2d2fd855179_0_106
 
