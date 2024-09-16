@@ -61,7 +61,7 @@ A metodologia proposta para esta pesquisa envolve as seguintes definições:
 >
 > | Dataset | Fonte | Descrição |
 > | --      |  --   |    --     |
-> | [ETH Pedestrian](https://paperswithcode.com/dataset/eth) | *ETH*  |O conjunto de dados que contém 1.804 imagens em três videoclipes. Capturado de um equipamento estéreo montado no carro, com uma resolução de 640 x 480 (bayered) e uma taxa de quadros de 13-14 FPS. |
+> | [ETH Pedestrian](https://paperswithcode.com/dataset/eth) | *ETH*  |Conjunto de dados que contém 1.804 imagens em três videoclipes. Capturado de um equipamento estéreo montado no carro, com uma resolução de 640 x 480 (bayered) e uma taxa de quadros de 13-14 FPS. |
 > | [UCY Crowds Data](https://graphics.cs.ucy.ac.cy/portfolio) | *UCY Graphics*  | Conjunto de dados em vídeo contendo de pessoas em movimento em meio a multidões.|
 > | [Stanford Drone Dataset](https://cvgl.stanford.edu/projects/uav_data/) | *Stanford*  | Conjunto de dados em larga escala que coleta imagens e vídeos de vários tipos de agentes que navegam em um ambiente externo do mundo real, como um campus universitário.|
 
@@ -69,7 +69,7 @@ A metodologia proposta para esta pesquisa envolve as seguintes definições:
 >
 > | Dataset | Fonte | Descrição |
 > | --      |  --   |    --     |
-> | [Forking Paths](https://github.com/JunweiLiang/Multiverse) | *Carnegie Mellon University (CMU) & Google*  |Conjunto de dados que contém 1.804 imagens em três videoclipes. Capturado de um equipamento estéreo montado no carro, com uma resolução de 640 x 480 (bayered) e uma taxa de quadros de 13-14 FPS. |
+> | [Forking Paths](https://github.com/JunweiLiang/Multiverse) | *Carnegie Mellon University (CMU) & Google*  |Conjunto de dados que inclui 3000 vídeos 1920x1080 (750 amostras de trajetórias anotadas por humanos em 4 visualizações de câmera) com caixas delimitadoras e segmentação semântica de cena de referência.|
 
 > Benchmark
 >
