@@ -25,10 +25,19 @@ Neste trabalho, focamos na geração de dados sintéticos tabulares para ativos 
 ## Objetivo
 Propor uma solução baseada em redes neurais adversárias (GANs) para a geração de dados financeiros sintéticos, preservando as principais características dos dados reais, com aplicações voltadas para a otimização de portfólios e outras análises financeiras.
 
-Pretendemos gerar dados sintéticos de ativos selecionados (a definir quais exatamente) presentes no Bloomberg Dataset. Esses ativos são representativos de índices importantes que avaliam o desempenho dos mercados de renda variável e renda fixa.
-
+Pretendemos gerar dados sintéticos de ativos selecionados do Bloomberg Dataset (a definir quais). Esses ativos representam de índices importantes que avaliam o desempenho dos mercados de renda variável e renda fixa dos EUA e do mundo em geral.
 
 ## Metodologia Proposta
+Como foi dito anteriormente, gerar dados sintéticos financeiros é particularmente desafiador devido à natureza complexa dessas informações, além de suas características estatísticas imprevisíveis. Além disso, os dados podem apresentar uma mudança significativa e permanente após certos eventos disruptivos, como a crise de 2008, por exemplo.
+
+Dessa forma, pensamos em inicialmente gerar dados financeiros sintéticos condicionados à períodos econômicos específicos, em que os dados apresentaram comportamento relativamente estável. Por exemplo, considere o índice S&P 500 que mede o desempenho das ações das 500 maiores empresas listadas na bolsa dos EUA. Podemos condicionar a geração de dados sintéticos desse índice aos seguintes períodos:
+1) 2002-2008: período antes da crise de 2008.
+2) 2008-2012: período de crise e recuperação.
+3) 2012-2020: período pós-crise e pré-pandemia.
+
+Com isso, os dados gerados seriam mais coerentes com os contextos históricos em que estão inseridos. Além do mais, podemos incluir outros features relevantes que influenciam o desempenho do índice, como a taxa de juros (U.S. Treasury Yield). Dessa forma, o dado gerado seria uma tupla contendo informações como: (Data, S&P 500, Taxa de Juros).
+
+O maior desafio do projeto será a geração de dados sintéticos realistas, o que exigirá não apenas bons algoritmos, mas também a escolha cuidadosa dos condicionamentos e dos features mais relevantes.
 
 ### Base de Dados Utilizadas
 - **API do Yahoo Finance** permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.
