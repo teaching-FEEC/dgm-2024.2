@@ -31,7 +31,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 >
 >Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
 
-> A principal motivação para a realização deste trabalho esta na compreensão do que é uma nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
+> A principal motivação para a realização deste trabalho está na compreensão do que é uma nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
 
 > A seguir tem-se os links para o vídeo da apresentação do entregável I e para a apresentação em slides.
  
