@@ -13,7 +13,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  |Byron Alejandro Acuña Acurio  | 209428  | Eng. Elétrica |
 
 ## Descrição do Problema/Motivação
-Desenvolver modelos a partir de dados financeiros é uma tarefa desafiadora, devido à natureza complexa e às características estatísticas imprevisíveis desses dados. Embora algoritmos de deep learning tenham avançado na modelagem orientada por dados (data driven modelling), a escassez de dados para o treinamento desses modelos continua sendo um grande obstáculo.
+Desenvolver modelos a partir de dados financeiros é uma tarefa desafiadora, devido à natureza complexa e às características estatísticas imprevisíveis desses dados. Embora algoritmos de deep learning tenham avançado na modelagem orientada por dados (data driven modelling), a escassez de dados para o treinamento desses modelos continua sendo um grande obstáculo [4].
 
 As arquiteturas da família Generative Adversarial Networks (GANs) têm mostrado bons resultados em tarefas de geração de imagens e, mais recentemente, estão sendo aplicadas na geração de dados financeiros sintéticos. A criação de dados financeiros que reproduzam o comportamento de dados reais é essencial para várias aplicações, especialmente naquelas em que a disponibilidade de informações é limitada, como na otimização de portfólios.
 
@@ -104,3 +104,7 @@ Para a avaliação da qualidade dos nossos geradores de dados sintéticos, vamos
 " Quantitative Finance 24, no. 3-4 (2024): 465-479.
 
 [3] https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html
+
+[4] F.Eckerli, J.Osterrieder.
+" Generative Adversarial Networks in finance: an overview."
+
