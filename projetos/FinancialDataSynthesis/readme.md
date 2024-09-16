@@ -23,7 +23,11 @@ Neste trabalho, focamos na geração de dados sintéticos tabulares para ativos 
 
 
 ## Objetivo
- Propor uma solução baseada em redes neurais adversárias (GANs) para gerar dados financeiros sintéticos, preservando e capturando as características principais dos dados reais para otimização de portfólios e outras aplicações financeiras.
+Propor uma solução baseada em redes neurais adversárias (GANs) para a geração de dados financeiros sintéticos, preservando as principais características dos dados reais, com aplicações voltadas para a otimização de portfólios e outras análises financeiras.
+
+Pretendemos gerar dados sintéticos de ativos selecionados (a definir quais exatamente) presentes no Bloomberg Dataset. Esses ativos são representativos de índices importantes que avaliam o desempenho dos mercados de renda variável e renda fixa.
+
+
 ## Metodologia Proposta
 
 ### Base de Dados Utilizadas
