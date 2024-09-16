@@ -56,7 +56,7 @@ O objetivo deste projeto é, a partir da arquitetura original da CycleGAN, inves
 
 [[Slides]](https://docs.google.com/presentation/d/11GfqeSx0cfEgmkaK85Abg1vAqVeyjwtpq9zFc_-PA94/edit?usp=sharing)
 [[PDF]](./docs/assets/IntroProjeto.pdf)
-[[Video]](https://link.fake)
+[[Video]](https://youtu.be/LJuTz5Pec7E)
 
 ## Metodologia Proposta
 
