@@ -27,7 +27,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 > A figura abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
 >
->![objetivo](/projetos/HTF/E1/FIG01.png)
+>![objetivo](/projetos/HTF/images/FIG01.png)
 >
 >Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
 
@@ -85,7 +85,7 @@ A metodologia proposta para esta pesquisa envolve as seguintes definições:
 
 > A arquitetura definida da GAN é composta por três módulos principais: o módulo de embedding das interações espaço-temporais (SIM - Spatial-Temporal Interaction Embedding Module), o gerador e o discriminador.
 
-![objetivo](/projetos/HTF/E1/FIG02.png)
+![objetivo](/projetos/HTF/images/FIG02.png)
 
 > Dentre as propriedades e características do modelo da Social GAN tem-se:
 > 
