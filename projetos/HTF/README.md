@@ -83,7 +83,7 @@ A metodologia proposta para esta pesquisa envolve as seguintes definições:
 
 
 
-> A arquitetura definida da GAN é composta por três módulos principais: o módulo de embedding das interações espaço-temporais (STIM - Spatial-Temporal Interaction Embedding Module), o gerador e o discriminador.
+> A arquitetura definida da GAN é composta por três módulos principais: o módulo de embedding das interações espaço-temporais (SIM - Spatial-Temporal Interaction Embedding Module), o gerador e o discriminador.
 
 ![objetivo](/projetos/HTF/E1/FIG02.png)
 
