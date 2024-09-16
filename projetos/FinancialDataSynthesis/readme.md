@@ -23,8 +23,9 @@ Neste trabalho, focamos na geração de dados sintéticos tabulares para ativos 
 
 
 ## Objetivo
- Propor uma solução baseada em redes neurais adversárias (GAN) para gerar dados financeiros sintéticos, preservando e capturando as características principais dos dados reais para otimização de portfólios e outras aplicações financeiras.
+ Propor uma solução baseada em redes neurais adversárias (GANs) para gerar dados financeiros sintéticos, preservando e capturando as características principais dos dados reais para otimização de portfólios e outras aplicações financeiras.
 ## Metodologia Proposta
+
 ### Base de Dados Utilizadas
 - **API do Yahoo Finance** permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real, histórico de preços. Neste trabalhos vamos fazer uso do histórico de preços das seguentes ações Johnson Controls International plc (JCI), Target Corporation (TGT), Comcast Corporation (CMCSA), Campbell Soup Company (CPB), Altria Group, Inc.(MO), APA Corporation (APA), Apple Inc.(AAPL), JPMorgan Chase & Co.(JP), Microsoft Corporation (MSFT).
 - **Fama-French Datasets** disponivel em [3]. Esta base de dados contém informações sobre fatores de risco sistemático e é amplamente utilizada em estudos de modelagem de retornos financeiros, como no estudo de regressão sintética de Li et al. [1]. Neste dataset temos os seguentes fatores de risco sistemático Market Risk Premium (Mkt-RF), Small Minus Big (SMB), High Minus Low (HML), Risk-Free Rate (RF).
