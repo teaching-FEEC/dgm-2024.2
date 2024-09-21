@@ -21,10 +21,10 @@ Phase-Resolved Partial Discharge (PRPD) é uma representação gráfica da ativi
 Para o desenvolvimento deste projeto, serão geradas imagens sintéticas com base em um conjunto de dados existente. O conjunto selecionado é proveniente do artigo "Dataset of phase-resolved images of internal, corona, and surface partial discharges in electrical generators", que contém imagens relacionadas a três tipos principais de falhas em motores elétricos: Corona, Internal e Surface, além de algumas imagens que representam ruídos. A escolha desse dataset se justifica por sua qualidade e relevância no contexto de estudo de descargas parciais, oferecendo uma base sólida para a criação de dados sintéticos. A tabela a seguir resume a quantidade de imagens por tipo de falha:
 | Tipo de DP | Quantidade de Imagens | Exemplo                                                             |
 |------------|-----------------------|---------------------------------------------------------------------|
-| Corona     | 308                   | ![Corona](./images/example_corona.png)                              |
-| Internal   | 321                   | ![Internal](./images/example_internal.png)                          |
-| Surface    | 316                   | ![Surface](./images/example_surface.png)                            |
-| Noise      | 5                     | ![Noise](./images/example_noise.png)                                |
+| Corona     | 308                   | ![Corona](./data/raw/example_corona.png)                              |
+| Internal   | 321                   | ![Internal](./data/raw/example_internal.png)                          |
+| Surface    | 316                   | ![Surface](./data/raw/example_surface.png)                            |
+| Noise      | 5                     | ![Noise](./data/raw/example_noise.png)                                |
 | **Total**  | 950                   |                                                                     |
 
 ### Separação de dados
