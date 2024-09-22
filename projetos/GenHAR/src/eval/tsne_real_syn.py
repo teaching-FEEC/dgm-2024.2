@@ -79,10 +79,6 @@ accuracy = accuracy_score(y_test, y_pred)
 
 print(f'{dataset} Accuracy with : {accuracy:.2f}')
 
-
-
-
-
 # Aplicar t-SNE para reduzir as dimensões dos dados combinados
 tsne = TSNE(n_components=2, random_state=42)
 reduced_combined_data = tsne.fit_transform(combined_data)

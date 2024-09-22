@@ -5,11 +5,9 @@ from sklearn.manifold import TSNE
 import pandas as pd
 
 def visualize_tsne_r_s(
-    X: np.ndarray,
-    y: np.ndarray,
-    X_gen: np.ndarray,
-    y_gen: np.ndarray,
-    path: str = "/tmp/tsne_embeddings.pdf",
+    df_train: pd.DataFrame,
+    df_synthetic: pd.DataFrame,
+    path: str = "tsne_embeddings.pdf",
     feature_averaging: bool = False,
     perplexity: float = 30.0
 ) -> None:
@@ -20,42 +18,39 @@ def visualize_tsne_r_s(
     Each data point is represented by a marker on the plot, and the colors of the markers
     correspond to the corresponding class labels of the data points.
 
-    :param X: The original real data tensor of shape (num_samples, num_features).
-    :type X: np.ndarray
-    :param y: The labels of the original real data tensor of shape (num_samples,).
-    :type y: np.ndarray
-    :param X_gen: The generated synthetic data tensor of shape (num_samples, num_features).
-    :type X_gen: np.ndarray
-    :param y_gen: The labels of the generated synthetic data tensor of shape (num_samples,).
-    :type y_gen: np.ndarray
+    :param df_train: DataFrame containing the real data and label column.
+    :param df_synthetic: DataFrame containing the synthetic data and label column.
     :param path: The path to save the visualization as a PDF file. Defaults to "/tmp/tsne_embeddings.pdf".
-    :type path: str, optional
     :param feature_averaging: Whether to compute the average features for each class. Defaults to False.
-    :type feature_averaging: bool, optional
     :param perplexity: Perplexity parameter for t-SNE.
-    :type perplexity: float, optional
     """
+    # Separar dados e rótulos (label) dos DataFrames
+    X = df_train.drop(columns=['label']).values
+    y = df_train['label'].values
+
+    X_gen = df_synthetic.drop(columns=['label']).values
+    y_gen = df_synthetic['label'].values
+    
     # Inicializar t-SNE
     tsne = TSNE(n_components=2, perplexity=perplexity, learning_rate='auto', init='random')
     
     # Preparar dados para t-SNE
     if feature_averaging:
-        X_all = np.concatenate((np.mean(X, axis=2), np.mean(X_gen, axis=2)))
+        X_all = np.concatenate((np.mean(X, axis=1), np.mean(X_gen, axis=1)))
     else:
         X_all = np.concatenate((X, X_gen), axis=0)
     
-    X_emb = tsne.fit_transform(X_all.reshape(X_all.shape[0], -1))
+    X_emb = tsne.fit_transform(X_all)
     
     # Preparar labels
     y_all = np.concatenate((y, y_gen), axis=0)
-    labels = np.concatenate((np.zeros(len(y)), np.ones(len(y_gen))), axis=0)  # 0: real, 1: generated
     
     # Criar DataFrame para seaborn
     df = pd.DataFrame({
         'TSNE1': X_emb[:, 0],
         'TSNE2': X_emb[:, 1],
         'Type': ['Real'] * len(y) + ['Generated'] * len(y_gen),
-        'Label': labels
+        'Label': np.concatenate((y, y_gen), axis=0)
     })
 
     # Definir paleta de cores e estilos
@@ -94,6 +89,3 @@ def visualize_tsne_r_s(
     plt.axis("off")
     plt.savefig(path, bbox_inches='tight')
     plt.show()
-
-# Exemplo de chamada da função
-#visualize_tsne(X_train, y, X_gen, y_gen)

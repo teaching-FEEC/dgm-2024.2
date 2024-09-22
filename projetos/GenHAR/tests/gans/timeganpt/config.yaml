@@ -1,0 +1,79 @@
+# Configuration for Synthetic Data Generation and Comparison
+
+# Datasets to be compared
+datasets:
+  - name: MotionSense
+    path: notebooks/data/standardized_view
+    type: standartized_balanced
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None
+
+  - name: KuHar
+    path: notebooks/data/standardized_view
+    type: standartized_balanced
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+  
+  
+
+# Data transformations
+transformations:
+  - name: fft
+    method: FFT
+    description: " fft transform."
+    parameters:
+      n_components: 0.95  # Retain 95% of the variance
+
+  
+
+# Generative models
+generative_models:
+
+  - name: timeganpt
+    method: TIMEGANPT
+    framework: None
+    description: "https://github.com/jsyoon0823/TimeGAN/blob/master/tutorial_timegan.ipynb"
+    parameters:
+          module: gru
+          hidden_dim: 24
+          num_layer: 3
+          iterations: 10000
+          batch_size: 128
+          
+
+
+          
+
+
+
+# Evaluations for comparing real and synthetic data
+evaluations:
+  - name: fidelity
+    metric: "MMD"
+    description: "Measures the similarity between real and synthetic distributions using Maximum Mean Discrepancy."
+  - name: utility
+    metric: "Classification Accuracy"
+    description: "Trains a classifier on synthetic data and evaluates on real data."
+  - name: diversity
+    metric: "Pairwise Distance"
+    description: "Measures the diversity of synthetic samples by calculating pairwise distances."
+
+# Experimental settings
+experiment:
+  output_dir: /path/to/output
+  random_seed: 42
+  num_runs: 5  # Number of repetitions to ensure robustness of results
+  sample_size: 1000  # Number of synthetic samples to generate for each dataset
+
+# Logging and results
+logging:
+  log_level: INFO
+  save_models: true
+  save_metrics: true
+  save_plots: true
+  save_reports_pdf: true

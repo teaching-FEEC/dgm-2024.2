@@ -30,6 +30,8 @@ def visualize_ts_lineplot(
     :param tick_size: Font size for y-axis ticks.
     :type tick_size: int, optional
     """
+    if ys.ndim > 1:
+        ys = np.argmax(ys, axis=1)
     assert len(ts.shape) == 3, "O tensor 'ts' deve ter três dimensões (samples, timesteps, features)."
 
     fig, axs = plt.subplots(num, 1, figsize=(14, 10))
