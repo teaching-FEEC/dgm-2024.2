@@ -1,4 +1,5 @@
 from data_processor.standartized_balanced import StandardizedViewDataset
+from data_processor.download_dataset import download_zenodo_datasets
 
 # Leitura dos datasets
 class DataRead:
@@ -8,6 +9,7 @@ class DataRead:
         self.df_val = None
 
         if dataset_config['type'] == 'standartized_balanced':
+            download_zenodo_datasets()
             try:
                 # Carregar o dataset de treino
                 svd_train = StandardizedViewDataset(data_folder=dataset_config["path"], type='train')
