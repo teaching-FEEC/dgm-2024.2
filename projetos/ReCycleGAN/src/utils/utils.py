@@ -2,9 +2,11 @@
 
 from pathlib import Path
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from PIL import Image
+from torchvision.utils import make_grid
 
 
 def remove_all_files(folder_path):
@@ -123,3 +125,29 @@ def resize_and_crop(image_path, output_path, target_size, size_filter=None):
         img.save(output_path)
 
         return True
+    return False
+
+def show_img(img, title=None, figsize=(4, 3), show=False):
+    """Show an image using matplotlib."""
+    if len(img.shape) > 4:
+        msg = 'Image tensor has more than 4 dimensions.'
+        raise ValueError(msg)
+    if len(img.shape) == 4:
+        nrow = max(4, min(8, np.ceil(img.shape[0] / 2)))
+        grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False).cpu()
+        return show_img(grid, title=title, figsize=figsize, show=show)
+
+    img = img.permute(1, 2, 0)
+    if img.shape[2]==1:
+        img = img.view(img.shape[0], img.shape[1])
+
+    fig, axs = plt.subplots(1,1,figsize=figsize)
+    if title is not None:
+        axs.set_title(title)
+    axs.imshow(img)
+    axs.axis('off')
+    plt.tight_layout()
+    if show:
+        plt.show()
+        return None
+    return fig
