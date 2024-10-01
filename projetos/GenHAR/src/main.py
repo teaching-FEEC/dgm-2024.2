@@ -42,11 +42,11 @@ def main(config_path):
             for generative_model_config in config['generative_models']:                
                 data_generate =DataGenerate(generative_model_config)
                 synthetic_df= data_generate.train(x_t_train,y_train)
-                df_trans_train=x_t_train
+                df_trans_train=x_train
                 df_trans_train['label']=y_train
-                df_trans_test=x_t_test
+                df_trans_test=x_test
                 df_trans_test['label']=y_test
-                df_trans_val=x_t_val
+                df_trans_val=x_val
                 df_trans_val['label']=y_val
                 
                 config_eval={}

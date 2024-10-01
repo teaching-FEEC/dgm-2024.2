@@ -17,13 +17,15 @@ class Evaluator:
     def get_visualization(self):
         print("visual")
         tsne=False
-        tsne_glob=True
+        tsne_glob=False
         bar_count_p=False
         images_p=False
         X_train = self.df_train.drop(columns=['label']).values
         y=self.df_train['label'].values
-        X_gen=self.df_synthetic.drop(columns=['label']).values
-        y_gen=self.df_synthetic['label'].values
+        if 'label' in self.df_synthetic.columns:
+            X_gen=self.df_synthetic.drop(columns=['label']).values
+        else:
+            X_gen = self.df_synthetic
         label_names = ['sit', 'stand', 'walk', 'stair up', 'stair down', 'run']
         if tsne:
             import eval.visualization.scaterplotly as sp
@@ -33,11 +35,13 @@ class Evaluator:
             import eval.visualization.scaterplotly as sp
 
             
+            y_gen=self.df_synthetic['label'].values
             sp.tsne_subplots_by_labels(X_train, y, X_gen, y_gen, label_names=label_names)
 
         if bar_count_p:
             from eval.visualization import bar_count
             #bar_count.plotly_count_by_labels(X_gen, y_gen, class_names=label_names)
+            y_gen=self.df_synthetic['label'].values
             bar_count.plotly_count_by_labels_compare(X_train, y, X_gen, y_gen, class_names=None)
 
         if images_p:

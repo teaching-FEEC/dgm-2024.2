@@ -28,7 +28,10 @@ def visualize_tsne_r_s(
     X = df_train.drop(columns=['label']).values
     y = df_train['label'].values
 
-    X_gen = df_synthetic.drop(columns=['label']).values
+    if 'label' in df_synthetic.columns:
+        X_gen = df_synthetic.drop(columns=['label']).values
+    else:
+        X_gen = df_synthetic.values
     y_gen = df_synthetic['label'].values
     
     # Inicializar t-SNE

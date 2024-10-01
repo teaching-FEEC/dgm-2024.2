@@ -20,12 +20,12 @@ class Transform:
                 self.x_t_val = self.split_sensors(self.df_x_val)
             elif params["method"] == "axis":
                 self.x_t_train = self.split_axis(self.df_x_train)
-                self.x_t_test = self.split_axis(self.df_x_test)
-                self.x_t_val = self.split_axis(self.df_x_val)
+                self.x_t_test = self.df_x_test #self.split_axis(self.df_x_test)
+                self.x_t_val = self.df_x_val #self.split_axis(self.df_x_val)
             if params['convert'] == 'tensor':
                 self.x_t_train = self.toTensor(self.x_t_train)
-                self.x_t_test = self.toTensor(self.x_t_test)
-                self.x_t_val = self.toTensor(self.x_t_val)
+                #self.x_t_test = self.toTensor(self.x_t_test)
+                #self.x_t_val = self.toTensor(self.x_t_val)
         elif config_t["name"] == "None":
             self.x_t_train = self.df_x_train
             self.x_t_test = self.df_x_test
