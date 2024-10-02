@@ -32,28 +32,28 @@ class Transform:
             self.x_t_val = self.df_x_val
 
     def split_axis(self, df):
-        axis_collumns = []
-        axis_collumns.append(
+        axis_columns = []
+        axis_columns.append(
             [col for col in df.columns if col.startswith("accel-x")])
-        axis_collumns.append(
+        axis_columns.append(
             [col for col in df.columns if col.startswith("accel-y")])
-        axis_collumns.append(
+        axis_columns.append(
             [col for col in df.columns if col.startswith("accel-z")])
-        axis_collumns.append(
+        axis_columns.append(
             [col for col in df.columns if col.startswith("gyro-x")])
-        axis_collumns.append(
+        axis_columns.append(
             [col for col in df.columns if col.startswith("gyro-y")])
-        axis_collumns.append(
+        axis_columns.append(
             [col for col in df.columns if col.startswith("gyro-z")])
-        return [df[collumns] for collumns in axis_collumns]
+        return [df[columns] for columns in axis_columns]
 
     def split_sensors(self, df):
-        sensors_collumns = []
-        sensors_collumns.append(
+        sensors_columns = []
+        sensors_columns.append(
             [col for col in df.columns if col.startswith("accel")])
-        sensors_collumns.append(
+        sensors_columns.append(
             [col for col in df.columns if col.startswith("gyro")])
-        return [df[collumns] for collumns in sensors_collumns]
+        return [df[columns] for columns in sensors_columns]
 
     def toTensor(self, df_list):
         return torch.stack([torch.tensor(df.values) for df in df_list]).transpose(0,1)
@@ -61,15 +61,15 @@ class Transform:
     def apply_fft(self):
         self.x_t_train = self.to_dataframe(
             np.fft.fft(self.df_x_train.values,
-                       axis=1).real, self.df_x_train.collumns
+                       axis=1).real, self.df_x_train.columns
         )
         self.x_t_test = self.to_dataframe(
             np.fft.fft(self.df_x_test.values,
-                       axis=1).real, self.df_x_test.collumns
+                       axis=1).real, self.df_x_test.columns
         )
         self.x_t_val = self.to_dataframe(
             np.fft.fft(self.df_x_val.values,
-                       axis=1).real, self.df_x_val.collumns
+                       axis=1).real, self.df_x_val.columns
         )
 
     def to_dataframe(self, data, cols):
