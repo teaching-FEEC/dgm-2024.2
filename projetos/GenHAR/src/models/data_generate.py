@@ -47,7 +47,7 @@ class DataGenerate:
 
         # Gerar dados sintéticos para cada classe
         synthetic_data_by_class = {}
-        num_samples_per_class = 10  # Número de amostras sintéticas para gerar por classe
+        num_samples_per_class = 10  # Número de amostras sintéticas fara gerar por classe
         embeddings_data = []
 
         for class_label, X_class_data in class_data.items():
@@ -93,5 +93,6 @@ class DataGenerate:
             synthetic_samples = diffusion.sample(batch_size=self.m_config['n_gen_samples'])
             synthetic_samples = synthetic_samples.view(synthetic_samples.shape[0], -1)
             synthetic_df = pd.DataFrame(synthetic_samples.numpy())
+            synthetic_df['label'] = [-1] * self.m_config['n_gen_samples']
 
         return synthetic_df

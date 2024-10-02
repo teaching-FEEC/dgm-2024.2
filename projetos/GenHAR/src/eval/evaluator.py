@@ -17,7 +17,7 @@ class Evaluator:
     def get_visualization(self):
         print("visual")
         tsne=False
-        tsne_glob=False
+        tsne_glob=True
         bar_count_p=False
         images_p=False
         X_train = self.df_train.drop(columns=['label']).values
@@ -29,12 +29,9 @@ class Evaluator:
         label_names = ['sit', 'stand', 'walk', 'stair up', 'stair down', 'run']
         if tsne:
             import eval.visualization.scaterplotly as sp
-            
-
             #sp.get_plotly_by_labels(X_train,X_gen,y,y_gen)
             import eval.visualization.scaterplotly as sp
 
-            
             y_gen=self.df_synthetic['label'].values
             sp.tsne_subplots_by_labels(X_train, y, X_gen, y_gen, label_names=label_names)
 
@@ -50,10 +47,8 @@ class Evaluator:
              #visualize_images.plot_sample_comparison(X_train, y, X_gen, y_gen, label=label_name, n_samples=1, reshape=True)
              #visualize_images.visualize_original_and_reconst_ts(X_train[0:limit], X_gen, num=10)
 
-
-
-
         if tsne_glob:
+            print("PLOT FIGURE")
             from eval.visualization import visualization_tsne_r_s
             filename=f'reports/{self.dataset}_{self.transform}_{self.model}.pdf' 
             visualization_tsne_r_s.visualize_tsne_r_s(self.df_train,self.df_synthetic,path=filename)
