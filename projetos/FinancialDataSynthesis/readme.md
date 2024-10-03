@@ -26,13 +26,13 @@ Considere um investidor com acesso a 𝑛 classes de ativos. O problema de otimi
 Neste trabalho, focamos na geração de dados sintéticos de ativos listados em bolsas de valores (nacionais e internacionais) utilizando uma abordagem baseada em GANs. A geração de dados sintéticos é particularmente útil para capturar cenários de retorno que estão ausentes nos dados históricos, mas são estatisticamente plausíveis.
 
 
-## Objetivo
+## Objetivos
 > Descrição do que o projeto se propõe a fazer.
 > É possível explicitar um objetivo geral e objetivos específicos do projeto.
 > 
-Propor uma solução baseada em redes neurais adversárias (GANs) para a geração de dados financeiros sintéticos, preservando as principais características dos dados reais, com aplicações voltadas para a otimização de portfólios e outras análises financeiras.
+Propor uma solução baseada em redes neurais adversárias (GANs) para a geração de dados financeiros sintéticos, preservando as principais características dos dados reais, com aplicações voltadas para a otimização de portfólios.
 
-Pretendemos gerar dados sintéticos de ativos selecionados do Bloomberg Dataset (a definir quais). Esses ativos representam de índices importantes que avaliam o desempenho dos mercados de renda variável e renda fixa dos EUA e do mundo em geral.
+Pretendemos gerar dados sintéticos de ativos selecionados do Bloomberg Dataset. Esses ativos representam de índices importantes que avaliam o desempenho dos mercados de renda variável e renda fixa dos EUA e do mundo em geral.
 
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
