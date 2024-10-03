@@ -14,6 +14,7 @@ class DataRead:
                 df_train = svd_train.load_dataset(dataset_config["name"], dataset_config['sensors'])
                 self.y_train = df_train['standard activity code']
                 self.x_train = df_train.drop(columns=['standard activity code'])
+               
 
                 # Carregar o dataset de teste
                 svd_test = StandardizedViewDataset(data_folder=dataset_config["path"], type='test')

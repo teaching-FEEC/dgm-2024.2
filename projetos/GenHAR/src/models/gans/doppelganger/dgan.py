@@ -7,10 +7,11 @@ from gretel_synthetics.timeseries_dgan.config import DGANConfig, OutputType, Nor
 def dgan(config,X_train,y_train):
    
     df=X_train
+    print("size ",X_train.shape[1])
     df["label"]=y_train
     # Train the model
     model = DGAN(DGANConfig(
-        max_sequence_len=config['parameters']['max_sequence_len'],
+        max_sequence_len=X_train.shape[1]-1,
         sample_len=config['parameters']['sample_len'],
         batch_size=config['parameters']['batch_size'],
         epochs=config['parameters']['epochs'],  

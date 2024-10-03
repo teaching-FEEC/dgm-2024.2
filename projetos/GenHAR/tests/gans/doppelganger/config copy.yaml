@@ -19,20 +19,20 @@ datasets:
             accel
             gyro
 
-  
-  
+            
   
   
 
 # Data transformations
 transformations:
-  
-  - name: None
+  - name: umap
   - name: fft
     method: FFT
     description: " fft transform."
     parameters:
       n_components: 0.95  # Retain 95% of the variance
+
+  - name: None
 
   
 
@@ -50,9 +50,9 @@ generative_models:
     parameters:
         max_sequence_len: 360
         sample_len: 3
-        batch_size: 32
-        epochs: 2000 ### mudar
-    n_gen_samples: 1000
+        batch_size: 1000
+        epochs: 2 ### mudar
+    n_gen_samples: 60
   # Logging and results
     logging:
       log_level: INFO
@@ -65,27 +65,36 @@ generative_models:
 
 # Evaluations for comparing real and synthetic data
 evaluations:
-  dataset_eval:
-      original: true
-      synthetic: true
-      reports:
-        #  save_html_report: true
-          save_pdf_reports: true
-       #   save_csv_metrics: true
-      
-  gen_vs_orig_eval:
-        
-      visualizations: true
-      ml: true      
-      
-      reports:
-          save_html_report: true
-          save_pdf_reports: true
-          save_csv_metrics: true
+  -visualizations:
+    -label_counts:
+          only_gen: true
+          shynt_real: true
+    -lineplot:
+    -scatterplot: 
+      - general_plot
+      - by_labelplot
+
+    -distrubution: 
+    -spectogram:
+
+  -metrics:
+    - name: fidelity
+      metric: "MMD"
+      description: "Measures the similarity between real and synthetic distributions using Maximum Mean Discrepancy."
+    
+    - name: diversity
+      metric: "Pairwise Distance"
+      description: "Measures the diversity of synthetic samples by calculating pairwise distances."
+  -ml: 
+    - name: utility
+      metric: "Classification Accuracy"
+      description: "Trains a classifier on synthetic data and evaluates on real data."
+    - classifiers:
+    - svm
   
-  folder_reports: tests/gans/doppelganger
-      
-  
-  
- 
+
+  save_csv_metrics: true
+  save_html_report: true
+  save_pdf_reports: true
+  comparation_all_eval: true
 

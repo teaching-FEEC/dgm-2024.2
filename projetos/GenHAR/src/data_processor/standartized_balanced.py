@@ -1,11 +1,12 @@
 import pandas as pd
 import os
+import torch
 
 class StandardizedViewDataset:
     def __init__(self, data_folder,type='train'):
         """Inicializa a classe com o caminho da pasta principal onde os datasets estão armazenados."""
         self.data_folder = data_folder
-        self.label_column = "standard activity code"
+        self.label_column = "activity code"
         self.standard_activity_code_names = {
             0: "sit",
             1: "stand",
@@ -34,7 +35,7 @@ class StandardizedViewDataset:
             accel_columns_z = [col for col in df.columns if col.startswith('accel-z')]
             #accel_columns = [col for col in accel_columns if col in ['accel-x', 'accel-y', 'accel-z']]
             accel_columns = accel_columns_x+accel_columns_y+ accel_columns_z
-            selected_columns += accel_columns
+        selected_columns += accel_columns
 
         
         # Adiciona as colunas de giroscópio, se especificado
@@ -43,12 +44,14 @@ class StandardizedViewDataset:
             gyro_columns_y = [col for col in df.columns if col.startswith('gyro-y')]
             gyro_columns_z = [col for col in df.columns if col.startswith('gyro-z')]
         #gyro_columns = [col for col in self.df.columns if col.startswith('gyro-')]
-            selected_columns += gyro_columns_x+gyro_columns_y+gyro_columns_z
+        
+        selected_columns += gyro_columns_x+gyro_columns_y+gyro_columns_z
         
         # Adiciona a coluna de labels
         selected_columns.append('standard activity code')
         
         # Retorna o DataFrame filtrado com as colunas selecionadas
+        
         return df[selected_columns]
 
     def combine_datasets(self, dataset_names, sensors):
@@ -98,6 +101,34 @@ class StandardizedViewDataset:
         accel_columns = [col for col in self.df.columns if col.startswith('accel-')]
         gyro_columns = [col for col in self.df.columns if col.startswith('gyro-')]
         return self.df[accel_columns + gyro_columns + [self.label_column]]
+    
+
+    def split_axis(self, df):
+        axis_columns = []
+        axis_columns.append(
+            [col for col in df.columns if col.startswith("accel-x")])
+        axis_columns.append(
+            [col for col in df.columns if col.startswith("accel-y")])
+        axis_columns.append(
+            [col for col in df.columns if col.startswith("accel-z")])
+        axis_columns.append(
+            [col for col in df.columns if col.startswith("gyro-x")])
+        axis_columns.append(
+            [col for col in df.columns if col.startswith("gyro-y")])
+        axis_columns.append(
+            [col for col in df.columns if col.startswith("gyro-z")])
+        return [df[columns] for columns in axis_columns]
+
+    def split_sensors(self, df):
+        sensors_columns = []
+        sensors_columns.append(
+            [col for col in df.columns if col.startswith("accel")])
+        sensors_columns.append(
+            [col for col in df.columns if col.startswith("gyro")])
+        return [df[columns] for columns in sensors_columns]
+
+    def toTensor(self, df_list):
+        return torch.stack([torch.tensor(df.values) for df in df_list]).transpose(0,1)
 
 
 

@@ -2,6 +2,8 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from PyPDF2 import PdfReader, PdfWriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 # Função para salvar figuras em um novo PDF ou adicionar em um existente
 def save_fig_pdf(file, *figs, append=False):

@@ -2,8 +2,11 @@ import sys,os
 REPO_ROOT_DIR="../"
 sys.path.append(os.path.dirname(REPO_ROOT_DIR))
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '1' 
+os.environ['CUDA_VISIBLE_DEVICES'] = '0' 
+import time
 
+
+#https://github.com/YihaoAng/TSGBench/tree/main?tab=readme-ov-file
 
 import yaml
 import argparse  
@@ -29,6 +32,9 @@ def main(config_path):
     for dataset_conf in config['datasets']:
         data_reader = DataRead(dataset_conf)
         x_train,y_train,x_test,y_test,x_val,y_val= data_reader.get_dataframes()
+        print(x_train.shape)
+        
+        
     
         for transformation_config in config['transformations']:
             print(transformation_config)
@@ -41,7 +47,9 @@ def main(config_path):
             #print(x_t_train.shape,y_train.shape) 
             for generative_model_config in config['generative_models']:                
                 data_generate =DataGenerate(generative_model_config)
+                start_time = time.time()
                 synthetic_df= data_generate.train(x_t_train,y_train)
+                training_time = time.time() - start_time
                 df_trans_train=x_t_train
                 df_trans_train['label']=y_train
                 df_trans_test=x_t_test
@@ -54,12 +62,14 @@ def main(config_path):
                 config_eval['dataset']=dataset_conf['name']
                 config_eval['transform']=transformation_config['name']
                 config_eval['model']=generative_model_config['name']
+                config_eval['training_time']=training_time
+                
                 evaluator=Evaluator(config_eval,df_trans_train,df_trans_test,df_trans_val,synthetic_df)
-                evaluator.get_visualization()
-                evaluator.get_metrics()
-                evaluator.get_ml()
+                evaluator.eval()
+                #evaluator.get_metrics()
+                #evaluator.get_ml()
 
-
+    
 
 
               
