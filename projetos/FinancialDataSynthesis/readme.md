@@ -1,7 +1,6 @@
 # `Síntese de Dados Financeiros para Otimização de Portfólio`
 # `Financial Data Synthesis for Portfolio Optimization`
 ## Link dos slides
-https://docs.google.com/presentation/d/1bETsdaZOJDIBiyRV0t87tP7LU9r7ZH9-kDMQtxbuoEY/edit#slide=id.g2d2fd855179_0_106
 
 ## Apresentação
 
@@ -11,6 +10,9 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  |--|--|--|
  |José Carlos Ferreira  | 170860  | Eng. Elétrica |
  |Byron Alejandro Acuña Acurio  | 209428  | Eng. Elétrica |
+
+## Resumo (Abstract)
+Resumo do objetivo, metodologia **e resultados** obtidos (na entrega E2 é possível relatar resultados parciais). Sugere-se máximo de 100 palavras. 
 
 ## Descrição do Problema/Motivação
 Desenvolver modelos a partir de dados financeiros é uma tarefa desafiadora, devido à natureza complexa e às características estatísticas imprevisíveis desses dados. Embora algoritmos de deep learning tenham avançado na modelagem orientada por dados (data driven modelling), a escassez de dados para o treinamento desses modelos continua sendo um grande obstáculo [4].
@@ -23,11 +25,22 @@ Neste trabalho, focamos na geração de dados sintéticos de ativos listados em 
 
 
 ## Objetivo
+> Descrição do que o projeto se propõe a fazer.
+> É possível explicitar um objetivo geral e objetivos específicos do projeto.
+> 
 Propor uma solução baseada em redes neurais adversárias (GANs) para a geração de dados financeiros sintéticos, preservando as principais características dos dados reais, com aplicações voltadas para a otimização de portfólios e outras análises financeiras.
 
 Pretendemos gerar dados sintéticos de ativos selecionados do Bloomberg Dataset (a definir quais). Esses ativos representam de índices importantes que avaliam o desempenho dos mercados de renda variável e renda fixa dos EUA e do mundo em geral.
 
 ## Metodologia Proposta
+> Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
+> Descrever bases de dados utilizadas.
+> Citar algoritmos de referência.
+> Justificar os porquês dos métodos escolhidos.
+> Apontar ferramentas relevantes.
+> Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
+
+
 Como foi dito anteriormente, gerar dados sintéticos financeiros é particularmente desafiador devido à natureza complexa dessas informações, além de suas características estatísticas imprevisíveis. Além disso, os dados podem apresentar uma mudança significativa e permanente após certos eventos disruptivos, como a crise de 2008, por exemplo.
 
 Dessa forma, pensamos em inicialmente gerar dados financeiros sintéticos condicionados à períodos econômicos específicos, em que os dados apresentaram comportamento relativamente estável. Por exemplo, considere o índice S&P 500 que mede o desempenho das ações das 500 maiores empresas listadas na bolsa dos EUA. Podemos condicionar a geração de dados sintéticos desse índice aos seguintes períodos:
@@ -39,7 +52,20 @@ Com isso, os dados gerados seriam mais coerentes com os contextos históricos em
 
 O maior desafio do projeto será a geração de dados sintéticos realistas, o que exigirá não apenas bons algoritmos, mas também a escolha cuidadosa dos condicionamentos e dos features mais relevantes.
 
-### Base de Dados Utilizadas
+### Bases de Dados e Evolução
+> Elencar bases de dados utilizadas no projeto.
+> Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento sobre como ela foi analisada/usada, conforme exemplo a seguir.
+
+|Base de Dados | Endereço na Web | Resumo descritivo|
+|----- | ----- | -----|
+|Título da Base | http://base1.org/ | Breve resumo (duas ou três linhas) sobre a base.|
+
+> Faça uma descrição sobre o que concluiu sobre esta base. Sugere-se que respondam perguntas ou forneçam informações indicadas a seguir:
+> * Qual o formato dessa base, tamanho, tipo de anotação?
+> * Quais as transformações e tratamentos feitos? Limpeza, reanotação, etc.
+> * Inclua um sumário com estatísticas descritivas da(s) base(s) de estudo.
+> * Utilize tabelas e/ou gráficos que descrevam os aspectos principais da base que são relevantes para o projeto.
+
 - **API do Yahoo Finance** permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.
 - **Fama-French Datasets** disponivel em [3]. Esta base de dados contém informações sobre fatores de risco sistemático e é amplamente utilizada em estudos de modelagem de retornos financeiros, como no estudo de regressão sintética de Li et al. [1]. Neste dataset temos os seguentes fatores de risco sistemático Market Risk Premium (Mkt-RF), Small Minus Big (SMB), High Minus Low (HML), Risk-Free Rate (RF).
 - **Bloomberg Dataset** conforme utilizado no trabalho de Peña et al. [2]. Esta base de dados inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o retorno histórico dos seguintes ativos:
@@ -82,7 +108,24 @@ Existem diversas bibliotecas Python disponíveis para geração de dados sintét
   
 - **Pandas** e **NumPy** para manipulação de dados tabulares.
 
-### Resultados Esperados
+### Workflow
+> Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nessa seção.
+> Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
+> Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos. 
+
+## Experimentos, Resultados e Discussão dos Resultados
+
+> Na entrega parcial do projeto (E2), essa seção pode conter resultados parciais, explorações de implementações realizadas e 
+> discussões sobre tais experimentos, incluindo decisões de mudança de trajetória ou descrição de novos experimentos, como resultado dessas explorações.
+
+> Na entrega final do projeto (E3), essa seção deverá elencar os **principais** resultados obtidos (não necessariamente todos), que melhor representam o cumprimento
+> dos objetivos do projeto.
+
+> A discussão dos resultados pode ser realizada em seção separada ou integrada à seção de resultados. Isso é uma questão de estilo.
+> Considera-se fundamental que a apresentação de resultados não sirva como um tratado que tem como único objetivo mostrar que "se trabalhou muito".
+> O que se espera da seção de resultados é que ela **apresente e discuta** somente os resultados mais **relevantes**, que mostre os **potenciais e/ou limitações** da metodologia, que destaquem aspectos
+> de **performance** e que contenha conteúdo que possa ser classificado como **compartilhamento organizado, didático e reprodutível de conhecimento relevante para a comunidade**.
+
 Os principais resultados esperados são:
 
 - Um conjunto de dados sintéticos gerado para complementação das bases financeiras históricas, capaz de capturar variações de retorno plausíveis que não foram observadas nos dados originais.
@@ -97,16 +140,11 @@ Para a avaliação da qualidade dos nossos geradores de dados sintéticos, vamos
   
 - **Utilidade**: Avaliação do desempenho de diferentes estratégias de alocação com e sem os dados sintéticos, medindo métricas de risco-retorno como o índice de Sharpe e o Value-at-Risk (VaR). Treinar modelos de regressão usando dados sintéticos e testando os modelos com dados reais.
 
-## Cronograma
-| Etapa                     | Descrição                                      | Duração Estimada |
-|----------------------------|------------------------------------------------|------------------|
-| Estudo das Bases de Dados   | Análise e pré-processamento dos dados de Fama-French e Bloomberg | 1 semanas        |
-| Estudo de Modelos Gerativos | Investigação de modelos como GANs e Regressão Sintética | 3 semanas        |
-| Implementação Inicial       | Implementação dos primeiros modelos generativos | 3 semanas        |
-| Avaliação Preliminar        | Análise preliminar da qualidade dos dados sintéticos gerados | 2 semanas        |
-| Refinamento do Modelo       | Ajustes no modelo com base nos resultados iniciais | 2 semanas        |
-| Avaliação Final             | Avaliação completa do modelo e documentação dos resultados | 2 semanas        |
+## Conclusão
 
+> A seção de Conclusão deve ser uma seção que recupera as principais informações já apresentadas no relatório e que aponta para trabalhos futuros.
+> Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas ou como o projeto será conduzido até a sua finalização.
+> Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outros aspectos, possibilidades de continuidade do projeto.
 > 
 ## Referências Bibliográficas
 [1] Li, Gaorong, Lei Huang, Jin Yang, and Wenyang Zhang.  
