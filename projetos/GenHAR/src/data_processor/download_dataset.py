@@ -1,10 +1,11 @@
 import requests
 import zipfile
 import os
+from utils import log
 
-def download_zenodo_datasets():
+def download_zenodo_datasets(extract_dir):
     # Define paths for the data directories
-    extract_dir = 'data'
+   # extract_dir = 'data'
     standardized_view_dir = os.path.join(extract_dir, 'standardized_view')
     baseline_view_dir = os.path.join(extract_dir, 'baseline_view')
 
@@ -12,7 +13,7 @@ def download_zenodo_datasets():
     if os.path.exists(standardized_view_dir) and os.path.exists(baseline_view_dir):
         print("Directories already exist. Skipping download.")
         return
-
+    log.print_debug("Download the file")
     # Download the file
     url = 'https://zenodo.org/api/records/11992126/files-archive'
     file_name = 'archive.zip'
