@@ -20,10 +20,7 @@ datasets:
             gyro
 
 transformations:
-    - name: split
-      parameters:
-        method: axis
-        convert: tensor
+    - name: None
 
 # Generative models
 generative_models:
@@ -33,36 +30,23 @@ generative_models:
     parameters:
       in_channel: 6
       out_channel: 6
-    n_gen_samples: 60
-    epochs: 10
+    n_gen_samples: 500
+    epochs: 100
 
 # Evaluations for comparing real and synthetic data
 evaluations:
-  -visualizations:
-  -line_plot:
-
-    -tsne: 
-    -distrubution: 
-
-  -metrics:
-  - name: fidelity
-    metric: "MMD"
-    description: "Measures the similarity between real and synthetic distributions using Maximum Mean Discrepancy."
-  
-  - name: diversity
-    metric: "Pairwise Distance"
-    description: "Measures the diversity of synthetic samples by calculating pairwise distances."
-  -ml: 
-  - name: utility
-    metric: "Classification Accuracy"
-    description: "Trains a classifier on synthetic data and evaluates on real data."
-
-
-
-# Logging and results
-logging:
-  log_level: INFO
-  save_models: true
-  save_metrics: true
-  save_plots: true
-  save_reports_pdf: true
+  dataset_eval:
+      original: true
+      synthetic: true
+      reports:
+        #  save_html_report: true
+          save_pdf_reports: true
+       #   save_csv_metrics: true
+  gen_vs_orig_eval:
+      visualizations: true
+      ml: true
+      reports:
+          save_html_report: true
+          save_pdf_reports: true
+          save_csv_metrics: true
+  folder_reports: tests/diffusion/unconditional_1d

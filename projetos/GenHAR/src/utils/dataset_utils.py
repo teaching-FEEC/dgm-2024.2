@@ -1,3 +1,5 @@
+from collections import defaultdict
+import numpy as np
 import matplotlib.pyplot as plt
 import umap
 
@@ -23,3 +25,17 @@ def plot_umap_by_label(dataset, transf, X, labels, class_names):
     
     # Retorna a figura
     return fig
+
+def split_axis_reshape(data):
+    n_amostras = data.shape[0]
+    return data.values.reshape(n_amostras, 6, 60)
+
+def dict_class_samples(data, labels):
+    class_data = defaultdict(list)
+    for X, y in zip(data, labels):
+        class_data[y].append(X)
+    for label in class_data.keys():
+        class_data[label] = np.array(class_data[label])
+    return class_data
+
+
