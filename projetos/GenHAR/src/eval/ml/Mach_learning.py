@@ -3,25 +3,34 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
-
+from matplotlib.backends.backend_pdf import PdfPages
+from PyPDF2 import PdfReader, PdfWriter
 from typing import Dict
+from io import BytesIO
 
 class ModelEvaluator:
     def __init__(self, classifiers: Dict[str, any], 
-                 X_train_real: np.ndarray, y_train_real: np.ndarray, 
-                 X_test: np.ndarray, y_test: np.ndarray, 
-                 X_synthetic: np.ndarray, y_synthetic: np.ndarray,
-                 generator_name: str, dataset_name: str, transformation_name: str):
+                 df_train: pd.DataFrame, df_test: pd.DataFrame, 
+                 df_val: pd.DataFrame, df_synthetic: pd.DataFrame,
+                 label: str, generator_name: str, dataset_name: str, 
+                 transformation_name: str):
         self.classifiers = classifiers
-        self.X_train_real = X_train_real
-        self.y_train_real = y_train_real
-        self.X_test = X_test
-        self.y_test = y_test
-        self.X_synthetic = X_synthetic
-        self.y_synthetic = y_synthetic
+        self.df_train = df_train
+        self.df_test = df_test
+        self.df_val = df_val
+        self.df_synthetic = df_synthetic
+        self.label = label  # Column name for the labels
         self.generator_name = generator_name
         self.dataset_name = dataset_name
         self.transformation_name = transformation_name
+
+        # Separar features e labels
+        self.X_train_real = df_train.drop(columns=[label]).values
+        self.y_train_real = df_train[label].values
+        self.X_test = df_test.drop(columns=[label]).values
+        self.y_test = df_test[label].values
+        self.X_synthetic = df_synthetic.drop(columns=[label]).values
+        self.y_synthetic = df_synthetic[label].values
 
         # Dados misturados
         self.X_train_mixed = np.vstack((self.X_train_real, self.X_synthetic))
@@ -58,6 +67,7 @@ class ModelEvaluator:
 
     def plot_metrics(self, metrics: Dict[str, Dict[str, Dict[str, float]]]) -> None:
         metrics_labels = ['accuracy', 'precision', 'recall', 'f1-score']
+        figs=[]
         for metric in metrics_labels:
             fig, ax = plt.subplots(figsize=(14, 8))
             x = np.arange(len(self.classifiers))  # Localizações dos rótulos
@@ -82,11 +92,14 @@ class ModelEvaluator:
 
             # Ajustar layout e salvar o gráfico
             plt.tight_layout()
-            plt.savefig(os.path.join(self.model_dir, f'{metric}_comparison.png'))
-            plt.close()
+            #plt.savefig(os.path.join(self.model_dir, f'{metric}_comparison.png'))
+            figs.append(fig)
+            #plt.close()
+        return figs
 
     def plot_boxplots(self, metrics: Dict[str, Dict[str, Dict[str, float]]]) -> None:
         metrics_labels = ['accuracy', 'precision', 'recall', 'f1-score']
+        figs=[]
         for metric in metrics_labels:
             fig, ax = plt.subplots(figsize=(14, 8))
 
@@ -111,10 +124,14 @@ class ModelEvaluator:
 
             # Ajustar layout e salvar o gráfico
             plt.tight_layout()
-            plt.savefig(os.path.join(self.model_dir, f'{metric}_boxplot.png'))
+            #plt.savefig(os.path.join(self.model_dir, f'{metric}_boxplot.png'))
+            figs.append(fig)
             plt.close()
+        return figs
+            
 
-    def save_metrics_to_csv(self, metrics: Dict[str, Dict[str, Dict[str, float]]], filename: str) -> None:
+
+    def save_metrics_to_csv(self, metrics: Dict[str, Dict[str, Dict[str, float]]], folder_name: str) -> None:
         data = []
         for name, metrics_dict in metrics.items():
             for data_type in ['real', 'synthetic', 'mixed']:
@@ -130,6 +147,75 @@ class ModelEvaluator:
                     'F1 Score': metrics_dict[data_type]['f1-score']
                 })
         df = pd.DataFrame(data)
-        csv_path = os.path.join(self.model_dir, filename)
-        df.to_csv(csv_path, index=False)
+        csv_path = os.path.join(folder_name,self.model_dir, "/evaluation_metrics.csv")
+        df.to_csv(csv_path,mode='w' ,index=False)
         print(f"Metrics saved to {csv_path}")
+
+    def save_metrics_to_pdf(self, metrics: Dict[str, Dict[str, Dict[str, float]]], pdf_path: str) -> None:
+        # Converte o dicionário de métricas em um DataFrame
+        data = []
+        for name, metrics_dict in metrics.items():
+            for data_type in ['real', 'synthetic', 'mixed']:
+                data.append({
+                    'Classifier': name,
+                    'Data Type': data_type.capitalize(),
+                    'Generator': self.generator_name,
+                    'Dataset': self.dataset_name,
+                    'Transformation': self.transformation_name,
+                    'Accuracy': metrics_dict[data_type]['accuracy'],
+                    'Precision': metrics_dict[data_type]['precision'],
+                    'Recall': metrics_dict[data_type]['recall'],
+                    'F1 Score': metrics_dict[data_type]['f1-score']
+                })
+        
+        df = pd.DataFrame(data)  # Converte o dicionário em DataFrame
+
+        # Verifica se o PDF já existe
+
+        # Se o arquivo já existir, adicione uma nova página com métricas, caso contrário, crie um novo arquivo
+        if os.path.exists(pdf_path):
+            reader = PdfReader(pdf_path)
+            writer = PdfWriter()
+
+            # Copia as páginas do PDF existente
+            for page_num in range(len(reader.pages)):
+                writer.add_page(reader.pages[page_num])
+
+        else:
+            writer = PdfWriter()
+
+        # Cria uma nova página com as métricas
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import letter
+        from io import BytesIO
+
+        packet = BytesIO()
+        can = canvas.Canvas(packet, pagesize=letter)
+
+        # Adiciona o título e as métricas
+        text_object = can.beginText(40, 750)
+        text_object.setFont("Helvetica", 12)
+        text_object.textLine(f"Evaluation Metrics for {self.dataset_name}")
+        text_object.moveCursor(0, 20)
+        
+        for index, row in df.iterrows():
+            row_text = ', '.join([f"{col}: {row[col]}" for col in df.columns])
+            text_object.textLine(row_text)
+
+        can.drawText(text_object)
+        can.save()
+
+        packet.seek(0)
+
+        # Lê a nova página
+        new_pdf_reader = PdfReader(packet)
+        writer.add_page(new_pdf_reader.pages[0])
+
+        # Salva o PDF atualizado
+        with open(pdf_path, "wb") as output_pdf:
+            writer.write(output_pdf)
+
+        print(f"Métricas salvas ou adicionadas ao arquivo PDF: {pdf_path}")
+
+
+

@@ -283,10 +283,10 @@ class TimeGAN:
 
     def train_timeganpt(self, X_train,y_train):
         parameters = {
-                'hidden_dim': 6,
-                'num_layer': 2,  # Certifique-se de que este valor seja pelo menos 1
-                'iterations': 5000,
-                'batch_size': 64,
+                'hidden_dim': self.hidden_dim,
+                'num_layer': self.num_layers,  # Certifique-se de que este valor seja pelo menos 1
+                'iterations': self.iterations,
+                'batch_size': self.batch_size,
                 'module': 'lstm'
                     } 
         def extract_time(data):

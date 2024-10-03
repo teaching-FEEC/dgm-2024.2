@@ -44,8 +44,8 @@ def plotly_count_by_labels(x, y, class_names=None):
         showlegend=True  # Show legend to allow selection
     )
 
-    # Show the chart
-    fig.show()
+    
+    return fig
 
 
 
@@ -85,7 +85,7 @@ def plotly_count_by_labels_compare(x_real, y_real, x_gen, y_gen, class_names=Non
 
     fig.update_traces(texttemplate='%{text}', textposition='outside')
     fig.update_layout(xaxis_title='Class', yaxis_title='Count', barmode='group', showlegend=True)
-    fig.show()
+    return fig
 
 
 

@@ -3,7 +3,7 @@
 # Datasets to be compared
 datasets:
   - name: MotionSense
-    path: data/standardized_view
+    path: notebooks/data/standardized_view
     type: standartized_balanced
     description: " XXX."
     sensors: 
@@ -12,15 +12,36 @@ datasets:
     reshape: None
 
   - name: KuHar
-    path: data/standardized_view
+    path: notebooks/data/standardized_view
     type: standartized_balanced
     description: " XXX."
     sensors: 
             accel
             gyro
 
+  - name: RealWorld_thigh
+    path: notebooks/data/standardized_view
+    type: standartized_balanced
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_upperarm
+    path: notebooks/data/standardized_view
+    type: standartized_balanced
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
   
-  
+  - name: RealWorld_waist
+    path: notebooks/data/standardized_view
+    type: standartized_balanced
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
   
   
 
@@ -28,6 +49,7 @@ datasets:
 transformations:
   
   - name: None
+ # - name: umap
   - name: fft
     method: FFT
     description: " fft transform."
@@ -38,6 +60,19 @@ transformations:
 
 # Generative models
 generative_models:
+
+  - name: timeganpt
+    method: TIMEGANPT
+    framework: None
+    description: "https://github.com/jsyoon0823/TimeGAN/blob/master/tutorial_timegan.ipynb"
+    parameters:
+          module: gru
+          hidden_dim: 6
+          num_layer: 3
+          iterations: 10
+          batch_size: 128
+    n_gen_samples: 1000
+
 
   - name: Doppelgangerger    
     model: GAN
@@ -57,7 +92,12 @@ generative_models:
     logging:
       log_level: INFO
       save_models: true
-      save_generate_df: true
+    save_generate_df: true
+
+
+
+  
+          
 
 
 # Evaluations for comparing real and synthetic data
@@ -76,11 +116,11 @@ evaluations:
       ml: true      
       
       reports:
-          save_html_report: true
+          #save_html_report: true
           save_pdf_reports: true
           save_csv_metrics: true
   
-  folder_reports: tests/gans/doppelganger
+  folder_reports: reports
       
   
   

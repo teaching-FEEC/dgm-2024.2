@@ -10,70 +10,40 @@ class Transform:
         self.df_x_test = df_x_test
         self.df_x_val = df_x_val
 
-        if config_t["name"] == "fft":
-            self.apply_fft()
-        elif config_t["name"] == "split":
-            params = config_t["parameters"]
-            if params["method"] == "sensor":
-                self.x_t_train = self.split_sensors(self.df_x_train)
-                self.x_t_test = self.split_sensors(self.df_x_test)
-                self.x_t_val = self.split_sensors(self.df_x_val)
-            elif params["method"] == "axis":
-                self.x_t_train = self.split_axis(self.df_x_train)
-                self.x_t_test = self.df_x_test #self.split_axis(self.df_x_test)
-                self.x_t_val = self.df_x_val #self.split_axis(self.df_x_val)
-            if params['convert'] == 'tensor':
-                self.x_t_train = self.toTensor(self.x_t_train)
-                #self.x_t_test = self.toTensor(self.x_t_test)
-                #self.x_t_val = self.toTensor(self.x_t_val)
-        elif config_t["name"] == "None":
-            self.x_t_train = self.df_x_train
-            self.x_t_test = self.df_x_test
-            self.x_t_val = self.df_x_val
+        if config_t['name']=='fft':
+           self.apply_fft()
+        elif config_t['name']=='umap':
+            self.apply_umap()
+            
 
-    def split_axis(self, df):
-        axis_columns = []
-        axis_columns.append(
-            [col for col in df.columns if col.startswith("accel-x")])
-        axis_columns.append(
-            [col for col in df.columns if col.startswith("accel-y")])
-        axis_columns.append(
-            [col for col in df.columns if col.startswith("accel-z")])
-        axis_columns.append(
-            [col for col in df.columns if col.startswith("gyro-x")])
-        axis_columns.append(
-            [col for col in df.columns if col.startswith("gyro-y")])
-        axis_columns.append(
-            [col for col in df.columns if col.startswith("gyro-z")])
-        return [df[columns] for columns in axis_columns]
-
-    def split_sensors(self, df):
-        sensors_columns = []
-        sensors_columns.append(
-            [col for col in df.columns if col.startswith("accel")])
-        sensors_columns.append(
-            [col for col in df.columns if col.startswith("gyro")])
-        return [df[columns] for columns in sensors_columns]
-
-    def toTensor(self, df_list):
-        return torch.stack([torch.tensor(df.values) for df in df_list]).transpose(0,1)
-
+        elif  config_t['name']=='None':
+            self.x_t_train=self.df_x_train
+            self.x_t_test=self.df_x_test
+            self.x_t_val=self.df_x_val
+            self.df_x_t_train = pd.DataFrame(self.x_t_train, columns=self.df_x_train.columns)
+            self.df_x_t_test = pd.DataFrame(self.x_t_test, columns=self.df_x_test.columns)
+            self.df_x_t_val = pd.DataFrame(self.x_t_val, columns=self.df_x_val.columns)
+    
     def apply_fft(self):
-        self.x_t_train = self.to_dataframe(
-            np.fft.fft(self.df_x_train.values,
-                       axis=1).real, self.df_x_train.columns
-        )
-        self.x_t_test = self.to_dataframe(
-            np.fft.fft(self.df_x_test.values,
-                       axis=1).real, self.df_x_test.columns
-        )
-        self.x_t_val = self.to_dataframe(
-            np.fft.fft(self.df_x_val.values,
-                       axis=1).real, self.df_x_val.columns
-        )
+        self.x_t_train=np.fft.fft(self.df_x_train.values, axis=1).real
+        self.x_t_test=np.fft.fft(self.df_x_test.values, axis=1).real
+        self.x_t_val=np.fft.fft(self.df_x_val.values, axis=1).real
+        self.df_x_t_train = pd.DataFrame(self.x_t_train, columns=self.df_x_train.columns)
+        self.df_x_t_test = pd.DataFrame(self.x_t_test, columns=self.df_x_test.columns)
+        self.df_x_t_val = pd.DataFrame(self.x_t_val, columns=self.df_x_val.columns)
 
-    def to_dataframe(self, data, cols):
-        return pd.DataFrame(data, columns=cols)
+    def apply_umap(self):
+        from umap import UMAP
+        umap_model = UMAP(n_neighbors=15, min_dist=0.1, n_components=6, random_state=42)
+        self.x_t_train = umap_model.fit_transform(self.df_x_train)
+        self.x_t_test=umap_model.fit_transform(self.df_x_test) 
+        self.x_t_val=umap_model.fit_transform(self.df_x_val) 
+        self.df_x_t_train = pd.DataFrame(self.x_t_train)
+        self.df_x_t_test = pd.DataFrame(self.x_t_test)
+        self.df_x_t_val = pd.DataFrame(self.x_t_val)
+        
 
     def get_data_transform(self):
-        return self.x_t_train, self.x_t_test, self.x_t_val
+        
+        return self.df_x_t_train,self.df_x_t_test,self.df_x_t_val
+    

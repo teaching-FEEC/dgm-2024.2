@@ -86,7 +86,7 @@ def get_plotly_by_labels(x_real,x_gen,y_labels,y_gen_labels,dataset="",transform
     fig = go.Figure(data=scatter_data, layout=layout)
 
     # Mostrar o gráfico
-    fig.show()
+    return fig
 
     
 
@@ -96,7 +96,7 @@ import plotly.express as px
 import plotly.subplots as sp
 from sklearn.manifold import TSNE
 
-def tsne_subplots_by_labels(x_real, y_real, x_gen, y_gen, label_names=None):
+def tsne_subplots_by_labels(x_real, y_real, x_gen, y_gen, label_names=None,title=""):
     # Reshape if 3D
     if x_real.ndim == 3:
         x_real = x_real.reshape(x_real.shape[0], -1)
@@ -150,5 +150,5 @@ def tsne_subplots_by_labels(x_real, y_real, x_gen, y_gen, label_names=None):
             row=row, col=col
         )
 
-    fig.update_layout(title='t-SNE Visualization of Real and Generated Data by Label', showlegend=False)
-    fig.show()
+    fig.update_layout(title=f'{title} Real and Generated Data by Label', showlegend=False)
+    return fig

@@ -66,4 +66,3 @@ logging:
   save_metrics: true
   save_plots: true
   save_reports_pdf: true
-
