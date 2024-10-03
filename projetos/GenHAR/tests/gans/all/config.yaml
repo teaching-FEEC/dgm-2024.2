@@ -1,10 +1,13 @@
 # Configuration for Synthetic Data Generation and Comparison
 
 # Datasets to be compared
+# Configuration for Synthetic Data Generation and Comparison
+
+# Datasets to be compared
 datasets:
   - name: MotionSense
-    path: notebooks/data/standardized_view
-    type: standartized_balanced
+    path: notebooks/data
+    type: standardized_view
     description: " XXX."
     sensors: 
             accel
@@ -12,36 +15,14 @@ datasets:
     reshape: None
 
   - name: KuHar
-    path: notebooks/data/standardized_view
-    type: standartized_balanced
+    path: notebooks/data
+    type: standardized_view
     description: " XXX."
     sensors: 
             accel
             gyro
 
-  - name: RealWorld_thigh
-    path: notebooks/data/standardized_view
-    type: standartized_balanced
-    description: " XXX."
-    sensors: 
-            accel
-            gyro
-
-  - name: RealWorld_upperarm
-    path: notebooks/data/standardized_view
-    type: standartized_balanced
-    description: " XXX."
-    sensors: 
-            accel
-            gyro
   
-  - name: RealWorld_waist
-    path: notebooks/data/standardized_view
-    type: standartized_balanced
-    description: " XXX."
-    sensors: 
-            accel
-            gyro
   
   
 
@@ -72,6 +53,7 @@ generative_models:
           iterations: 10
           batch_size: 128
     n_gen_samples: 1000
+    folder_save_generate_df: data_gen
 
 
   - name: Doppelgangerger    
@@ -92,7 +74,7 @@ generative_models:
     logging:
       log_level: INFO
       save_models: true
-    save_generate_df: true
+    folder_save_generate_df: data_gen
 
 
 

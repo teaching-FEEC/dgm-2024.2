@@ -253,7 +253,7 @@ class TimeGAN:
     def generate(self, num_samples):
         Z_mb = random_generator(num_samples, self.z_dim, [self.max_seq_len]*num_samples, self.max_seq_len)
         Z_mb = torch.FloatTensor(Z_mb)
-        Z_mb = torch.tensor(Z_mb, dtype=torch.float32).to(device)
+        Z_mb =  Z_mb.clone().detach().to(device)
         E_hat = self.generator(Z_mb)
         H_hat = self.supervisor(E_hat)
         X_hat = self.recovery(H_hat)

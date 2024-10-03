@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(REPO_ROOT_DIR))
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0' 
 import time
+from utils import log
 
 
 #https://github.com/YihaoAng/TSGBench/tree/main?tab=readme-ov-file
@@ -32,24 +33,27 @@ def main(config_path):
     for dataset_conf in config['datasets']:
         data_reader = DataRead(dataset_conf)
         x_train,y_train,x_test,y_test,x_val,y_val= data_reader.get_dataframes()
-        print(x_train.shape)
+        log.print_debug(f"dataset info-> name:{dataset_conf['name']}, shape:{x_train.shape} ")
+        
         
         
     
-        for transformation_config in config['transformations']:
-            print(transformation_config)
+        for transformation_config in config['transformations']:            
             transform=Transform(transformation_config,x_train,x_test,x_val)
             x_t_train,x_t_test,x_t_val = transform.get_data_transform()
-            
-            
+            log.print_debug(f"transform info-> name:{transformation_config['name']}, shape:{x_t_train.shape} ")
 
-
-            #print(x_t_train.shape,y_train.shape) 
             for generative_model_config in config['generative_models']:                
                 data_generate =DataGenerate(generative_model_config)
                 start_time = time.time()
-                synthetic_df= data_generate.train(x_t_train,y_train)
-                training_time = time.time() - start_time
+                data_generate.train(x_t_train,y_train)
+                training_time = time.time() - start_time                
+                synthetic_df=data_generate.generate()
+                
+                #print(synthetic_df.head())
+                break
+                
+                
                 df_trans_train=x_t_train
                 df_trans_train['label']=y_train
                 df_trans_test=x_t_test
