@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 
 class Transformer(object):
-    """"Transform"""
+    """Transform"""
     def __init__(self,):
         pass
     def __call__(self, imgA, imgB=None):
