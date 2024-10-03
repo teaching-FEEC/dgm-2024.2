@@ -62,10 +62,11 @@ class TimeSeriesDatasetEvaluator:
         return fig
     def histogram_density(self):
         """Exibe um histograma e gráfico de densidade das séries temporais."""
-        plt.figure(figsize=(12, 6))
-        sns.histplot(self.df_time.values.flatten(), kde=True)
-        plt.title("Histograma e Gráfico de Densidade das Séries Temporais")
-        plt.show()
+        fig, ax = plt.subplots(figsize=(12, 6))
+        sns.histplot(self.df_time.values.flatten(), kde=True, ax=ax)
+        ax.set_title("Histograma e Gráfico de Densidade das Séries Temporais")
+        #plt.show()
+        return fig
 
     def plot_acf_pacf_all(self):
         fig= plt.figure(figsize=(12, 6))
@@ -87,7 +88,7 @@ class TimeSeriesDatasetEvaluator:
         plt.legend()
 
         plt.tight_layout()
-        plt.show()
+        #plt.show()
         return fig
 
 
