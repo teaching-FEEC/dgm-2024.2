@@ -12,8 +12,7 @@ class DCGANGenerator:
     def train(self, X_train, y_train):
         # Adiciona a coluna de labels ao dataframe
         df = X_train.copy()
-        self.columns_names = df.X_train.columns
-        df["label"] = y_train
+        self.columns_names = df.columns
 
         # Split axis
         num_samples = df.shape[0]
@@ -22,7 +21,7 @@ class DCGANGenerator:
         # Reshape to (seq_length * num_samples, num_axis)
         train_data = train_data.transpose(0, 2, 1).reshape(-1, 6)
         train_df = pd.DataFrame(train_data)
-        train_df["label"] = np.repeat(df["label"].values, self.seq_length)
+        train_df["label"] = np.repeat(y_train.values, self.seq_length)
         train_df["sample"] = np.repeat(np.arange(num_samples), self.seq_length)
 
         # Configura o modelo DGAN
@@ -52,8 +51,10 @@ class DCGANGenerator:
         # Gera dados sintéticos
         synthetic_df = self.model.generate_dataframe(n_samples)
 
+        print(np.unique(synthetic_df['sample'].values, return_counts=True))
         synth_labels = synthetic_df["label"].values[:: self.seq_length]
         synth_data = synthetic_df.drop(columns=["label", "sample"]).values
+        print(synth_data.shape)
         synth_data = (
             synth_data.reshape(n_samples, 60, 6)
             .transpose(0, 2, 1)

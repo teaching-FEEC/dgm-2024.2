@@ -3,7 +3,7 @@
 # Datasets to be compared
 datasets:
   - name: MotionSense
-    path: data/standardized_view
+    path: data
     type: standardized_view
     description: " XXX."
     sensors: 
@@ -18,11 +18,6 @@ datasets:
     sensors: 
             accel
             gyro
-
-  
-  
-  
-  
 
 # Data transformations
 transformations:
@@ -39,7 +34,7 @@ transformations:
 # Generative models
 generative_models:
 
-  - name: Doppelgangerger    
+  - name: Doppelgangerger
     model: GAN
     paper: DoppelGANger
     speciality: general TS
@@ -48,11 +43,12 @@ generative_models:
     description: 
     source code: https://github.com/fjxmlzn/DoppelGANger
     parameters:
-        max_sequence_len: 360
+        max_sequence_len: 60
         sample_len: 3
         batch_size: 32
-        epochs: 20 ### mudar
+        epochs: 4 ### mudar
     n_gen_samples: 1000
+    folder_save_generate_df: data/synthetic/doppelgan
   # Logging and results
     logging:
       log_level: INFO

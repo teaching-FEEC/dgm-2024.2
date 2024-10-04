@@ -4,6 +4,8 @@ import torch
 from collections import defaultdict
 from models.gans.timeganpt.timegan import TimeGAN
 import pickle  # Para salvar e carregar o modelo
+from utils.dataset_utils import split_axis_reshape, dict_class_samples
+
 
 class TimeGANGenerator:
     def __init__(self, m_config):
@@ -24,35 +26,34 @@ class TimeGANGenerator:
         columns = X_train.columns
         parameters_ = self.m_config["parameters"]
         parameters = {
-            'hidden_dim': parameters_["hidden_dim"],
-            'num_layer': parameters_["num_layer"],
-            'iterations': parameters_["iterations"],
-            'batch_size': parameters_["batch_size"],
-            'module': 'lstm'
+            "hidden_dim": parameters_["hidden_dim"],
+            "num_layer": parameters_["num_layer"],
+            "iterations": parameters_["iterations"],
+            "batch_size": parameters_["batch_size"],
+            "module": "lstm",
         }
 
         # Reformatar os dados para (n_amostras, 60, 6) se necessário
         reshape = True
         if reshape:
-            n_amostras = X_train.shape[0]
-            X_train = X_train.values.reshape(n_amostras, 60, 6)
+            X_train = split_axis_reshape(X_train.values).transpose(0, 2, 1)
 
-        class_data = defaultdict(list)
-        for X, y in zip(X_train, y_train):
-            class_data[y].append(X)
+        class_data = dict_class_samples(X_train, y_train.values)
 
         # Treinar o TimeGAN para cada classe
         self.synthetic_data_by_class = {}
-        num_samples_per_class = self.m_config['n_gen_samples']  # Número de amostras sintéticas a gerar por classe
+        # Número de amostras sintéticas a gerar por classe
 
         for class_label, X_class_data in class_data.items():
             X_class_data = np.array(X_class_data)
-            ori_time, _ = self.extract_time(X_class_data)
+            # ori_time, _ = self.extract_time(X_class_data)
 
             # Criar e treinar o TimeGAN
-            model = TimeGAN(X_class_data, parameters)  # Novo modelo para cada classe
+            # Novo modelo para cada classe
+            model = TimeGAN(X_class_data, parameters)
             model.train()
-            self.models[class_label] = model  # Armazenar o modelo no dicionário
+            # Armazenar o modelo no dicionário
+            self.models[class_label] = model
 
     def generate(self, num_samples_per_class):
         synthetic_df = pd.DataFrame()
@@ -71,7 +72,7 @@ class TimeGANGenerator:
             # Criar um DataFrame para os dados sintéticos da classe atual
             class_df = pd.DataFrame(synthetic_data)
             # Adicionar uma coluna para a classe
-            class_df['label'] = class_label
+            class_df["label"] = class_label
 
             # Concatenar com o DataFrame geral
             synthetic_df = pd.concat([synthetic_df, class_df], ignore_index=True)
@@ -80,10 +81,10 @@ class TimeGANGenerator:
 
     def save_model(self, file_path):
         # Salvar o dicionário de modelos treinados como um arquivo .pkl
-        with open(file_path, 'wb') as f:
+        with open(file_path, "wb") as f:
             pickle.dump(self.models, f)
 
     def load_model(self, file_path):
         # Carregar o dicionário de modelos a partir de um arquivo .pkl
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             self.models = pickle.load(f)
