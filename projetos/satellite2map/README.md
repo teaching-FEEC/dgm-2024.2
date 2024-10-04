@@ -1,5 +1,4 @@
 # `Obtenção de mapas a partir de imagens de satélite`
-# `Obtaining maps from satellite images`
 
 ## Apresentação
 
