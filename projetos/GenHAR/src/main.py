@@ -5,9 +5,12 @@ from models.data_generate import DataGenerate
 from data_processor.data_transform import Transform
 from data_processor.data_read import DataRead
 import yaml
-from utils import log
+from utils import log, setup
 import time
 import os
+
+# Define as seeds para repredutibilidade
+setup.set_seeds()
 
 # https://github.com/YihaoAng/TSGBench/tree/main?tab=readme-ov-file
 REPO_ROOT_DIR = "../"
