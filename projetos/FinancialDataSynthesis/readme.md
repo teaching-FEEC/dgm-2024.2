@@ -54,12 +54,12 @@ Os fatos estilizados são propriedades estatísticas, verificadas empiricamente,
 
   **e)** Ausência de autocorrelação nos retornos: os retornos geralmente apresentam pouca ou nenhuma autocorrelação linear.
 
-  Podemos avaliar se a distribuição possui "heavy tails" através da métrica kurtosis (K) que mede a tendência da distribuição apresentar valores extremos. E podemos avaliar se a distribuição possui assimetria entre ganhos e perdas através da métrica skewness (S) que mede a assimetria da distribuição em relação à média.
+Podemos avaliar se a distribuição possui "heavy tails" através da métrica kurtosis (K) que mede a tendência da distribuição apresentar valores extremos. E podemos avaliar se a distribuição possui assimetria entre ganhos e perdas através da métrica skewness (S) que mede a assimetria da distribuição em relação à média.
 Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e 2024, e temos o seguinte histograma:
 
 ![Texto Alternativo](histograma.png "Histograma")
 
-
+Verificamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, ou seja, há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, as propriedades a) e b) são verificadas com este histograma.
 
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
