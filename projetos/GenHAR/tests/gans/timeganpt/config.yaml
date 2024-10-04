@@ -1,0 +1,81 @@
+datasets:
+  - name: MotionSense
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None
+
+
+
+  - name: RealWorld_thigh
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None
+
+  - name: RealWorld_waist
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None  
+
+  - name: KuHar
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None   
+    
+    # Data transformations
+transformations:
+  
+  - name: None
+
+# Generative models
+generative_models:
+
+
+  - name: timeganpt
+    method: TIMEGANPT
+    framework: None
+    description: "https://github.com/jsyoon0823/TimeGAN/blob/master/tutorial_timegan.ipynb"
+    parameters:
+          module: gru
+          hidden_dim: 6
+          num_layer: 3
+          iterations: 400
+          batch_size: 128
+    n_gen_samples: 5
+    folder_save_generate_df: data/synthetic/timegan
+
+
+
+
+
+evaluations:
+  dataset_eval:
+      original: true
+      synthetic: true
+      reports:
+        #  save_html_report: true
+          save_pdf_reports: true
+       #   save_csv_metrics: true
+  gen_vs_orig_eval:
+      visualizations: true
+      ml: true
+      reports:
+          save_html_report: true
+          save_pdf_reports: true
+          save_csv_metrics: true
+  folder_reports: tests/gans/timeganpt

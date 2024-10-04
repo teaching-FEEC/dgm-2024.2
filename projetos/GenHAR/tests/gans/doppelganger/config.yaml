@@ -1,0 +1,79 @@
+# Configuration for Synthetic Data Generation and Comparison
+
+# Datasets to be compared
+datasets:
+  - name: MotionSense
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None
+
+  - name: KuHar
+    path: data/standardized_view
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+# Data transformations
+transformations:
+  
+  - name: None
+  - name: fft
+    method: FFT
+    description: " fft transform."
+    parameters:
+      n_components: 0.95  # Retain 95% of the variance
+
+  
+
+# Generative models
+generative_models:
+
+  - name: Doppelgangerger
+    model: GAN
+    paper: DoppelGANger
+    speciality: general TS
+    time: 2020
+    framework: None
+    description: 
+    source code: https://github.com/fjxmlzn/DoppelGANger
+    parameters:
+        max_sequence_len: 60
+        sample_len: 3
+        batch_size: 32
+        epochs: 2 ### mudar
+    n_gen_samples: 1000
+    folder_save_generate_df: data/synthetic/doppelgan
+  # Logging and results
+    logging:
+      log_level: INFO
+      save_models: true
+      save_generate_df: true
+
+
+# Evaluations for comparing real and synthetic data
+evaluations:
+  dataset_eval:
+      original: true
+      synthetic: true
+      reports:
+        #  save_html_report: true
+          save_pdf_reports: true
+       #   save_csv_metrics: true
+      
+  gen_vs_orig_eval:
+        
+      visualizations: true
+      ml: true      
+      
+      reports:
+          save_html_report: true
+          save_pdf_reports: true
+          save_csv_metrics: true
+  
+  folder_reports: tests/gans/doppelganger
