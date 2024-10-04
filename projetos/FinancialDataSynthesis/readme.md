@@ -37,7 +37,7 @@ $$
 
 $$ E= mc^2 $$
 
-r(t) = [ x(t) - x(t-1) ] / x(t-1)
+$$ r(t) =\frac{x(t) - x(t-1)}{x(t-1)} $$
 
 Sendo x(t) o valor do índice no período t.
 
