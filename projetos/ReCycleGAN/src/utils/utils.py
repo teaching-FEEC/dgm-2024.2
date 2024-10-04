@@ -8,6 +8,11 @@ from tqdm import tqdm
 from PIL import Image
 from torchvision.utils import make_grid
 
+class Constants:
+    DATASET_FILEPATH = "./data/external/nexet"
+    WB_PROJECT = "cyclegan"
+    WB_DB_UPLOAD_JOB = "dataset_upload"
+    WB_DB_ARTIFACT_TYPE = "datasets"
 
 def remove_all_files(folder_path):
     """Remove all files in a folder."""
