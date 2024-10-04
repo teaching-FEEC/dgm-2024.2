@@ -21,7 +21,7 @@ class TimeGANGenerator:
         return time, max_seq_len
 
     def train(self, X_train, y_train):
-        columns = X_train.columns
+        self.columns = X_train.columns
         parameters_ = self.m_config["parameters"]
         parameters = {
             'hidden_dim': parameters_["hidden_dim"],
@@ -43,8 +43,7 @@ class TimeGANGenerator:
 
         # Treinar o TimeGAN para cada classe
         self.synthetic_data_by_class = {}
-        num_samples_per_class = self.m_config['n_gen_samples']  # Número de amostras sintéticas a gerar por classe
-
+        
         for class_label, X_class_data in class_data.items():
             X_class_data = np.array(X_class_data)
             ori_time, _ = self.extract_time(X_class_data)
@@ -70,6 +69,7 @@ class TimeGANGenerator:
 
             # Criar um DataFrame para os dados sintéticos da classe atual
             class_df = pd.DataFrame(synthetic_data)
+            class_df.columns=self.columns
             # Adicionar uma coluna para a classe
             class_df['label'] = class_label
 

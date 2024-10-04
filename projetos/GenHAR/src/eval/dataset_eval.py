@@ -10,7 +10,7 @@ import plotly.express as px
 from statsmodels.graphics.tsaplots import plot_acf,plot_pacf
 
 class TimeSeriesDatasetEvaluator:
-    def __init__(self, df, label_col):
+    def __init__(self, df, label_col,label_names):
         """
         Classe para avaliar o dataset de séries temporais.
         
@@ -22,81 +22,60 @@ class TimeSeriesDatasetEvaluator:
         self.time_cols = [col for col in df.columns if col != label_col]  # Todas as colunas exceto a de rótulos
         self.labels = df[label_col].unique()
         self.df_time = self.df.drop(columns=[label_col])
+        self.label_names=label_names
 
-    def num_samples(self):
-        """Exibe e retorna a figura com o número total de amostras por classe."""
-        counts = self.df[self.label_col].value_counts()
-        print("Número de amostras por classe:")
-        print(counts)
+    def plot_samples(self):
+        """Exibe e retorna a figura com o número total de amostras por classe (nome da classe ao invés do ID)."""
+        df_ = self.df.copy()  # Criar uma cópia do DataFrame para evitar modificações diretas no original
+        label_col_ = self.label_col
+        label_names_ = self.label_names
         
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.barplot(x=counts.index, y=counts.values, ax=ax)
+        # Criar um dicionário de mapeamento de IDs para nomes de atividades
+        label_to_activity_ = {i: name for i, name in enumerate(label_names_)}
+        
+        # Substituir IDs pelos nomes das atividades na coluna de rótulos
+        df_[label_col_] = df_[label_col_].map(label_to_activity_)
+        
+        # Verificar se houve falhas no mapeamento
+        if df_[label_col_].isnull().any():
+            missing_ids = df_[label_col_].isnull()
+            print(f"IDs não mapeados: {df_.loc[missing_ids, label_col_].unique()}")
+            return None
+        
+        # Contar o número de amostras por nome de atividade
+        counts_ = df_[label_col_].value_counts()
+
+        # Verificar se há dados
+        if counts_.empty:
+            print("Nenhum dado disponível para plotagem.")
+            return None
+
+        # Criar o gráfico
+        fig1, ax = plt.subplots(figsize=(10, 6))
+        sns.barplot(x=counts_.index, y=counts_.values, ax=ax)
         ax.set_title("Número de amostras por classe")
         ax.set_xlabel("Classe")
         ax.set_ylabel("Contagem")
         
-        return fig
+        plt.close()
+        return fig1
+
+    
     def tsne_plot(self, n_components=2):
         """Aplica t-SNE e retorna a figura com os dados reduzidos."""
         tsne = TSNE(n_components=n_components, random_state=42)
         X = self.df[self.time_cols].values
-        X_scaled = StandardScaler().fit_transform(X)
-        X_tsne = tsne.fit_transform(X_scaled)
-        
+        X_tsne = tsne.fit_transform(X)        
         df_tsne = pd.DataFrame(X_tsne, columns=[f"TSNE_{i+1}" for i in range(n_components)])
-        df_tsne[self.label_col] = self.df[self.label_col].values
-        
+        df_tsne[self.label_col] = self.df[self.label_col].values        
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.scatterplot(data=df_tsne, x="TSNE_1", y="TSNE_2", hue=self.label_col, palette="Set1", ax=ax)
         ax.set_title("t-SNE das séries temporais")
-        
+        #plt.close() 
         return fig
-    
-
-    def plot_distribution(self):
-        """Plota e retorna a figura da distribuição dos dados por classe."""
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.countplot(data=self.df, x=self.label_col, ax=ax)
-        ax.set_title("Distribuição das classes")
-        
-        return fig
-    def histogram_density(self):
-        """Exibe um histograma e gráfico de densidade das séries temporais."""
-        plt.figure(figsize=(12, 6))
-        sns.histplot(self.df_time.values.flatten(), kde=True)
-        plt.title("Histograma e Gráfico de Densidade das Séries Temporais")
-        plt.show()
-
-    def plot_acf_pacf_all(self):
-        fig= plt.figure(figsize=(12, 6))
-        
-        # ACF
-        plt.subplot(1, 2, 1)
-        for col in self.df.columns:
-            if col != 'label':  
-                plot_acf(self.df[col], lags=40, alpha=0.05, label=col)
-        plt.title('ACF de Todas as Labels')
-        plt.legend()
-
-        # PACF
-        plt.subplot(1, 2, 2)
-        for col in self.df.columns:
-            if col != 'label':
-                plot_pacf(self.df[col], lags=40, alpha=0.05, label=col)
-        plt.title('PACF de Todas as Labels')
-        plt.legend()
-
-        plt.tight_layout()
-        plt.show()
-        return fig
-
-
-   
-       
-    
     
     def plot_i_samples(self, activity_names=['sit', 'stand', 'walk', 'stair up', 'stair down', 'run'], n_samples=3, reshape=False):
-        df = self.df
+        df = self.df.copy()
         
         if 'label' not in df.columns:
             raise ValueError("The DataFrame does not contain a 'labels' column.")
@@ -134,9 +113,117 @@ class TimeSeriesDatasetEvaluator:
                 else:
                     axs[col, row].axis('off')  # Hide the axis if no samples
 
-        plt.tight_layout()
+       # plt.tight_layout()
+        plt.close() 
         return fig
 
+
+
+
+    def plot_metrics_comparison(self,metrics, thresholds):
+        """
+        Args:
+        - metrics (dict): Um dicionário contendo os nomes das métricas como chaves e seus respectivos valores.
+        - thresholds (dict): Um dicionário com os limites de valores "ok" para cada métrica.
+
+        Retorna:
+        - None: Exibe os subplots para comparação.
+        """
+        # Filtrar apenas métricas com valores numéricos (remover None)
+        numeric_metrics = {k: v for k, v in metrics.items() if v is not None}
+
+        # Número de métricas a serem plotadas
+        n_metrics = len(numeric_metrics)
+        
+        if n_metrics == 0:
+            print("Nenhuma métrica numérica disponível para plotar.")
+            return
+        
+        # Preparar os dados para o gráfico
+        metric_names = list(numeric_metrics.keys())
+        metric_values = list(numeric_metrics.values())
+
+        # Criar subplots
+        fig, axes = plt.subplots(n_metrics, 1, figsize=(8, 4 * n_metrics))  # Subplots verticais
+
+        # Se houver apenas uma métrica, garantir que axes seja uma lista
+        if n_metrics == 1:
+            axes = [axes]
+
+        # Plotar as métricas em subplots individuais
+        for i, (ax, metric) in enumerate(zip(axes, numeric_metrics)):
+            value = numeric_metrics[metric]
+            threshold = thresholds.get(metric, (None, None))  # Obter limites de "ok" e "ruim"
+            
+            # Plotar o valor da métrica como linha
+            ax.plot([metric], [value], marker='o', color='black', label=f'{metric}: {value:.3f}')
+            
+            # Adicionar linha vermelha ou verde de acordo com os thresholds
+            if threshold[0] is not None and value < threshold[0]:
+                ax.axhline(threshold[0], color='red', linestyle='--', label='Limite Inferior')
+            if threshold[1] is not None and value >= threshold[0]:
+                ax.axhline(threshold[1], color='green', linestyle='--', label='Limite Superior')
+            
+            # Ajustar título, rótulos e limites
+            ax.set_title(f'Métrica: {metric}')
+            ax.set_ylim(min(value - 0.5, threshold[0] if threshold[0] is not None else value - 0.5),
+                        max(value + 0.5, threshold[1] if threshold[1] is not None else value + 0.5))
+            ax.set_xticks([])  # Remover rótulos do eixo X (não necessário para este gráfico)
+            ax.legend(loc='upper right')
+            ax.grid(True, linestyle='--', alpha=0.7)
+
+        # Ajustar layout
+        plt.tight_layout()
+        plt.close()
+        return fig
+
+
+
+
+
+    def plot_distribution(self):
+        """Plota e retorna a figura da distribuição dos dados por classe."""
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.countplot(data=self.df, x=self.label_col, ax=ax)
+        ax.set_title("Distribuição das classes")
+        plt.close() 
+        return fig
+    def histogram_density(self):
+        """Exibe um histograma e gráfico de densidade das séries temporais."""
+        plt.figure(figsize=(12, 6))
+        sns.histplot(self.df_time.values.flatten(), kde=True)
+        plt.title("Histograma e Gráfico de Densidade das Séries Temporais")
+        plt.show()
+
+    def plot_acf_pacf_all(self):
+        fig= plt.figure(figsize=(12, 6))
+        
+        # ACF
+        plt.subplot(1, 2, 1)
+        for col in self.df.columns:
+            if col != 'label':  
+                plot_acf(self.df[col], lags=40, alpha=0.05, label=col)
+        plt.title('ACF de Todas as Labels')
+        plt.legend()
+
+        # PACF
+        plt.subplot(1, 2, 2)
+        for col in self.df.columns:
+            if col != 'label':
+                plot_pacf(self.df[col], lags=40, alpha=0.05, label=col)
+        plt.title('PACF de Todas as Labels')
+        plt.legend()
+
+        plt.tight_layout()
+        plt.show()
+        return fig
+
+
+   
+       
+    
+    
+    
     def plot_autocorrelation(self):
         """Plota a autocorrelação para cada label no DataFrame em subplots."""
         n_labels = len(self.labels)
@@ -226,23 +313,11 @@ class TimeSeriesDatasetEvaluator:
                 ax.legend()
 
             plt.tight_layout(rect=[0, 0, 1, 0.97])
+        #plt.close() 
         return fig
 
 
-    def plot_spectrogram(self, sample_idx):
-        
-        """Plota e retorna a figura do espectrograma para uma amostra específica."""
-        sample = self.df[self.time_cols].iloc[sample_idx].values
-        f, t, Sxx = spectrogram(sample)
-        
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.pcolormesh(t, f, 10 * np.log10(Sxx), shading='gouraud')
-        ax.set_ylabel('Frequência [Hz]')
-        ax.set_xlabel('Tempo [s]')
-        ax.set_title(f"Espectrograma - Amostra {sample_idx}")
-        fig.colorbar(ax.pcolormesh(t, f, 10 * np.log10(Sxx), shading='gouraud'), ax=ax)
-        
-        return fig
+
 
     def plot_correlation_matrix(self):
         """Plota e retorna a figura da matriz de correlação das características temporais."""

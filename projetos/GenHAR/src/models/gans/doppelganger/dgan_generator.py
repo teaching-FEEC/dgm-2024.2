@@ -35,6 +35,7 @@ class DCGANGenerator:
         
         # Gera dados sintéticos
         synthetic_df = self.model.generate_dataframe(n_samples)
+        print(synthetic_df.columns)
         print(f"{n_samples} synthetic samples generated.")
         return synthetic_df
 

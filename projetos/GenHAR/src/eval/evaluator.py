@@ -1,22 +1,19 @@
-
 from sklearn.metrics import accuracy_score, pairwise_distances
 from scipy.stats import wasserstein_distance
+from utils import log
+import os
+import utils.report_ut as r_ut
 
 ##https://github.com/gretelai/public_research/blob/main/oss_doppelganger/analysis.ipynb
 ## https://nannyml.readthedocs.io/en/stable/how_it_works/univariate_drift_comparison.html
 ## https://itsudit.medium.com/the-jensen-shannon-divergence-a-measure-of-distance-between-probability-distributions-23b2b1146550
-import plotly.io as pio
-import webbrowser
-import os
-import utils.report_ut as r_ut
+
 class Evaluator:
     def __init__(self,config,df_train,df_test,df_val,df_synthetic):
-        print(config)
         self.df_train=df_train
         self.df_test=df_test
         self.df_val=df_val
         self.df_synthetic=df_synthetic
-
         self.config=config['evaluations']
         self.dataset=config['dataset']
         self.transform=config['transform']
@@ -24,31 +21,39 @@ class Evaluator:
         self.activity_names=['sit', 'stand', 'walk', 'stair up', 'stair down', 'run']
         self.folder_reports=f"{self.config['folder_reports']}/reports/"
         os.makedirs(self.folder_reports, exist_ok=True)
-
      
     def eval_dataset(self,dataset,title):
-        print('eval dataset')
-        from eval.metrics.unsupervised_metrics import UnsupervisedLearningMetrics        
-        metrics = UnsupervisedLearningMetrics(dataset)
-        results = metrics.evaluate()
-        print(results)
-        zscore=metrics.zscore_outliers()
-        print(zscore)
+        from eval.metrics.unsupervised_metrics import UnsupervisedLearningMetrics  
+        print(dataset.columns)      
+        metrics_uns = UnsupervisedLearningMetrics(dataset)
+        metrics_uns_val = metrics_uns.evaluate()
+        log.print_debug(title)
+        log.print_debug(metrics_uns_val)
 
         from eval.dataset_eval import TimeSeriesDatasetEvaluator
-        evaluator = TimeSeriesDatasetEvaluator(dataset,  label_col='label')
-        fig1 = evaluator.num_samples()    
+        evaluator = TimeSeriesDatasetEvaluator(dataset,  label_col='label', label_names=['sit', 'stand', 'walk', 'stair up', 'stair down', 'run'])
+        log.print_debug("....gerando graficos....")
+
+        fig1 = evaluator.plot_samples()    
         fig2 = evaluator.tsne_plot()
-        fig3=evaluator.histogram_density()
-        fig4=evaluator.plot_acf_pacf_all()
+        fig3=evaluator.plot_random_sensor_samples_single_dataset (dataset, self.activity_names, num_samples=6,sensor="gyro")
+        fig4=evaluator.plot_random_sensor_samples_single_dataset (dataset, self.activity_names, num_samples=6,sensor="accel")
         fig5=evaluator.plot_i_samples(n_samples=10, reshape=False)
-        fig6=evaluator.plot_random_sensor_samples_single_dataset (dataset, self.activity_names, num_samples=6,sensor="gyro")
-        fig7=evaluator.plot_random_sensor_samples_single_dataset (dataset, self.activity_names, num_samples=6,sensor="accel")
-        #fig8=evaluator.plot_autocorrelation()
-        fig9 = evaluator.plot_spectrogram(sample_idx=0)
+        thresholds = {
+                    'Silhouette Score': (-1, 1), # prox 1 melhors ok
+                    'Davies-Bouldin Index': (0, 100),  # quanto mais prox zero melhor
+                    'Calinski-Harabasz Index': (0, 500),  # maior melhor
+                    'Entropy': (0, 2),  # definir limites
+                    'Mutual Information': (0, 500),  # entre maior melhor
+                }
+        fig6=evaluator.plot_metrics_comparison(metrics_uns_val, thresholds)
+        #fig6=evaluator.plot_autocorrelation()
         #fig10 = evaluator.plot_pca_correlation()
+        #fig3=evaluator.histogram_density()
+        #fig4=evaluator.plot_acf_pacf_all()
+        
             # Usar a função save_fig_pdf para salvar as figuras:
-        r_ut.save_fig_pdf(f"{self.folder_reports}{title}.pdf", fig1,fig2,fig3,fig4,fig5,fig6,fig7,fig9)
+        r_ut.save_fig_pdf(f"{self.folder_reports}{title}.pdf",fig1,fig2,fig3,fig4,fig5,fig6)
 
 
     def ml_metrics(self):
@@ -90,7 +95,6 @@ class Evaluator:
 
 
     def eval(self):
-        print("test")
         if(self.config['dataset_eval']['original']):
             title=f"{self.dataset}_{self.transform}_{self.model}_dataset_train"
             self.eval_dataset(self.df_train,title)
@@ -102,7 +106,6 @@ class Evaluator:
         
             
         if(self.config['gen_vs_orig_eval']["visualizations"]):
-            print('orig s original')
             from eval.real_synthetic_eval import RealSyntheticComparator
             
             label_col = 'label'
