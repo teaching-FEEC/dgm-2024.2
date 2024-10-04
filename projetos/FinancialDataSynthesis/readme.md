@@ -36,13 +36,19 @@ $$ r(t) =\frac{x(t) - x(t-1)}{x(t-1)} $$
 
 Sendo x(t) o valor do índice no período t.
 
-**Objetivos Específicos:**\\
+**Objetivos Específicos:**
+
 **1.** Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas empíricas conhecidas como fatos estilizados.
 Os fatos estilizados são propriedades estatísticas, verificadas empiricamente, que ativos financeiros possuem em diversos mercados e períodos [4]. Os principais fatos estilizados são:
+
 **a)** Heavy tails: a probabilidade de retornos extremos (ganhos ou perdas extremas) é maior do que visto em distribuições normais. Logo, as extremidades da distribuição de retornos tende a ser mais "grossas" do que as observadas em uma distribuição normal.
+
 **b)** Assimetria entre ganhos e perdas: perdas extremas tendem a serem mais prováveis do que ganhos extremos, logo a distribuição de retornos tende a ser assimétrica.
+
 **c)** Agrupamento de volatilidade: a volatilidade mostra autocorrelação, ou seja, períodos de alta volatilidade tendem a ser seguidos por outros de alta volatilidade, e o mesmo ocorre com períodos de baixa volatilidade.
+
 **d)** Curva Gaussiana: conforme aumentamos o horizonte do tempo, a distribuição de retornos tende a se tornar mais normal (Gaussiana). 
+
 **e)** Ausência de autocorrelação nos retornos: os retornos geralmente apresentam pouca ou nenhuma autocorrelação linear.
 
 
