@@ -11,4 +11,5 @@ pandas
 pip
 python-dotenv
 scikit-learn
--e .
+wandb
+python-dotenv
