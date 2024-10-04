@@ -1,4 +1,5 @@
 import math
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -6,6 +7,8 @@ from torch.utils.data import DataLoader, TensorDataset
 from functools import partial
 import numpy as np
 from tqdm.auto import tqdm
+from utils.dataset_utils import split_axis_reshape, dict_class_samples
+from models.diffusion.unet.unet_1d import UNet
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -271,7 +274,7 @@ class GaussianDiffusion(nn.Module):
             torch.Tensor: Sampled sequence.
         """
         device = self.betas.device
-        sample_inter = (self.num_timesteps // 10)
+        sample_inter = self.num_timesteps // 10
         shape = x_in
         img = torch.randn(shape, device=device)
         ret_img = img.unsqueeze(0)
@@ -281,7 +284,7 @@ class GaussianDiffusion(nn.Module):
             total=self.num_timesteps,
         ):
             img = self.p_sample(img, i)
-            if (i+1) % sample_inter == 0:
+            if (i + 1) % sample_inter == 0:
                 ret_img = torch.cat([ret_img, img.unsqueeze(0)], dim=0)
         if continous:
             return ret_img
@@ -351,11 +354,15 @@ class GaussianDiffusion(nn.Module):
         x_start = x_in
         [b, c, lenth] = x_start.shape
         t = np.random.randint(1, self.num_timesteps + 1)
-        continuous_sqrt_alpha_cumprod = torch.tensor(
-            np.random.uniform(
-                self.sqrt_alphas_cumprod_prev[t - 1], self.sqrt_alphas_cumprod_prev[t], size=b
+        continuous_sqrt_alpha_cumprod = (
+            torch.tensor(
+                np.random.uniform(
+                    self.sqrt_alphas_cumprod_prev[t - 1], self.sqrt_alphas_cumprod_prev[t], size=b
+                )
             )
-        ).to(x_start.device).float()
+            .to(x_start.device)
+            .float()
+        )
         continuous_sqrt_alpha_cumprod = continuous_sqrt_alpha_cumprod.view(b, -1)
 
         noise = default(noise, lambda: torch.randn_like(x_start))
@@ -383,23 +390,68 @@ class GaussianDiffusion(nn.Module):
         return self.p_losses(x, *args, **kwargs)
 
 
-class DiffusionTrainer:
+class DiffusionGenerator:
 
-    def __init__(self, model, seq_length, channels, epochs=10):
-        self.model = model.float()
-        self.diffusion = GaussianDiffusion(
-            self.model,
-            seq_length,
-            channels=channels,
+    def __init__(self, config):
+        self.config = config
+        self.model = None
+
+    def train(self, X_train, y_train):
+
+        params = self.config["parameters"]
+        gen_samples = self.config["n_gen_samples"]
+
+        x_df = X_train.copy()
+        self.columns_names = x_df.columns
+        self.seq_length = x_df.shape[-1]
+
+        self.model = {}
+        x_data = split_axis_reshape(x_df)
+        class_data_dict = dict_class_samples(x_data, y_train.copy())
+        for class_label in class_data_dict.keys():
+            train_data = torch.from_numpy(class_data_dict[class_label])
+            assert train_data.shape[-2:] == (6, 60)
+            model = UNet(
+                in_channel=params["in_channel"],
+                out_channel=params["out_channel"],
+                seq_length=train_data.shape[-1],
+            ).to(device)
+            model = self.train_model(model, train_data)
+            self.model[class_label] = model
+
+    def generate(self, n_samples):
+        if self.model is None:
+            raise RuntimeError("The model has not yet been trained")
+
+        synthetic_df = pd.Dataframe()
+        samples_per_class = n_samples // len(self.model)
+        for class_label, model in self.model.items():
+            diffusion = GaussianDiffusion(
+                model,
+                self.seq_length,
+                channels=6,
+            )
+            synthetic_samples = diffusion.sample(batch_size=samples_per_class)
+            synthetic_samples = synthetic_samples.view(synthetic_samples.shape[0], -1)
+            class_df = pd.DataFrame(synthetic_samples, columns=self.columns_names)
+            class_df["label"] = [class_label] * samples_per_class
+            synthetic_df = pd.concat([synthetic_df, class_df], ignore_index=True)
+
+        return synthetic_df
+
+    def train_model(self, model, x_train):
+        diffusion = GaussianDiffusion(
+            model,
+            x_train.shape[1],
+            channels=x_train.shape[-1],
             loss_type="l2",
             schedule_opt={"schedule": "cosine", "n_timestep": 1000, "cosine_s": 8e-3},
         )
-        self.epochs = epochs
-        self.optim = optim.AdamW(self.model.parameters(), lr=3e-4)
 
-    def train(self, x_train):
+        optim = optim.AdamW(model.parameters(), lr=3e-4)
         dataloader = DataLoader(TensorDataset(x_train), batch_size=64, shuffle=True)
-        for e in tqdm(range(self.epochs)):
+
+        for e in tqdm(range(self.config["epochs"])):
             for batch in tqdm(dataloader):
                 batch = batch[0].to(device)
 
@@ -408,6 +460,4 @@ class DiffusionTrainer:
                 self.optim.zero_grad()
                 loss.backward()
                 self.optim.step()
-
-    def sample(self, batch_size=32):
-        return self.diffusion.sample(batch_size, continous=False)
+        return model
