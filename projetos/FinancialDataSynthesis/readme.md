@@ -29,10 +29,12 @@ Neste trabalho, focamos na geração de dados sintéticos de ativos listados em 
 ## Objetivos
 > Descrição do que o projeto se propõe a fazer.
 > É possível explicitar um objetivo geral e objetivos específicos do projeto.
-> 
-Propor uma solução baseada em redes neurais adversárias (GANs) para a geração de dados financeiros sintéticos, preservando as principais características dos dados reais, com aplicações voltadas para a otimização de portfólios.
+>
+**Objetivo Geral:** gerar dados financeiros sintéticos realistas baseada em redes neurais adversárias (GANs). No caso, computaremos os retornos de índices financeiros nacionais e internacionais (e.g. índice Bovespa ou índice S&P 500). Esses índices representam o desempenho de um conjunto representativo de ativos (em geral, ações). O retorno r(t) para um período t é dado por:
+r(t) = [ x(t) - x(t-1) ] / x(t-1)
 
-Pretendemos gerar dados sintéticos de ativos selecionados do Bloomberg Dataset. Esses ativos representam de índices importantes que avaliam o desempenho dos mercados de renda variável e renda fixa dos EUA e do mundo em geral.
+Sendo x(t) o valor do índice no período t.
+
 
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
