@@ -67,26 +67,6 @@ class Evaluator:
         # Usar a função save_fig_pdf para salvar as figuras:
         r_ut.save_fig_pdf(f"{self.folder_reports}{title}.pdf", fig1, fig2, fig3, fig4, fig5, fig6)
 
-        evaluator = TimeSeriesDatasetEvaluator(dataset, label_col="label")
-        fig1 = evaluator.num_samples()
-        fig2 = evaluator.tsne_plot()
-        fig3 = evaluator.histogram_density()
-        fig4 = evaluator.plot_acf_pacf_all()
-        fig5 = evaluator.plot_i_samples(n_samples=10, reshape=False)
-        fig6 = evaluator.plot_random_sensor_samples_single_dataset(
-            dataset, self.activity_names, num_samples=6, sensor="gyro"
-        )
-        fig7 = evaluator.plot_random_sensor_samples_single_dataset(
-            dataset, self.activity_names, num_samples=6, sensor="accel"
-        )
-        # fig8=evaluator.plot_autocorrelation()
-        fig9 = evaluator.plot_spectrogram(sample_idx=0)
-        # fig10 = evaluator.plot_pca_correlation()
-        # Usar a função save_fig_pdf para salvar as figuras:
-        r_ut.save_fig_pdf(
-            f"{self.folder_reports}{title}.pdf", fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig9
-        )
-
     def ml_metrics(self):
         from sklearn.ensemble import RandomForestClassifier
         from sklearn.svm import SVC
