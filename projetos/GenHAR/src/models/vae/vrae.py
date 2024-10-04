@@ -126,14 +126,3 @@ class VRAE(nn.Module):
             if save:
                 # Lógica para salvar o modelo
                 pass
-
-if __name__ == "__main__":
-    # Gerar dados de exemplo
-    n_samples = 3558
-    sequence_length = 360
-    number_of_features = 6
-    x_t_train = np.random.rand(n_samples, sequence_length, number_of_features)
-    y_train = np.random.randint(1, 7, size=(n_samples,))
-
-    vae = VRAE(sequence_length=sequence_length, number_of_features=number_of_features, n_epochs=5)
-    vae.fit(x_t_train, y_train, save=True)

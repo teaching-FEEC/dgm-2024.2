@@ -5,7 +5,7 @@ import torch
 class StandardizedViewDataset:
     def __init__(self, data_folder,type='train'):
         """Inicializa a classe com o caminho da pasta principal onde os datasets estão armazenados."""
-        self.data_folder = data_folder
+        self.data_folder = f'{data_folder}/standardized_view'
         self.label_column = "activity code"
         self.standard_activity_code_names = {
             0: "sit",

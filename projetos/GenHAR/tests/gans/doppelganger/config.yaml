@@ -4,7 +4,7 @@
 datasets:
   - name: MotionSense
     path: data/standardized_view
-    type: standartized_balanced
+    type: standardized_view
     description: " XXX."
     sensors: 
             accel
@@ -13,7 +13,7 @@ datasets:
 
   - name: KuHar
     path: data/standardized_view
-    type: standartized_balanced
+    type: standardized_view
     description: " XXX."
     sensors: 
             accel
@@ -81,8 +81,3 @@ evaluations:
           save_csv_metrics: true
   
   folder_reports: tests/gans/doppelganger
-      
-  
-  
- 
-
