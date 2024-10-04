@@ -54,6 +54,9 @@ Os fatos estilizados são propriedades estatísticas, verificadas empiricamente,
 
   **e)** Ausência de autocorrelação nos retornos: os retornos geralmente apresentam pouca ou nenhuma autocorrelação linear.
 
+  Podemos avaliar se a distribuição possui "heavy tails" através da métrica kurtosis (K) que mede a tendência da distribuição apresentar valores extremos. E podemos avaliar se a distribuição possui assimetria entre ganhos e perdas através da métrica skewness (S) que mede a assimetria da distribuição em relação à média.
+Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e 2024, e temos o seguinte histograma:
+
 
 
 ## Metodologia Proposta
