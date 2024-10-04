@@ -46,7 +46,7 @@ generative_models:
         max_sequence_len: 60
         sample_len: 3
         batch_size: 32
-        epochs: 4 ### mudar
+        epochs: 20 ### mudar
     n_gen_samples: 1000
     folder_save_generate_df: data/synthetic/doppelgan
   # Logging and results

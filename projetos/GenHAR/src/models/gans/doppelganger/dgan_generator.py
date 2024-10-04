@@ -50,8 +50,12 @@ class DCGANGenerator:
 
         # Gera dados sintéticos
         synthetic_df = self.model.generate_dataframe(n_samples)
+        print(self.model.generate_numpy(n_samples)[0].shape)
+        print(self.model.generate_numpy(n_samples)[0][0])
+        print(len(self.model.generate_numpy(n_samples)[1]))
+        print(self.model.generate_numpy(n_samples)[1][0][:,-1])
 
-        print(np.unique(synthetic_df['sample'].values, return_counts=True))
+        #print(np.unique(synthetic_df['sample'].values, return_counts=True))
         synth_labels = synthetic_df["label"].values[:: self.seq_length]
         synth_data = synthetic_df.drop(columns=["label", "sample"]).values
         print(synth_data.shape)
