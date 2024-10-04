@@ -31,6 +31,9 @@ Neste trabalho, focamos na geração de dados sintéticos de ativos listados em 
 > É possível explicitar um objetivo geral e objetivos específicos do projeto.
 >
 **Objetivo Geral:** gerar dados financeiros sintéticos realistas baseada em redes neurais adversárias (GANs). No caso, computaremos os retornos de índices financeiros nacionais e internacionais (e.g. índice Bovespa ou índice S&P 500). Esses índices representam o desempenho de um conjunto representativo de ativos (em geral, ações). O retorno r(t) para um período t é dado por:\\
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
 r(t) = [ x(t) - x(t-1) ] / x(t-1)
 
 Sendo x(t) o valor do índice no período t.
