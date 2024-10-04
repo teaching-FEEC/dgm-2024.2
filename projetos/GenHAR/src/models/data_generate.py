@@ -134,6 +134,6 @@ class DataGenerate:
                 synthetic_df = pd.concat([synthetic_df, class_df], ignore_index=True)
 
             synthetic_df = synthetic_df.fillna(0)
-            assert synthetic_df.values.shape[-1] == 360
+            assert synthetic_df.values.shape[-1] == 361
 
         return synthetic_df
