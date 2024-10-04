@@ -40,25 +40,68 @@ Como objetivo principal do projeto, tentaremos extrair o mapa da Unicamp de sua 
 
 - **Proposta de avaliação dos resultados de síntese**: As métricas de avaliação encontradas na literatura foram:
 
-    - PSNR (Peak signal-to-noise ratio): Uma medida da qualidade geral de um sinal, é uma das métricas de performance mais utilizadas. Dada uma imagem real $Y$ e uma imagem sintética $\bar{Y}$, o PSNR é dado por 
 
-    $$ PSNR = 20 * \log_{10} \frac{MAX_Y}{MSE} $$
+**1. Erro Quadrático Médio (MSE)**
 
-    onde 
+  **Teoria**:
+  O Erro Quadrático Médio é uma métrica comum usada para quantificar a diferença entre a imagem prevista e a imagem de verdade. É definido como:
 
-    $$ MSE = \frac{1}{mn} \sum_{i=0}^{m-1} \sum_{j=0}^{n-1} [Y(i,j) - \bar{Y}(i,j)]^2 $$
+ ![image](https://github.com/user-attachments/assets/a9ff5edd-390a-424a-884d-766c5534f618)
 
-    - RMSE: A raíz do erro quadrático médio pixel-a-pixel. Pode ser calculado rapidamente durante o cálculo do PSRN.
+  onde N é o número total de pixels, Itrue é o valor do pixel i da imagem real e Ipred é o valor do pixel i da imagem gerada.
 
-    $$ RMSE = \sqrt{MSE} $$
+  **Referências**:
 
-    - SSIM (Structural Similarity Index): Medida de similaridade entre duas imagens. O SSIM marca cada pixel como o centro de um bloco e então SSIM compara três atributos estatísticos de cada bloco - luminância (média) contraste (variância) e estrutura (covariância). O SSIM então é calculado seguindo a fórmula a seguir: 
+  •	Zhang, Z. et al. (2012). "A survey of image denoising methods." Proceedings of the IEEE.
+  •	Shapiro, J. (2001). "Embedded Image Coding using the Coder/Decoder." IEEE Transactions on Image Processing.
 
-    $$ SSIM(x, y) = \frac{(2\mu_x\mu_y + c_1)(2\sigma_{xy}+c_2)}{(\mu^2_x+\mu^2_y+c_1)(\sigma^2_x+\sigma^2_y+c_2)} $$
+  **Aplicação na Tradução de Imagem**:
 
-    onde $c_1$ e $c_2$ são constantes para manter a estabilidade.
+  Em tarefas de tradução de imagem, o MSE é usado para avaliar a precisão em nível de pixel das imagens geradas. Um MSE mais baixo indica uma correspondência mais próxima com a imagem de verdade, sugerindo que as imagens geradas preservam bem os detalhes e o conteúdo das imagens originais.
 
-    - ACC (Acurácia de pixel): Dado um pixel $i$ com valor verdadeiro $(r_i, g_i, b_i)$ e valor previsto $(r_i', g_i', b_i')$, se $\max{(|r_i - r_i'|, |g_i - g_i'|, |b_i - b_i'|)} < \delta$, onde será utilizado o valor $\delta=5$ para obter resultados comparáveis à literatura [[2]](#2).
+
+
+**2. Relação Sinal-Ruído de Pico (PSNR)**
+   
+  **Teoria**:
+  O PSNR é derivado do MSE e fornece uma medida do erro máximo. É expresso em decibéis (dB) e definido como:
+
+ ![image](https://github.com/user-attachments/assets/310943d6-47e4-4350-b15b-ffa2d79571cd)
+
+  onde p é o número de bits por pixel.
+
+  **Referências**:
+
+  •	Gonzalez, R. C., & Woods, R. E. (2002). Digital Image Processing. Prentice Hall.
+  •	Wang, Z., & Bovik, A. C. (2009). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine.
+
+  **Aplicação na Tradução de Imagem**:
+
+  O PSNR é usado em tradução de imagem para fornecer uma maneira padronizada de comparar a qualidade das imagens geradas em relação à verdade. Valores de PSNR mais altos indicam melhor qualidade da imagem, significando menos distorção nas imagens geradas.
+
+
+
+**3. Índice de Similaridade Estrutural (SSIM)**
+
+  **Teoria**:
+  O SSIM é uma métrica perceptual que mede a similaridade estrutural entre duas imagens. Baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
+
+![image](https://github.com/user-attachments/assets/65b1b8f5-0d5b-4a0f-823c-d399c0b44076)
+
+  onde μ e σ são as médias e desvios padrão das imagens, e C1 e C2 são constantes para estabilizar a divisão.
+
+  **Referências**:
+
+  •	Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image quality assessment: From error visibility to structural similarity." IEEE Transactions on Image Processing.
+  •	Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine.
+
+  **Aplicação na Tradução de Imagem**:
+
+  O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na  
+ estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
+
+
+   
 
 ## Cronograma
 TODO: MAKE A COLORED TABLE 
