@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import torch
-from collections import defaultdict
 from models.gans.timeganpt.timegan import TimeGAN
 import pickle  # Para salvar e carregar o modelo
 from utils.dataset_utils import split_axis_reshape, dict_class_samples
@@ -23,7 +22,7 @@ class TimeGANGenerator:
         return time, max_seq_len
 
     def train(self, X_train, y_train):
-        columns = X_train.columns
+        self.columns = X_train.columns
         parameters_ = self.m_config["parameters"]
         parameters = {
             "hidden_dim": parameters_["hidden_dim"],
@@ -71,6 +70,7 @@ class TimeGANGenerator:
 
             # Criar um DataFrame para os dados sintéticos da classe atual
             class_df = pd.DataFrame(synthetic_data)
+            class_df.columns=self.columns
             # Adicionar uma coluna para a classe
             class_df["label"] = class_label
 

@@ -14,6 +14,9 @@ class Transform:
            self.apply_fft()
         elif config_t['name']=='umap':
             self.apply_umap()
+        #elif  config_t['name']=='standardscaler':      
+        #    X_scaled = StandardScaler().fit_transform(X)
+
             
 
         elif  config_t['name']=='None':

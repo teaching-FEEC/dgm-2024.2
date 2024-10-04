@@ -1,9 +1,3 @@
-# Configuration for Synthetic Data Generation and Comparison
-
-# Datasets to be compared
-# Configuration for Synthetic Data Generation and Comparison
-
-# Datasets to be compared
 datasets:
   - name: MotionSense
     path: notebooks/data
@@ -14,6 +8,26 @@ datasets:
             gyro
     reshape: None
 
+
+
+  - name: RealWorld_thigh
+    path: notebooks/data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None
+
+  - name: RealWorld_waist
+    path: notebooks/data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None  
+
   - name: KuHar
     path: notebooks/data
     type: standardized_view
@@ -21,41 +35,16 @@ datasets:
     sensors: 
             accel
             gyro
-
-  
-  
-  
-
-# Data transformations
+    reshape: None   
+    
+    # Data transformations
 transformations:
   
   - name: None
- # - name: umap
   - name: fft
-    method: FFT
-    description: " fft transform."
-    parameters:
-      n_components: 0.95  # Retain 95% of the variance
-
-  
 
 # Generative models
 generative_models:
-
-  - name: timeganpt
-    method: TIMEGANPT
-    framework: None
-    description: "https://github.com/jsyoon0823/TimeGAN/blob/master/tutorial_timegan.ipynb"
-    parameters:
-          module: gru
-          hidden_dim: 6
-          num_layer: 3
-          iterations: 10
-          batch_size: 128
-    n_gen_samples: 1000
-    folder_save_generate_df: data_gen
-
-
   - name: Doppelgangerger    
     model: GAN
     paper: DoppelGANger
@@ -68,43 +57,48 @@ generative_models:
         max_sequence_len: 360
         sample_len: 3
         batch_size: 32
-        epochs: 20 ### mudar
-    n_gen_samples: 1000
+        epochs: 5 ### mudar
+    n_gen_samples: 400
   # Logging and results
     logging:
       log_level: INFO
       save_models: true
     folder_save_generate_df: data_gen
 
+  - name: timeganpt
+    method: TIMEGANPT
+    framework: None
+    description: "https://github.com/jsyoon0823/TimeGAN/blob/master/tutorial_timegan.ipynb"
+    parameters:
+          module: gru
+          hidden_dim: 6
+          num_layer: 3
+          iterations: 10
+          batch_size: 128
+    n_gen_samples: 5
+    folder_save_generate_df: data_gen
 
 
-  
-          
 
 
-# Evaluations for comparing real and synthetic data
+
 evaluations:
   dataset_eval:
-      original: true
-      synthetic: true
+      original: false
+      synthetic: false
       reports:
         #  save_html_report: true
-          save_pdf_reports: true
+          save_pdf_reports: false
        #   save_csv_metrics: true
-      
-  gen_vs_orig_eval:
-        
-      visualizations: true
-      ml: true      
+
+ # Evaluations for comparing real and synthetic data     
+  gen_vs_orig_eval:        
+      visualizations: false
+      ml: false      
       
       reports:
           #save_html_report: true
-          save_pdf_reports: true
-          save_csv_metrics: true
+          save_pdf_reports: false
+          save_csv_metrics: false
   
   folder_reports: reports
-      
-  
-  
- 
-
