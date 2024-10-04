@@ -1,6 +1,6 @@
 datasets:
   - name: MotionSense
-    path: notebooks/data
+    path: data
     type: standardized_view
     description: " XXX."
     sensors: 
@@ -11,7 +11,7 @@ datasets:
 
 
   - name: RealWorld_thigh
-    path: notebooks/data
+    path: data
     type: standardized_view
     description: " XXX."
     sensors: 
@@ -20,7 +20,7 @@ datasets:
     reshape: None
 
   - name: RealWorld_waist
-    path: notebooks/data
+    path: data
     type: standardized_view
     description: " XXX."
     sensors: 
@@ -29,7 +29,7 @@ datasets:
     reshape: None  
 
   - name: KuHar
-    path: notebooks/data
+    path: data
     type: standardized_view
     description: " XXX."
     sensors: 
@@ -57,7 +57,7 @@ generative_models:
           iterations: 400
           batch_size: 128
     n_gen_samples: 5
-    folder_save_generate_df: data_gen
+    folder_save_generate_df: data/synthetic/timegan
 
 
 
@@ -65,21 +65,17 @@ generative_models:
 
 evaluations:
   dataset_eval:
-      original: false
-      synthetic: false
+      original: true
+      synthetic: true
       reports:
         #  save_html_report: true
-          save_pdf_reports: false
+          save_pdf_reports: true
        #   save_csv_metrics: true
-
- # Evaluations for comparing real and synthetic data     
-  gen_vs_orig_eval:        
-      visualizations: false
-      ml: false      
-      
+  gen_vs_orig_eval:
+      visualizations: true
+      ml: true
       reports:
-          #save_html_report: true
-          save_pdf_reports: false
-          save_csv_metrics: false
-  
-  folder_reports: reports
+          save_html_report: true
+          save_pdf_reports: true
+          save_csv_metrics: true
+  folder_reports: tests/gans/timeganpt

@@ -30,8 +30,8 @@ generative_models:
     parameters:
       in_channel: 6
       out_channel: 6
-    n_gen_samples: 1000
-    epochs: 4
+    n_gen_samples: 3000
+    epochs: 100
     folder_save_generate_df: data/synthetic/unconditional_unet
 
 # Evaluations for comparing real and synthetic data

@@ -1,5 +1,6 @@
 import math
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -405,11 +406,20 @@ class DiffusionGenerator:
         self.columns_names = x_df.columns
 
         self.model = {}
+        self.scaler = {}
         x_data = split_axis_reshape(x_df)
         class_data_dict = dict_class_samples(x_data, y_train.copy())
         for class_label in class_data_dict.keys():
-            train_data = torch.from_numpy(class_data_dict[class_label])
+            train_data = class_data_dict[class_label]
             assert train_data.shape[-2:] == (6, 60)
+
+            transform_data = train_data.transpose(0, 2, 1).reshape(-1, 6)
+            scaler = StandardScaler()
+            scaler.fit(transform_data)
+            transform_data = scaler.transform(transform_data)
+            train_data = transform_data.reshape(train_data.shape[0], 60, 6).transpose(0, 2, 1)
+            train_data = torch.from_numpy(train_data)
+
             model = UNet(
                 in_channel=params["in_channel"],
                 out_channel=params["out_channel"],
@@ -417,6 +427,7 @@ class DiffusionGenerator:
             ).to(device)
             model = self.train_model(model, train_data)
             self.model[class_label] = model
+            self.scaler[class_label] = scaler
 
     def generate(self, n_samples):
         if self.model is None:
@@ -433,7 +444,10 @@ class DiffusionGenerator:
                 schedule_opt={"schedule": "cosine", "n_timestep": 1000, "cosine_s": 8e-3},
             )
             synthetic_samples = diffusion.sample(batch_size=samples_per_class).detach().cpu()
-            synthetic_samples = synthetic_samples.view(synthetic_samples.shape[0], -1)
+            synthetic_samples = synthetic_samples.transpose(2, 1).reshape(-1, 6)
+            synthetic_samples = self.scaler[class_label].inverse_transform(synthetic_samples)
+            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(0, 2, 1)
+            synthetic_samples = synthetic_samples.reshape(samples_per_class, -1)
             class_df = pd.DataFrame(synthetic_samples, columns=self.columns_names)
             class_df["label"] = [class_label] * samples_per_class
             synthetic_df = pd.concat([synthetic_df, class_df], ignore_index=True)

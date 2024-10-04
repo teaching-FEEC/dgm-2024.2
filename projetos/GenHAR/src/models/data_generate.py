@@ -23,22 +23,22 @@ class DataGenerate:
         self.folder_save = f"{m_config['folder_save_generate_df']}/{dataset}_{transformation}_{self.m_config['name']}"
 
     def train(self, X_train, y_train):
-        try:
+        #try:
             X_train_ = X_train.copy()
             log.print_debug(f"-----train----{self.m_config['name']}")
             self.model = self.generator.train(X_train_, y_train)
-        except Exception as e:
-            log.print_err(f"Error in trainning synthetic data: {e}")
+        #except Exception as e:
+        #    log.print_err(f"Error in trainning synthetic data: {e}")
 
     def generate(self):
-        try:
+        #try:
             log.print_debug(f"-----generate ----{self.m_config['name']}")
             self.synthetic_df = self.generator.generate(self.n_gen_samples)
             if self.folder_save is not None:
                 self.save_data(self.folder_save)
             return self.synthetic_df
-        except Exception as e:
-            log.print_err(f"Error in generating synthetic data: {e}")
+        #except Exception as e:
+        #    log.print_err(f"Error in generating synthetic data: {e}")
 
     def save_data(self, folder, filename="synthetic_data.csv"):
         try:

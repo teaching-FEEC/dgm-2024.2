@@ -1,13 +1,20 @@
 import numpy as np
-from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score, mutual_info_score
+from sklearn.metrics import (
+    silhouette_score,
+    davies_bouldin_score,
+    calinski_harabasz_score,
+    mutual_info_score,
+)
 from scipy.stats import entropy
 from scipy.stats import zscore
+
 """Métrica	        Intervalo	Valores ideais
 Silhouette Score	-1 a 1	1 é ideal, 0 é limítrofe, -1 é ruim
 Davies-Bouldin Score	0 a ∞ (sem limite superior)	0 é ideal, valores menores são melhores
 Calinski-Harabasz Score	0 a ∞ (sem limite superior)	Valores maiores indicam melhor separação
 Mutual Information Score	0 a 1	1 é ideal, 0 significa sem correspondência
 """
+
 
 class UnsupervisedLearningMetrics:
     def __init__(self, df):
@@ -43,7 +50,6 @@ class UnsupervisedLearningMetrics:
         z_scores = np.abs(zscore(self.X))
         outliers = (z_scores > threshold).any(axis=1)
         return self.X[outliers], self.labels[outliers]
-    
 
     def mcd(self):
         # Implementação da Minimum Classification Difference
@@ -71,29 +77,22 @@ class UnsupervisedLearningMetrics:
 
     def evaluate(self):
         results = {
-            'Silhouette Score': self.silhouette(),
-            'Davies-Bouldin Index': self.davies_bouldin(),
-            'Calinski-Harabasz Index': self.calinski_harabasz(),
-            'Entropy': self.entropy_measure(),
-            'Mutual Information': self.mutual_information(),
-            'A-distance': self.a_distance(),
-            'H∆H-divergence': self.h_delta_h_divergence(),
-            'MCD': self.mcd(),
-            'MDD': self.mdd(),
-            'DEV': self.dev(),
-            'SND': self.snd(),
-            'ISM': self.ism(),
-            'ACM': self.acm(),
-            #'zscore_outliers':self.zscore_outliers(),
+            "Silhouette Score": self.silhouette(),
+            "Davies-Bouldin Index": self.davies_bouldin(),
+            "Calinski-Harabasz Index": self.calinski_harabasz(),
+            "Entropy": self.entropy_measure(),
+            "Mutual Information": self.mutual_information(),
+            "A-distance": self.a_distance(),
+            "H∆H-divergence": self.h_delta_h_divergence(),
+            "MCD": self.mcd(),
+            "MDD": self.mdd(),
+            "DEV": self.dev(),
+            "SND": self.snd(),
+            "ISM": self.ism(),
+            "ACM": self.acm(),
+            # 'zscore_outliers':self.zscore_outliers(),
         }
         return results
-    
-    
-    
-
-
-
-    
 
 
 # Exemplo de uso:

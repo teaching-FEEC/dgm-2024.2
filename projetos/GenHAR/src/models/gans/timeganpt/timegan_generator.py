@@ -35,7 +35,7 @@ class TimeGANGenerator:
         # Reformatar os dados para (n_amostras, 60, 6) se necessário
         reshape = True
         if reshape:
-            X_train = split_axis_reshape(X_train.values).transpose(0, 2, 1)
+            X_train = split_axis_reshape(X_train).transpose(0, 2, 1)
 
         class_data = dict_class_samples(X_train, y_train.values)
 
