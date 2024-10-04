@@ -403,7 +403,6 @@ class DiffusionGenerator:
 
         x_df = X_train.copy()
         self.columns_names = x_df.columns
-        self.seq_length = x_df.shape[-1]
 
         self.model = {}
         x_data = split_axis_reshape(x_df)
@@ -414,7 +413,7 @@ class DiffusionGenerator:
             model = UNet(
                 in_channel=params["in_channel"],
                 out_channel=params["out_channel"],
-                seq_length=train_data.shape[-1],
+                seq_length=60,
             ).to(device)
             model = self.train_model(model, train_data)
             self.model[class_label] = model
@@ -423,15 +422,17 @@ class DiffusionGenerator:
         if self.model is None:
             raise RuntimeError("The model has not yet been trained")
 
-        synthetic_df = pd.Dataframe()
+        synthetic_df = pd.DataFrame()
         samples_per_class = n_samples // len(self.model)
         for class_label, model in self.model.items():
             diffusion = GaussianDiffusion(
                 model,
-                self.seq_length,
+                60,
                 channels=6,
+                loss_type="l2",
+                schedule_opt={"schedule": "cosine", "n_timestep": 1000, "cosine_s": 8e-3},
             )
-            synthetic_samples = diffusion.sample(batch_size=samples_per_class)
+            synthetic_samples = diffusion.sample(batch_size=samples_per_class).detach().cpu()
             synthetic_samples = synthetic_samples.view(synthetic_samples.shape[0], -1)
             class_df = pd.DataFrame(synthetic_samples, columns=self.columns_names)
             class_df["label"] = [class_label] * samples_per_class
@@ -440,7 +441,7 @@ class DiffusionGenerator:
         return synthetic_df
 
     def train_model(self, model, x_train):
-        diffusion = GaussianDiffusion(
+        diffusion_process = GaussianDiffusion(
             model,
             x_train.shape[1],
             channels=x_train.shape[-1],
@@ -448,16 +449,16 @@ class DiffusionGenerator:
             schedule_opt={"schedule": "cosine", "n_timestep": 1000, "cosine_s": 8e-3},
         )
 
-        optim = optim.AdamW(model.parameters(), lr=3e-4)
+        optimizer = optim.AdamW(model.parameters(), lr=3e-4)
         dataloader = DataLoader(TensorDataset(x_train), batch_size=64, shuffle=True)
 
         for e in tqdm(range(self.config["epochs"])):
             for batch in tqdm(dataloader):
                 batch = batch[0].to(device)
 
-                loss = self.diffusion(batch.float())
+                loss = diffusion_process(batch.float())
 
-                self.optim.zero_grad()
+                optimizer.zero_grad()
                 loss.backward()
-                self.optim.step()
+                optimizer.step()
         return model

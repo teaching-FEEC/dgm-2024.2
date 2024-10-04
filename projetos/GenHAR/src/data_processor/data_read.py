@@ -14,8 +14,8 @@ class DataRead:
         if dataset_config["type"] == "standardized_view":
             # se o diretorio não existe baixa os arquivos na pasta data
             from data_processor import download_dataset as dw
-
             dw.download_zenodo_datasets(dataset_config["path"])
+
             try:
                 # Carregar o dataset de treino
                 svd_train = StandardizedViewDataset(
@@ -48,4 +48,4 @@ class DataRead:
         try:
             return self.x_train, self.y_train, self.x_test, self.y_test, self.x_val, self.y_val
         except Exception as e:
-            log.print_err(f"Error in standardized_balanced dataset read: {e}")
+            log.print_err(f"Error in standardized_balanced dataset get: {e}")
