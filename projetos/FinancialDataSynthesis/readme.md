@@ -57,7 +57,7 @@ Os fatos estilizados são propriedades estatísticas, verificadas empiricamente,
   Podemos avaliar se a distribuição possui "heavy tails" através da métrica kurtosis (K) que mede a tendência da distribuição apresentar valores extremos. E podemos avaliar se a distribuição possui assimetria entre ganhos e perdas através da métrica skewness (S) que mede a assimetria da distribuição em relação à média.
 Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e 2024, e temos o seguinte histograma:
 
-![Texto Alternativo](projetos/FinancialDataSynthesis/histograma.png "Histograma")
+![Texto Alternativo](histograma.png "Histograma")
 
 
 
