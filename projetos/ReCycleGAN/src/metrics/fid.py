@@ -4,6 +4,7 @@ Code source: https://www.kaggle.com/code/ibtesama/gan-in-pytorch-with-fid
 """
 
 import numpy as np
+import torch
 from torch import nn
 from torch.nn import functional as F
 from torchvision import models
@@ -134,9 +135,11 @@ class FID():
     Attributes
     ----------
     dims : int
-        Dimensionality of features in InceptionV3 network. Default is 2048.
+        Dimensionality of features in InceptionV3 network.
+        (Default: 2048)
     cuda : bool
-        If True, use GPU to compute activations. Default is False.
+        If True, use GPU to compute activations.
+        (Default: False)
     """
     def __init__(self, dims=2048, cuda=False):
         self.dims = dims
@@ -155,7 +158,8 @@ class FID():
             batch=images.cuda()
         else:
             batch=images
-        pred = self.model(batch)[0]
+        with torch.no_grad():
+            pred = self.model(batch)[0]
 
         # If model output is not scalar, apply global spatial average pooling.
         # This happens if you choose a dimensionality not equal 2048.
