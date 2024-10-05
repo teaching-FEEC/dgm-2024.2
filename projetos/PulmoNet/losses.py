@@ -6,7 +6,9 @@ def get_disc_loss(gen,disc,criterion,input_mask,input_img,device):
     gt_gen = torch.zeros_like(ans_gen)
     ans_real = disc(input_img)
     gt_real = torch.ones_like(ans_real)
+    # Concatenando os vetores do output do discriminador das reais com as geradas
     x = torch.cat((ans_real.reshape(-1),ans_gen.reshape(-1)))
+    # Concatenando os vetores dos labels reais das images reais com as geradas
     y = torch.cat((gt_real.reshape(-1),gt_gen.reshape(-1)))
     loss = criterion(x,y)
     #the regularization (l1 norm) is not important here: is independent of D
