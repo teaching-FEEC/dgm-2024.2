@@ -2,10 +2,20 @@
 
 Source: https://github.com/richzhang/PerceptualSimilarity/"""
 
+import random
+import math
+import itertools
 import warnings
 import torch
 import lpips
 import numpy as np
+try:
+    from tqdm import tqdm
+except ImportError:
+    # If tqdm is not available, provide a mock version of it
+    def tqdm(x):
+        """Dummy function for tqdm."""
+        return x
 
 class LPIPS():
     """Wrapper to compute Perceptual Similarity Metric (LPIPS).
@@ -25,11 +35,19 @@ class LPIPS():
     no_grad : bool
         If True, use torch.no_grad() context.
         (Default: True).
+    batch_size : int
+        Batch size to use.
+        (Default: 128).
+    max_pairs : int
+        Maximum number of pairs to use.
+        (Default: 10000).
     """
-    def __init__(self, net='alex', cuda=False, rescale=True, no_grad=True):
+    def __init__(self, net='alex', cuda=False, rescale=True, no_grad=True, batch_size=128, max_pairs=10000):
         self.cuda = cuda
         self.rescale = rescale
         self.no_grad = no_grad
+        self.batch_size = batch_size
+        self.max_pairs = max_pairs
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -39,28 +57,48 @@ class LPIPS():
         if cuda:
             self.model.cuda()
 
-    @staticmethod
-    def tensor2im(image_tensor, imtype=np.uint8, cent=1., factor=255./2.):
-        """Convert tensor to image."""
-        image_numpy = image_tensor[0].cpu().float().numpy()
-        image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + cent) * factor
-        return image_numpy.astype(imtype)
+    def _lpips(self, img0, img1, normalize, use_all_pairs):
+        if use_all_pairs:
+            all_pairs = self._get_all_pairs(img0, img1)
+        else:
+            all_pairs = np.array([(i, i) for i in range(len(img0))])
+        pred_arr = None
+        start_idx = 0
+        for _ in tqdm(range(math.ceil(len(all_pairs) / self.batch_size))):
+            i0 = all_pairs[start_idx:start_idx + self.batch_size, 0]
+            i1 = all_pairs[start_idx:start_idx + self.batch_size, 1]
 
-    @staticmethod
-    def im2tensor(image, cent=1., factor=255./2.):
-        """Convert image to tensor."""
-        return torch.Tensor((image / factor - cent)
-                            [:, :, :, np.newaxis].transpose((3, 2, 0, 1)))
+            lpips_values = self.model.forward(img0[i0], img1[i1], normalize=normalize)
+            if pred_arr is None:
+                pred_arr = lpips_values
+            else:
+                pred_arr = torch.cat((pred_arr, lpips_values))
+            start_idx += self.batch_size
+        return pred_arr
 
-    def get(self, images_real,images_fake):
+    def _get_all_pairs(self, list1, list2):
+        i1 = list(range(len(list1)))
+        i2 = list(range(len(list2)))
+        all_pairs = list(itertools.product(i1, i2))
+        random.shuffle(all_pairs)
+        return np.array(all_pairs[:min(len(all_pairs), self.max_pairs)])
+
+    def get(self, images_real,images_fake, all_pairs=False):
         """Calculate LPIPS between real and fake images."""
+        if not all_pairs:
+            if len(images_real) != len(images_fake):
+                msg = 'Number of real and fake images must be the same.'
+                raise ValueError(msg)
+
         if self.cuda:
             images_real = images_real.cuda()
             images_fake = images_fake.cuda()
 
         if self.no_grad:
             with torch.no_grad():
-                lpips_value = self.model.forward(images_real, images_fake, normalize=self.rescale)
+                lpips_value = self._lpips(images_real, images_fake,
+                                          normalize=self.rescale, use_all_pairs=all_pairs)
         else:
-            lpips_value = self.model.forward(images_real, images_fake)
+            lpips_value = self._lpips(images_real, images_fake,
+                                      normalize=self.rescale, use_all_pairs=all_pairs)
         return lpips_value

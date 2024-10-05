@@ -20,9 +20,11 @@ class TestFID(unittest.TestCase):
         # Use cuda
         self.cuda = True
         # Load image paths from CSV files
-        self.n = 200
+        self.n = 2048
         # Print memory usage
-        self.print_memory = True
+        self.print_memory = False
+        # Run FID tests
+        self.run_fid = False
 
         folder = Path(__file__).resolve().parent.parent / 'data' / 'external' / 'nexet'
         self.train_A_csv = folder / 'input_A_train.csv'
@@ -63,6 +65,8 @@ class TestFID(unittest.TestCase):
         print("===============")
         print("FID calculation")
         print("===============")
+        if not self.run_fid:
+            return
         if self.print_memory:
             print_gpu_memory_usage("Initital memory usage:")
         fid = FID(dims=2048, cuda=self.cuda)
@@ -111,23 +115,30 @@ class TestFID(unittest.TestCase):
             print_gpu_memory_usage("Initital memory usage:")
         lpips = LPIPS(cuda=self.cuda)
 
+        n = min([len(self.train_A_imgs), len(self.train_B_imgs), len(self.test_A_imgs), len(self.test_B_imgs)])
+
         start_time = time.time()
-        lpips_equal = lpips.get(self.train_A_imgs, self.train_A_imgs)
+        lpips_equal = lpips.get(self.train_A_imgs[:n], self.train_A_imgs[:n])
         elapsed_time = time.time() - start_time
         print(f"LPIPS loss of the same images: {lpips_equal.mean():0.3g} ± {lpips_equal.std():0.3g} ({elapsed_time:.3f} s)")
 
         start_time = time.time()
-        lpips_same_A = lpips.get(self.train_A_imgs, self.test_A_imgs)
+        lpips_equal_pairs = lpips.get(self.train_A_imgs, self.train_A_imgs, all_pairs=True)
+        elapsed_time = time.time() - start_time
+        print(f"LPIPS loss of the same group of images by pairs: {lpips_equal_pairs.mean():0.3g} ± {lpips_equal_pairs.std():0.3g} ({elapsed_time:.3f} s)")
+
+        start_time = time.time()
+        lpips_same_A = lpips.get(self.train_A_imgs[:n], self.test_A_imgs[:n])
         elapsed_time = time.time() - start_time
         print(f"LPIPS loss of only A images: {lpips_same_A.mean():0.3g} ± {lpips_same_A.std():0.3g} ({elapsed_time:.3f} s)")
 
         start_time = time.time()
-        lpips_same_B = lpips.get(self.train_A_imgs, self.test_A_imgs)
+        lpips_same_B = lpips.get(self.train_A_imgs[:n], self.test_A_imgs[:n])
         elapsed_time = time.time() - start_time
         print(f"LPIPS loss of only B images: {lpips_same_B.mean():0.3g} ± {lpips_same_B.std():0.3g} ({elapsed_time:.3f} s)")
 
         start_time = time.time()
-        lpips_different = lpips.get(self.train_A_imgs, self.train_B_imgs)
+        lpips_different = lpips.get(self.train_A_imgs[:n], self.train_B_imgs[:n])
         elapsed_time = time.time() - start_time
         print(f"LPIPS loss of A x B images: {lpips_different.mean():0.3g} ± {lpips_different.std():0.3g} ({elapsed_time:.3f} s)")
 
