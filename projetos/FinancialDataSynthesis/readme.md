@@ -38,7 +38,7 @@ Sendo x(t) o valor do índice no período t.
 
 **Objetivos Específicos:**
 
-**1.** Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas empíricas conhecidas como fatos estilizados.
+**1.** Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas conhecidas como fatos estilizados.
 Os fatos estilizados são propriedades estatísticas, verificadas empiricamente, que ativos financeiros possuem em diversos mercados e períodos [4]. Os principais fatos estilizados são:
 
   **a)** Heavy tails: a probabilidade de retornos extremos (ganhos ou perdas extremas) é maior do que visto em distribuições normais. Logo, as extremidades da 
@@ -59,7 +59,7 @@ Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e
 
 ![Texto Alternativo](histograma.png "Histograma")
 
-Verificamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, ou seja, há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma.
+Verificamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, ou seja, há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma. Os outros fatos também podem ser verificados através de métricas adequadas.
 
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
