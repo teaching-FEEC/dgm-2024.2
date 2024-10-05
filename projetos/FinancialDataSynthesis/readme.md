@@ -188,6 +188,6 @@ Para a avaliação da qualidade dos nossos geradores de dados sintéticos, vamos
 [4] F.Eckerli, J.Osterrieder.
 " Generative Adversarial Networks in finance: an overview."
 
-[5]- Bernardo K. Pagnoncelli ,Arturo Cifuentes, Domingo Ramírez and Hamed Rahimian.
+[5]- Bernardo K. Pagnoncelli, Arturo Cifuentes, Domingo Ramírez and Hamed Rahimian.
  "A Synthetic Data-Plus-Features Driven Approach for Portfolio Optimization".
  Computational Economics, 2023, Volume 62, Number 1, Page 187.
