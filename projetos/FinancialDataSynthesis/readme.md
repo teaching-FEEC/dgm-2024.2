@@ -15,7 +15,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 > Resumo do objetivo, metodologia **e resultados** obtidos (na entrega E2 é possível relatar resultados parciais). Sugere-se máximo de 100 palavras. 
 
 ## Descrição do Problema/Motivação
-O desenvolvimento de modelos precisos que utilizam dados financeiros é consideravelmente desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos.
+O desenvolvimento de modelos precisos que utilizam dados financeiros é consideravelmente desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos [5].
 
 Há um movimento crescente entre pesquisadores para otimizar modelos de machine learning através da incorporação de dados financeiros sintéticos [4]. A geração de dados sintéticos permite melhorar o desempenho de métodos que, até então, apresentavam resultados insatisfatórios ou eram inviáveis na prática devido à falta de dados, além de possibilitar a simulação de eventos raros ou extremos. 
 
@@ -38,11 +38,13 @@ Sendo x(t) o valor do índice no período t.
 
 **Objetivos Específicos:**
 
+Neste projeto, temos dois objetivos específicos.
+
 **1.** Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas conhecidas como fatos estilizados.
 Os fatos estilizados são propriedades estatísticas, verificadas empiricamente, que ativos financeiros possuem em diversos mercados e períodos [4]. Os principais fatos estilizados são:
 
   **a)** Heavy tails: a probabilidade de retornos extremos (ganhos ou perdas extremas) é maior do que visto em distribuições normais. Logo, as extremidades da 
-  distribuição de retornos tende a ser mais "grossas" do que as observadas em uma distribuição normal.
+  distribuição de retornos tende a ser mais "grossas" do que as observadas em uma curva normal.
 
   **b)** Assimetria entre ganhos e perdas: perdas extremas tendem a serem mais prováveis do que ganhos extremos, logo a distribuição de retornos tende a ser 
   assimétrica.
@@ -50,7 +52,7 @@ Os fatos estilizados são propriedades estatísticas, verificadas empiricamente,
   **c)** Agrupamento de volatilidade: a volatilidade mostra autocorrelação, ou seja, períodos de alta volatilidade tendem a ser seguidos por outros de alta    
   volatilidade, e o mesmo ocorre com períodos de baixa volatilidade.
 
-  **d)** Curva Gaussiana: conforme aumentamos o horizonte do tempo, a distribuição de retornos tende a se tornar mais normal (Gaussiana). 
+  **d)** Curva Gaussiana: conforme aumentamos o horizonte do tempo, a distribuição de retornos tende a aproximar da curva Gaussiana. 
 
   **e)** Ausência de autocorrelação nos retornos: os retornos geralmente apresentam pouca ou nenhuma autocorrelação linear.
 
@@ -59,7 +61,9 @@ Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e
 
 ![Texto Alternativo](histograma.png "Histograma")
 
-Verificamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, ou seja, há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma. Os outros fatos também podem ser verificados através de métricas adequadas.
+Observamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, no caso há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma. Os outros fatos também podem ser verificados através de métricas adequadas. Dessa forma, para averiguar se um dado sintético pode ser considerado realista, podemos analisar se ele possui essas propriedades.
+
+**2.** Condicionar a geração de dados sintéticos financeiros à diferentes períodos econômicos. Conforme mencionado por Peña et al. [3], o comportamento dos ativos pode variar de acordo com o período econômico, também conhecidos como regimes de mercado, em que se encontram. Por exemplo, os ativos em geral se tornam mais voláteis em períodos de crise. Dessa forma, pretendemos separar os períodos econômicos em categorias, como: período de alta, de baixa, de normalidade, e condicionar a geração de dados de acordo com cada categoria, obtendo assim, dados sintéticos mais realistas. Para tal, podemos utilizar técnicas de clusterização nas séries temporais estudadas, agrupando dados que apresentam comportamentos semelhantes. 
 
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
@@ -69,7 +73,7 @@ Verificamos que o Skewness (S) é negativo, indicando que há uma assimetria ent
 > Apontar ferramentas relevantes.
 > Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
 
-
+**ESCREVER SOBRE O PROCESSO DE CLUSTERIZAÇÃO DOS PERÍODOS ECONÔMICOS (MARKET REGIMS)**
 Como foi dito anteriormente, gerar dados sintéticos financeiros é particularmente desafiador devido à natureza complexa dessas informações, além de suas características estatísticas imprevisíveis. Além disso, os dados podem apresentar uma mudança significativa e permanente após certos eventos disruptivos, como a crise de 2008, por exemplo.
 
 Dessa forma, pensamos em inicialmente gerar dados financeiros sintéticos condicionados à períodos econômicos específicos, em que os dados apresentaram comportamento relativamente estável. Por exemplo, considere o índice S&P 500 que mede o desempenho das ações das 500 maiores empresas listadas na bolsa dos EUA. Podemos condicionar a geração de dados sintéticos desse índice aos seguintes períodos:
@@ -97,6 +101,8 @@ O maior desafio do projeto será a geração de dados sintéticos realistas, o q
 
 - **API do Yahoo Finance** permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.
 - **Fama-French Datasets** disponivel em [3]. Esta base de dados contém informações sobre fatores de risco sistemático e é amplamente utilizada em estudos de modelagem de retornos financeiros, como no estudo de regressão sintética de Li et al. [1]. Neste dataset temos os seguentes fatores de risco sistemático Market Risk Premium (Mkt-RF), Small Minus Big (SMB), High Minus Low (HML), Risk-Free Rate (RF).
+
+- **Talvez nao precise explicar cada ativo**
 - **Bloomberg Dataset** conforme utilizado no trabalho de Peña et al. [2]. Esta base de dados inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o retorno histórico dos seguintes ativos:
     - **us_equities**: Refere-se as variações percentuais do índice S&P 500 que é composto pelas 500 maiores empresas listadas na bolsa de Nova York.
     - **us_equities_tech**: Refere-se as variações percentuais do índice Nasdaq 100 que é composto pelas 100 maiores empresas de tecnologia listadas na bolsa de Nova York.
@@ -181,11 +187,14 @@ Para a avaliação da qualidade dos nossos geradores de dados sintéticos, vamos
 *Journal of Business & Economic Statistics* 40, no. 4 (2022): 1665-1677.
 
 [2] Peña, José-Manuel, Fernando Suárez, Omar Larré, Domingo Ramírez, and Arturo Cifuentes. 
-"A modified CTGAN-plus-features-based method for optimal asset allocation.
-" Quantitative Finance 24, no. 3-4 (2024): 465-479.
+"A modified CTGAN-plus-features-based method for optimal asset allocation".
+" Quantitative Finance 24, no. 3-4 (2024): 465-479".
 
 [3] https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html
 
 [4] F.Eckerli, J.Osterrieder.
 " Generative Adversarial Networks in finance: an overview."
 
+[5]- Bernardo K. Pagnoncelli ,Arturo Cifuentes, Domingo Ramírez and Hamed Rahimian.
+ "A Synthetic Data-Plus-Features Driven Approach for Portfolio Optimization".
+ Computational Economics, 2023, Volume 62, Number 1, Page 187.
