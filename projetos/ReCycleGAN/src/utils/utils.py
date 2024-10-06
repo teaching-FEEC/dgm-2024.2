@@ -11,7 +11,7 @@ import torch
 import wandb
 
 class Constants:
-    DATASET_FILEPATH = "./data/external/nexet"
+    DATASET_FILEPATH = "./data/external"
     WB_PROJECT = "cyclegan"
     WB_DB_UPLOAD_JOB = "dataset_upload"
     WB_DB_ARTIFACT_TYPE = "datasets"
