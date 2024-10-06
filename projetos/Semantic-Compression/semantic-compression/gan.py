@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tqdm.auto import tqdm
 from keras import layers, models, optimizers
-from .utils import normalize_input, denormalize_output
+from utils import normalize_input, denormalize_output
 
 class Block(layers.Layer):
     def __init__(self, filters, kernel_size):
