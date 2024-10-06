@@ -108,7 +108,7 @@ class TimeSeriesDatasetEvaluator:
             samples = self.df_time.loc[selected_real].values
 
             if reshape:
-                real_samples = samples.reshape(-1, 60, 6)
+                samples = samples.reshape(-1, 6, 60).transpose(0, 2, 1)
 
             samples_per_activity.append(samples)
 
@@ -120,7 +120,7 @@ class TimeSeriesDatasetEvaluator:
         for col, (activity, samples) in enumerate(zip(activity_names, samples_per_activity)):
             for row in range(min(n_samples, len(samples))):
                 if len(samples) > 0:  # Check if there are samples using length
-                    axs[col, row].imshow(samples[row].reshape(60, 6), aspect="auto")
+                    axs[col, row].imshow(samples[row].reshape(60,6), aspect="auto")
                     axs[col, row].set_title(f"{activity} {row + 1}")
 
                     # Remove axis ticks and labels
@@ -274,7 +274,7 @@ class TimeSeriesDatasetEvaluator:
             return
         # Create subplots for num_samples rows and 1 column
         fig, axes = plt.subplots(
-            ncols=num_samples, nrows=6, figsize=(5 * num_samples, 5 * 6), sharex=True, sharey=True
+            ncols=num_samples, nrows=6, figsize=(5 * num_samples, 5 * 6), sharex=True, sharey='row'
         )
         fig.suptitle(f"{sensor} Data Samples", fontsize=16)
 
