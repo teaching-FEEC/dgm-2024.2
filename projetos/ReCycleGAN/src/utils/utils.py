@@ -157,8 +157,7 @@ def show_img(img, title=None, figsize=(4, 3), show=False):
         plt.show()
         return None
     return fig
-
-
+  
 def get_gpu_memory_usage():
     """Get the memory usage of all GPUs."""
     pynvml.nvmlInit()

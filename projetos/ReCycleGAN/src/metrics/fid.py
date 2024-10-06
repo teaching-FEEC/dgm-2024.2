@@ -18,7 +18,6 @@ except ImportError:
 
 class FID():
     """Wrapper to compute Fréchet Inception Distance (FID).
-
     Attributes
     ----------
     dims : int
