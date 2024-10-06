@@ -7,13 +7,13 @@ from lungmask import LMInferer
 
 
 class rawCTData(Dataset):
-    def __init__(self, mode: str, transform: Optional[Callable] = None):
+    def __init__(self, raw_data_folder: str, mode: str, transform: Optional[Callable] = None):
         super().__init__()
         if mode == 'train':
-            self.cts = sorted(glob(os.path.join(RAW_DATA_FOLDER, mode, "imagesTr", "*.nii.gz")))
-            self.labels = sorted(glob(os.path.join(RAW_DATA_FOLDER, mode, "labelsTr", "*.nii.gz")))
+            self.cts = sorted(glob(os.path.join(raw_data_folder, mode, "imagesTr", "*.nii.gz")))
+            self.labels = sorted(glob(os.path.join(raw_data_folder, mode, "labelsTr", "*.nii.gz")))
         else:
-            self.cts = sorted(glob(os.path.join(RAW_DATA_FOLDER, mode, "*.nii.gz")))
+            self.cts = sorted(glob(os.path.join(raw_data_folder, mode, "*.nii.gz")))
         self.transform = transform
         self.inferer = LMInferer()
 
@@ -50,14 +50,20 @@ class rawCTData(Dataset):
 
 
 class lungCTData(Dataset):
-    def __init__(self, mode: str, qntty: Optional[int] = None, transform: Optional[Callable] = None):
+    def __init__(self, processed_data_folder: str, mode: str, start: Optional[int] = None, end: Optional[int] = None, transform: Optional[Callable] = None):
         super().__init__()
-        if qntty is not None:
-            self.cts = sorted(glob(os.path.join(PROCESSED_DATA_FOLDER, mode, "imagesTr", "*.npz")))[:qntty]
-            self.labels = sorted(glob(os.path.join(PROCESSED_DATA_FOLDER, mode, "lungsTr", "*.npz")))[:qntty]
+        if start is not None and end is not None:
+            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))[start:end]
+            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))[start:end]
+        elif start is not None and end == None:
+            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))[start:]
+            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))[start:]
+        elif start == None and end is not None:
+            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))[:end]
+            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))[:end]
         else:
-            self.cts = sorted(glob(os.path.join(PROCESSED_DATA_FOLDER, mode, "imagesTr", "*.npz")))
-            self.labels = sorted(glob(os.path.join(PROCESSED_DATA_FOLDER, mode, "lungsTr", "*.npz")))
+            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))
+            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))
         self.transform = transform
         assert len(self.cts) == len(self.labels)
 
