@@ -43,9 +43,11 @@ Em uma GAN, temos uma rede neural "geradora", responsável por sintetizar as dis
 No caso específico da nossa aplicação, utilizaremos como referência principal as arquiteturas propostas em [[1]](#1). Neste trabalho, uma rede Pix2Pix é utilizada pelo gerador, recebendo uma máscara binária com o formato de um pulmão em um CT e retornando esta imagem 2D preenchida com as vias aéras de um pulmão. Já a rede discriminadora segue a arquitetura 30 × 30 PatchGAN. Ambas estas estruturas foram inicialmente recomendadas por [[8]](#8).
 As duas imagens abaixo ilustram as arquiteturas do gerador e discriminador, respectivamente.
 
-![Arquitetura Pix2Pix proposta para gerador.](https://github.com/julia-cdp/dgm-2024.2/tree/readme_e2/projetos/PulmoNet/figs/arquitetura_gen.png?raw=true)
+![Arquitetura Pix2Pix proposta para gerador.](figs/arquitetura_gen.png?raw=true)
+*Figura 1: Arquitetura Pix2Pix proposta para gerador.*
 
-![Arquitetura PatchGAN proposta para discriminador.](https://github.com/julia-cdp/dgm-2024.2/tree/readme_e2/projetos/PulmoNet/figs/arquitetura_disc.png?raw=true)
+![Arquitetura PatchGAN proposta para discriminador.](figs/arquitetura_disc.png?raw=true)
+*Figura 2: Arquitetura PatchGAN proposta para discriminador.*
 
 A função de loss aplica o critério de Binary Cross Entropy, conforme a seguinte a equação matemática:
 
@@ -65,7 +67,8 @@ Apesar de inspirar-se no artigo [[1]](#1), para o desenvolvimento deste projeto 
 Os dados desta base são arquivos com extensão *.nii.gz, e contêm todo o volume pulmonar obtido durante um exame de tomografia. Cada arquivo com um volume pulmonar é acompanhado por um outro arquivo de mesma extensão contendo as anotações feitas por especialistas.
 Dado que este trabalho centrará-se na geração de imagens sintéticas em duas dimensões de CTs pulmonares, estes volumes pulmonares serão fatiados no eixo transversal, assim como ilustrado na imagem abaixo. Como resultado, fatiaremos os 500 volumes pulmores em uma quantidade muito maior de imagens 2D, aumentando o tamanho dos conjuntos de dados disponíveis para treinamento, validação e testes.
 
-![Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.](https://github.com/julia-cdp/dgm-2024.2/tree/readme_e2/projetos/PulmoNet/figs/dataset_exemplo_fatia.png?raw=true)
+![Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.](figs/dataset_exemplo_fatia.png?raw=true)
+*Figura 3: Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.*
 
 A quantia exata de dados que serão utilizados depende da configuração da fatia obtida. Isto é, não serão utilizadas todas as fatias do volume pulmonar, mas sim apenas as imagens que apresentarem o pulmão completo e cercado por tecidos. A partir desta condição, as fatias serão selecionadas e utilizadas como entrada da rede geradora. Ressalta-se que esta seleção é necessária, uma vez que é uma restrição da biblioteca em Python lungmask [[7]](#7), utilizada para segmentação automática de CTs pulmonares.
 Também é pertinente destacar que esta segmentação é uma etapa essencial do workflow, posto que os dados de entrada da rede geradora da GAN serão máscaras pulmonares, tal como feito em [[1]](#1).
@@ -73,13 +76,15 @@ Também é pertinente destacar que esta segmentação é uma etapa essencial do 
 O gráfico abaixo ilutsra o histograma da base de dados após a seleção das fatias. Para a construção deste histograma, calculou-se a quantidade de pixels de cada imagem que descreviam a região pulmonar (a parte em branco após a máscara de segmentação). Nota-se que temos muitas imagens com até 2000 pixels para compor o pulmão, depois temos uma queda nesta quantidade de imagens até algo em torno de 20000 pixels, seguido por uma nova região de máximo - temos a maior concentração das imagens usadas pela rede generativa com o pulmão ocupando entre 30 e 40 mil pixels. Depois disso, a quantidade exemplares com mais pixels vai diminuindo gradualmente até pouco mais de 100 mil pixels.
 Um ponto importante a ser mencionado é que apesar do histograma começar em zero, a menor quantia de pixels no conjunto após segmentação é de 100 pixels. Ademais, dado que imagens 512 x 512 têm mais de 260 mil pixels, as imagens com a maior quantidade de pixels para a região do pulmão não ocupam nem metade de todos os pixels da imagem.
 
-![Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.](https://github.com/julia-cdp/dgm-2024.2/tree/readme_e2/projetos/PulmoNet/figs/histograma_fatias.png?raw=true)
+![Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.](figs/histograma_fatias.png?raw=true)
+*Figura 4: Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.*
 
 A figura abaixo ilustra exemplos de fatias em regiões distintas deste histograma para podermos visualizar a variabilidade dos dados de entrada da rede.
 Nota-se que as fatias com menos de 10 mil pixels para descrever o pulmão praticamente não têm região suficiente para ser preenchida com vias aéreas, ao passo que as imagens com mais pixels para a região do pulmão são aqueles que mais próximas de uma fatia no meio do pulmão, exibindo a maior área util deste órgão.
 Com base nestas análises, considera-se descartar imagens com poucos pixels para o pulmão.
 
-![Exemplos de fatias das CTS pulmonares da base de dados ATM'22 segmentadas.](https://github.com/julia-cdp/dgm-2024.2/tree/readme_e2/projetos/PulmoNet/figs/exemplos_pixels.png?raw=true)
+![Exemplos de fatias das CTS pulmonares da base de dados ATM'22 segmentadas.](figs/exemplos_pixels.png?raw=true)
+*Figura 5: Exemplos de fatias das CTS pulmonares da base de dados ATM'22 segmentadas.*
 
 Além da segmentação dos dados e seleção das fatias, a base de dados também passa pelas etapas de normalização e de transformação para numpy arrays, antes de serem utilizados pelas GANs implementadas para este projeto.
 
@@ -88,7 +93,8 @@ O fluxo de trabalho proposto por este projeto, ilustrado na figura a seguir, ini
 Utilizando os dados de treinamento e validação, alimenta-se a rede generativa com as fatias segmentadas (máscaras binárias). Já a rede discriminadora recebe os dados reais (sem segmentação) e os dados sintéticos, devendo classificar cada um como "real" ou "falso".
 Após o treinamento, avalia-se os dados sintéticos a partir de três perspectivas: análise qualitativa, análise quantitativa e análise de utilidade, as quais serão descritas em detalhes nas próximas seções deste relatório.
 
-![Fluxo para treinamento da PulmoNet.](https://github.com/julia-cdp/dgm-2024.2/tree/readme_e2/projetos/PulmoNet/figs/worflow_completo.png?raw=true)
+![Fluxo para treinamento da PulmoNet.](figs/workflow_completo.png?raw=true)
+*Figura 6: Fluxo para treinamento da PulmoNet.*
 
 Destaca-se que, em operação (após a fase treinamento), espera-se que o modelo receba máscaras binárias com o formato do pulmão e um ruído, retonando o preenchimento da área interna do pulmão.
 Uma mesma máscara binária poderá gerar imagens sintéticas distintas, devido o ruído aleatório adicionado na entrada do modelo.
