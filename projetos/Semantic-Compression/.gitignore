@@ -1,0 +1,4 @@
+data/train
+data/test
+data/val
+data/*.tar.xz
