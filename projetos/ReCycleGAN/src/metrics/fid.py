@@ -1,215 +1,102 @@
-"""Module to compute Frechet Inception Distance (FID)
+"""FID wrapper.
 
-Code source: https://www.kaggle.com/code/ibtesama/gan-in-pytorch-with-fid
-"""
+Source: https://github.com/mseitzer/pytorch-fid"""
 
+import math
+import torch
+from torch.nn.functional import adaptive_avg_pool2d
+from pytorch_fid import fid_score
+from pytorch_fid.inception import InceptionV3
 import numpy as np
-from torch import nn
-from torch.nn import functional as F
-from torchvision import models
-from scipy import linalg
-
-
-class InceptionV3(nn.Module):
-    """Pretrained InceptionV3 network returning feature maps"""
-
-    # Index of default block of inception to return,
-    # corresponds to output of final average pooling
-    DEFAULT_BLOCK_INDEX = 3
-
-    # Maps feature dimensionality to their output blocks indices
-    BLOCK_INDEX_BY_DIM = {
-        64: 0,   # First max pooling features
-        192: 1,  # Second max pooling featurs
-        768: 2,  # Pre-aux classifier features
-        2048: 3  # Final average pooling features
-    }
-
-    def __init__(self,
-                 output_blocks=None,
-                 resize_input=True,
-                 normalize_input=True,
-                 requires_grad=False):
-        super().__init__()
-
-        if output_blocks is None:
-            output_blocks = [InceptionV3.DEFAULT_BLOCK_INDEX]
-
-
-        self.resize_input = resize_input
-        self.normalize_input = normalize_input
-        self.output_blocks = sorted(output_blocks)
-        self.last_needed_block = max(output_blocks)
-
-        assert self.last_needed_block <= 3, \
-            'Last possible output block index is 3'
-
-        self.blocks = nn.ModuleList()
-
-        inception = models.inception_v3(weights='DEFAULT')
-
-        # Block 0: input to maxpool1
-        block0 = [
-            inception.Conv2d_1a_3x3,
-            inception.Conv2d_2a_3x3,
-            inception.Conv2d_2b_3x3,
-            nn.MaxPool2d(kernel_size=3, stride=2)
-        ]
-        self.blocks.append(nn.Sequential(*block0))
-
-        # Block 1: maxpool1 to maxpool2
-        if self.last_needed_block >= 1:
-            block1 = [
-                inception.Conv2d_3b_1x1,
-                inception.Conv2d_4a_3x3,
-                nn.MaxPool2d(kernel_size=3, stride=2)
-            ]
-            self.blocks.append(nn.Sequential(*block1))
-
-        # Block 2: maxpool2 to aux classifier
-        if self.last_needed_block >= 2:
-            block2 = [
-                inception.Mixed_5b,
-                inception.Mixed_5c,
-                inception.Mixed_5d,
-                inception.Mixed_6a,
-                inception.Mixed_6b,
-                inception.Mixed_6c,
-                inception.Mixed_6d,
-                inception.Mixed_6e,
-            ]
-            self.blocks.append(nn.Sequential(*block2))
-
-        # Block 3: aux classifier to final avgpool
-        if self.last_needed_block >= 3:
-            block3 = [
-                inception.Mixed_7a,
-                inception.Mixed_7b,
-                inception.Mixed_7c,
-                nn.AdaptiveAvgPool2d(output_size=(1, 1))
-            ]
-            self.blocks.append(nn.Sequential(*block3))
-
-        for param in self.parameters():
-            param.requires_grad = requires_grad
-
-    def forward(self, inp):
-        """Get Inception feature maps
-        Parameters
-        ----------
-        inp : torch.autograd.Variable
-            Input tensor of shape Bx3xHxW. Values are expected to be in
-            range (0, 1)
-        Returns
-        -------
-        List of torch.autograd.Variable, corresponding to the selected output
-        block, sorted ascending by index
-        """
-        outp = []
-        x = inp
-
-        if self.resize_input:
-            x = F.interpolate(x,
-                              size=(299, 299),
-                              mode='bilinear',
-                              align_corners=False)
-
-        if self.normalize_input:
-            x = 2 * x - 1  # Scale from range (0, 1) to range (-1, 1)
-
-        for idx, block in enumerate(self.blocks):
-            x = block(x)
-            if idx in self.output_blocks:
-                outp.append(x)
-
-            if idx == self.last_needed_block:
-                break
-
-        return outp
-
+try:
+    from tqdm import tqdm
+except ImportError:
+    # If tqdm is not available, provide a mock version of it
+    def tqdm(x):
+        """Dummy function for tqdm."""
+        return x
 
 class FID():
-    """Class to compute Frechet Inception Distance (FID)
-
+    """Wrapper to compute Fréchet Inception Distance (FID).
     Attributes
     ----------
     dims : int
-        Dimensionality of features in InceptionV3 network. Default is 2048.
+        Dimensionality of features in InceptionV3 network.
+        (Default: 2048)
     cuda : bool
-        If True, use GPU to compute activations. Default is False.
+        If True, use GPU to compute activations.
+        (Default: False).
+    init_model : bool
+        If True, initialize InceptionV3 model.
+        (Default: True).
+    batch_size : int
+        Batch size to use.
+        (Default: 128).
     """
-    def __init__(self, dims=2048, cuda=False):
-        self.dims = dims
+    def __init__(self, dims=2048, cuda=False, init_model=True, batch_size=128):
         self.cuda = cuda
+        self.dims = dims
+        self.batch_size = batch_size
 
-        block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
-        self.model = InceptionV3(output_blocks=[block_idx])
-        if cuda:
-            self.model = self.model.cuda()
+        self.model = None
+        if init_model:
+            self._init_model()
 
-    def _calculate_activation_statistics(self, images):
-        self.model.eval()
-        act=np.empty((len(images), self.dims))
+    def _init_model(self):
+        if self.model is None:
+            block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[self.dims]
+            self.model = InceptionV3([block_idx])
+            if self.cuda:
+                self.model = self.model.to('cuda')
+            self.model.eval()
 
-        if self.cuda:
-            batch=images.cuda()
-        else:
-            batch=images
-        pred = self.model(batch)[0]
+    def _get_activations(self, imgs):
+        pred_arr = np.empty((len(imgs), self.dims))
 
-        # If model output is not scalar, apply global spatial average pooling.
-        # This happens if you choose a dimensionality not equal 2048.
-        if pred.size(2) != 1 or pred.size(3) != 1:
-            pred = F.adaptive_avg_pool2d(pred, output_size=(1, 1))
+        start_idx = 0
 
-        act = pred.cpu().data.numpy().reshape(pred.size(0), -1)
+        for _ in tqdm(range(math.ceil(len(imgs) / self.batch_size))):
+            batch = imgs[start_idx:start_idx + self.batch_size]
+            with torch.no_grad():
+                pred = self.model(batch)[0]
 
+            # If model output is not scalar, apply global spatial average pooling.
+            # This happens if you choose a dimensionality not equal 2048.
+            if pred.size(2) != 1 or pred.size(3) != 1:
+                pred = adaptive_avg_pool2d(pred, output_size=(1, 1))
+
+            pred = pred.squeeze(3).squeeze(2).cpu().numpy()
+            pred_arr[start_idx:start_idx + pred.shape[0]] = pred
+            start_idx = start_idx + pred.shape[0]
+
+        return pred_arr
+
+    def _compute_statistics_of_imgs(self, imgs):
+        act = self._get_activations(imgs)
         mu = np.mean(act, axis=0)
         sigma = np.cov(act, rowvar=False)
         return mu, sigma
 
-    @staticmethod
-    def _calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
-        """Numpy implementation of the Frechet Distance.
-        The Frechet distance between two multivariate Gaussians X_1 ~ N(mu_1, C_1)
-        and X_2 ~ N(mu_2, C_2) is
-                d^2 = ||mu_1 - mu_2||^2 + Tr(C_1 + C_2 - 2*sqrt(C_1*C_2)).
-        """
-        mu1 = np.atleast_1d(mu1)
-        mu2 = np.atleast_1d(mu2)
+    def get(self, images_real, images_fake):
+        """Calculate FID between real and fake images."""
+        if self.cuda:
+            images_real = images_real.cuda()
+            images_fake = images_fake.cuda()
+        self._init_model()
 
-        sigma1 = np.atleast_2d(sigma1)
-        sigma2 = np.atleast_2d(sigma2)
+        m1, s1 = self._compute_statistics_of_imgs(images_real)
+        m2, s2 = self._compute_statistics_of_imgs(images_fake)
+        return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
 
-        assert mu1.shape == mu2.shape, \
-            'Training and test mean vectors have different lengths'
-        assert sigma1.shape == sigma2.shape, \
-            'Training and test covariances have different dimensions'
-
-        diff = mu1 - mu2
-
-        covmean, _ = linalg.sqrtm(sigma1.dot(sigma2), disp=False)
-        if not np.isfinite(covmean).all():
-            msg = 'fid calculation produces singular product; '
-            msg += f'adding {eps} to diagonal of cov estimates'
-            print(msg)
-            offset = np.eye(sigma1.shape[0]) * eps
-            covmean = linalg.sqrtm((sigma1 + offset).dot(sigma2 + offset))
-
-        if np.iscomplexobj(covmean):
-            if not np.allclose(np.diagonal(covmean).imag, 0, atol=1e-3):
-                m = np.max(np.abs(covmean.imag))
-                raise ValueError(f'Imaginary component {m}')
-            covmean = covmean.real
-
-        tr_covmean = np.trace(covmean)
-
-        return (diff.dot(diff) + np.trace(sigma1) +
-                np.trace(sigma2) - 2 * tr_covmean)
-
-    def get(self, images_real,images_fake):
-        """Calculate FID score between real and fake images."""
-        mu_1,std_1=self._calculate_activation_statistics(images_real)
-        mu_2,std_2=self._calculate_activation_statistics(images_fake)
-        fid_value = FID._calculate_frechet_distance(mu_1, std_1, mu_2, std_2)
-        return fid_value
+    def get_from_paths(self, path_images_real, path_images_fake):
+        """Calculate FID between real and fake images."""
+        if self.cuda:
+            device = torch.device('cuda')
+        else:
+            device = torch.device('cpu')
+        return fid_score.calculate_fid_given_paths(
+            [path_images_real, path_images_fake],
+            batch_size=self.batch_size,
+            device=device,
+            dims=self.dims,
+            num_workers=4)
