@@ -75,7 +75,7 @@ Para tal, podemos utilizar técnicas de clusterização nas séries temporais es
 
 O diagrama abaixo ilustra um exemplo, em que temos a série temporal de retornos (retornos dos índices em cada instante t):
 
-$$ R1:N  ={r(1), r(2), ..., r(N)  $$
+$$ R_{1:N}  ={r(1), r(2), ..., r(N)}  $$
 
 ![Histograma](Diagrama.drawio.png "Diagrama")
 
