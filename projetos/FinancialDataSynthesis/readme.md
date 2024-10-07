@@ -73,7 +73,7 @@ Dessa forma, pretendemos separar os períodos econômicos em categorias, como: p
 
 Para tal, podemos utilizar técnicas de clusterização nas séries temporais estudadas, agrupando dados que apresentam comportamentos semelhantes e atribuindo variáveis categóricas para cada cluster. Ao final, geramos os dados utilizando as CTGANs (Conditional Tabular Generative Adversarial Networks) que produzem os dados sintéticos de acordo com o regime de mercado, descrito através da variável categórica.
 
-![Histograma](Diagrama.drawio.png"Diagrama")
+![Histograma](Diagrama.drawio.png "Diagrama")
 
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
