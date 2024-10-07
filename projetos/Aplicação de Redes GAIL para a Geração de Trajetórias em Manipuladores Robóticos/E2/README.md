@@ -52,7 +52,7 @@ Serão coletados dados de teleoperação utilizando o manipulador robótico Kino
 - **Posições angulares das juntas**: obtidas em tempo real durante a teleoperação.
 - **Posição cartesiana da garra**: [x, y, z].
 - **Orientação da garra**: Representada por [roll, pitch, yaw].
-Os dados serão armazenados em arquivos JSON para fácil acesso e manipulação. 
+A forma como os dados serão armazenadas está detalhada na seção **Bases de Dados e Evolução**.
 
 ### 2. Treinamento da Rede GAIL
 A GAIL será utilizada para aprender a gerar trajetórias a partir dos dados coletados. O algoritmo foi escolhido por sua capacidade de imitar comportamentos complexos, aproveitando tanto a aprendizagem por reforço quanto o aprendizado por imitação. A rede será treinada com os seguintes passos:
@@ -89,82 +89,95 @@ Os objetivos do projeto serão avaliados através de:
 
 ### Bases de Dados e Evolução
 
-Para esse projeto, não foi utilizada uma base de dados pronta, a base de dados foi montada, colhendo os dados via teleoperação do manipulador robótico (por meio de um joystick)
-no ambiente de simulação.
+Para este projeto, a base de dados foi montada manualmente, com dados coletados através da teleoperação de um manipulador robótico (usando um joystick) no ambiente de simulação. Inicialmente, as trajetórias eram salvas em múltiplos arquivos JSON, mas esses arquivos foram unificados em um único arquivo JSON para simplificação e uso em treinamentos de Redes Adversárias Generativas de Imitação (GAIL).
 
-|Base de Dados | Endereço na Web | Resumo descritivo|
-|----- | ----- | -----|
-|GAIL_Dataset | N/A | Base de dados coletada durante a simulação do manipulador robótico. Inclui informações sobre as posições angulares das juntas, a posição cartesiana da garra e a orientação da garra.|
+| Base de Dados  | Endereço na Web | Resumo Descritivo |
+|----------------|-----------------|------------------|
+| GAIL_Dataset   | N/A             | Base de dados unificada contendo trajetórias de teleoperação do manipulador robótico, com informações sobre as posições angulares das juntas, a posição cartesiana e a orientação da garra. |
 
-#### Descrição e Análise da Base de Dados:
 
-* **Formato:** A base de dados é armazenada em arquivos JSON, contendo um dicionário de dados coletados durante as simulações;
+#### Descrição e Análise da Base de Dados
 
-* **Tamanho:** O tamanho da base de dados varia conforme o número de de simulações realizadas, onde cada arquivo JSON pode conter dados de diferentes iterações da simulação;
+* **Formato:** A base de dados está agora armazenada em um único arquivo JSON, que contém múltiplas trajetórias simuladas, com observações e ações associadas.
 
-* **Tipo de Anotação:** Os dados incluem anotações sobre as posições angulares de cada junta do manipulador robótico, posição e orientação da garra, que são dados essenciais para a geração de trajetórias válidas;
+* **Estrutura:**
+  - **Observações:** Cada observação consiste em uma combinação de:
+    - **Posições angulares das juntas** (7 valores),
+    - **Posição cartesiana da garra** (3 valores),
+    - **Orientação da garra** (3 valores de rotação: pitch, yaw, roll).
+  
+  - **Ações:** As ações são calculadas como a diferença entre estados consecutivos:
+    - **Ação do gripper**: Diferença na posição e orientação da garra entre dois estados consecutivos, refletindo as mudanças que ocorreram em cada etapa.
 
-* **Transformações e Tratamentos:** os dados são coletados em tempo real, logo, não há necessidade de limpeza adicional, visto que foram coletados em um ambiente controlado.
+* **Tamanho:** A base de dados contém várias trajetórias, que antes estavam separadas em múltiplos arquivos JSON, mas agora foram unificadas em um único arquivo com uma estrutura de dados otimizada.
+
+* **Tipo de Anotação:** O arquivo JSON inclui:
+  - **Trajetórias:** Cada trajetória é composta por observações e ações. As observações incluem as posições e orientações tanto das juntas quanto da garra. As ações representam a diferença nas movimentações do gripper, incluindo tanto a sua posição quanto a rotação.
+
+* **Transformações e Tratamentos:** As trajetórias foram coletadas diretamente do ambiente de simulação. Para a formatação final, os dados de todas as simulações foram unificados em um único JSON, com observações e ações organizadas para serem processadas por redes adversárias generativas (GAIL). Como a coleta de dados ocorreu em um ambiente controlado, não foi necessário aplicar técnicas de limpeza ou filtragem.
+
+#### Sumário com Estatísticas Descritivas da Base de Estudo
+
+##### Estatísticas das Posições Angulares das Juntas
+
+| Estatística | joint_1    | joint_2    | joint_3    | joint_4    | joint_5    | joint_6    | joint_7    |
+|-------------|------------|------------|------------|------------|------------|------------|------------|
+| count       | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 |
+| mean        | 216.9260   | 244.5008   | 155.2496   | 160.6793   | 153.4203   | 163.3758   | 141.0073   |
+| std         | 112.8747   | 133.0374   | 123.9732   | 132.8272   | 145.7203   | 80.5145    | 111.4131   |
+| min         | 0.0974     | 0.0061     | 0.0048     | 0.0091     | 0.0030     | 33.6910    | 0.0283     |
+| 25%         | 99.8671    | 286.0129   | 53.0035    | 46.4387    | 15.2208    | 77.8979    | 57.9813    |
+| 50%         | 290.8084   | 297.0499   | 96.9260    | 68.6351    | 78.9634    | 127.7249   | 72.2764    |
+| 75%         | 308.5260   | 330.3035   | 312.3682   | 301.6214   | 343.1981   | 243.2315   | 246.2258   |
+| max         | 359.7806   | 359.9976   | 359.9915   | 359.9679   | 359.9981   | 348.0733   | 359.9999   |
+
+![distribuicoes_angulares](https://github.com/user-attachments/assets/41d1405f-1809-40f6-b323-0c4290bb5e42)
+
+##### Estatísticas das Posições da Garra
+
+| Estatística | gripper_x   | gripper_y   | gripper_z   |
+|-------------|-------------|-------------|-------------|
+| count       | 16051.0000  | 16051.0000  | 16051.0000  |
+| mean        | 1.3223      | 1.8376      | 0.6307      |
+| std         | 0.4224      | 0.0823      | 0.1922      |
+| min         | 0.7617      | 1.5202      | 0.1754      |
+| 25%         | 0.9824      | 1.7740      | 0.5554      |
+| 50%         | 1.0688      | 1.8232      | 0.6301      |
+| 75%         | 1.8875      | 1.8843      | 0.7168      |
+| max         | 1.9766      | 2.2050      | 1.1005      |
+
+##### Estatísticas das Rotações da Garra
+
+| Estatística | gripper_pitch | gripper_yaw | gripper_roll |
+|-------------|---------------|--------------|--------------|
+| count       | 16051.0000    | 16051.0000   | 16051.0000   |
+| mean        | 107.9481      | 201.8668     | 161.1637     |
+| std         | 144.1107      | 50.9297      | 35.6482      |
+| min         | 0.0032        | 0.0454       | 0.0585       |
+| 25%         | 5.0705        | 174.3852     | 130.1401     |
+| 50%         | 37.0476       | 207.8905     | 174.4622     |
+| 75%         | 294.0989      | 225.9177     | 180.7627     |
+| max         | 359.9729      | 359.0083     | 359.9722     |
+
+##### Estatísticas das Ações da Garra
+
+| Estatística | delta_gripper_x | delta_gripper_y | delta_gripper_z | delta_gripper_pitch | delta_gripper_yaw | delta_gripper_roll |
+|-------------|------------------|------------------|------------------|----------------------|--------------------|---------------------|
+| count       | 16051.0000       | 16051.0000       | 16051.0000       | 16051.0000           | 16051.0000         | 16051.0000          |
+| mean        | -0.0006          | 0.0000           | -0.0000          | 0.1051               | 0.0251             | 0.0385              |
+| std         | 0.0066           | 0.0066           | 0.0089           | 19.9207              | 6.5096             | 6.4767              |
+| min         | -0.1018          | -0.1503          | -0.2055          | -359.8785            | -358.9630          | -359.8317           |
+| 25%         | -0.0002          | -0.0001          | -0.0003          | -0.0124              | -0.0372            | -0.0130             |
+| 50%         | 0.0000           | 0.0000           | 0.0000           | -0.0000              | 0.0000             | 0.0000              |
+| 75%         | 0.0001           | 0.0001           | 0.0003           | 0.0121               | 0.0470             | 0.0123              |
+| max         | 0.0980           | 0.1940           | 0.1729           | 359.8557             | 355.2020           | 359.8180            |
+
+
 
 ## Workflow
 
 Este projeto adota um workflow bem definido para alcançar o objetivo de gerar trajetórias válidas para manipuladores robóticos de 7 graus de liberdade (DoF), utilizando redes GAIL (Generative Adversarial Imitation Learning). O processo foi dividido em seis etapas principais, que cobrem desde a definição do escopo até a validação e testes, conforme ilustrado nas imagens a seguir.
 
-### 1. Definição do Escopo do Projeto
-
-O objetivo principal é desenvolver um modelo baseado em GAIL para gerar trajetórias seguras e eficientes. Para avaliar a qualidade das trajetórias, utilizamos métricas como a distância cartesiana e a diferença de orientação entre as trajetórias geradas e as trajetórias de referência. 
-
-O ambiente de simulação consiste no simulador RCareWorld, da universidade de Cornell, que é implementado no Unity, permitindo flexibilidade na coleta de dados.
-
-### 2. Coleta de Dados Especialistas
-
-Nesta fase, configuramos o ambiente de simulação no **Unity** e geramos dados especialistas controlando o manipulador robótico manualmente, via joystick. As informações coletadas incluem as posições cartesianas (x, y, z) e as orientações (roll, pitch, yaw) da garra do manipulador, além dos ângulos das juntas. Após a coleta, os dados são organizados e validados para garantir sua qualidade e consistência.
-
-**Atividades principais (Figura 1 e Figura 2, Etapa 2)**:
-- Preparação do ambiente de simulação.
-- Coleta manual dos dados - Trajetórias geradas via teleoperação.
-- Armazenamento e organização dos dados coletados.
-- Validação para garantir a integridade dos dados.
-
-### 3. Pré-processamento dos Dados
-
-Antes de treinar o modelo, realizamos uma etapa essencial de pré-processamento dos dados coletados. Isso inclui a limpeza para remover outliers ou dados inconsistentes, além da normalização das posições angulares para garantir escalas compatíveis para o treinamento. Por fim, os dados são divididos em conjuntos de treino e validação, fundamentais para monitorar a performance do modelo durante o treinamento.
-
-**Atividades principais (Figura 1 e Figura 2, Etapa 3)**:
-- Limpeza dos dados: Remoção de outliers e inconsistências.
-- Normalização: Ajuste das escalas das posições angulares.
-- Divisão dos dados: Separação dos dados em conjuntos de treino e validação.
-
-### 4. Modelagem da Rede GAIL
-
-A modelagem da rede GAIL consiste em definir tanto a **rede geradora** quanto a **rede discriminadora**, além de integrar ambas no modelo final. A rede geradora é responsável por criar novas trajetórias a partir dos dados especialistas, enquanto a rede discriminadora avalia a validade dessas trajetórias, comparando-as com as trajetórias de referência. Também definimos as funções de perda para cada uma das redes, essenciais para o processo de aprendizado adversarial.
-
-**Atividades principais (Figura 1 e Figura 2, Etapa 4)**:
-- Definição da arquitetura da rede geradora.
-- Definição da arquitetura da rede discriminadora.
-- Integração das redes GAIL (geradora e discriminadora).
-- Definição e ajuste das funções de perda.
-
-### 5. Treinamento da Rede GAIL
-
-Uma vez que a rede GAIL foi modelada, será iniciado o treinamento com os dados especialistas. Deverá ser feito o ajusto dos hiperparâmetros, como a taxa de aprendizado, conforme necessário, para otimizar a performance da rede. Durante o treinamento, as trajetórias geradas são continuamente avaliadas e comparadas às trajetórias especialistas, garantindo que o modelo esteja aprendendo a imitar com precisão.
-
-**Atividades principais (Figura 1 e Figura 2, Etapa 5)**:
-- Treinamento inicial utilizando os dados especialistas.
-- Ajuste dos hiperparâmetros para otimização do modelo.
-- Avaliação contínua das trajetórias geradas para verificar melhorias.
-
-### 6. Validação e Testes
-
-Após o treinamento, as trajetórias geradas passam por uma fase de validação, que inclui simulações no ambiente simulacional para verificar a viabilidade física das trajetórias. Conduzimos testes de robustez e generalização para garantir que o modelo seja capaz de lidar com diferentes condições. Também realizamos uma análise de colisões para assegurar que as trajetórias respeitem as limitações físicas do manipulador. Ao final, geramos um relatório de desempenho detalhado e documentamos os resultados.
-
-**Atividades principais (Figura 1 e Figura 2, Etapa 6)**:
-- Validação das trajetórias geradas.
-- Simulações no Unity para testar a viabilidade física.
-- Testes de robustez e generalização para diferentes cenários.
-- Análise de colisões no simulador, para garantir segurança.
-- Revisão e ajuste após iterações de testes.
-- Geração de relatório de desempenho e documentação final dos resultados.
 
 ### Imagens de Fluxograma:
 
