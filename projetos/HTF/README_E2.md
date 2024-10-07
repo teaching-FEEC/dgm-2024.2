@@ -5,8 +5,6 @@
 
 ## Apresentação
 
-
-
 O presente projeto foi originado no contexto das atividades da disciplina de pós-graduação *IA376N - IA generativa: de modelos a aplicações multimodais*, 
 oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra. Paula Dornhofer Paro Costa, do Departamento de Engenharia de Computação e Automação (DCA) da Faculdade de Engenharia Elétrica e de Computação (FEEC).
 
@@ -19,9 +17,9 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Descrição do Problema/Motivação
 
-A predição de trajetórias humanas em ambientes densamente povoados é uma tarefa essencial para que no futuro, sistemas autônomos como carros e robôs possam interagir de forma segura e eficiente com pessoas. É necessário que estes consigam avaliar o ambiente e prever com um grau confiável de precisão as trajetórias futuras dos pedestres a fim de evitar colisões. Entretanto, modelar este comportamento é uma tarefa complexa e que impõe uma série de desafios, pois para isto, é necessário entender o processo implícito de interações sociais existentes entre seres humanos.
+A predição de trajetórias humanas em ambientes densamente povoados é uma tarefa essencial para que no futuro, sistemas autônomos como carros e robôs possam interagir de forma segura e eficiente com pessoas. É necessário que estes consigam avaliar o ambiente e prever com um grau confiável de precisão as trajetórias futuras dos pedestres a fim de evitar colisões. Entretanto, modelar este comportamento é uma tarefa complexa e que impõe uma série de desafios pois é necessário entender o processo implícito de interações sociais existentes entre seres humanos.
 
-Nesse contexto, as Redes Adversariais Generativas (GANs) surgem como uma possível solução.  As GANs, por serem modelos generativos, são capazes de capturar a incerteza inerente ao movimento humano, gerando múltiplos cenários futuros multimodais, dentre os quais os socialmente aceitáveis serão escolhidos.  A fim de tornar esse processo ainda mais eficiente, foram introduzidos mecanismos sociais a fim de permitir que o gerador compreenda melhor tais interações, criando-se assim as GANs Sociais (SGANs). A principal motivação para a realização deste trabalho é a compreensão de uma nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
+Nesse contexto, as Redes Adversariais Generativas (GANs) surgem como uma possível solução.  As GANs, por serem modelos generativos, são capazes de capturar a incerteza inerente ao movimento humano, gerando múltiplos cenários futuros multimodais, dentre os quais os socialmente aceitáveis serão escolhidos.  A fim de tornar esse processo ainda mais eficiente, foram introduzidos mecanismos sociais neste tipo de rede a fim de permitir que o gerador compreenda melhor tais dinâmicas, criando-se assim as GANs Sociais (SGANs). A principal motivação para a realização deste trabalho é a compreensão desta nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
 
  A figura abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
 
@@ -30,34 +28,21 @@ Nesse contexto, as Redes Adversariais Generativas (GANs) surgem como uma possív
 Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
 
 
-## Objetivo
-
->O projeto de pesquisa proposto irá estudar e propor modelos profundos de redes Generativas Adversariais (GANs) para geração de amostras futuras de possiveis trajetórias humanas em espaços populados. Ao combinar a arquitetura tradicional da GAN com auto encoders, células recorrentes Long-Short-Term Memory (LSTM) e módulos de pooling,  espera-se modelar interações multimodais de espaço e tempo de trajetórias de pedestres conforme os acordos sociais implícitos existentes em uma distribuição real desconhecida. O processo adversarial é capaz de gerar o que se denomina de amostragem colaborativa (CS) cujo discriminador (D) possui a tarefa primordial de disciplinar o gerador (G) e garantir que a distribuição de G seja próxima à distribuição real desconhecida. Tal processo é capaz de gerar amostras confiáveis de trajetória humana em espaços populados e cujos modelos profundos devem ser avaliados apropriadamente de acordo com métricas bem estabelecidas na literatura.
-
-## Metodologia
-
-> O desemvolvimento do modelo e treinamento do modelo terá com ponto de partida  e benchmark o repositório disponibilizado em [2]
->
->Para o desenvolvimente e treinamento do modelo profundo será utilizado um conjunto de datasets e um benchmark para comparação da eficácia do modelo profundo. Datasets como o ETH (Zurich), UCY e o Stanford Drone estão entre os mais utilizados na literatura técnica e proporcionam um conjunto de vídeos com trajetórias reais de pedestres em meio à espaços populados. Ainda, há a possibilidade de empregar dataset simulado em ambiente computacional com alta definição como o Forking Paths que tem sido utilizado na pesquisa de modelos de predição de trajetória humana recente. Tais datasets proporcionam ao modelo profundo um conjunto de dados estruturados na forma de séries temporais contendo o posicionamento x e y de pedestres ao longo de uma via a um determinado tempo. Com isso, os modelos profundos podem ser treinados para modelar o conjunto de regras sociais implícitas existentes em trajetórias humanas.
-
-
 > A seguir tem-se os links para o vídeo da apresentação do entregável I e para a apresentação em slides.
  
 > [Vídeo da Apresentação](https://drive.google.com/file/d/1NyRet8UhioGTLzvMHryGt_-gbP54u1VB/view) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [Link da Apresentação](https://docs.google.com/presentation/d/1vHEd9DeePXOXCwRnCimp_5Cx16KPEKW2/edit?usp=sharing&ouid=101073047652792710630&rtpof=true&sd=true)
 
+## Objetivo
+
+>O projeto de pesquisa proposto irá estudar e propor modelos profundos de redes Generativas Adversariais (GANs) para geração de amostras futuras de possiveis trajetórias humanas em espaços populados. Ao combinar a arquitetura tradicional da GAN com auto encoders, células recorrentes Long-Short-Term Memory (LSTM) e módulos de pooling,  espera-se modelar interações multimodais de espaço e tempo de trajetórias de pedestres conforme os acordos sociais implícitos existentes em uma distribuição real desconhecida. O processo adversarial é capaz de gerar o que se denomina de amostragem colaborativa (CS) cujo discriminador (D) possui a tarefa primordial de disciplinar o gerador (G) e garantir que a distribuição de G seja próxima à distribuição real desconhecida. Tal processo é capaz de gerar amostras confiáveis de trajetória humana em espaços populados e cujos modelos profundos devem ser avaliados apropriadamente de acordo com métricas bem estabelecidas na literatura. Apesar da proposta inicial contemplar a implementação de novas estruturas descritas em [1], destre as quais destacam-se o módulo de interação espacial dos dados de entrada para criar um embedding e o descriminador baseado em arquitetura transformer, este será um objetivo secundário que será trabalhado apenas se os objetivos primários forem alcançado.
+
+## Metodologia
+
+> O desemvolvimento e treinamento do modelo terá com ponto de partida e benchmark o repositório disponibilizado em [2]. Portanto, o primeiro passo será sua reprodução, a fim de confirmar os resultados disponibilizados e compreender as propostas realizadas. O repositório permite a avaliação de redes previamente treinadas disponibilizadas, bem como novos treinamentos tanto para dos datasets ultilizados , quantos para outros que respeitem o formato proposto, que são dados tabulares obtidos a partir de videos que contem o número do frame, o número de identificação do pedestre conforme ordem de aparição no vídeo e suas coordenadas x e y. Tais datasets proporcionam ao modelo profundo um conjunto de dados estruturados na forma de séries temporais contendo o posicionamento de pedestres ao longo de uma via a um determinado tempo. Com isso, os modelos profundos podem ser treinados para modelar o conjunto de regras sociais implícitas existentes em trajetórias humanas.
+>
+> As avaliações qualitativas serão realizadas por observações gráficas que comparam os movimentos reais observados, aos preditos comforme o exmplo da figura xx e as avaliações quantitaivas utilizarão as métricas do benchmark que são o Erro de Deslocamento Médio (ADE - Average Displacement Error), que mede a distância média (L2 norm) entre todas as posições previstas e as trajetórias reais ao longo do tempo, fornecendo uma visão geral de quão próximas as trajetórias previstas estão das trajetórias reais dos pedestres. No entanto, o ADE não capta diretamente as interações entre pedestres, algo que modelos como o Social GAN busca melhorar por meio de técnicas como "Social Pooling". Tem-se tanbém o Erro de Deslocamento Final (FDE - Final Displacement Error), que de forma semelhante ao ADE, mede a distância entre a posição final das trajetórias previstas e a posição final real dos pedestres. Essa métrica é particularmente utilizada para avaliar a precisão do modelo ao prever a posição ao final do horizonte de previsão. Assim como o ADE, o FDE, isoladamente, não avalia as interações sociais entre pedestres, sendo complementadas pela Taxa de Colisão, que avalia a porcentagem de trajetórias previstas que resultam em colisões entre pedestres. Esta métrica é fundamental para verificar se o modelo gera trajetórias socialmente aceitáveis. Modelos que geram trajetórias com altas taxas de colisão indicam que o comportamento aprendido não está alinhado com interações sociais naturais, notáveis pela ausência de colisões em geral. No caso de modelos como o Social GAN, a consideração das interações espaciais e temporais é essencial para minimizar essas colisões. Tais métricas podem ser avalidadas em sua totalidade, ou ainda pela aplicação do método Top-K, em que são selecionadas trajetórias potenciais para o futuro, e a saída do modelo consiste nas K trajetórias mais prováveis, com base nos padrões e interações aprendidos;
 
 
-## Metodologia Proposta
-
-
-
-A metodologia proposta para esta pesquisa envolve as seguintes definições:
-
-* Proposta de estudo e pesquisa do tópico de referência;
-* Modelagem das interações espaço-temporais com os datasets de referência a partir da implementação de um módulo de interação espaço-temporal (STIM) a partir de redes recorrentes com células LSTM ou Transformers na estrutura do gerador e discriminador - para fins de captura de features da evolução espaço-temporal das interações sociais;
-* Treinamento da rede GAN modificada, do gerador e discriminador, para predições multimodais a partir de amostras futuras geradas em conformidade com os acordos sociais implícitos;
-* Análise quanti-quali para avaliação das métricas obtidas - amostras sintéticas geradas avaliadas sob métricas utilizadas em artigos de referência;
-* Análise qualitativa para avaliação da factibilidade e realismo de resultados obtidos em etapa inicial de treinamento.
 
 
 
