@@ -122,6 +122,12 @@ $$ R_{1:N} = [ r(1), r(2), ..., r(N) ] $$
 
 $$ I_{1:N} = [i(1), i(2), ..., i(N)] $$
 
+**3.** Aplicar técnicas de clusterização no conjunto:
+
+$$ D = [ R_{1:N}, I_{1:N} ] $$
+
+De forma a identificar as tuplas (r(t), i(t)) que exibem características e similares e agrupá-las em dois ou três conjuntos que representam regimes de mercado (períodos econômicos) distintos.
+
 ### Bases de Dados e Evolução
 > Elencar bases de dados utilizadas no projeto.
 > Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento sobre como ela foi analisada/usada, conforme exemplo a seguir.
