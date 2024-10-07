@@ -69,6 +69,11 @@ Os objetivos do projeto serão avaliados através de:
 - **Testes de Simulação**: Execução de simulações para verificar se o manipulador consegue realizar a tarefa proposta.
 - **Análise Quantitativa**: Avaliação estatística das trajetórias geradas em comparação com as trajetórias desejadas.
 
+### Slides da Apresentação da Segunda Etapa do Projeto
+
+- [Link para os slides](https://docs.google.com/presentation/d/1d-bhS5pN8eW80D_pL8XNPtMwcds4ifCcIb9pqzJnMhk/edit#slide=id.p1)
+
+
 
 ### Referências
 
