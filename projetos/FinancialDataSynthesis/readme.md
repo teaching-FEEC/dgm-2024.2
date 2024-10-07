@@ -49,18 +49,18 @@ Neste projeto, temos três objetivos específicos.
 
 Os fatos estilizados são propriedades estatísticas comuns, observadas empiricamente, entre diversos ativos financeiros em diferentes mercados e períodos [4]. Os principais fatos estilizados são:
 
-  **a)** Heavy tails: a probabilidade de retornos extremos (ganhos ou perdas extremas) é maior do que visto em distribuições normais. Logo, as extremidades da 
+-Heavy tails: a probabilidade de retornos extremos (ganhos ou perdas extremas) é maior do que visto em distribuições normais. Logo, as extremidades da 
   distribuição de retornos tende a ser mais "grossas" do que as observadas em uma curva normal.
 
-  **b)** Assimetria entre ganhos e perdas: perdas extremas tendem a serem mais prováveis do que ganhos extremos, logo a distribuição de retornos tende a ser 
+-Assimetria entre ganhos e perdas: perdas extremas tendem a serem mais prováveis do que ganhos extremos, logo a distribuição de retornos tende a ser 
   assimétrica.
 
-  **c)** Agrupamento de volatilidade: a volatilidade mostra autocorrelação, ou seja, períodos de alta volatilidade tendem a ser seguidos por outros de alta    
+-Agrupamento de volatilidade: a volatilidade mostra autocorrelação, ou seja, períodos de alta volatilidade tendem a ser seguidos por outros de alta    
   volatilidade, e o mesmo ocorre com períodos de baixa volatilidade.
 
-  **d)** Curva Gaussiana: conforme aumentamos o horizonte do tempo, a distribuição de retornos tende a aproximar da curva Gaussiana. 
+-Curva Gaussiana: conforme aumentamos o horizonte do tempo, a distribuição de retornos tende a aproximar da curva Gaussiana. 
 
-  **e)** Ausência de autocorrelação nos retornos: os retornos geralmente apresentam pouca ou nenhuma autocorrelação linear. Por exemplo, o fato do retorno r(t-1) ter sido positivo tem pouca influência no retorno r(t).
+-Ausência de autocorrelação nos retornos: os retornos geralmente apresentam pouca ou nenhuma autocorrelação linear. Por exemplo, o fato do retorno r(t-1) ter sido positivo tem pouca influência no retorno r(t).
 
 Podemos avaliar se a distribuição possui "heavy tails" através da métrica kurtosis (K) que mede a tendência da distribuição apresentar valores extremos. E podemos avaliar se a distribuição possui assimetria entre ganhos e perdas através da métrica skewness (S) que mede a assimetria da distribuição em relação à média.
 Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e 2024, e temos o seguinte histograma:
@@ -148,8 +148,8 @@ A escolha dessas bases de dados é justificada pelo seu uso comprovado em estudo
 
 ### Abordagens de Modelagem Generativa
 Entre as abordagens de modelagem generativa que o grupo pretende explorar estão:
-- **Redes Adversárias Generativas (CTGAN)**: A abordagem usando GANs não assume uma forma funcional pré-definida para os dados. A rede aprende diretamente a distribuição dos dados reais (tanto marginais quanto condicionais) e gera amostras sintéticas que imitam os dados reais..
--   
+- **Redes Adversárias Generativas (CTGAN)**: A abordagem usando GANs não assume uma forma funcional pré-definida para os dados. A rede aprende diretamente a distribuição dos dados reais (tanto marginais quanto condicionais) e gera amostras sintéticas que imitam os dados reais.
+
 ### Artigos de Referência
 Os principais artigos que o grupo já identificou como base para estudo e planejamento do projeto são:
 
@@ -157,7 +157,7 @@ Os principais artigos que o grupo já identificou como base para estudo e planej
   
 - **Peña et al. (2024)**: "A modified CTGAN-plus-features-based method for optimal asset allocation" [2].
 
--  **F.Eckerli, J.Osterrieder.** "Generative Adversarial Networks in finance: an overview" [3].: 
+-  **F.Eckerli, J.Osterrieder.** "Generative Adversarial Networks in finance: an overview" [3]. 
 
 ### Ferramentas
 Existem diversas bibliotecas Python disponíveis para geração de dados sintéticos, cada uma com suas capacidades e recursos distintos. Neste trabalho exploraremos as seguintes bibliotecas CTGAN  e Synthetic Data Vault (SDV).
