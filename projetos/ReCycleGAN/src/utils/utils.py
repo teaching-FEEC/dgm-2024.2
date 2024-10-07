@@ -157,7 +157,7 @@ def show_img(img, title=None, figsize=(4, 3), show=False):
         plt.show()
         return None
     return fig
-  
+
 def get_gpu_memory_usage():
     """Get the memory usage of all GPUs."""
     pynvml.nvmlInit()
@@ -175,13 +175,19 @@ def get_gpu_memory_usage():
             'free_memory': memory_info.free
         })
     pynvml.nvmlShutdown()
-
     return gpu_memory_info
 
-
-def print_gpu_memory_usage(msg=None):
+def print_gpu_memory_usage(msg=None, short_msg=False):
     """Print the memory usage of all GPUs."""
     gpu_memory_info = get_gpu_memory_usage()
+    if short_msg:
+        if msg is None:
+            msg = "GPU Memory Usage"
+        total = sum(info['total_memory'] for info in gpu_memory_info)
+        used = sum(info['used_memory'] for info in gpu_memory_info)
+        print(f"{msg}: {used / (1024 ** 2):.2f} MB ({used / total * 100:.2f}% used)")
+        return
+
     ident = ""
     if msg is not None:
         print(msg)
