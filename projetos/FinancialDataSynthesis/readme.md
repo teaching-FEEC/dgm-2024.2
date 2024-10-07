@@ -126,7 +126,7 @@ $$ I_{1:N} = [i(1), i(2), ..., i(N)] $$
 
 $$ D = [ R_{1:N}, I_{1:N} ] $$
 
-De forma a identificar as tuplas $$ \left(r(t), i(t)\right) $$ que exibem características e similares e agrupá-las em dois ou três conjuntos que representam regimes de mercado (períodos econômicos) distintos.
+De forma a identificar as tuplas \( \left(r(t), i(t)\right) \) que exibem características e similares e agrupá-las em dois ou três conjuntos que representam regimes de mercado (períodos econômicos) distintos.
 
 ### Bases de Dados e Evolução
 > Elencar bases de dados utilizadas no projeto.
