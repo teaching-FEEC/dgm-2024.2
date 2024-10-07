@@ -13,9 +13,9 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Resumo (Abstract)
 
-Na tarefa de reconhecimento de atividades humanas (HAR) busca-se determinar qual a ação realizada pelo usuário de um dispositivo móvel a partir dos dados de acelerômetro e giroscópio gerados pelo mesmo. A coleta de dados rotulados para HAR apresenta diversas dificuldades, gerando datasets pequenos para representar toda a complexidade do dado e desbalanceados. 
+Na tarefa de reconhecimento de atividades humanas (HAR) utiliza-se dados de acelerômetro e giroscópio para identificar uma ação realizada. A coleta de dados rotulados para HAR apresenta diversas dificuldades, gerando datasets pouco representativos e desbalanceados.
 
-Diante disso, neste trabalho propomos modelos de geração de séries temporais adaptados para dados HAR. Comparamos as arquiteturas DoppelGAN e BioDiffusion em diferentes datasets. Os dados de todos os datasets são padronizados para amostragens em 20Hz e janelas de tempos de 3 segundos retirados do conjunto de dados tratados DAGHAR.
+Diante disso, neste trabalho realizamos a adaptação e avaliação de modelos de geração de séries temporais para dados HAR. Comparamos as arquiteturas DoppelGAN, TimeGAN e BioDiffusion em cinco diferentes datasets. Os resultados preliminares demonstram um baixo desempenho dos modelos quando aplicados diretamente aos dados de sensores. Desenvolvimentos futuros serão voltados para melhorias nos modelos utilizados e exploração de hiperparâmetros, e implementação métricas de avaliação quantitativa.
 
 ## Descrição do Problema/Motivação
 
@@ -30,7 +30,6 @@ Atualmente, há dois principais problemas relacionados aos dados existentes para
 
 Diante do contexto e motivação apresentados, temos como objetivo geral a implementação e avaliação de modelos generativos para dados de sensores de acelerômetro e giroscópio correspondentes a diferentes atividades humanas, buscando obter dados sintéticos que sejam representativos da distribuição de dados reais e possam ser utilizados para a melhoria de modelos de classificação HAR.
 
-
 ## Metodologia
 
 Neste trabalho, utilizamos os dados de 5 datasets (MotionSense[1], KuHAR[2], RealWorld[3], UCI[4] e WISDM[5]) para reconhecimento de atividades humanas a partir de dados de acelerômetro e giroscópio. Ao invés dos dados brutos de cada dataset, são utilizados os dados processados do repositório DAGHAR[6]. 
@@ -40,6 +39,7 @@ Três arquiteturas de geração de séries temporais são comparadas: DoppelGAN,
 ### DoppelGAN [7]
 
 ![DoppelGAN](docs/figures/doppelgan_model.png)
+*Figura 1: Arquitetura da DoppelGANger com as principais técnicas aplicadas destacadas.*
 
 A DoppelGANger é um modelo generativo adversarial para séries temporais, o qual compila diversas técnicas da literatura para adereçar diferentes problemas que GANs sofrem durante o treinamento, especificamente de séries temporais. As principais técnicas aplicadas são:
 Separação de informações categóricas (denominados metadados e que não se alteram durante o tempo para uma mesma amostra) de informações temporais;
@@ -67,6 +67,7 @@ Learning rate (gerador, discriminador auxiliar e discriminador) | 0.001|
 ### BioDiffusion [8]
 
 ![BioDiffusion](docs/figures/biodiffusion_model.png)
+*Figura 2: Arquitetura U-Net modificada utilizada para o processo de difusão da arquitetura BioDiffusion*
 
 O BioDiffusion é um modelo generativo de difusão para séries temporais multidimensionais de dados médicos. A arquitetura consiste em um modelo U-Net adaptado para séries temporais, onde camadas de convolução 1D são adicionadas no início e final do pipeline da rede. O modelo BioDiffusion pode ser utilizado com dados condicionados (presença de uma classe ou outro sinal ‘guia’) ou não-condicionados. 
 
@@ -87,6 +88,7 @@ A configuração utilizada nos experimentos é a padrão, com os seguintes hiper
 ### TimeGAN [9]
 
 ![TimeGAN](docs/figures/timegan_model.png)
+*Figura 3: Diagrama em blocos dos principais componentes e funções objetivos utilizados na arquitetura da TimeGAN*
 
 A proposta apresentada pelo modelo TimeGAN é a união dos métodos de treinamento de GANs e modelos autorregressivos para o aprendizado de um espaço latente representativo. Amostras reais são representadas em espaço latente por um embeder e dados sintéticos também são gerados diretamente na dimensão do espaço latente. O discriminador é treinado com base nas representações dos dados projetados no espaço latente e um reconstrutor é treinado para recuperar os dados na representação original a partir de sua projeção no espaço latente. Por fim, uma tarefa de supervisão é treinada conjuntamente, cujo objetivo é prever o próximo instante de tempo de um dado, real ou sintético, que foi projetado para o espaço latente.
 
@@ -133,6 +135,7 @@ As principais informações levantadas por essa exploração são:
 ### Workflow
 
 ![Workflow](docs/figures/GenHAR_Worflow.png)
+*Figura 4: Diagrama de atividades para o Workflow dos experimentos do projeto*
 
 #### Configuração do Ambiente
 
@@ -262,17 +265,27 @@ GenHar/
 
 Esta seção descreve os experimentos realizados para comparar dados reais e sintéticos gerados a partir de múltiplos datasets de sensores. Os dados foram coletados de dispositivos que capturam leituras de acelerômetro e giroscópio, e os modelos generativos aplicados foram projetados para criar séries temporais sintéticas com características semelhantes às dos dados reais. O objetivo principal é avaliar a qualidade, fidelidade e utilidade dos dados gerados.
 
-Os três modelos descritos anteriormente (TimeGAN, DoppelGAN e BioDiffusion) são treinados separadamente em cada base de dados seguindo o workflow de experimento descrito anteriormente.
+Os três modelos descritos anteriormente (TimeGAN, DoppelGAN e BioDiffusion) são treinados separadamente em cada base de dados seguindo o workflow de experimento descrito anteriormente, totalizando 15 diferentes modelos treinados.
 Os arquivos de configuração dos experimentos podem ser encontrados em:
   - [`tests/gans/doppelganger/config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/gans/doppelganger/config.yaml)
   - [`tests/gans/timeganpt/config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/gans/timeganpt/config.yaml)
   - [`tests/diffusion/unet1d_config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/diffusion/unet1d_config.yaml)
 
+No estado atual do projeto estão implementadas as avaliações qualitativas e de usabilidade.
+Abaixo são apresentadas as projeções em t-SNE dos dados reais e sintéticos dos três modelos implementados após serem treinados no conjunto de dados Ku-HAR.
+Os resultados completos podem ser vistos nas subpastas do diretório [`tests/`](https://github.com/brgsil/GenHAR/tree/main/projetos/GenHAR/tests).
+
+![BioDiffuion Ku-HAR](tests/diffusion/unconditional_1d/images/KuHar_None__diffusion_unet1d_tsne_comparison.jpg "title-1" =32%x) ![DoppelGAN Ku-HAR](tests/diffusion/unconditional_1d/images/KuHar_None__diffusion_unet1d_tsne_comparison.jpg "title-2" =32%x) ![TimeGAN Ku-HAR](tests/diffusion/unconditional_1d/images/KuHar_None__diffusion_unet1d_tsne_comparison.jpg "title-3" =32%x)
+*Figura 5: Projeção conjunta dos dados reais e sintéticos por t-SNE para modelos treinados com Ku-HAR. Da esquerda para direita: BioDiffusion, DoppelGAN e TimeGAN.
+
+Os resultados preliminares demonstram que a adaptação direta dos modelos para os dados de sensores de acelerômetro e giroscópio não apresentam bom desempenho e não são capazes de capturar corretamente o comportamento das séries temporais.
+Adicionalmente, a avaliação de usbilidade de classificadores nos conjuntos de dados sintéticos apresentam uma queda no desempenho de classificadores treinados com dados reais e sintéticos em comparação com classificadores treinados somente com dados reais. Novamente isso aponta para o baixo representatividade dos dados sintéticos devido ao modelo não ter sido capaz de capturar a distribuição dos dados.
+
 ## Conclusão
 
 Este projeto realiza a adaptação e comparação de modelos de geração de séries temporais para dados de sensores de acelerômetro e giroscópio voltados para tarefa de reconhecimento de atividades humanas. São utilizados dados de 5 datasets diferentes, os quais são padronizados e balanceados segundo a metodologia do benchmark DAGHAR.
 
-Três modelos generativos foram implementados e avaliados até o momento: TimeGAN, DoppelGAN e BioDiffusion. Esses modelos utilizam diferentes técnicas de geração de dados e melhorias do processo de treinamento específicas para séries temporais. Os resultados parciais mostram que ….
+Três modelos generativos foram implementados e avaliados até o momento: TimeGAN, DoppelGAN e BioDiffusion. Esses modelos utilizam diferentes técnicas de geração de dados e melhorias do processo de treinamento específicas para séries temporais. Os resultados parciais mostram que a adaptação direta dos modelos para dados de sensores HAR não é capaz de capturar adequadamente a distribuição dos dados reais, gerando amostras sintéticas não representativas do comportamento real.
 
 Os próximos passos do trabalho incluem o estudo de adaptações e ajuste dos hiperparâmetros dos modelos implementados de forma a melhorar a qualidade dos dados sintéticos gerados. Adicionalmente, outras métricas de avaliação serão implementadas para comparar propriedades das distribuições de dados reais e sintéticos, permitindo descrever melhor aspectos da qualidade dos dados sintéticos. Por fim, pretende-se realizar um estudo comparativo do desempenho dos modelos entre diferentes datasets, realizando o treinamento do modelo em um mais datasets e avaliando-o em outro dataset.
 
