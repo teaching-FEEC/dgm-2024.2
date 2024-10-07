@@ -3,7 +3,8 @@
 
 # `Financial Data Synthesis for Portfolio Optimization`
 ==============================
-## Link dos slides
+## Link dos slides:
+https://docs.google.com/presentation/d/1eOmgRpkQeXU1htM_7Gq66HRcn2CPZ7iB/edit?pli=1#slide=id.p1
 
 Apresentação
 ==============================
