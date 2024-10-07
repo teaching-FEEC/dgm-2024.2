@@ -13,7 +13,6 @@ import utils
 labels_file_name = '../../data/external/nexet/nexet/train.csv'
 
 df_labels = pd.read_csv(labels_file_name)
-df_labels.head(5)
 
 img_folder = '../../data/external/nexet/nexet/nexet_2017_1/'
 
