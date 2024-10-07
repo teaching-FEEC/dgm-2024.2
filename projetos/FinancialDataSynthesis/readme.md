@@ -83,6 +83,10 @@ $$ C1_{1:N} \\ U \\ C2_{1:N} \\ U \\ C3_{1:N} = R_{1:N} $$
 
 ![Histograma](Diagrama.drawio.png "Diagrama")
 
+**3:** Incorporar features à geração dos dados sintéticos.
+
+
+
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
 > Descrever bases de dados utilizadas.
