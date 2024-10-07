@@ -115,7 +115,7 @@ Este projeto adota um workflow bem definido para alcançar o objetivo de gerar t
 
 O objetivo principal é desenvolver um modelo baseado em GAIL para gerar trajetórias seguras e eficientes. Para avaliar a qualidade das trajetórias, utilizamos métricas como a distância cartesiana e a diferença de orientação entre as trajetórias geradas e as trajetórias de referência. 
 
-O ambiente de simulação foi implementado no Unity, o que nos permite flexibilidade na coleta de dados e a capacidade de testar diferentes cenários de maneira precisa.
+O ambiente de simulação consiste no simulador RCareWorld, da universidade de Cornell, que é implementado no Unity, permitindo flexibilidade na coleta de dados.
 
 ### 2. Coleta de Dados Especialistas
 
@@ -123,8 +123,7 @@ Nesta fase, configuramos o ambiente de simulação no **Unity** e geramos dados 
 
 **Atividades principais (Figura 1 e Figura 2, Etapa 2)**:
 - Preparação do ambiente de simulação.
-- Programação de trajetórias de referência para o manipulador.
-- Coleta manual dos dados.
+- Coleta manual dos dados - Trajetórias geradas via teleoperação.
 - Armazenamento e organização dos dados coletados.
 - Validação para garantir a integridade dos dados.
 
@@ -149,7 +148,7 @@ A modelagem da rede GAIL consiste em definir tanto a **rede geradora** quanto a 
 
 ### 5. Treinamento da Rede GAIL
 
-Uma vez que a rede GAIL foi modelada, iniciamos o treinamento com os dados especialistas. Ajustamos os hiperparâmetros, como a taxa de aprendizado, conforme necessário, para otimizar a performance da rede. Durante o treinamento, as trajetórias geradas são continuamente avaliadas e comparadas às trajetórias especialistas, garantindo que o modelo esteja aprendendo a imitar com precisão.
+Uma vez que a rede GAIL foi modelada, será iniciado o treinamento com os dados especialistas. Deverá ser feito o ajusto dos hiperparâmetros, como a taxa de aprendizado, conforme necessário, para otimizar a performance da rede. Durante o treinamento, as trajetórias geradas são continuamente avaliadas e comparadas às trajetórias especialistas, garantindo que o modelo esteja aprendendo a imitar com precisão.
 
 **Atividades principais (Figura 1 e Figura 2, Etapa 5)**:
 - Treinamento inicial utilizando os dados especialistas.
@@ -158,13 +157,13 @@ Uma vez que a rede GAIL foi modelada, iniciamos o treinamento com os dados espec
 
 ### 6. Validação e Testes
 
-Após o treinamento, as trajetórias geradas passam por uma fase de validação rigorosa, que inclui simulações no Unity para verificar a viabilidade física das trajetórias. Conduzimos testes de robustez e generalização para garantir que o modelo seja capaz de lidar com diferentes condições. Também realizamos uma análise de colisões para assegurar que as trajetórias respeitem as limitações físicas do manipulador. Ao final, geramos um relatório de desempenho detalhado e documentamos os resultados.
+Após o treinamento, as trajetórias geradas passam por uma fase de validação, que inclui simulações no ambiente simulacional para verificar a viabilidade física das trajetórias. Conduzimos testes de robustez e generalização para garantir que o modelo seja capaz de lidar com diferentes condições. Também realizamos uma análise de colisões para assegurar que as trajetórias respeitem as limitações físicas do manipulador. Ao final, geramos um relatório de desempenho detalhado e documentamos os resultados.
 
 **Atividades principais (Figura 1 e Figura 2, Etapa 6)**:
 - Validação das trajetórias geradas.
 - Simulações no Unity para testar a viabilidade física.
 - Testes de robustez e generalização para diferentes cenários.
-- Análise de colisões no Unity para garantir segurança.
+- Análise de colisões no simulador, para garantir segurança.
 - Revisão e ajuste após iterações de testes.
 - Geração de relatório de desempenho e documentação final dos resultados.
 
