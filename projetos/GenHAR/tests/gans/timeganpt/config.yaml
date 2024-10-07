@@ -54,9 +54,9 @@ generative_models:
           module: gru
           hidden_dim: 6
           num_layer: 3
-          iterations: 400
+          iterations: 3000
           batch_size: 128
-    n_gen_samples: 5
+    n_gen_samples: 300
     folder_save_generate_df: data/synthetic/timegan
 
 
