@@ -128,6 +128,12 @@ $$ D = [ R_{1:N}, I_{1:N} ] $$
 
 De forma a identificar as tuplas ( r(t), i(t) ) que exibem características e similares e agrupá-las em dois ou três conjuntos que representam regimes de mercado (períodos econômicos) distintos.
 
+**4.** Associar uma variável categórica a cada conjunto, ou seja, a cada regime de mercado.
+
+**5.** Gerar amostras sintéticas condicionadas à cada grupo através da CTGANs:
+
+$$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
+
 ### Bases de Dados e Evolução
 > Elencar bases de dados utilizadas no projeto.
 > Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento sobre como ela foi analisada/usada, conforme exemplo a seguir.
