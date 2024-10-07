@@ -112,10 +112,11 @@ i(t): taxa de juros no instante t.
 > Apontar ferramentas relevantes.
 > Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
 
-**ESCREVER SOBRE O PROCESSO DE CLUSTERIZAÇÃO DOS PERÍODOS ECONÔMICOS (MARKET REGIMS) conforme Peña explica**
-#Além do mais, podemos incluir outros features relevantes que influenciam o desempenho do índice, como a taxa de juros (U.S. Treasury Yield). Dessa forma, o dado gerado seria uma tupla contendo informações como: (Data, S&P 500, Taxa de Juros).
+A metodologia proposta consiste nos seguintes passos:
 
-O maior desafio do projeto será a geração de dados sintéticos realistas, o que exigirá não apenas bons algoritmos, mas também a escolha cuidadosa dos condicionamentos e dos features mais relevantes.
+**1.** Coletar os retornos de um determinado índice em um determinado período (e.g. retornos do Ibovespa de 2002 até 2024) descritos pela série temporal:
+
+$$ R_{1:N} = { r(1), r(2), ..., r(N) } $$
 
 ### Bases de Dados e Evolução
 > Elencar bases de dados utilizadas no projeto.
