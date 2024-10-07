@@ -23,7 +23,7 @@ Nesse contexto, as Redes Adversariais Generativas (GANs) surgem como uma possív
  A figura 01 abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
 
 ![objetivo](/projetos/HTF/images/FIG01.png)
-Figura 01: Exemplo de predição de trajetória humana em ambientes povoados
+>Figura 01: Exemplo de predição de trajetória humana em ambientes povoados
 
 Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
 
@@ -51,13 +51,29 @@ Para o projeto, serão consideradas duas bases de dados principais conforme tabe
 |----- | ----- | -----|
 |BIWI Walking Pedestrians Dataset | https://data.vision.ee.ethz.ch/cvl/aem/ewap_dataset_full.tgz | Vista superior de pedestres caminhando em cenários povoados.|
 
-![objetivo](/projetos/HTF/images/bew.png)
-Figura 01: Exemplo de predição de trajetória humana em ambientes povoados
+<div style="text-align: center;">
+    <img src="/projetos/HTF/images/biwi_eth.png" alt="Figura 02: Imagem do dataset ETH" width="600"/>
+    <p><em>Figura 02: Imagem do dataset Biwi_ETH</em></p>
+</div>
 
+<div style="text-align: center;">
+    <img src="/projetos/HTF/images/biwi_hotel.png" alt="Figura 03: Imagem do dataset HOTEL" width="600"/>
+    <p><em>Figura 03: Imagem do dataset Biwi Hotel</em></p>
+</div>
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
 |UCY Crowd Data | https://graphics.cs.ucy.ac.cy/research/downloads/crowd-data | Conjunto de dados contendo pessoas em movimento em meio a multidões.|
+
+<div style="text-align: center;">
+    <img src="/projetos/HTF/images/crowds_zara01.jpg" alt="Figura 04: Imagem do dataset UCY Zara 01" width="600"/>
+    <p><em>Figura 04: Imagem do dataset UCY Zara 01</em></p>
+</div>
+
+<div style="text-align: center;">
+    <img src="/projetos/HTF/images/students_003.jpg" alt="Figura 05:Imagem do dataset UCY Students 03" width="600"/>
+    <p><em>Figura 05: Imagem do dataset UCY Students 03</em></p>
+</div>
 
 
 
