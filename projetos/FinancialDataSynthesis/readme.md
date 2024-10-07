@@ -85,7 +85,7 @@ O processo de clusterização irá separar os retornos que apresentam comportame
 
 $$ C1_{1:n} \\ U \\ C2_{1:m} \\ U \\ C3_{1:o} = R_{1:N} $$ 
 
-![Diagrama](Diagram_series.png "Diagrama")
+![Diagrama](Diagrama_Cluster.png "Diagrama")
 
 **3. Incorporação de informações contextuais (features) na geração dos dados sintéticos.**
 
