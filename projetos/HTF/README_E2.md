@@ -23,11 +23,11 @@ A predição de trajetórias humanas em ambientes densamente povoados é uma tar
 
 Nesse contexto, as Redes Adversariais Generativas (GANs) surgem como uma possível solução.  As GANs, por serem modelos generativos, são capazes de capturar a incerteza inerente ao movimento humano, gerando múltiplos cenários futuros multimodais, dentre os quais os socialmente aceitáveis serão escolhidos.  A fim de tornar esse processo ainda mais eficiente, foram introduzidos mecanismos sociais a fim de permitir que o gerador compreenda melhor tais interações, criando-se assim as GANs Sociais (SGANs). A principal motivação para a realização deste trabalho é a compreensão de uma nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
 
-> A figura abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
->
->![objetivo](/projetos/HTF/images/FIG01.png)
->
->Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
+ A figura abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
+
+![objetivo](/projetos/HTF/images/FIG01.png)
+
+Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
 
 
 ## Objetivo
