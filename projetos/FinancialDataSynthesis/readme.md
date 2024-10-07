@@ -94,7 +94,7 @@ Conforme explicado por Pagnocelli et al.[5], a taxa de juros é um bom indicador
 
 Dessa forma, os dados de treinamento são séries temporais, em que a informação para cada instante t é representado por uma tupla:
 
-$$ [r(t), i(t) ] $$
+$$ \left(r(t), i(t) \right) $$
 
 Sendo:
 
