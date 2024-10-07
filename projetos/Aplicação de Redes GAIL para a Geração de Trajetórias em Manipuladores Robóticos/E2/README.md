@@ -182,8 +182,8 @@ Este projeto adota um workflow bem definido para alcançar o objetivo de gerar t
 ### Imagens de Fluxograma:
 
 #### Figura 1:
+![Workflow_Etapas_1-Página-1 drawio (2)](https://github.com/user-attachments/assets/023dc0b2-a584-4356-b72e-9d308da9be10)
 
-![Workflow_Etapas_1-Página-1 drawio](https://github.com/user-attachments/assets/0e3f4347-f6cd-4dd5-8b65-15fb8fb9c08a)
 
 
 #### Figura 2:
