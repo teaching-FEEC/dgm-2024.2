@@ -33,6 +33,18 @@ Este projeto tem como objetivo realizar um estudo comparativo de modelos de comp
 
 [Link para a apresentação de slides](https://drive.google.com/file/d/1XXuT1HYH33gW0SCd8A1U8ulIU7ICBDPW/view?usp=sharing)
 
+## Objetivos
+
+### Objetivo geral
+
+Contruir e comparar modelos gerativos voltados para compressão semântica de dados.
+
+### Objetivos específicos
+
+* Montar e treinar uma GAN simples que reconstrua uma imagem a partir do espaço semântico da original;
+* Montar e treinar uma GAN/cGAN que construa uma imagem semanticamente parecida com a imagem original;
+* Montar e treinar um LDM que conprime e reconstroi semanticamente uma imagem.
+
 ## Metodologia Proposta
 
 Diante do contexto apresentado, a proposta deste projeto será implementar diferentes abordagens de redes generativas e compará-las de maneira padronizada com um modelo de referência de compressão tradicional e entre si.
@@ -59,7 +71,7 @@ Em uma avaliação de ordem qualitativa para teste inicial do conceito também s
 ## Cronograma
 >| Tarefa          | Data de Finalização     | Número de Semanas| Progresso  |
 >|-----------------|------------|-----------|------------|
->| Revisão bibliográfica        | 17/09/2024 | 2 | █████████░ 90% |
+>| Revisão bibliográfica        | 17/09/2024 | 2 | ██████████ 100% |
 >| Desenvolvimento BPG/VVC | 24/09/2024 | 1 | ░░░░░░░░░░ 0% |
 >| Desenvolvimento GAN | 08/10/2024 | 2 | ░░░░░░░░░░ 0%  
 >| Entrega 2          | 08/10/2024 | 0 | ░░░░░░░░░░ 0% |
