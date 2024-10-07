@@ -120,7 +120,7 @@ Levando em conta os modelos pré-treinados disponibilizados no repositório, for
 
 ## Conclusão
 
-Para os próximos passos, espera-se compreender os detalhes da rede e conduzir novos treinamentos mediante variação de parâmentros para a fim de obter resultados que possam ser iguais ou melhores aos fornecidos pelas referências.
+Para os próximos passos, espera-se compreender os detalhes da rede SGAN e conduzir novos treinamentos mediante variação de parâmentros a fim de obter resultados que possam ser iguais ou melhores aos fornecidos pelas referências.
 
 
 ## Referências Bibliográficas
