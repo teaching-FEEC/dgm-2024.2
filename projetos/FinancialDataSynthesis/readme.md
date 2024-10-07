@@ -81,7 +81,7 @@ O processo de clusterização irá separar os retornos que apresentam comportame
 
 $$ C1_{1:n} \\ U \\ C2_{1:m} \\ U \\ C3_{1:o} = R_{1:N} $$ 
 
-![Histograma](Diagrama.drawio.png "Diagrama")
+![Histograma](Diagram_series.png "Diagrama")
 
 **3:** Incorporar features à geração dos dados sintéticos.
 
