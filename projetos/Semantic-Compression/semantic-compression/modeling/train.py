@@ -1,6 +1,7 @@
-# code to train models
+
+import argparse
 from tqdm.auto import tqdm
-from ..gan import GenerativeCompressionGAN
+from gan import GenerativeCompressionGAN
 from keras.utils import image_dataset_from_directory
 from keras import optimizers, losses
 
@@ -25,16 +26,33 @@ def train(gan, dataloader_train, dataloader_val, epochs, save_every):
 
 
 def main():
-    path_train = '../../data/train'
-    path_val = '../../data/test'
-    H, W = 128, 256
-    width = 32
-    depth = 3
-    batch_size = 50
-    d_lr = 0.001
-    g_lr = 0.001
-    epochs = 50
-    save_every = 50
+    parser = argparse.ArgumentParser(description="Treinamento de Generative Compression GAN")
+
+    parser.add_argument('--path_train', type=str, default='../../data/train', help='Caminho para o dataset de treino')
+    parser.add_argument('--path_val', type=str, default='../../data/test', help='Caminho para o dataset de validação')
+    parser.add_argument('--H', type=int, default=128, help='Altura das imagens')
+    parser.add_argument('--W', type=int, default=256, help='Largura das imagens')
+    parser.add_argument('--width', type=int, default=32, help='Número de filtros de largura do GAN')
+    parser.add_argument('--depth', type=int, default=3, help='Número de blocos de profundidade do GAN')
+    parser.add_argument('--batch_size', type=int, default=50, help='Tamanho do batch para treinamento')
+    parser.add_argument('--d_lr', type=float, default=0.001, help='Taxa de aprendizado do discriminador')
+    parser.add_argument('--g_lr', type=float, default=0.001, help='Taxa de aprendizado do gerador')
+    parser.add_argument('--epochs', type=int, default=50, help='Número de épocas de treinamento')
+    parser.add_argument('--save_every', type=int, default=50, help='Salvar pesos a cada número de épocas')
+
+    args = parser.parse_args()
+
+    path_train = args.path_train
+    path_val = args.path_val
+    H = args.H
+    W = args.W
+    width = args.width
+    depth = args.depth
+    batch_size = args.batch_size
+    d_lr = args.d_lr
+    g_lr = args.g_lr
+    epochs = args.epochs
+    save_every = args.save_every
 
     train_set = image_dataset_from_directory(
         path_train, labels=None, batch_size=batch_size, image_size=(H, W), shuffle=True
