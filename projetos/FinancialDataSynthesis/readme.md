@@ -142,7 +142,7 @@ $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
 |API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.|
-| Bloomberg Dataset|https://www.bloomberg.com| Inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o retorno histórico dos principais índices do mundo, como S&P 500, Nasdaq 100, Total Stock Market, etc.| 
+| Bloomberg Dataset|https://github.com/chuma9615/ctgan-portfolio-research/blob/main/src/data/asset_prices.csv| Inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o retorno histórico dos principais índices do mundo, como S&P 500, Nasdaq 100, Total Stock Market, etc.| 
 
 A escolha dessas bases de dados é justificada pelo seu uso comprovado em estudos anteriores sobre otimização de portfólio e síntese de dados financeiros.
 
