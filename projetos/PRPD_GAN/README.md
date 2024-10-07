@@ -71,7 +71,7 @@ Se realizou uma exploração estatística para entender o dataset, especificamen
 
 #### Análise por Textura
 
-Se utilizou a matriz GLCM, conhecida por seu uso no contexto de extração de características sobre a textura das imagens, utiliza images em escala de cinza, se extrairam as seguintes características de cada imagen:
+Se utilizou a matriz de *Gray Level Co-Occurrence Matrix* (GLCM), conhecida por seu uso no contexto de extração de características de textura de imagens, utiliza images em escala de cinza, e se extrairam as seguintes características globais de cada imagen:
 
 - Contraste
 - Correlação
@@ -80,12 +80,16 @@ Se utilizou a matriz GLCM, conhecida por seu uso no contexto de extração de ca
 
 #### Análise por Contornos
 
-Se utilizou uma binarização com o algoritmo de Otsu para extrair os contornos principais das nubes que aparecem em cada imagen, posteriormente se extrairam as seguintes caracteristicas:
+Se utilizou uma binarização com o algoritmo de Otsu para extrair os contornos principais das nubes de descargas parciais que apareceram em cada imagen. A continuação, se pode ver um exemplo do processo para cada tipo de defeito.
+
+![Contours-example](.\reports\figures\contours_prpd.png)
+
+Posteriormente se extrairam as seguintes caracteristicas de cada nube:
 
 - Area
 - Perimetro
 - Aspect ratio
-- Extenção
+- Extent
 - Solidity
 - Diámetro equivalente
 - Compactness
@@ -95,69 +99,70 @@ Se utilizou uma binarização com o algoritmo de Otsu para extrair os contornos 
 
 Apartir da extração de características de cada imagen, se utilizaram técnicas de redução de características e visualização para observar se existem clusters claramente definidos. De tal maneira, a continuação se pode olhar as figuras que foram mais representativas.
 
+##### Clusterização por Características de Textura
+
+![GLCM-UMAP](.\reports\figures\UMAP_texture.png)
+
+##### Clusterização por Características dos Contornos
+
+![Contours-tSNE](.\reports\figures\tSNE_contours.png)
+
+##### Clusterização por Características de Textura e Contornos
+
+![GLCM&Contours-tSNE](.\reports\figures\tSNE_texture_contours.png)
+
 ### Implementação da ACWGAN
+
+Se implementou uma variação da rede generativa condicional conhecida como Auxilliary Classifier Generative Adversarial Network (ACGAN), neste caso se utilizou a penalidade de gradiente de Wasserstein para melhorar a estabilidade de treinamento, assim mesmo, se adiciou normalização espectral nas camadas convolucionais do discriminador.
 
 #### Hiperparâmetros
 
+Os hiperparâmetros usados nesta iteraçao inícial foram os seguintes:
+
+- z_dim = 128
+- n_embedding = 64
+- epochs = 600
+- Gaussian noise std = 0.1
+- Gaussian noise decay = 0.995
+- Batch size = 32
+- Learning rate = 1e-4
+- (&beta;<sub>1</sub>, &beta;<sub>2</sub>) = (0, 0.999)
+- &lambda; = 20
+- Dropout rate = 0.5
+- Leaky ReLU slope = 0.2
+
 #### Arquiteturas
+
+##### Generator
+
+| Layer                                             | Parameters                           |
+|---------------------------------------------------|--------------------------------------|
+| Embedding / GaussianNoise                          | 3, 128                           |
+| Linear (fc_latent)                                | 128, 400                             |
+| ConvTranspose2d / BatchNorm2d / ReLU | 400, 256, (4, 4), (4, 4) |
+| ConvTranspose2d  / BatchNorm2d  / ReLU  | 256, 128, (8, 8), (4, 4), (2, 2)|
+| ConvTranspose2d / BatchNorm2d / ReLU (block_c3) | 128, 64, (8, 8), (4, 4), (2, 2)|
+| ConvTranspose2d / Tanh     | 64, 3, (4, 4), (2, 3), (1, 14) |
+
+**Número total de parâmetros treináveis:** 4,315,395
+
+---
+
+##### Discriminator
+
+| Layer                                              | Parameters                           |
+|---------------------------------------------------|--------------------------------------|
+| GaussianNoise  / Conv2d  / LeakyReLU  / Dropout | 3, 64, (8, 8), (4, 4), (2, 2) |
+| GaussianNoise  / Conv2d  / LeakyReLU / Dropout  | 64, 128, (8, 8), (4, 4), (2, 2) |
+| GaussianNoise  / Conv2d  / LeakyReLU / Dropout  | 128, 256, (4, 4), (2, 2), (1, 1) |
+| GaussianNoise  / Linear  / Sigmoid | 5120, 1                      |
+| GaussianNoise  / Linear / Softmax | 5120, 3                    |
+
+**Número total de parâmetros treináveis:** 1,081,348
 
 #### Resultados parciais
 
 ## Conclusão
-
-## Referências Bibliográficas
-
-Ao longo do projeto, a equipe utilizará como base os seguintes artigos que já foram identificados: 
-- "A GAN-based Method for the Enhancement of Phase-Resolved Partial Discharge Map Data"
-- "Partial Discharge Data Augmentation Based on Improved Wasserstein Generative Adversarial Network With Gradient Penalty" 
-- "Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN"
-
-### Ferramentas computacionais
-Esses estudos fornecerão suporte teórico e prático para o desenvolvimento das soluções propostas.
-
-As ferramentas previstas para o desenvolvimento incluem 
-- Linguagem de programação: Python
-- Deep Learning: PyTorch 
-- Visão Computacional: TorchVision, OpenCV, Numpy
-- Visualização de dados: Matplotlib, Seaborn
-- Avaliação por métricas: Scikit-learn, Scikit-image
-- Manipulação de dados: Pandas
-- Monitoramento: Weights and Biases
-- Otimização de hiperparâmetros: Optuna
-
-### Avaliação dos modelos
-Espera-se avaliar a qualidade das imagens geradas tanto com métricas quantitativas quanto qualitativas. Vamos usar uma avaliação baseada em três aspectos: comparação da distribuição dos datasets, morfologia das imagens e inspecção visual. Essas métricas permitirão avaliar de maneira robusta o desempenho dos modelos generativos e a qualidade das imagens sintéticas produzidas.
-
-Avaliação da distribuição dos datasets
-- Frétchet Inception Distance (FID)
-- Kernel Inception Distance (KID)
-
-Avaliação de morfologia das imagens dos datasets
-- Structural similarity index measure (SSIM)
-
-Avaliação visual dos dados
-- t-SNE
-- UMAP
-
-### Resultados esperados
-Ao final, planeja-se ter como resultados uma base de dados sintética de PRPDs baseada em uma avaliaçaõ quantitativa e qualitativa, ter código público e propor uma abordagem para comparar imagens sintéticas no contexto de detecção de falhas em motores.
-
-## Cronograma do Projeto
-
-| Data        | Etapa do Projeto                                            |
-|-------------|-------------------------------------------------------------|
-| 10/09/2024  | Escrita e ideação do projeto                                |
-| 17/09/2024  | Exploração da base de dados (Entrega E1)                    |
-| 24/09/2024  | Escolha dos modelos de geração que serão comparados         |
-| 01/10/2024  | Implementação dos modelos escolhidos                        |
-| 08/10/2024  | Revisão e escrita parcial do projeto (Entrega E2)           |
-| 15/10/2024  | Implementação de possíveis feedbacks recebidos pela turma   |
-| 22/10/2024  | Otimização dos hiperparâmetros                              |
-| 29/10/2024  | Otimização dos hiperparâmetros                              |
-| 05/11/2024  | Avaliação dos modelos implementados                         |
-| 12/11/2024  | Revisão e escrita do projeto                                |
-| 19/11/2024  | Revisão e escrita do projeto                                |
-| 25/11/2024  | Entrega E3                                                  |
 
 ## Referências Bibliográficas
 1. Lv, F., Liu, G., Wang, Q., Lu, X., Lei, S., Wang, S., & Ma, K. (2023). Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN. Journal of Electrical Engineering & Technology, 18(2), 829–841. https://doi.org/10.1007/s42835-022-01260-7
