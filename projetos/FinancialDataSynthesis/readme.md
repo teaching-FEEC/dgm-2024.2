@@ -63,7 +63,7 @@ Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e
 
 ![Texto Alternativo](histograma.png "Histograma")
 
-Observamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, no caso há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma. Os outros fatos também podem ser verificados através de métricas adequadas. Dessa forma, para averiguar se um dado sintético é realista, podemos analisar se ele tal propriedades.
+Observamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, no caso há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma. Os outros fatos também podem ser verificados através de métricas adequadas. Dessa forma, para averiguar se um dado sintético é realista, podemos analisar se ele possui tal propriedades.
 
 **2.** Condicionar a geração de dados sintéticos financeiros à diferentes períodos econômicos.
 
