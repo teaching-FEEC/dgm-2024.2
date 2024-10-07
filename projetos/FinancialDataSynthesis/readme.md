@@ -78,7 +78,7 @@ Para tal, podemos utilizar técnicas de clusterização nas séries temporais es
 
 O diagrama abaixo ilustra um exemplo, em que temos a série temporal de retornos (retornos dos índices em cada instante t, conforme indicado na equação 1):
 
-$$ R_{1:N}  = [ r(1), r(2), ..., r(N) ]  $$
+$$ R_{1:N}  = [{ r(1), r(2), ..., r(N) }]  $$
 
 O processo de clusterização irá separar os retornos que apresentam comportamenho semelhante, categorizando os regimes de mercado. No exemplo, isso gera três séries temporais C1, C2 e C3 que são subséries da original:
 
