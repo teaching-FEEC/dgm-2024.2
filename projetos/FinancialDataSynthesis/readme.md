@@ -137,6 +137,8 @@ $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 
 **6.** Verificar se as amostras sintéticas são realistas através da observação dos fatos estilizados e outras métricas.
 
+**7.** Caso os dados não fiquem suficientemente realistas, realiza ajustes na CTGAN e/ou no processo de clusterização.
+
 ### Bases de Dados e Evolução
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
