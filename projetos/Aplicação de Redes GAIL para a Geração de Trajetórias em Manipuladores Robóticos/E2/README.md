@@ -83,7 +83,7 @@ Os objetivos do projeto serão avaliados através de:
 #### API de Referência:
 * Gleave, Adam, Taufeeque, Mohammad, Rocamonde, Juan, Jenner, Erik, Wang, Steven H., Toyer, Sam, Ernestus, Maximilian, Belrose, Nora, Emmons, Scott, Russell, Stuart. (2022). Imitation: Clean Imitation Learning Implementations. [arXiv:2211.11972v1 [cs.LG]](https://arxiv.org/abs/2211.11972). <https://imitation.readthedocs.io/en/latest/index.html>
 
-#### Simulador que será Utilizado (CoppeliaSim):
+#### Simulador que será Utilizado (RCareWorld - Unity):
 * **RCareWorld**: <https://github.com/empriselab/RCareWorld>
 
 
@@ -187,30 +187,60 @@ Este projeto adota um workflow bem definido para alcançar o objetivo de gerar t
 
 
 #### Figura 2:
-![Workflow-Página-2](Workflow-Página-2.drawio.png)
 
 
+![Workflow_Etapas_1-Página-2 drawio (1)](https://github.com/user-attachments/assets/deddb135-14a6-481c-bef8-89004084487d)
 
 
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-> Na entrega parcial do projeto (E2), essa seção pode conter resultados parciais, explorações de implementações realizadas e 
-> discussões sobre tais experimentos, incluindo decisões de mudança de trajetória ou descrição de novos experimentos, como resultado dessas explorações.
+Até o momento, foram realizados avanços significativos no processamento e organização dos dados para o treinamento do modelo. Utilizando um conjunto de dados coletado e consolidado manualmente, foi realizada uma análise para entender melhor as características das trajetórias de movimentação e ação da garra robótica. As estatísticas descritivas geradas forneceram uma visão das posições angulares das juntas, posições e rotações da garra, bem como as variações (ações) realizadas ao longo das trajetórias.
 
-> Na entrega final do projeto (E3), essa seção deverá elencar os **principais** resultados obtidos (não necessariamente todos), que melhor representam o cumprimento
-> dos objetivos do projeto.
+### Análise dos Dados
+A análise inicial revelou padrões importantes, como a variação dos ângulos das juntas e a dispersão das posições e rotações da garra. Essas informações são essenciais para definir a abordagem do modelo de aprendizado por imitação (no caso, GAIL). O processo de normalização de ângulos garantiu que todos os dados estivessem adequadamente preparados para o treinamento, corrigindo valores fora do intervalo esperado (por exemplo, ângulos maiores que 360 graus).
 
-> A discussão dos resultados pode ser realizada em seção separada ou integrada à seção de resultados. Isso é uma questão de estilo.
-> Considera-se fundamental que a apresentação de resultados não sirva como um tratado que tem como único objetivo mostrar que "se trabalhou muito".
-> O que se espera da seção de resultados é que ela **apresente e discuta** somente os resultados mais **relevantes**, que mostre os **potenciais e/ou limitações** da metodologia, que destaquem aspectos
-> de **performance** e que contenha conteúdo que possa ser classificado como **compartilhamento organizado, didático e reprodutível de conhecimento relevante para a comunidade**. 
+### Próximos Passos: Definição da Arquitetura da Rede Neural
+Com a base de dados já estruturada e explorada, o foco atual está na definição da arquitetura da rede neural que será utilizada para treinar o modelo de GAIL. O modelo precisará capturar tanto a dinâmica das posições e rotações da garra quanto as ações que representam as mudanças realizadas em cada iteração.
+
+A definição da arquitetura envolverá decisões sobre:
+
+* Tipo de rede neural: A princípio, planeja-se utilizar redes neurais recorrentes (RNNs), como LSTM ou GRU, que são adequadas para capturar dependências temporais nas sequências de observações e ações.
+* Entrada e saída do modelo: As observações das posições angulares, posições e rotações da garra serão usadas como entrada, enquanto as ações serão a saída que o modelo tentará replicar.
+* Número de camadas e neurônios: Experimentos serão conduzidos para identificar a quantidade ideal de camadas e neurônios, buscando um equilíbrio entre a capacidade do modelo de generalizar e sua eficiência computacional.
+Esses elementos serão ajustados com base em experimentos subsequentes, onde o desempenho do modelo será avaliado em termos de sua capacidade de imitar as trajetórias de forma realista. A partir desses testes, ajustes na arquitetura poderão ser feitos para otimizar o desempenho.
+
+### Discussão
+Apesar de ainda estarmos na fase de exploração da arquitetura da rede, os dados já indicam que o modelo terá de lidar com uma alta variabilidade, especialmente nas rotações da garra e nas ações associadas. A diversidade observada nas posições e rotações reforça a necessidade de uma arquitetura robusta, capaz de lidar com essas variações.
+
+Os próximos experimentos irão se concentrar em testar diferentes arquiteturas e parâmetros, e ajustes poderão ser feitos com base nos resultados preliminares, buscando uma melhora no desempenho do modelo.
 
 ## Conclusão
 
-> A seção de Conclusão deve ser uma seção que recupera as principais informações já apresentadas no relatório e que aponta para trabalhos futuros.
-> Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas ou como o projeto será conduzido até a sua finalização.
-> Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outros aspectos, possibilidades de continuidade do projeto.
+Até o momento, o projeto avançou na preparação e análise dos dados de demonstração, gerando estatísticas importantes sobre o comportamento do robô. Também foi realizada uma análise preliminar das arquiteturas de rede para o GAIL, definindo os próximos passos para implementação e testes no ambiente de simulação.
+
+Para a etapa final do projeto, serão realizados os seguintes passos:
+
+* Implementação completa da arquitetura de GAIL.
+* Treinamento do agente (robô) no ambiente de simulação, ajustando a política de ações para que o comportamento imite o especialista de forma eficaz.
+* Avaliação do desempenho do robô após o treinamento, tanto quantitativamente (medidas de erro ou similaridade com o especialista) quanto qualitativamente (análise visual das execuções do robô).
+* Refinamentos adicionais com base nos resultados obtidos e considerações para possíveis melhorias futuras, como a expansão do dataset ou ajustes na estrutura da rede.
+
+Com essas próximas etapas, o projeto avançará para a fase final, onde o foco estará na implementação, treinamento e avaliação do modelo de aprendizado por imitação.
+
 
 ## Referências Bibliográficas
-> Apontar nesta seção as referências bibliográficas adotadas no projeto.
+#### Artigos de Referência:
+
+* **GAIL**: Ho, J. & Ermon, S. (2016). Generative Adversarial Imitation Learning. [arXiv:1606.03476](https://arxiv.org/abs/1606.03476).
+* WANG, Haoxu; MEGER, David. Robotic object manipulation with full-trajectory gan-based imitation learning. In: 2021 18th Conference on Robots and Vision (CRV). IEEE, 2021. p. 57-63. <https://ieeexplore.ieee.org/abstract/document/9469449>
+* SYLAJA, Midhun Muraleedharan; KAMAL, Suraj; KURIAN, James. Example-driven trajectory learner for robots under structured static environment. International Journal of Intelligent Robotics and Applications, p. 1-18, 2024. <https://link.springer.com/content/pdf/10.1007/s41315-024-00353-y.pdf>
+* TSURUMINE, Yoshihisa; MATSUBARA, Takamitsu. Goal-aware generative adversarial imitation learning from imperfect demonstration for robotic cloth manipulation. Robotics and Autonomous Systems, v. 158, p. 104264, 2022. <https://www.sciencedirect.com/science/article/pii/S0921889022001543>
+* REN, Hailin; BEN-TZVI, Pinhas. Learning inverse kinematics and dynamics of a robotic manipulator using generative adversarial networks. Robotics and Autonomous Systems, v. 124, p. 103386, 2020. <https://www.sciencedirect.com/science/article/pii/S0921889019303501>
+
+#### API de Referência:
+* Gleave, Adam, Taufeeque, Mohammad, Rocamonde, Juan, Jenner, Erik, Wang, Steven H., Toyer, Sam, Ernestus, Maximilian, Belrose, Nora, Emmons, Scott, Russell, Stuart. (2022). Imitation: Clean Imitation Learning Implementations. [arXiv:2211.11972v1 [cs.LG]](https://arxiv.org/abs/2211.11972). <https://imitation.readthedocs.io/en/latest/index.html>
+
+#### Simulador que será Utilizado (RCareWorld - Unity):
+* **RCareWorld**: <https://github.com/empriselab/RCareWorld>
+
