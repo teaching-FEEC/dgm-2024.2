@@ -205,7 +205,7 @@ class GenerativeCompressionGAN(models.Model):
             # Perda de distorção
             g_distortion_loss = self.distortion_loss_fn(real_images, generated_images)
             # Perda total ponderada
-            g_loss_batch = g_gan_loss + self.lambda_recon * g_distortion_loss
+            g_loss_batch = g_gan_loss + self.lambda_d * g_distortion_loss
             g_loss_val+= g_loss_batch
         d_loss_avg = d_loss_val / len(dataloader_val)
         g_loss_avg = g_loss_val / len(dataloader_val)
