@@ -138,50 +138,26 @@ $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 **6.** Verificar se as amostras sintéticas são realistas através da observação dos fatos estilizados e outras métricas.
 
 ### Bases de Dados e Evolução
-> Elencar bases de dados utilizadas no projeto.
-> Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento sobre como ela foi analisada/usada, conforme exemplo a seguir.
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
 |API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.|
 | Bloomberg Dataset|-| Inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o retorno histórico dos principais índices do mundo, como S&P 500, Nasdaq 100, Total Stock Market, etc.| 
 
-> Faça uma descrição sobre o que concluiu sobre esta base. Sugere-se que respondam perguntas ou forneçam informações indicadas a seguir:
-> * Qual o formato dessa base, tamanho, tipo de anotação?
-> * Quais as transformações e tratamentos feitos? Limpeza, reanotação, etc.
-> * Inclua um sumário com estatísticas descritivas da(s) base(s) de estudo.
-> * Utilize tabelas e/ou gráficos que descrevam os aspectos principais da base que são relevantes para o projeto.
-
-- **API do Yahoo Finance** permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.
-- **Fama-French Datasets** disponivel em [3]. Esta base de dados contém informações sobre fatores de risco sistemático e é amplamente utilizada em estudos de modelagem de retornos financeiros, como no estudo de regressão sintética de Li et al. [1]. Neste dataset temos os seguentes fatores de risco sistemático Market Risk Premium (Mkt-RF), Small Minus Big (SMB), High Minus Low (HML), Risk-Free Rate (RF).
-
-- **Talvez nao precise explicar cada ativo**
-- **Bloomberg Dataset** conforme utilizado no trabalho de Peña et al. [2]. Esta base de dados inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o retorno histórico dos seguintes ativos:
-    - **us_equities**: Refere-se as variações percentuais do índice S&P 500 que é composto pelas 500 maiores empresas listadas na bolsa de Nova York.
-    - **us_equities_tech**: Refere-se as variações percentuais do índice Nasdaq 100 que é composto pelas 100 maiores empresas de tecnologia listadas na bolsa de Nova York.
-    - **global_equities**: Refere-se as variações percentuais do índice Total Stock Market que representa ações de empresas de todo o mundo, abrangendo vários mercados fora dos Estados Unidos. Este grupo inclui tanto economias desenvolvidas quanto emergentes. É uma categoria mais diversificada geograficamente.
-    - **em_equities**: Refere-se as variações percentuais do índice Emerging Markets Stock que representa ações de mercados emergentes. Esses mercados incluem países como Brasil, Índia, China e outros. Eles tendem a ter maior potencial de crescimento, mas também podem ser mais voláteis e arriscados.
-    - **us_hy**: Refere-se as variações percentuais do índice High Yield Bonds que representa os títulos corporativos de empresas com classificação de crédito inferior a "investment grade" (grau de investimento), oferecendo maiores retornos devido ao maior risco de inadimplência.
-    - **us_ig**: Refere-se as variações percentuais do índice Liquid Investment Grade que representa os títulos de empresas ou governos com alta classificação de crédito, o que implica em menor risco e, geralmente, menor retorno em comparação com os títulos de "high yield".
-    - **em_debt**: Refere-se as variações percentuais do índice Emerging Markets Bond refentes às dívidas de mercados emergentes, que inclui títulos de dívida emitidos por governos ou empresas de países em desenvolvimento. Esses títulos podem oferecer altos retornos, mas também carregam riscos significativos devido à instabilidade econômica ou política.
-    - **cmdty**: Refere-se as variações percentuais do índice Bloomberg Commodities que incluem ativos como petróleo, ouro, prata, e outros recursos naturais. Investir em commodities pode fornecer proteção contra a inflação e diversificação, mas também pode ser volátil.
-    - **long_term_treasuries**: Refere-se as variações percentuais do índice Long-Term Treasury relativos à títulos do Tesouro dos EUA com vencimentos de longo prazo, geralmente 10 anos ou mais. Eles são considerados ativos de baixo risco e são sensíveis às mudanças nas taxas de juros. Quando as taxas de juros sobem, o valor desses títulos tende a cair.
-    - **short_term_treasuries**: Refere-se as variações percentuais do índice Short-Term Treasury relativos à títulos do Tesouro dos EUA de curto prazo, geralmente com vencimentos de 1 a 3 anos. São considerados extremamente seguros e menos voláteis que os títulos de longo prazo, sendo usados por investidores que buscam preservar capital.
-
 A escolha dessas bases de dados é justificada pelo seu uso comprovado em estudos anteriores sobre otimização de portfólio e síntese de dados financeiros.
 
 ### Abordagens de Modelagem Generativa
 Entre as abordagens de modelagem generativa que o grupo pretende explorar estão:
 - **Redes Adversárias Generativas (CTGAN)**: A abordagem usando GANs não assume uma forma funcional pré-definida para os dados. A rede aprende diretamente a distribuição dos dados reais (tanto marginais quanto condicionais) e gera amostras sintéticas que imitam os dados reais..
-  
-- **Modelos de Regressão Sintética**: Como proposto por Li et al. [1], esses modelos oferecem uma abordagem mais interpretável para a geração de dados sintéticos, com base em funções matemáticas e modelos estatísticos para prever o comportamento de variáveis dependentes a partir de um conjunto de variáveis independentes..
-
+-   
 ### Artigos de Referência
 Os principais artigos que o grupo já identificou como base para estudo e planejamento do projeto são:
 
-- **Li et al. (2022)**: "A synthetic regression model for large portfolio allocation" [1].
+- **Pagnocelli. (2022)**: "A Synthetic Data-Plus-Features Driven Approach for Portfolio Optimization" [5].
   
 - **Peña et al. (2024)**: "A modified CTGAN-plus-features-based method for optimal asset allocation" [2].
+
+-  **F.Eckerli, J.Osterrieder.** "Generative Adversarial Networks in finance: an overview" [3].: 
 
 ### Ferramentas
 Existem diversas bibliotecas Python disponíveis para geração de dados sintéticos, cada uma com suas capacidades e recursos distintos. Neste trabalho exploraremos as seguintes bibliotecas CTGAN  e Synthetic Data Vault (SDV).
