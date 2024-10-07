@@ -32,7 +32,7 @@ Para o desenvolvimento deste projeto, serão geradas imagens sintéticas com bas
 
 | Base de Dados | Endereço na Web | Resumo                                                             |
 |------------|-----------------------|---------------------------------------------------------------------|
-| Images of Resolved Phase Patterns of Partial Discharges in Electric Generators | https://data.mendeley.com/datasets/xz4xhrc4yr/8 | Este conjunto de dados contém imagens de padrões de fase resolvidos de descargas parciais tipo corona, superficiais e internos |
+| Images of Resolved Phase Patterns of Partial Discharges in Electric Generators | https://data.mendeley.com/datasets/xz4xhrc4yr/8 | Este conjunto de dados contém imagens de padrões de fase resolvidos de descargas parciais tipo corona, superficiais e internos obtidos de geradores elétricos localizados na Colombia e um simulador de descargas parciais de Omycron Energy.|
 
 A escolha desse dataset se justifica por sua qualidade e relevância no contexto de estudo de descargas parciais, oferecendo uma base sólida para a criação de dados sintéticos. A tabela a seguir resume a quantidade de imagens por tipo de falha:
 | Tipo de DP | Quantidade de Imagens | Exemplo                                                             |
@@ -64,6 +64,44 @@ O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de m
 ![Workflow](.\reports\figures\workflowPRPD.drawio.png)
 
 ## Experimentos, Resultados e Discussão dos Resultados
+
+### Exploração estatística do Dataset
+
+Se realizou uma exploração estatística para entender o dataset, especificamente o desafío que poderia aparecer para as redes generativas.
+
+#### Análise por Textura
+
+Se utilizou a matriz GLCM, conhecida por seu uso no contexto de extração de características sobre a textura das imagens, utiliza images em escala de cinza, se extrairam as seguintes características de cada imagen:
+
+- Contraste
+- Correlação
+- Energía
+- Disimilaridade
+
+#### Análise por Contornos
+
+Se utilizou uma binarização com o algoritmo de Otsu para extrair os contornos principais das nubes que aparecem em cada imagen, posteriormente se extrairam as seguintes caracteristicas:
+
+- Area
+- Perimetro
+- Aspect ratio
+- Extenção
+- Solidity
+- Diámetro equivalente
+- Compactness
+- Eccentricity
+
+#### Visualização
+
+Apartir da extração de características de cada imagen, se utilizaram técnicas de redução de características e visualização para observar se existem clusters claramente definidos. De tal maneira, a continuação se pode olhar as figuras que foram mais representativas.
+
+### Implementação da ACWGAN
+
+#### Hiperparâmetros
+
+#### Arquiteturas
+
+#### Resultados parciais
 
 ## Conclusão
 
