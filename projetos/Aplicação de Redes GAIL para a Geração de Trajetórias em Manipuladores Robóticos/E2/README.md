@@ -13,17 +13,14 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > | Raisson Leal Silva  | 186273  | Eng. Eletricista|
 
 ## Resumo (Abstract)
-O objetivo do projeto é desenvolver uma abordagem de aprendizado por imitação para um manipulador robótico Kinova Gen3, visando a geração de trajetórias válidas em tarefas assistivas.
-A metodologia envolve a teleoperação do robô com joystick, coletando dados sobre posições angulares das juntas, posição cartesiana da garra e sua orientação, que são armazenados em arquivos JSON.
-Para a entrega E2, os resultados parciais incluem a criação de uma estrutura de dados organizada e a implementação bem-sucedida da teleoperação, permitindo a coleta eficiente de dados para treinar uma rede GAIL, preparando o robô para realizar tarefas complexas de forma autônoma.
+Este projeto desenvolve uma abordagem de aprendizado por imitação para o manipulador robótico Kinova Gen3, com foco na geração de trajetórias válidas para tarefas assistivas. A metodologia envolve a teleoperação do robô com joystick, coletando dados sobre posições angulares das juntas, posição cartesiana da garra e sua orientação, que são armazenados em arquivos JSON. Na entrega E2, foram organizados os dados e implementada com sucesso a teleoperação, permitindo a coleta eficiente de dados para o treinamento de uma rede GAIL, preparando o robô para realizar tarefas complexas de forma autônoma.
 
 
 ## Descrição do Problema/Motivação
 
-A proposta inicial era utilizar redes GAIL (Generative Adversarial Imitation Learning) para gerar trajetórias válidas para um manipulador robótico de 3 DoF. Contudo, como um integrante do grupo já trabalhava em paralelo na simulação de um manipulador robótico de 7 DoF,
-a aplicação foi adaptada para o Kinova Gen3, um manipulador de 7 DoF. O objetivo é fazer com que o robô consiga vestir um paciente, colocando um jaleco cirúrgico. 
-A motivação para utilizar redes generativas surgiu da insatisfação com os resultados obtidos no projeto em paralelo, visando aprimorar a eficácia na geração de trajetórias e alcançar resultados satisfatórios. 
-Para a disciplina, o foco é alinhar o jaleco cirúrgico com o braço esquerdo da paciente, conforme ilustrado na imagem.
+A proposta inicial era utilizar redes GAIL (Generative Adversarial Imitation Learning) para gerar trajetórias válidas para um manipulador robótico de 3 DoF. Contudo, como um integrante do grupo já trabalhava em paralelo na simulação de um manipulador robótico de 7 DoF, a aplicação foi adaptada para o Kinova Gen3, um manipulador de 7 DoF. O objetivo é fazer com que o robô consiga vestir um paciente, colocando um jaleco cirúrgico. 
+
+A motivação para utilizar redes generativas surgiu da insatisfação com os resultados obtidos no projeto em paralelo, visando aprimorar a eficácia na geração de trajetórias e alcançar resultados satisfatórios. Para a disciplina, o foco é alinhar o jaleco cirúrgico com o braço esquerdo da paciente, conforme ilustrado na imagem.
 
 
 ![trajetória a ser gerada](https://github.com/user-attachments/assets/b19c3f4a-8d2c-442d-92bf-3d4dcd39ee76)
@@ -31,15 +28,15 @@ Para a disciplina, o foco é alinhar o jaleco cirúrgico com o braço esquerdo d
 
 ## Objetivo
 
-O projeto se propõe a desenvolver um sistema utilizando redes GAIL (Generative Adversarial Imitation Learning) para gerar trajetórias válidas para um manipulador robótico de 7 DoF (Kinova Gen3), 
-com o intuito de automatizar o processo de vestir um paciente com um jaleco cirúrgico.
+Este projeto tem como objetivo desenvolver um sistema baseado em redes GAIL (Generative Adversarial Imitation Learning) para gerar trajetórias válidas para o manipulador robótico Kinova Gen3 (7 DoF), automatizando o processo de vestir um paciente com um jaleco cirúrgico de forma eficiente e segura.
 
 ### Objetivo Geral
-* Gerar trajetórias eficientes e seguras para o manipulador robótico, permitindo que ele realize a tarefa de vestir um paciente de forma autônoma.
+- Gerar trajetórias eficientes e seguras para o manipulador robótico, permitindo a realização autônoma da tarefa de vestir um paciente.
+
 ### Objetivos Específicos
-* Coletar Dados de Teleoperação: Capturar dados das posições angulares das juntas, posição cartesiana e orientação da garra durante a teleoperação.
-* Treinar a Rede GAIL: Utilizar os dados coletados para treinar uma rede GAIL que possa replicar as trajetórias observadas.
-* Validar as Trajetórias Geradas: Avaliar a eficácia das trajetórias geradas pelo modelo em simulações, garantindo que sejam seguras e realizáveis.
+- **Coleta de Dados de Teleoperação:** Capturar dados das posições angulares das juntas, posição cartesiana e orientação da garra durante a teleoperação.
+- **Treinamento da Rede GAIL:** Utilizar os dados coletados para treinar uma rede GAIL, capaz de replicar as trajetórias observadas.
+- **Validação das Trajetórias Geradas:** Avaliar a eficácia e segurança das trajetórias geradas em simulações, garantindo que sejam realizáveis e seguras.
 
 
 ## Metodologia
@@ -47,24 +44,26 @@ com o intuito de automatizar o processo de vestir um paciente com um jaleco cir�
 A metodologia proposta para alcançar os objetivos do projeto envolve as seguintes etapas:
 
 ### 1. Coleta de Dados
-Para a aplicação proposta, não serão utilizados datasets prontos, será necessário montar o dataset, a metodologia adotada para montar esse dataset, for a seguinte:
-Serão coletados dados de teleoperação utilizando o manipulador robótico Kinova Gen3 de 7 DoF no ambiente de simulação. A coleta incluirá:
-- **Posições angulares das juntas**: obtidas em tempo real durante a teleoperação.
-- **Posição cartesiana da garra**: [x, y, z].
-- **Orientação da garra**: Representada por [roll, pitch, yaw].
-A forma como os dados serão armazenadas está detalhada na seção **Bases de Dados e Evolução**.
+Neste projeto, será necessário criar um dataset específico para o manipulador robótico Kinova Gen3 de 7 DoF, visto que não serão utilizados datasets prontos. A coleta de dados será realizada por meio de teleoperação no ambiente de simulação, capturando:
+- **Posições angulares das juntas** em tempo real durante a teleoperação.
+- **Posição cartesiana da garra** (x, y, z).
+- **Orientação da garra** representada por [roll, pitch, yaw].
+
+Os dados serão armazenados em arquivos JSON, conforme descrito na seção [**Bases de Dados e Evolução**](#bases-de-dados-e-evolução), e utilizados como referência para o treinamento do modelo.
 
 ### 2. Treinamento da Rede GAIL
-A GAIL será utilizada para aprender a gerar trajetórias a partir dos dados coletados. O algoritmo foi escolhido por sua capacidade de imitar comportamentos complexos, aproveitando tanto a aprendizagem por reforço quanto o aprendizado por imitação. A rede será treinada com os seguintes passos:
-- **Arquitetura da Rede**: Implementação de uma arquitetura de rede neural para o gerador e o discriminador, utilizando bibliotecas como TensorFlow ou PyTorch.
-- **Função de Perda**: Utilização da função de perda adversarial para avaliar o desempenho do gerador em relação ao discriminador.
+A abordagem GAIL foi escolhida por sua capacidade de imitar comportamentos complexos, utilizando aprendizado por reforço e aprendizado por imitação. O modelo será treinado para replicar as trajetórias capturadas, seguindo os seguintes passos:
+- **Arquitetura da Rede:** Implementação de uma rede neural para o gerador e o discriminador, utilizando frameworks como TensorFlow ou PyTorch.
+- **Função de Perda:** A função de perda adversarial será aplicada para medir o desempenho do gerador em relação ao discriminador.
+
+A GAIL se destaca por unir as vantagens do aprendizado por imitação e do aprendizado por reforço, permitindo que o modelo aprenda a replicar trajetórias a partir de demonstrações fornecidas.
 
 ### 3. Validação das Trajetórias
 Após o treinamento, as trajetórias geradas serão validadas em simulações. As seguintes métricas serão usadas para avaliar a eficácia:
 - **Proximidade do Ponto de Contato**: Medição da distância entre a posição prevista da garra e a posição objetivo.
 - **Segurança**: Avaliação da trajetória para evitar colisões e garantir a segurança do paciente simulado.
 
-### 5. Metodologia de Avaliação
+### 4. Metodologia de Avaliação
 Os objetivos do projeto serão avaliados através de:
 - **Testes de Simulação**: Execução de simulações para verificar se o manipulador consegue realizar a tarefa proposta.
 - **Análise Quantitativa**: Avaliação estatística das trajetórias geradas em comparação com as trajetórias desejadas.
@@ -72,24 +71,6 @@ Os objetivos do projeto serão avaliados através de:
 ### Slides da Apresentação da Segunda Etapa do Projeto
 
 - [Link para os slides](https://docs.google.com/presentation/d/1d-bhS5pN8eW80D_pL8XNPtMwcds4ifCcIb9pqzJnMhk/edit#slide=id.p1)
-
-
-
-### Referências
-
-#### Artigos de Referência:
-
-* **GAIL**: Ho, J. & Ermon, S. (2016). Generative Adversarial Imitation Learning. [arXiv:1606.03476](https://arxiv.org/abs/1606.03476).
-* WANG, Haoxu; MEGER, David. Robotic object manipulation with full-trajectory gan-based imitation learning. In: 2021 18th Conference on Robots and Vision (CRV). IEEE, 2021. p. 57-63. <https://ieeexplore.ieee.org/abstract/document/9469449>
-* SYLAJA, Midhun Muraleedharan; KAMAL, Suraj; KURIAN, James. Example-driven trajectory learner for robots under structured static environment. International Journal of Intelligent Robotics and Applications, p. 1-18, 2024. <https://link.springer.com/content/pdf/10.1007/s41315-024-00353-y.pdf>
-* TSURUMINE, Yoshihisa; MATSUBARA, Takamitsu. Goal-aware generative adversarial imitation learning from imperfect demonstration for robotic cloth manipulation. Robotics and Autonomous Systems, v. 158, p. 104264, 2022. <https://www.sciencedirect.com/science/article/pii/S0921889022001543>
-* REN, Hailin; BEN-TZVI, Pinhas. Learning inverse kinematics and dynamics of a robotic manipulator using generative adversarial networks. Robotics and Autonomous Systems, v. 124, p. 103386, 2020. <https://www.sciencedirect.com/science/article/pii/S0921889019303501>
-
-#### API de Referência:
-* Gleave, Adam, Taufeeque, Mohammad, Rocamonde, Juan, Jenner, Erik, Wang, Steven H., Toyer, Sam, Ernestus, Maximilian, Belrose, Nora, Emmons, Scott, Russell, Stuart. (2022). Imitation: Clean Imitation Learning Implementations. [arXiv:2211.11972v1 [cs.LG]](https://arxiv.org/abs/2211.11972). <https://imitation.readthedocs.io/en/latest/index.html>
-
-#### Simulador que será Utilizado (RCareWorld - Unity):
-* **RCareWorld**: <https://github.com/empriselab/RCareWorld>
 
 
 ### Bases de Dados e Evolução
@@ -103,21 +84,20 @@ Para este projeto, a base de dados foi montada manualmente, com dados coletados 
 
 #### Descrição e Análise da Base de Dados
 
-* **Formato:** A base de dados está agora armazenada em um único arquivo JSON, que contém múltiplas trajetórias simuladas, com observações e ações associadas.
+* **Formato:** A base de dados foi consolidada em um único arquivo JSON, contendo múltiplas trajetórias simuladas. Cada registro no dataset é composto por observações e ações associadas ao manipulador robótico.
 
 * **Estrutura:**
-  - **Observações:** Cada observação consiste em uma combinação de:
-    - **Posições angulares das juntas** (7 valores),
-    - **Posição cartesiana da garra** (3 valores),
-    - **Orientação da garra** (3 valores de rotação: pitch, yaw, roll).
+  - **Observações:** Cada observação inclui:
+    - **Posições angulares das juntas**: 7 valores que representam o estado de cada junta do manipulador.
+    - **Posição cartesiana da garra**: 3 valores ([x, y, z]) que indicam a posição da garra no espaço.
+    - **Orientação da garra**: 3 valores de rotação (pitch, yaw, roll) que definem a orientação da garra.
   
-  - **Ações:** As ações são calculadas como a diferença entre estados consecutivos:
-    - **Ação do gripper**: Diferença na posição e orientação da garra entre dois estados consecutivos, refletindo as mudanças que ocorreram em cada etapa.
+  - **Ações:** As ações são calculadas como a diferença entre dois estados consecutivos e incluem:
+    - **Movimentação do gripper:** Diferença na posição e orientação da garra entre dois estados consecutivos, refletindo as mudanças ocorridas ao longo da trajetória.
 
-* **Tamanho:** A base de dados contém várias trajetórias, que antes estavam separadas em múltiplos arquivos JSON, mas agora foram unificadas em um único arquivo com uma estrutura de dados otimizada.
+* **Tamanho:** O arquivo consolidado contém diversas trajetórias, que anteriormente estavam separadas em vários arquivos JSON, mas foram unificadas para otimização do processamento e treinamento.
 
-* **Tipo de Anotação:** O arquivo JSON inclui:
-  - **Trajetórias:** Cada trajetória é composta por observações e ações. As observações incluem as posições e orientações tanto das juntas quanto da garra. As ações representam a diferença nas movimentações do gripper, incluindo tanto a sua posição quanto a rotação.
+* **Tipo de Anotação:** A base de dados contém anotações referentes às trajetórias do manipulador. As observações descrevem as posições e orientações tanto das juntas quanto da garra, enquanto as ações descrevem as mudanças de posição e orientação entre os estados.
 
 * **Transformações e Tratamentos:** As trajetórias foram coletadas diretamente do ambiente de simulação. Para a formatação final, os dados de todas as simulações foram unificados em um único JSON, com observações e ações organizadas para serem processadas por redes adversárias generativas (GAIL). Como a coleta de dados ocorreu em um ambiente controlado, não foi necessário aplicar técnicas de limpeza ou filtragem.
 
@@ -177,9 +157,12 @@ Para este projeto, a base de dados foi montada manualmente, com dados coletados 
 | 75%         | 0.0001           | 0.0001           | 0.0003           | 0.0121               | 0.0470             | 0.0123              |
 | max         | 0.0980           | 0.1940           | 0.1729           | 359.8557             | 355.2020           | 359.8180            |
 
+#### Conclusão sobre a Base de Dados
+
+A base de dados construída oferece uma visão completa das trajetórias de teleoperação do manipulador robótico, com dados bem estruturados para treinamento do modelo GAIL. A unificação dos arquivos JSON em um único arquivo facilitou o processo de análise e treinamento, garantindo consistência nos dados. As análises estatísticas descritivas fornecem insights importantes sobre as posições angulares das juntas, a posição cartesiana e a rotação da garra, além das mudanças ocorridas entre os estados, o que será crucial para o sucesso do treinamento da rede GAIL.
 
 
-## Workflow
+### Workflow
 
 Este projeto adota um workflow bem definido para alcançar o objetivo de gerar trajetórias válidas para manipuladores robóticos de 7 graus de liberdade (DoF), utilizando redes GAIL (Generative Adversarial Imitation Learning). O processo foi dividido em seis etapas principais, que cobrem desde a definição do escopo até a validação e testes, conforme ilustrado nas imagens a seguir.
 
@@ -213,6 +196,7 @@ A definição da arquitetura envolverá decisões sobre:
 * Tipo de rede neural: A princípio, planeja-se utilizar redes neurais recorrentes (RNNs), como LSTM ou GRU, que são adequadas para capturar dependências temporais nas sequências de observações e ações.
 * Entrada e saída do modelo: As observações das posições angulares, posições e rotações da garra serão usadas como entrada, enquanto as ações serão a saída que o modelo tentará replicar.
 * Número de camadas e neurônios: Experimentos serão conduzidos para identificar a quantidade ideal de camadas e neurônios, buscando um equilíbrio entre a capacidade do modelo de generalizar e sua eficiência computacional.
+
 Esses elementos serão ajustados com base em experimentos subsequentes, onde o desempenho do modelo será avaliado em termos de sua capacidade de imitar as trajetórias de forma realista. A partir desses testes, ajustes na arquitetura poderão ser feitos para otimizar o desempenho.
 
 ### Discussão
