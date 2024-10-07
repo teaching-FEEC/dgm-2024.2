@@ -45,11 +45,14 @@ As avaliações qualitativas serão realizadas por observações gráficas que c
 
 ## Datasets:
 
-Para o projeto, serão consideradas duas bases de dados principais conforme tabelas abaixo
+Para o projeto, serão consideradas duas bases de dados principais conforme tabelas abaixo, constituidas por vídeos de trajetórias humanas no mundo real, com cenários ricos em interações.  A primeira é a BIWI Walking Pedestrians e a segunda a UCY Crowd. Ambos foram convertidos para coordenadas do mundo real em metros, interpolados para obter valores a cada 0,4 segundos.
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
 |BIWI Walking Pedestrians Dataset | https://data.vision.ee.ethz.ch/cvl/aem/ewap_dataset_full.tgz | Vista superior de pedestres caminhando em cenários povoados.|
+
+Esta base de dados é composta por duas cenas, a ETH e a Hotel, cujas imagens podem ser observadas nas figuras 02 e 03 respectiviamente.
+
 
 <div style="text-align: center;">
     <img src="/projetos/HTF/images/biwi_eth.png" alt="Figura 02: Imagem do dataset ETH" width="600"/>
