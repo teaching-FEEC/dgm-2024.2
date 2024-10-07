@@ -103,7 +103,33 @@ A proposta apresentada pelo modelo TimeGAN é a união dos métodos de treinamen
 Para este trabalho, inicialmente utilizaremos os conjuntos de dados fornecidos pela equipe da Meta 4 do grupo HIAAC, disponíveis em https://zenodo.org/records/11992126 . A versão balanceada destes conjuntos de dados foi denominada View Balanceada. Os dados foram balanceados de forma que todas as classes apresentassem o mesmo número de amostras, evitando que as diferentes proporções entre os rótulos afetassem a avaliação do desempenho. Essa abordagem visa garantir uma distribuição equitativa das classes, permitindo uma análise mais precisa das metodologias de avaliação implementadas para a geração de dados.
 Adicionalmente, os subconjuntos de treino, teste e validação foram organizados de maneira que as amostras de um determinado participante não estivessem presentes em dois subconjuntos distintos. Essa estratégia é fundamental para evitar o vazamento de informações entre os conjuntos, assegurando que a validação do modelo seja realizada de forma justa e confiável.
 
+#### Análise das Bases de Dados
 
+Os conjuntos de dados padronizados das cincos bases foram explorados e comparadas entre si.
+O notebook presente no arquivo [`notebooks/Exploring datasets.ipynb`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/notebooks/Exploring%20datasets.ipynb) apresenta o código utilizado para a comparação, e os resultados compilados podem ser acessados no arquivo [`reports/exploring all datasets.pdf`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/reports/exploring%20all%20datasets.pdf).
+As principais informações levantadas por essa exploração são:
+- **Atividades Comuns**: Sentado, em pé, caminhando e correndo são atividades presentes em todos os datasets, exceto para o dataset WISDM, que não inclui subir e descer escadas. O UCI-HAR também não inclui a atividade "correr".
+- **Separação de Clusters**: O dataset KU-HAR apresentou uma boa separação de clusters nas análises t-SNE, o que indica maior clareza na distinção entre atividades comparado aos outros datasets, que apresentam confusão entre algumas atividades.
+- **Visualização Temporal**: As visualizações das amostras temporais dos sensores (acelerômetro e giroscópio) para cada classe revelam variações em alguns pontos, indicando possíveis transições entre atividades. No geral, os padrões entre os sensores são consistentes.
+
+### Avaliação dos Dados Sintéticos
+
+#### Análise Qualitativa
+
+- **Análise Visual por Amostragem Local e Global**: São realizadas análises visuais para comparar amostras locais e globais dos dados reais e sintéticos, ajudando a entender se o comporta aparente dos dados sintéticos se aproxima dos dados reais e não ocorre o colapso do modelo gerador, por exemplo, geração de sinais constantes ou ondas periódicas simples;
+- **Redução de Dimensionalidade (t-SNE)**: A técnica de redução de dimensionalidade t-SNE é utilizada para visualizar a disposição relativa dos dados em um gráfico 2D, facilitando a comparação visual entre as distribuições de dados reais e sintéticos. Isso permite verificar de forma rápida e superficial se os dados sintéticos seguem a distribuição dos dados reais e formam clusters semelhantes.
+
+#### Análise Quantitativa
+
+- **Similaridade entre distribuições**: Nessa abordagem é escolhida uma métrica de similaridade ou distância entre amostras e compara-se a similaridade média entre amostras de três pares de conjuntos diferentes: dois sub-conjuntos de dados reais sem intersecção (R2R); dados reais e dados sintéticos (R2S); dois conjuntos de dados sintéticos sem intersecção(S2S). Com isso, espera-se que o valor R2R seja próximo ao de R2S, indicando uma distribuição semelhante de dados, o valor de S2S serve para verificar que o gerador não colapsou, o que causaria valores de similaridade altos. Por fim, também é obtido o maior valor de similaridade entre amostras dos conjuntos real e sintético (Max-R2S), o qual espera-se ser alto, porém não perfeito (similaridade máxima), pois isso indicaria que dados reais estão sendo copiados para o conjunto de dados sintéticos. Diferentes métricas de similaridade e distância são exploradas:
+  - Distância Euclidiana
+  - Dynamic Tyme Warping
+  - Similaridade de Cosseno
+
+#### Análise de Usabilidade
+
+- **Usabilidade para classificação**: Nessa avaliação, para um dado conjunto de dados sintéticos gerados por um modelo, três classificadores são treinados: somente com os dados reais, somente com dados sintéticos e com dados reais e sintéticos juntos. As três instâncias de classificadores são testadas em um mesmo conjunto de dados reais e espera-se que o modelo sintético tenha desempenho comparável ao de dados reais e ainda que o classificador treinado com dados conjuntos se desempenhe melhor do que o classificador com dados reais. Para essa comparação são utilizadas as métricas de acurácia, precisão, recall e f1-score.
+  
 ### Workflow
 
 ![Workflow](docs/figures/GenHAR_Worflow.png)
@@ -234,7 +260,13 @@ GenHar/
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
+Esta seção descreve os experimentos realizados para comparar dados reais e sintéticos gerados a partir de múltiplos datasets de sensores. Os dados foram coletados de dispositivos que capturam leituras de acelerômetro e giroscópio, e os modelos generativos aplicados foram projetados para criar séries temporais sintéticas com características semelhantes às dos dados reais. O objetivo principal é avaliar a qualidade, fidelidade e utilidade dos dados gerados.
 
+Os três modelos descritos anteriormente (TimeGAN, DoppelGAN e BioDiffusion) são treinados separadamente em cada base de dados seguindo o workflow de experimento descrito anteriormente.
+Os arquivos de configuração dos experimentos podem ser encontrados em:
+  - [`tests/gans/doppelganger/config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/gans/doppelganger/config.yaml)
+  - [`tests/gans/timeganpt/config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/gans/timeganpt/config.yaml)
+  - [`tests/diffusion/unet1d_config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/diffusion/unet1d_config.yaml)
 
 ## Conclusão
 
