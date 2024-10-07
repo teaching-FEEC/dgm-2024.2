@@ -79,6 +79,13 @@ Esta base de dados é composta por seis cenas que são Zara01, Zara02, Zara03, S
     <p><em>Figura 05: Imagem do dataset UCY Students 03</em></p>
 </div>
 
+Após tratados, o formato dos datasets será como o disposto na Figura 06, em que a primeira coluna indica o frame do video, a segunda a identificação do pedeste e a terceira e quarta suas coordenadas x e y respectivamente. 
+
+<div style="text-align: center;">
+    <img src="/projetos/HTF/images/datazara.png" alt="Figura 06:Estrutura dos dados tratados" width="600"/>
+    <p><em>Figura 06: Exemplo de estrutura dos dados tratados</em></p>
+</div>
+
 
 
 ## Arquitetura do Modelo:
