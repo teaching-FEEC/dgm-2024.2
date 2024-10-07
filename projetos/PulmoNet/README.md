@@ -44,18 +44,16 @@ No caso específico da nossa aplicação, utilizaremos como referência principa
 As duas imagens abaixo ilustram as arquiteturas do gerador e discriminador, respectivamente.
 
 ![Arquitetura Pix2Pix proposta para gerador.](figs/arquitetura_gen.png?raw=true)
+
 *Figura 1: Arquitetura Pix2Pix proposta para gerador.*
 
 ![Arquitetura PatchGAN proposta para discriminador.](figs/arquitetura_disc.png?raw=true)
+
 *Figura 2: Arquitetura PatchGAN proposta para discriminador.*
 
-A função de loss aplica o critério de Binary Cross Entropy, conforme a seguinte a equação matemática:
+A função de loss aplica o critério de *Binary Cross Entropy*, conforme a seguinte a equação matemática:
 
-$ arg \ min_𝐺 \ max_𝐷 \
-E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)]+
-E_{𝑥,𝑧}[log(1 − 𝐷(𝑥, 𝐺(𝑥, 𝑧)))]+
-𝜆E_{𝑥,𝑦,𝑧}[‖𝑦 − 𝐺(𝑥, 𝑧)‖1
-]$
+$arg\ min_{𝐺}\ max_{𝐷}\ E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)] + E_{𝑥,𝑧}[log(1 − 𝐷(𝑥, 𝐺(𝑥, 𝑧)))] + 𝜆E_{𝑥,𝑦,𝑧}[‖𝑦 − 𝐺(𝑥, 𝑧)‖_{1}]$
 
 ### Bases de Dados e Evolução
 Apesar de inspirar-se no artigo [[1]](#1), para o desenvolvimento deste projeto será usada a base de dados ATM'22, cuja descrição está na tabela abaixo. Tal base de dados não foi usada no desenvolvimento do projeto em [[1]](#1), mas foi escolhida no presente projeto devido a sua amplitude, a presença de dados volumétricos e em razão das imagens possuírem a delimitação das vias aéreas obtidas através de especialistas. Os volumes da base ATM'22 foram adquiridos em diferentes clínicas e considerando diferentes contextos clínicos. Construída para a realização de um desafio de segmentação automática de vias aéria utilizando IA, a base de dados está dividida em 300 volumes para treino, 50 para validação e 150 para teste.
@@ -68,6 +66,7 @@ Os dados desta base são arquivos com extensão *.nii.gz, e contêm todo o volum
 Dado que este trabalho centrará-se na geração de imagens sintéticas em duas dimensões de CTs pulmonares, estes volumes pulmonares serão fatiados no eixo transversal, assim como ilustrado na imagem abaixo. Como resultado, fatiaremos os 500 volumes pulmores em uma quantidade muito maior de imagens 2D, aumentando o tamanho dos conjuntos de dados disponíveis para treinamento, validação e testes.
 
 ![Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.](figs/dataset_exemplo_fatia.png?raw=true)
+
 *Figura 3: Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.*
 
 A quantia exata de dados que serão utilizados depende da configuração da fatia obtida. Isto é, não serão utilizadas todas as fatias do volume pulmonar, mas sim apenas as imagens que apresentarem o pulmão completo e cercado por tecidos. A partir desta condição, as fatias serão selecionadas e utilizadas como entrada da rede geradora. Ressalta-se que esta seleção é necessária, uma vez que é uma restrição da biblioteca em Python lungmask [[7]](#7), utilizada para segmentação automática de CTs pulmonares.
@@ -77,6 +76,7 @@ O gráfico abaixo ilutsra o histograma da base de dados após a seleção das fa
 Um ponto importante a ser mencionado é que apesar do histograma começar em zero, a menor quantia de pixels no conjunto após segmentação é de 100 pixels. Ademais, dado que imagens 512 x 512 têm mais de 260 mil pixels, as imagens com a maior quantidade de pixels para a região do pulmão não ocupam nem metade de todos os pixels da imagem.
 
 ![Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.](figs/histograma_fatias.png?raw=true)
+
 *Figura 4: Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.*
 
 A figura abaixo ilustra exemplos de fatias em regiões distintas deste histograma para podermos visualizar a variabilidade dos dados de entrada da rede.
@@ -84,16 +84,18 @@ Nota-se que as fatias com menos de 10 mil pixels para descrever o pulmão pratic
 Com base nestas análises, considera-se descartar imagens com poucos pixels para o pulmão.
 
 ![Exemplos de fatias das CTS pulmonares da base de dados ATM'22 segmentadas.](figs/exemplos_pixels.png?raw=true)
+
 *Figura 5: Exemplos de fatias das CTS pulmonares da base de dados ATM'22 segmentadas.*
 
 Além da segmentação dos dados e seleção das fatias, a base de dados também passa pelas etapas de normalização e de transformação para numpy arrays, antes de serem utilizados pelas GANs implementadas para este projeto.
 
 ### Workflow
 O fluxo de trabalho proposto por este projeto, ilustrado na figura a seguir, inicia-se com a obtenção da base de dados ATM'22 e seu devido tratamento, conforme detalhado na seção anterior.
-Utilizando os dados de treinamento e validação, alimenta-se a rede generativa com as fatias segmentadas (máscaras binárias). Já a rede discriminadora recebe os dados reais (sem segmentação) e os dados sintéticos, devendo classificar cada um como "real" ou "falso".
+Utilizando estes dados, alimenta-se a rede generativa com as fatias segmentadas (máscaras binárias). Já a rede discriminadora recebe os dados reais (sem segmentação) e os dados sintéticos, devendo classificar cada um como "real" ou "falso".
 Após o treinamento, avalia-se os dados sintéticos a partir de três perspectivas: análise qualitativa, análise quantitativa e análise de utilidade, as quais serão descritas em detalhes nas próximas seções deste relatório.
 
 ![Fluxo para treinamento da PulmoNet.](figs/workflow_completo.png?raw=true)
+
 *Figura 6: Fluxo para treinamento da PulmoNet.*
 
 Destaca-se que, em operação (após a fase treinamento), espera-se que o modelo receba máscaras binárias com o formato do pulmão e um ruído, retonando o preenchimento da área interna do pulmão.
@@ -108,38 +110,56 @@ Ademais, para o desenvolvimento colaborativo dos modelos entre os estudantes, op
 Já para o versionamento dos modelos e para ajustar seus hiperparâmetros, decidiu-se pela ferramenta **Weights & Biases (Wandb AI)** dentre as opções disponíveis no mercado. E, além disso, a ferramenta do **GitHub** também auxiliará no versionamento dos algoritmos desenvolvidos.
 
 ### Métricas de Avaliação
-Para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõe-se três tipos de avaliação: análise qualitativa, análise quantitativa e análise de utilidade
+Para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõe-se três tipos de avaliação: análise qualitativa, análise quantitativa e análise de utilidade.
 
 #### Análise Qualitativa
 Esta estratégia será utilizada apenas nas etapas iniciais do desenvolvimento do projeto, na qual os próprios estudantes irão observar os resultados sintéticos, sejam eles imagens e/ou  volumes, e compararão com os dados reais esperados. Com isto, faz-se uma avaliação se a imagem gerada estaria muito distante de um CT pulmonar ou se o modelo já estaria se encaminhando para bons resultados. Após esta etapa, as avaliações do modelo serão feitas por meio das análises quantitativa e de utiliddade.
 
 #### Análise Quantitativa
-Já a análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos Fréchet Inception Distance (FID) e Structural Similarity Index (SSIM), os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite uma avaliação dos nossos resultados frente a esta outra pesquisa.
+Já a análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos **Fréchet Inception Distance (FID)** e **Structural Similarity Index (SSIM)**, os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite uma avaliação dos nossos resultados frente a esta outra pesquisa.
 
-> FID: InceptionV3  + The generated and real images from the test set were passed through the encoder, where the distributions of the generated and real images were calculated and used to compute the FID distance.
+Entrando em mais detalhes, a métrica FID avalia o desempenho da rede generativa e será calculada utilizando uma rede neural pré-treinada *InceptionV3*, que extrairá *features* das fatias pulmonares geradas e das fatias originais. Com isso, as distribuições dos dados sintéticos e dos dados reais, obtidos pelo encoder desta rede, são usados para calcular a FID e, assim, avaliar a qualidade da imagem gerada.
+A expressão matemática que descreve o cálculo da FID entre duas distribuições gaussianas criadas pelas features da última camada de pooling do modelo Inception-v3 é dada por:
 
-> SSIM: SSIM was used in order to compare each image with its ground-truth counterpart and uses three image characteristics to compare two images: luminance, contrast distortion and loss of structural correlation
+$FID = ‖𝜇_{𝑟} − 𝜇_{𝑔}‖^{2} + Tr(\sum_{𝑟} + \sum_{𝑔} − 2(\sum_{𝑟}\sum_{𝑔})^{1∕2})$
 
-> Gerar gráfico com distribuição real e distribuição sintética, usadas no cálculo da FID. Podemos comparar nossos resultados dessa métrica com os resultados do artigo 1
+onde $𝜇_{𝑟}$ e $𝜇_{𝑔}$ são as médias entre as imagens reais e sintéticas, e $\sum_{𝑟},\ \sum_{𝑔}$ são a matriz de convariância para os vetores de features dos dados reais e gerados, respectivamente.
+Quanto menor for o FID, maior a qualidade da imagem gerada.
 
-#### Análise de Utilidade / Aplicabilidade
-> Passar dados pelo lungmask e comparar com a máscara que originou o dado
+Por sua vez, a métrica SSIM compara a imagem gerada com seu respectivo ground-truth com base em três características: luminância, distorção de contraste e perda de correlação estrutural.
+Casos as imagens sejam iguais, o resultado desta métrica será igual a 1, ao passo que se as imagens forem completamente diferentes, o SSIM será nulo.
+Ressalta-se que não queremos que esta métrica fique em nenhum deste extremos, mas sim em um valor intermediário.
+As expressões matemáticas usadas para o cálculo desta métrica são:
 
-> Utilidade do gerador: feature extraction -> Parecida com o dcgan: Usar uma U-Net com a mesma estrutura da nossa pix-2-pix para fazer a segmentação das vias aéreas. Mostrar que nossa pix-2-pix será mais capaz de fazer a segmentação devido a extração de suas features.
+$SSIM(𝑥, 𝑦) = l(𝑥, 𝑦) \times 𝑐(𝑥, 𝑦) \times 𝑠(𝑥, 𝑦)$
 
-> juntar com o tópico acima!! -> Por último, a análise de benchmark, que também pode ser considerada um estratégia quantitativa, tem como proposta a comparação das saídas de uma rede de segmentação já consolidada a partir dos dados gerados pela PulmoNet e de dados reais. Feito isso, compara-se ambas as saídas da rede, por meio do cálculo do coeficiente DICE (obtido a partir da precisão e recall da predição) e da quantidade de ramificações (métricas escolhidas com base na referência do artigo [[2]](#2)) e avalia-se se os dados sintéticos são bons o suficiente em uma aplicação real, isto é, avalia-se a utilidade do modelo generativo proposto.
+$l(𝑥, 𝑦) = \frac{2𝜇_{𝑥}𝜇_{𝑦} + 𝐶_{1}}{𝜇^{2}_{𝑥}+ 𝜇^{2}_{𝑦} + 𝐶_{1}}$
 
-> Ver se o tempo de segmentação diminui com nossa gan 
+$𝑐(𝑥, 𝑦) = \frac{2𝜎_{𝑥}𝜎_{𝑦} + 𝐶_{2}}{𝜎^{2}_{𝑥} + 𝜎^{2}_{𝑦} + 𝐶{2}}$
 
-> ----------------------------------------------------------
+$𝑠(𝑥, 𝑦) = \frac{𝜎_{𝑥𝑦} + 𝐶_{3}}{𝜎_{𝑥}𝜎_{𝑦} + 𝐶_{3}}$
 
-> Para 3D (caso de tempo), podemos fazer o lance interpolação
+onde $𝜇_{𝑥}$, $𝜇_{𝑦}$, $𝜎_{𝑥}$, $𝜎_{𝑦}$, e $𝜎_{𝑥𝑦}$ são as médias locais, variâncias e covariâncias cruzadas para as imagens 𝑥, 𝑦, respectivament. $𝐶_{1}$, $𝐶_{2}$ $𝐶_{3}$ são constantes.
+
+#### Análise de Utilidade
+Dado que o objetivo do projeto é gerar imagens sintéticas (2D) de CTs pulmonares realistas, avalia-se nesta etapa duas perspectivas. A primeira delas trata da segmentação das fatias sintéticas por meio da biblioteca *lungmask* e comparação desta saída com a máscara binária original que gerou esta imagem sintética. Isto é feito para avaliar se o gerador conseguiu manter o formato do pulmão original ou algo próximo a isso. Utiliza-se o SSIM para comparação destas duas fatias pulmonares segmentadas.
+
+Já a segunda perspectiva trata da utilidade do gerador, em termos de **feature extraction**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma U-Net com a mesma estrutura da rede geradora Pix-2-Pix que implementamos para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza as *features* extraídas pelo nosso gerador. Esta comparação será avaliada ao comparar as saídas com a própria segmentação presente na base de dados, feitas por especialistas. Além disso, será calculado o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2), e considera-se também calcular o tempo de processamento das redes U-Net e U-Net com *features* extraídos pela nossa Pix-2-Pix, a fim de verificar se também há uma otimização neste quesito.
+
+Por fim, é importante destacar o caminho a ser seguido para a avaliação da rede generativa para as saídas em 3D, caso seja possível implementá-las dentro do prazo do projeto. Para esta aplicação, utilizaríamos 5 fatias de CTs pulmonares sequenciais, removeríamos a segunda e a quarta fatias e sinetizaríamos esas fatias faltantes. Feito isso, analisaríamos o volume formado em comparação com o volume original. Com isso, seria possível avaliar se a PulmoNet é capaz de gerar imagens relevantes e realistas, além de possibilitar sua implementação no auxílio a **interpolação de CTs pulmonares**.
 
 ### Cronograma
+O projeto será implementado seguindo o seguinte fluxo lógico:
+
+![Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.](figs/fluxo_logico.png?raw=true)
+
+*Figura 7: Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.*
+
+Dado este fluxo, estipulamos o seguinte cronograma para desenvolvimento do projeto:
 
 | Nº da Tarefa | Descrição                                                                 | Data Prevista de Finalização | Semanas Entre Etapas |
 |--------------|---------------------------------------------------------------------------|------------------------------|----------------------|
-| 1            | Leitura de artigos, familiarização com a base de dados e GANs              | 10/09                        |                      |
+| 1            | Leitura de artigos, familiarização com a base de dados e GANs             | 10/09                        |                      |
 | 2            | Primeira versão da GAN (inspirada no artigo de referência)                | 24/09                        | 2 semanas            |
 | 3            | Estrutura de avaliação bem delimitada                                     | 07/10                        | 2 semanas            |
 | 4            | E2                                                                        | 08/10                        | 1 dia                |
@@ -151,23 +171,23 @@ Já a análise quantitativa trata de uma avaliação sobre as imagens a partir d
 
 
 ## Experimentos, Resultados e Discussão dos Resultados
+Para a entrega parcial do projeto (E2), já foi realizada um estudo de artigos na literatura no contexto do nosso projeto. Além disso, seguindo o cronograma do projeto, também foi realizada uma etapa de análise da base de dados e definição das etapas de pré-processamento, conforme já discutido brevemente na seção sobre a base de dados. Mais ainda, foi realizada a implementação da arquitetura inicial das GANs escolhidas para o projeto, tomando como base o desenvolvimento em [[1]](#1), e iniciou-se a etapa de treinamento deste modelo.
 
-> Na entrega parcial do projeto (E2), essa seção pode conter resultados parciais, explorações de implementações realizadas e 
-> discussões sobre tais experimentos, incluindo decisões de mudança de trajetória ou descrição de novos experimentos, como resultado dessas explorações.
+Atualmente, estamos enfrentando dificuldade nesta etapa de treinamento, já que notamos que o discriminador estava ficando muito bom rápido demais, não permitindo que o gerador conseguisse avançar em seu aprendizado. Para solucionar este problema, tentaremos usar a estratégia de atualizar a loss do gerador com mais frequência do que a do discriminador (a priori, atualizaremos a loss do discriminador a cada 3 batches de atualização da loss do gerador).
+Deste modo, a saída do nosso gerador até o momento não está boa, como é possível observar na figura abaixo.
 
-> Na entrega final do projeto (E3), essa seção deverá elencar os **principais** resultados obtidos (não necessariamente todos), que melhor representam o cumprimento
-> dos objetivos do projeto.
+![Fatia original, fatia segmentada e saída da PulmoNet na terceira época de treinamento.](figs/example_generated_epoch_3.png?raw=true)
 
-> A discussão dos resultados pode ser realizada em seção separada ou integrada à seção de resultados. Isso é uma questão de estilo.
-> Considera-se fundamental que a apresentação de resultados não sirva como um tratado que tem como único objetivo mostrar que "se trabalhou muito".
-> O que se espera da seção de resultados é que ela **apresente e discuta** somente os resultados mais **relevantes**, que mostre os **potenciais e/ou limitações** da metodologia, que destaquem aspectos
-> de **performance** e que contenha conteúdo que possa ser classificado como **compartilhamento organizado, didático e reprodutível de conhecimento relevante para a comunidade**. 
+*Figura 8: Fatia original, fatia segmentada e saída da PulmoNet na terceira época de treinamento.*
+
+Ademais outros problemas que estamos enfrentando durante a etapa do treinamento tratam do tamanho da nossa base de dados, que é bem grande e resulta em um processamento demorado, e o uso de recursos em GPU.
 
 ## Conclusão
+O projeto da rede PulmoNet busca a geração de fatias de CTs pulmonares a partir de máscaras binárias, em duas dimensões, baseada em GANs. Esta rede utiliza uma arquitetura Pix-2-Pix para o gerador e uma PatchGAN para o discriminador. São usados dados da base pública ATM'22, cujos dados correspondem a volumes pulmonares de tomografias. Para a avaliação da qualidade da rede, propõe-se métodos qualitativos, quantitativos e análises de utilidade.
 
-> A seção de Conclusão deve ser uma seção que recupera as principais informações já apresentadas no relatório e que aponta para trabalhos futuros.
-> Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas ou como o projeto será conduzido até a sua finalização.
-> Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outros aspectos, possibilidades de continuidade do projeto.
+Seguindo o cronograma do projeto, as etapas até a entrega E2 foram cumpridas, de maneira que estamos atualmente na fase de treinamento do modelo e implementação dos métodos de avaliação. No caso do treinamento, estamos enfrentando algumas dificuldades que estão afetando a qualidade das saídas da rede, principalmente no quesito da velocidade de aprendizado do discriminador frente a do gerador.
+
+Os próximos passos do projeto tratam da finalização do treinamento do modelo, análise das métricas de avaliação e fine-tunning e aperfeiçoamento do modelo. Caso tenhamos tempo disponível, buscaremos a geração de volumes 3D de CTs pulmonares.
 
 ## Referências Bibliográficas
 
@@ -186,5 +206,7 @@ Já a análise quantitativa trata de uma avaliação sobre as imagens a partir d
 <a id="7">[7]</a> : Hofmanninger, J., Prayer, F., Pan, J. et al. Automatic lung segmentation in routine imaging is primarily a data diversity problem, not a methodology problem. Eur Radiol Exp 4, 50 (2020). https://doi.org/10.1186/s41747-020-00173-2
 
 <a id="8">[8]</a> : Isola, P., Zhu, J. Y., Zhou, T., & Efros, A. A. (2017). Image-to-image translation with conditional adversarial networks. In Proceedings - 30th IEEE conference on computer vision and pattern recognition, CVPR 2017. http://dx.doi.org/10.1109/CVPR.2017. 632, arXiv:1611.07004.
+
+<a id="9">[9]</a> : Radford, A., Metz, L., and Chintala, S., “Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks”, <i>arXiv e-prints</i>, Art. no. arXiv:1511.06434, 2015. doi:10.48550/arXiv.1511.06434.
 
 Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
