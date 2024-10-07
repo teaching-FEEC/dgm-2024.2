@@ -85,7 +85,7 @@ O processo de clusterização irá separar os retornos que apresentam comportame
 
 $$ C1_{1:n} \\ U \\ C2_{1:m} \\ U \\ C3_{1:o} = R_{1:N} $$ 
 
-![Histograma](Diagram_series.png "Diagrama")
+![Diagrama](Diagram_series.png "Diagrama")
 
 **3. Incorporação de informações contextuais (features) na geração dos dados sintéticos.**
 
@@ -175,9 +175,8 @@ Existem diversas bibliotecas Python disponíveis para geração de dados sintét
 - **Pandas** e **NumPy** para manipulação de dados tabulares.
 
 ### Workflow
-> Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nessa seção.
-> Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
-> Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos. 
+O workflow se baseia nos passos descritos na metodologia.
+![Workflow](Diagrama2.png "Workflow")
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
