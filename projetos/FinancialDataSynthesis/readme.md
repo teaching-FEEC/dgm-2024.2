@@ -131,7 +131,7 @@ De forma a identificar as tuplas ( r(t), i(t) ) que exibem características e si
 
 **4.** Associar uma variável categórica a cada conjunto, ou seja, a cada regime de mercado.
 
-**5.** Gerar amostras sintéticas condicionadas à cada grupo através da CTGANs:
+**5.** Gerar amostras sintéticas Ds condicionadas à cada conjunto através da CTGANs:
 
 $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 
@@ -143,7 +143,7 @@ $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
-|Título da Base | http://base1.org/ | Breve resumo (duas ou três linhas) sobre a base.|
+|API do Yahoo Finance| [http://base1.org/](https://finance.yahoo.com/) | permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.|
 
 > Faça uma descrição sobre o que concluiu sobre esta base. Sugere-se que respondam perguntas ou forneçam informações indicadas a seguir:
 > * Qual o formato dessa base, tamanho, tipo de anotação?
