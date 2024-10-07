@@ -61,9 +61,13 @@ class TestFID(unittest.TestCase):
         if not self.run_fid:
             print("Skipping FID tests.")
             return
+
         if self.print_memory:
             print_gpu_memory_usage("Initital memory usage", short_msg=True)
+
         fid = FID(dims=2048, cuda=self.cuda, batch_size=128)
+        if self.print_memory:
+            print_gpu_memory_usage("After model load", short_msg=True)
 
         start_time = time.time()
         fid_equal = fid.get(self.train_A_imgs, self.train_A_imgs)
@@ -87,13 +91,10 @@ class TestFID(unittest.TestCase):
 
         if self.print_memory:
             print_gpu_memory_usage("After FID calculation", short_msg=True)
-
-        fid = None
         torch.cuda.empty_cache()
-        gc.collect()
-
         if self.print_memory:
-            print_gpu_memory_usage("After garbage collection", short_msg=True)
+            print_gpu_memory_usage("After emptying cache", short_msg=True)
+
 
         self.assertLess(fid_equal, 1E-3, "FID for same images should be zero.")
         self.assertLess(fid_same_A, fid_different, "FID for images of the same class A should be lower than for images of different classes.")
@@ -106,7 +107,10 @@ class TestFID(unittest.TestCase):
         print("=================")
         if self.print_memory:
             print_gpu_memory_usage("Initital memory usage", short_msg=True)
+
         lpips = LPIPS(cuda=self.cuda, batch_size=256)
+        if self.print_memory:
+            print_gpu_memory_usage("After model load", short_msg=True)
 
         n = min([len(self.train_A_imgs), len(self.train_B_imgs), len(self.test_A_imgs), len(self.test_B_imgs)])
 
@@ -137,13 +141,9 @@ class TestFID(unittest.TestCase):
 
         if self.print_memory:
             print_gpu_memory_usage("After LPIPS calculation", short_msg=True)
-
-        lpips = None
         torch.cuda.empty_cache()
-        gc.collect()
-
         if self.print_memory:
-            print_gpu_memory_usage("After garbage collection", short_msg=True)
+            print_gpu_memory_usage("After emptying cache", short_msg=True)
 
         self.assertLess(lpips_equal.mean(), 1E-3, "LPIPS loss for same images should be zero.")
         self.assertLess(lpips_same_A.mean(), lpips_different.mean(), "LPIPS loss for images of the same A class should be lower than for images of different classes.")
