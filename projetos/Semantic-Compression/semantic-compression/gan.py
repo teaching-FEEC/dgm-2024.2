@@ -228,7 +228,7 @@ class GenerativeCompressionGAN(models.Model):
                 d_loss += d_loss_batch
                 grads = tape.gradient(d_loss_batch, self.discriminator.trainable_weights)
                 self.d_optimizer.apply_gradients(zip(grads, self.discriminator.trainable_weights))
-            # Train the autoencoder (min GAN loss, distortion loss, entropy loss)
+            # Train the autoencoder (min GAN loss + distortion loss)
             with tf.GradientTape() as tape:
                 generated_images, quantized_latent = self.autoencoder(real_images)
                 fake_output = self.discriminator(generated_images)
@@ -243,4 +243,4 @@ class GenerativeCompressionGAN(models.Model):
                 self.g_optimizer.apply_gradients(zip(grads, self.autoencoder.trainable_weights))
         d_loss_avg = d_loss / len(dataloader_train)
         g_loss_avg = g_loss / len(dataloader_train)
-        return d_loss, g_loss
+        return d_loss_avg, g_loss_avg
