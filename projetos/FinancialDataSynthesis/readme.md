@@ -43,7 +43,7 @@ Sendo x(t) o valor do índice no período t.
 
 Neste projeto, temos três objetivos específicos.
 
-**1.** Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas conhecidas como fatos estilizados.
+**1. Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas conhecidas como fatos estilizados.**
 
 Os fatos estilizados são propriedades estatísticas comuns, observadas empiricamente, entre diversos ativos financeiros em diferentes mercados e períodos [4]. Os principais fatos estilizados são:
 
@@ -67,7 +67,7 @@ Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e
 
 Observamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, no caso há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma. Os outros fatos também podem ser verificados através de métricas adequadas. Dessa forma, para averiguar se um dado sintético é realista, podemos analisar se ele possui tal propriedades.
 
-**2.** Condicionar a geração de dados sintéticos financeiros à diferentes períodos econômicos.
+**2. Condicionar a geração de dados sintéticos financeiros à diferentes períodos econômicos.**
 
 Conforme mencionado por Peña et al. [3], o comportamento dos ativos pode variar de acordo com o período econômico, também conhecidos como regimes de mercado, em que se encontram. Por exemplo, os ativos em geral se tornam mais voláteis em períodos de crise comparado à tempos de estabilidade. 
 
@@ -85,7 +85,19 @@ $$ C1_{1:n} \\ U \\ C2_{1:m} \\ U \\ C3_{1:o} = R_{1:N} $$
 
 ![Histograma](Diagram_series.png "Diagrama")
 
-**3:** Incorporar features à geração dos dados sintéticos.
+**3. Incorporação de informações contextuais (features) na geração dos dados sintéticos.**
+
+Ao invés de treinar o modelo apenas utilizado as informações dos retornos dos índices, podemos incorporar aos dados de treinamento, e consequentemente aos dados sintéticos gerados, informações contextuais que ajudam a melhorar o realismo dos dados gerados.
+
+Conforme explicado por Pagnocelli et al.[5], a taxa de juros é um bom indicador do comportamento dos índices de ações. Visto que, de maneira simplificada, uma taxa mais elevada tende a atrair investidores a aplicar em títulos de renda fixa, refletindo numa queda do mercado de ações e o contrário também acontece.
+
+Dessa forma, os dados de treinamento são séries temporais, em que a informação para cada instante t é representado por uma tupla:
+
+$$ [r(t), i(t) ] $$
+
+Sendo:
+r(t): retorno do índice no instante t.
+i(t): taxa de juros no instante t.
 
 
 
