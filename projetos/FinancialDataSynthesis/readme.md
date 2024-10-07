@@ -143,7 +143,7 @@ $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
-|API do Yahoo Finance| [http://base1.org/](https://finance.yahoo.com/) | permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.|
+|API do Yahoo Finance| [https://finance.yahoo.com] | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.|
 
 > Faça uma descrição sobre o que concluiu sobre esta base. Sugere-se que respondam perguntas ou forneçam informações indicadas a seguir:
 > * Qual o formato dessa base, tamanho, tipo de anotação?
