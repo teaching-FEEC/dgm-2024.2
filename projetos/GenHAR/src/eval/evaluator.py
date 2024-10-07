@@ -49,7 +49,7 @@ class Evaluator:
         fig4 = evaluator.plot_random_sensor_samples_single_dataset(
             dataset, self.activity_names, num_samples=6, sensor="accel"
         )
-        fig5 = evaluator.plot_i_samples(n_samples=10, reshape=False)
+        fig5 = evaluator.plot_i_samples(n_samples=10, reshape=True)
         thresholds = {
             "Silhouette Score": (-1, 1),  # prox 1 melhors ok
             # quanto mais prox zero melhor
@@ -135,7 +135,7 @@ class Evaluator:
             fig5 = comparator.plot_samplesT_by_label(num_samples=3)
 
             # Comparar amostras aleatórias
-            fig6 = comparator.compare_images()
+            fig6 = comparator.compare_images(reshape=True)
             # fig4=comparator.visualize_distribution()
             # Comparar matrizes de correlação
 

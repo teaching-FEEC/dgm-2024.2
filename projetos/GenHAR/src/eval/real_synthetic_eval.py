@@ -56,22 +56,34 @@ class RealSyntheticComparator:
         tsne = TSNE(n_components=n_components, random_state=42)
         
         # Preparando dados
-        X_real = StandardScaler().fit_transform(self.df_real[self.time_cols].values)
-        X_synthetic = StandardScaler().fit_transform(self.df_synthetic[self.time_cols].values)
+        x_real = self.df_real[self.time_cols].values
+        x_synthetic = self.df_synthetic[self.time_cols].values
+        y_real = self.df_real[self.label_col].values
+        y_synthetic = self.df_synthetic[self.label_col].values
+        combined_data = np.concatenate((x_real, x_synthetic))
+        combined_data = StandardScaler().fit_transform(combined_data)
+        combined_labels = np.concatenate((y_real, y_synthetic))
+        #X_real = StandardScaler().fit_transform(self.df_real[self.time_cols].values)
+        #X_synthetic = StandardScaler().fit_transform(self.df_synthetic[self.time_cols].values)
         
         # t-SNE
-        X_real_tsne = tsne.fit_transform(X_real)
-        X_synthetic_tsne = tsne.fit_transform(X_synthetic)
+        #X_real_tsne = tsne.fit_transform(X_real)
+        #X_synthetic_tsne = tsne.fit_transform(X_synthetic)
+        X_all_tsne = tsne.fit_transform(combined_data)
         
-        df_real_tsne = pd.DataFrame(X_real_tsne, columns=[f"TSNE_{i+1}" for i in range(n_components)])
-        df_real_tsne[self.label_col] = self.df_real[self.label_col].values
-        df_real_tsne['Dataset'] = 'Real'
+        #df_real_tsne = pd.DataFrame(X_real_tsne, columns=[f"TSNE_{i+1}" for i in range(n_components)])
+        #df_real_tsne[self.label_col] = self.df_real[self.label_col].values
+        #df_real_tsne['Dataset'] = 'Real'
         
-        df_synthetic_tsne = pd.DataFrame(X_synthetic_tsne, columns=[f"TSNE_{i+1}" for i in range(n_components)])
-        df_synthetic_tsne[self.label_col] = self.df_synthetic[self.label_col].values
-        df_synthetic_tsne['Dataset'] = 'Sintético'
+        #df_synthetic_tsne = pd.DataFrame(X_synthetic_tsne, columns=[f"TSNE_{i+1}" for i in range(n_components)])
+        #df_synthetic_tsne[self.label_col] = self.df_synthetic[self.label_col].values
+        #df_synthetic_tsne['Dataset'] = 'Sintético'
         
-        df_combined = pd.concat([df_real_tsne, df_synthetic_tsne])
+        #df_combined = pd.concat([df_real_tsne, df_synthetic_tsne])
+
+        df_combined = pd.DataFrame(X_all_tsne, columns=[f"TSNE_{i+1}" for i in range(n_components)])
+        df_combined[self.label_col] = combined_labels
+        df_combined['Dataset'] = ['Real'] * len(self.df_real) + ['Sintético'] * len(self.df_synthetic)
         
         fig, ax = plt.subplots(figsize=(10, 6))
         sns.scatterplot(data=df_combined, x="TSNE_1", y="TSNE_2", hue=self.label_col, style='Dataset', palette="Set1", ax=ax)
@@ -101,8 +113,8 @@ class RealSyntheticComparator:
             synthetic_samples = self.df_synthetic_time.loc[selected_synthetic].values
 
             if reshape:
-                real_samples = real_samples.reshape(-1, 60, 6)
-                synthetic_samples = synthetic_samples.reshape(-1, 60, 6)
+                real_samples = real_samples.reshape(-1, 6, 60).transpose(0, 2, 1)
+                synthetic_samples = synthetic_samples.reshape(-1, 6, 60).transpose(0, 2, 1)
 
             samples_per_activity_real.append(real_samples)
             samples_per_activity_synthetic.append(synthetic_samples)
@@ -148,34 +160,41 @@ class RealSyntheticComparator:
     
 
     def visualize_tsne_unlabeled(self, perplexity=10, markersize=20, alpha=0.5):
-            """
-            Visualiza a t-SNE não supervisionada (sem rótulos) para os datasets real e sintético.
-            """
-            tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42)
-            
-            # Padronizar ambos os datasets
-            X_real = StandardScaler().fit_transform(self.df_real[self.time_cols].values)
-            X_synthetic = StandardScaler().fit_transform(self.df_synthetic[self.time_cols].values)
-            
-            # Aplicar t-SNE em ambos
-            X_real_tsne = tsne.fit_transform(X_real)
-            X_synthetic_tsne = tsne.fit_transform(X_synthetic)
-            
-            # Criar DataFrames para visualização
-            df_real_tsne = pd.DataFrame(X_real_tsne, columns=["TSNE_1", "TSNE_2"])
-            df_real_tsne["Dataset"] = "Real"
-            
-            df_synthetic_tsne = pd.DataFrame(X_synthetic_tsne, columns=["TSNE_1", "TSNE_2"])
-            df_synthetic_tsne["Dataset"] = "Sintético"
-            
-            df_combined = pd.concat([df_real_tsne, df_synthetic_tsne])
-            
-            # Plot
-            fig, ax = plt.subplots(figsize=(10, 6))
-            sns.scatterplot(data=df_combined, x="TSNE_1", y="TSNE_2", hue="Dataset", style="Dataset", s=markersize, alpha=alpha, ax=ax)
-            ax.set_title("t-SNE Unlabeled: Real vs Sintético")
-            
-            return fig
+        """
+        Visualiza a t-SNE não supervisionada (sem rótulos) para os datasets real e sintético.
+        """
+        tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42)
+        
+        # Padronizar ambos os datasets
+        x_real = self.df_real[self.time_cols].values
+        x_synthetic = self.df_synthetic[self.time_cols].values
+        combined_data = np.concatenate((x_real, x_synthetic))
+        combined_data = StandardScaler().fit_transform(combined_data)
+        #X_real = StandardScaler().fit_transform(self.df_real[self.time_cols].values)
+        #X_synthetic = StandardScaler().fit_transform(self.df_synthetic[self.time_cols].values)
+        
+        # Aplicar t-SNE em ambos
+        #X_real_tsne = tsne.fit_transform(X_real)
+        #X_synthetic_tsne = tsne.fit_transform(X_synthetic)
+        X_all_tsne = tsne.fit_transform(combined_data)
+        
+        # Criar DataFrames para visualização
+        #df_real_tsne = pd.DataFrame(X_real_tsne, columns=["TSNE_1", "TSNE_2"])
+        #df_real_tsne["Dataset"] = "Real"
+        
+        #df_synthetic_tsne = pd.DataFrame(X_synthetic_tsne, columns=["TSNE_1", "TSNE_2"])
+        #df_synthetic_tsne["Dataset"] = "Sintético"
+        
+        #df_combined = pd.concat([df_real_tsne, df_synthetic_tsne])
+        df_combined = pd.DataFrame(X_all_tsne, columns=["TSNE_1", "TSNE_2"])
+        df_combined['Dataset'] = ['Real'] * len(self.df_real) + ['Sintético'] * len(self.df_synthetic)
+        
+        # Plot
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.scatterplot(data=df_combined, x="TSNE_1", y="TSNE_2", hue="Dataset", style="Dataset", s=markersize, alpha=alpha, ax=ax)
+        ax.set_title("t-SNE Unlabeled: Real vs Sintético")
+        
+        return fig
     
     def tsne_subplots_by_labels(self, activity_names=['sit', 'stand', 'walk', 'stair up', 'stair down', 'run']):
         # Reshape if 3D
@@ -191,6 +210,7 @@ class RealSyntheticComparator:
 
         # Combine data for t-SNE
         combined_data = np.concatenate((x_real, x_synthetic))
+        combined_data = StandardScaler().fit_transform(combined_data)
         combined_labels = np.concatenate((y_real, y_synthetic))
 
         # Apply t-SNE
@@ -249,7 +269,7 @@ class RealSyntheticComparator:
         # Create subplots for num_samples rows and 2 columns (one for each dataset)
         fig, axes = plt.subplots(nrows=len(self.activity_names), ncols=num_samples * 2, 
                                 figsize=(5 * num_samples * 2, 5 * len(self.activity_names)), 
-                                sharex=True, sharey=True)
+                                sharex=True, sharey='row')
         fig.suptitle(f'{sensor} Data Samples Comparison: Real vs Synthetic', fontsize=16)
 
         for act_id, activity_name in enumerate(self.activity_names):
@@ -330,7 +350,7 @@ class RealSyntheticComparator:
         # Create subplots for num_samples rows and 2 columns (one for each dataset)
         fig, axes = plt.subplots(nrows=len(self.activity_names), ncols=num_samples * 2, 
                                 figsize=(5 * num_samples * 2, 5 * len(self.activity_names)), 
-                                sharex=True, sharey=True)
+                                sharex=True, sharey='row')
         fig.suptitle('Data Samples Comparison: Real vs Synthetic', fontsize=16)
 
         for act_id, activity_name in enumerate(self.activity_names):
@@ -391,7 +411,7 @@ class RealSyntheticComparator:
         
         # Create subplots: 2 columns (Real and Synthetic) for each label
         num_labels = len(self.activity_names)
-        fig, axes = plt.subplots(nrows=num_labels, ncols=2, figsize=(10, num_labels * 5), sharex=True, sharey=True)
+        fig, axes = plt.subplots(nrows=num_labels, ncols=2, figsize=(10, num_labels * 5), sharex=True, sharey='row')
         fig.suptitle('Samples Comparison by Label: Real vs Synthetic', fontsize=16)
 
         for act_id, activity_name in enumerate(self.activity_names):
