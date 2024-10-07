@@ -12,13 +12,52 @@ datasets:
     reshape: None
 
   - name: KuHar
-    path: data/standardized_view
+    path: data
     type: standardized_view
     description: " XXX."
     sensors: 
             accel
             gyro
 
+  - name: RealWorld_thigh
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_upperarm
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_waist
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: UCI
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: WISDM
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
 # Data transformations
 transformations:
   
@@ -28,7 +67,6 @@ transformations:
     description: " fft transform."
     parameters:
       n_components: 0.95  # Retain 95% of the variance
-
   
 
 # Generative models
@@ -46,7 +84,7 @@ generative_models:
         max_sequence_len: 60
         sample_len: 3
         batch_size: 32
-        epochs: 2 ### mudar
+        epochs: 500 ### mudar
     n_gen_samples: 1000
     folder_save_generate_df: data/synthetic/doppelgan
   # Logging and results

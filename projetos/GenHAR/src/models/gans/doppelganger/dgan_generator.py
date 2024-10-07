@@ -2,6 +2,12 @@ import numpy as np
 import pandas as pd
 from gretel_synthetics.timeseries_dgan.dgan import DGAN
 from gretel_synthetics.timeseries_dgan.config import DGANConfig, OutputType
+import os
+import torch
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"  # ou ":16:8"
+
+
+torch.use_deterministic_algorithms(True)
 
 
 class DCGANGenerator:
@@ -27,8 +33,12 @@ class DCGANGenerator:
         self.model = DGAN(
             DGANConfig(
                 max_sequence_len=self.seq_length,
+                apply_feature_scaling=True,
+                apply_example_scaling=False,
                 sample_len=self.config["parameters"]["sample_len"],
                 batch_size=self.config["parameters"]["batch_size"],
+                generator_learning_rate=1e-4,
+                discriminator_learning_rate=1e-4,
                 epochs=self.config["parameters"]["epochs"],
             )
         )
