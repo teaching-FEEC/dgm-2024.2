@@ -37,6 +37,8 @@ Três arquiteturas de geração de séries temporais são comparadas: DoppelGAN,
 
 ### DoppelGAN
 
+![DoppelGAN](docs/figures/doppelgan_model.png)
+
 A DoppelGANger é um modelo generativo adversarial para séries temporais, o qual compila diversas técnicas da literatura para adereçar diferentes problemas que GANs sofrem durante o treinamento, especificamente de séries temporais. As principais técnicas aplicadas são:
 Separação de informações categóricas (denominados metadados e que não se alteram durante o tempo para uma mesma amostra) de informações temporais;
 Geração de metadados como condicionamento da geração de dados temporais;
@@ -62,6 +64,8 @@ Learning rate (gerador, discriminador auxiliar e discriminador) | 0.001|
 
 ### BioDiffusion
 
+![DoppelGAN](docs/figures/biodiffusion_model.png)
+
 O BioDiffusion é um modelo generativo de difusão para séries temporais multidimensionais de dados médicos. A arquitetura consiste em um modelo U-Net adaptado para séries temporais, onde camadas de convolução 1D são adicionadas no início e final do pipeline da rede. O modelo BioDiffusion pode ser utilizado com dados condicionados (presença de uma classe ou outro sinal ‘guia’) ou não-condicionados. 
 
 A implementação utilizada é uma reprodução do código disponível no repositório do artigo [ref].
@@ -80,6 +84,8 @@ A configuração utilizada nos experimentos é a padrão, com os seguintes hiper
 
 ### TimeGAN
 
+![DoppelGAN](docs/figures/timegan_model.png)
+
 A proposta apresentada pelo modelo TimeGAN é a união dos métodos de treinamento de GANs e modelos autorregressivos para o aprendizado de um espaço latente representativo. Amostras reais são representadas em espaço latente por um embeder e dados sintéticos também são gerados diretamente na dimensão do espaço latente. O discriminador é treinado com base nas representações dos dados projetados no espaço latente e um reconstrutor é treinado para recuperar os dados na representação original a partir de sua projeção no espaço latente. Por fim, uma tarefa de supervisão é treinada conjuntamente, cujo objetivo é prever o próximo instante de tempo de um dado, real ou sintético, que foi projetado para o espaço latente.
 
 ### Bases de Dados e Evolução
@@ -97,6 +103,8 @@ Adicionalmente, os subconjuntos de treino, teste e validação foram organizados
 
 
 ### Workflow
+
+![DoppelGAN](docs/figures/GenHAR_Worflow.png)
 
 #### Configuração do Ambiente
 
@@ -156,6 +164,57 @@ Adicionalmente, os subconjuntos de treino, teste e validação foram organizados
     - Um classificador treinado com o conjunto sintético;
     - Um classificador treinado com os conjuntos de treino e sintético;
   - Para cada classificador é reportados a acurácia, precisão, recall e pontuação f1;
+
+### Descrição dos Diretórios
+
+```
+GenHar/
+│
+├── docs/           	# Documentação do projeto
+│   ├── instalação.md   # Instruções de instalação
+│   └── tutorial.md 	# Tutoriais e guias de uso
+│
+├── src/            	# Código-fonte principal do projeto
+│   ├── __init__.py 	# Indica que este é um pacote Python
+│   ├── main.py     	# Script principal do projeto
+│   ├── utils.py    	# Módulos de utilidades
+│   ├── data_processor/    	# Pacotes para leitura e processamento dos datasets
+│   │   ├── __init__.py
+│   │   ├── data_read.py
+│   │   ├── data_transform.py
+│   │   ├── download_dataset.py
+│   │   └── standartized_balanced.py
+│   ├── eval/    	# Pacotes para avaliação dos datasets
+│   │   ├── __init__.py
+│   │ 	├── evaluator.py ### módulo principal para avaliação
+│   │ 	├── dataset_eval.py ## avalia só um dataset
+│   │ 	├── real_synthetic_eval.py ##  compara o dataset real e o gerado
+│   │ 	└── machine_learning.py ##  avalia com modelos de classificação 
+│   ├── models/   # contém os modelos e os arquivos necessários para a geração
+│   │ 	├── __init__.py
+│   │   ├── data_generate.py  ## módulo principal para a geração
+│   │   ├── gans ## contém os modelos das gans
+│   │   └── diffusion ## contém os modelos do diffusion
+│   └── utils/    	# Pacotes para leitura e processamento dos datasets
+│   	  ├── __init__.py
+│   	  ├── dataset_utils.py
+│   	  ├── model_utils.py
+│   	  └── report_utils.py
+│
+├── tests/          	# Testes automatizados
+│   ├── diffusion	# Testes para o modelo diffusion
+│   └── gans
+├── data/           	# Dados utilizados no projeto
+│   ├── baseline_view/        	# Dados brutos (não processados)
+│   ├── standarized_view/        	# Dados brutos (não processados)
+│   ├── synthetic/  	# Dados gerados
+│   └── README.md   	# Descrição sobre os dados
+│
+├── .gitignore      	# Arquivos e diretórios a serem ignorados pelo Git
+├── README.md       	# Documentação principal do projeto
+└── requirements.txt	# Lista de dependências do projeto
+```
+
 
 ### Ferramentas Utilizadas
 
