@@ -15,15 +15,13 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > | Hiuri Santana de Noronha  | 229961  | Eng. Eletricista|
 > | Thiago Belina Silva Ramos  | 203975  | Eng. Eletricista|
 
+## Resumo
 
+## Descrição do Problema/Motivação
 
-## Descrição Resumida do Projeto
+A predição de trajetórias humanas em ambientes densamente povoados é uma tarefa essencial para que no futuro, sistemas autônomos como carros e robôs possam interagir de forma segura e eficiente com pessoas. É necessário que estes consigam avaliar o ambiente e prever com um grau confiável de precisão as trajetórias futuras dos pedestres a fim de evitar colisões. Entretanto, modelar este comportamento é uma tarefa complexa e que impõe uma série de desafios, pois para isto, é necessário entender o processo implícito de interações sociais existentes entre seres humanos.
 
-
-
-> Com base em pesquisas recentes, o projeto de pesquisa proposto visa estudar e propor modelos profundos de redes Generativas Adversariais (GANs) para geração de amostras futuras para predição da trajetória humana em espaços populados. A arquitetura da GAN possui estruturas combinadas de modelos profundos aplicando-se desde o variational auto-encoder (VAE) e rede neural recorrente com células LSTM para que em conjunto possuam a capacidade de modelar as interações multimodais de espaço e tempo da trajetória de pedestres conforme os acordos sociais implícitos existentes em uma distribuição real desconhacida. O processo adversarial é capaz de gerar o que se denomina de amostragem colaborativa (CS) cujo discriminador (D) possui a tarefa primordial de disciplinar o gerador (G) e garantir que a distribuição de G é próxima à distribuição real desconhecida. Tal processo é capaz de gerar amostras confiáveis de trajetória humana em espaços populados e cujos modelos profundos devem ser avaliados apropriadamente de acordo com métricas bem estabelecidas na literatura. 
-
-> Para o treinamento do modelo profundo será utilizado um conjunto de datasets e um benchmark para comparação da eficácia do modelo profundo. Datasets como o ETH (Zurich), UCY e o Stanford Drone estão entre os mais utilizados na literatura técnica e proporcionam um conjunto de vídeos com trajetórias reais de pedestres em meio à espaços populados. Ainda, há a possibilidade de empregar dataset simulado em ambiente computacional com alta definição como o Forking Paths que tem sido utilizado na pesquisa de modelos de predição de trajetória humana recente. Tais datasets proporcionam ao modelo profundo um conjunto de dados estruturados na forma de séries temporais contendo o posicionamento x e y de pedestres ao longo de uma via a um determinado tempo. Com isso, os modelos profundos podem ser treinados para modelar o conjunto de regras sociais implícitas existentes em trajetórias humanas.
+Nesse contexto, as Redes Adversariais Generativas (GANs) surgem como uma possível solução.  As GANs, por serem modelos generativos, são capazes de capturar a incerteza inerente ao movimento humano, gerando múltiplos cenários futuros multimodais, dentre os quais os socialmente aceitáveis serão escolhidos.  A fim de tornar esse processo ainda mais eficiente, foram introduzidos mecanismos sociais a fim de permitir que o gerador compreenda melhor tais interações, criando-se assim as GANs Sociais (SGANs). A principal motivação para a realização deste trabalho é a compreensão de uma nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
 
 > A figura abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
 >
@@ -31,7 +29,17 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 >
 >Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
 
-> A principal motivação para a realização deste trabalho está na compreensão do que é uma nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
+
+## Objetivo
+
+>O projeto de pesquisa proposto irá estudar e propor modelos profundos de redes Generativas Adversariais (GANs) para geração de amostras futuras de possiveis trajetórias humanas em espaços populados. Ao combinar a arquitetura tradicional da GAN com auto encoders, células recorrentes Long-Short-Term Memory (LSTM) e módulos de pooling,  espera-se modelar interações multimodais de espaço e tempo de trajetórias de pedestres conforme os acordos sociais implícitos existentes em uma distribuição real desconhecida. O processo adversarial é capaz de gerar o que se denomina de amostragem colaborativa (CS) cujo discriminador (D) possui a tarefa primordial de disciplinar o gerador (G) e garantir que a distribuição de G seja próxima à distribuição real desconhecida. Tal processo é capaz de gerar amostras confiáveis de trajetória humana em espaços populados e cujos modelos profundos devem ser avaliados apropriadamente de acordo com métricas bem estabelecidas na literatura.
+
+## Metodologia
+
+> O desemvolvimento do modelo e treinamento do modelo terá com ponto de partida  e benchmark o repositório disponibilizado em [2]
+>
+>Para o desenvolvimente e treinamento do modelo profundo será utilizado um conjunto de datasets e um benchmark para comparação da eficácia do modelo profundo. Datasets como o ETH (Zurich), UCY e o Stanford Drone estão entre os mais utilizados na literatura técnica e proporcionam um conjunto de vídeos com trajetórias reais de pedestres em meio à espaços populados. Ainda, há a possibilidade de empregar dataset simulado em ambiente computacional com alta definição como o Forking Paths que tem sido utilizado na pesquisa de modelos de predição de trajetória humana recente. Tais datasets proporcionam ao modelo profundo um conjunto de dados estruturados na forma de séries temporais contendo o posicionamento x e y de pedestres ao longo de uma via a um determinado tempo. Com isso, os modelos profundos podem ser treinados para modelar o conjunto de regras sociais implícitas existentes em trajetórias humanas.
+
 
 > A seguir tem-se os links para o vídeo da apresentação do entregável I e para a apresentação em slides.
  
