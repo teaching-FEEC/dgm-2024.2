@@ -39,7 +39,7 @@ Sendo x(t) o valor do índice no período t.
 
 **Objetivos Específicos:**
 
-Neste projeto, temos dois objetivos específicos.
+Neste projeto, temos três objetivos específicos.
 
 **1.** Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas conhecidas como fatos estilizados.
 
