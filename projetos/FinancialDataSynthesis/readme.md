@@ -116,7 +116,11 @@ A metodologia proposta consiste nos seguintes passos:
 
 **1.** Coletar os retornos de um determinado índice em um determinado período (e.g. retornos do Ibovespa de 2002 até 2024) descritos pela série temporal:
 
-$$ R_{1:N} = { r(1), r(2), ..., r(N) } $$
+$$ R_{1:N} = [ r(1), r(2), ..., r(N) ] $$
+
+**2.** Coletar os valores da taxa de juros (e/ou outros features relevantes) para o mesmo período:
+
+$$ I_{1:N} = [i(1), i(2), ..., i(N)] $$
 
 ### Bases de Dados e Evolução
 > Elencar bases de dados utilizadas no projeto.
