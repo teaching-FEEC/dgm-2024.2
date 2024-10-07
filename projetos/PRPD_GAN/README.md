@@ -82,7 +82,7 @@ Se utilizou a matriz de *Gray Level Co-Occurrence Matrix* (GLCM), conhecida por 
 
 Se utilizou uma binarização com o algoritmo de Otsu para extrair os contornos principais das nubes de descargas parciais que apareceram em cada imagen. A continuação, se pode ver um exemplo do processo para cada tipo de defeito.
 
-![Contours-example](.\reports\figures\contours_prpd.png)
+![Contours-example](./reports/figures/contours_prpd.png)
 
 Posteriormente se extrairam as seguintes caracteristicas de cada nube:
 
@@ -101,15 +101,15 @@ Apartir da extração de características de cada imagen, se utilizaram técnica
 
 ##### Clusterização por Características de Textura
 
-![GLCM-UMAP](.\reports\figures\UMAP_texture.png)
+![GLCM-UMAP](./reports/figures/UMAP_texture.png)
 
 ##### Clusterização por Características dos Contornos
 
-![Contours-tSNE](.\reports\figures\tSNE_contours.png)
+![Contours-tSNE](./reports/figures/tSNE_contours.png)
 
 ##### Clusterização por Características de Textura e Contornos
 
-![GLCM&Contours-tSNE](.\reports\figures\tSNE_texture_contours.png)
+![GLCM&Contours-tSNE](./reports/figures/tSNE_texture_contours.png)
 
 ### Implementação da ACWGAN
 
