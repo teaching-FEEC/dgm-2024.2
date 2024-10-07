@@ -134,6 +134,8 @@ De forma a identificar as tuplas ( r(t), i(t) ) que exibem características e si
 
 $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 
+**6.** Verificar se as amostras sintéticas são realistas através da observação dos fatos estilizados e outras métricas.
+
 ### Bases de Dados e Evolução
 > Elencar bases de dados utilizadas no projeto.
 > Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento sobre como ela foi analisada/usada, conforme exemplo a seguir.
