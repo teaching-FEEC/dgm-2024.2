@@ -9,6 +9,7 @@ from PIL import Image
 from torchvision.utils import make_grid
 import torch
 import wandb
+import pynvml
 
 class Constants:
     DATASET_FILEPATH = "./data/external"
@@ -252,3 +253,45 @@ def plot_losses(train_losses, val_losses):
     plt.ylabel('Loss')
     plt.legend()
     plt.show()
+
+def get_gpu_memory_usage():
+    """Get the memory usage of all GPUs."""
+    pynvml.nvmlInit()
+    device_count = pynvml.nvmlDeviceGetCount()
+
+    gpu_memory_info = []
+    for i in range(device_count):
+        handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+        memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+
+        gpu_memory_info.append({
+            'gpu_index': i,
+            'total_memory': memory_info.total,
+            'used_memory': memory_info.used,
+            'free_memory': memory_info.free
+        })
+    pynvml.nvmlShutdown()
+    return gpu_memory_info
+
+def print_gpu_memory_usage(msg=None, short_msg=False):
+    """Print the memory usage of all GPUs."""
+    gpu_memory_info = get_gpu_memory_usage()
+    if short_msg:
+        if msg is None:
+            msg = "GPU Memory Usage"
+        total = sum(info['total_memory'] for info in gpu_memory_info)
+        used = sum(info['used_memory'] for info in gpu_memory_info)
+        print(f"{msg}: {used / (1024 ** 2):.2f} MB ({used / total * 100:.2f}% used)")
+        return
+
+    ident = ""
+    if msg is not None:
+        print(msg)
+        ident = " " * 2
+    if len(gpu_memory_info) == 0:
+        print(f"{ident}No GPUs found.")
+    for info in gpu_memory_info:
+        print(f"{ident}GPU {info['gpu_index']}:")
+        print(f"{ident}  Total Memory: {info['total_memory'] / (1024 ** 2):.2f} MB")
+        print(f"{ident}  Used Memory: {info['used_memory'] / (1024 ** 2):.2f} MB")
+        print(f"{ident}  Free Memory: {info['free_memory'] / (1024 ** 2):.2f} MB")
