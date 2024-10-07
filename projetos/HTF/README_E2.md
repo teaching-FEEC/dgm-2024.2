@@ -20,9 +20,10 @@ A predição de trajetórias humanas em ambientes densamente povoados é uma tar
 
 Nesse contexto, as Redes Adversariais Generativas (GANs) surgem como uma possível solução.  As GANs, por serem modelos generativos, são capazes de capturar a incerteza inerente ao movimento humano, gerando múltiplos cenários futuros multimodais, dentre os quais os socialmente aceitáveis serão escolhidos.  A fim de tornar esse processo ainda mais eficiente, foram introduzidos mecanismos sociais neste tipo de rede a fim de permitir que o gerador compreenda melhor tais dinâmicas, criando-se assim as GANs Sociais (SGANs). A principal motivação para a realização deste trabalho é a compreensão desta nova e latente área para aplicações futuras em robótica social (robôs humanoides), cidades inteligentes e sistemas inteligentes de transporte.
 
- A figura abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
+ A figura 01 abaixo mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
 
 ![objetivo](/projetos/HTF/images/FIG01.png)
+Figura 01: Exemplo de predição de trajetória humana em ambientes povoados
 
 Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting(Parth Kothari and Alexandre Alahi, 2023)*
 
@@ -50,7 +51,8 @@ Para o projeto, serão consideradas duas bases de dados principais conforme tabe
 |----- | ----- | -----|
 |BIWI Walking Pedestrians Dataset | https://data.vision.ee.ethz.ch/cvl/aem/ewap_dataset_full.tgz | Vista superior de pedestres caminhando em cenários povoados.|
 
-
+![objetivo](/projetos/HTF/images/bew.png)
+Figura 01: Exemplo de predição de trajetória humana em ambientes povoados
 
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
