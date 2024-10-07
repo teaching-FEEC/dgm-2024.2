@@ -69,7 +69,9 @@ Observamos que o Skewness (S) é negativo, indicando que há uma assimetria entr
 
 Conforme mencionado por Peña et al. [3], o comportamento dos ativos pode variar de acordo com o período econômico, também conhecidos como regimes de mercado, em que se encontram. Por exemplo, os ativos em geral se tornam mais voláteis em períodos de crise comparado à tempos de estabilidade. 
 
-Dessa forma, pretendemos separar os períodos econômicos em categorias, como: período de alta, de baixa, de normalidade, e condicionar a geração de dados de acordo com cada categoria, obtendo assim, dados sintéticos mais realistas para cada regime de mercado. Para tal, podemos utilizar técnicas de clusterização nas séries temporais estudadas, agrupando dados que apresentam comportamentos semelhantes. 
+Dessa forma, pretendemos separar os períodos econômicos em categorias, como: período de alta, de baixa, de normalidade, e condicionar a geração de dados de acordo com cada categoria, obtendo assim, dados sintéticos mais realistas para cada regime de mercado.
+
+Para tal, podemos utilizar técnicas de clusterização nas séries temporais estudadas, agrupando dados que apresentam comportamentos semelhantes e atribuindo variáveis categóricas para cada cluster. Ao final, geramos os dados utilizando as CTGANs (Conditional Tabular Generative Adversarial Networks) que produzem os dados sintéticos de acordo com o regime de mercado, descrito através da variável categórica. 
 
 ## Metodologia Proposta
 > Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
