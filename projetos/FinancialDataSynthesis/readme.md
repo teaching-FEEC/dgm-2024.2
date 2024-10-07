@@ -198,8 +198,7 @@ Para a avaliação da qualidade dos nossos geradores de dados sintéticos, vamos
 
 > A seção de Conclusão deve ser uma seção que recupera as principais informações já apresentadas no relatório e que aponta para trabalhos futuros.
 > Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas ou como o projeto será conduzido até a sua finalização.
-> Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outros aspectos, possibilidades de continuidade do projeto.
-> 
+ 
 ## Referências Bibliográficas
 [1] Li, Gaorong, Lei Huang, Jin Yang, and Wenyang Zhang.  
 "A synthetic regression model for large portfolio allocation."  
