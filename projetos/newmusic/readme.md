@@ -3,9 +3,12 @@
 ## Apresentação
 
  Incluir nome RA e foco de especialização de cada membro do grupo. Os projetos devem ser desenvolvidos em duplas.
- |Nome  | RA | Curso|\\
- |Mariana Ap. Ferreira | 183670 | Ciência da Computação |\\
- |Leonardo Colussi Mazzamboni | 220129 | Ciência da Computação |\\
+ |Nome  | RA | Curso|
+
+ |Mariana Ap. Ferreira | 183670 | Ciência da Computação |
+
+ |Leonardo Colussi Mazzamboni | 220129 | Ciência da Computação |
+ 
 
 
 ## Introdução ao problema
