@@ -73,9 +73,13 @@ Dessa forma, pretendemos separar os períodos econômicos em categorias, como: p
 
 Para tal, podemos utilizar técnicas de clusterização nas séries temporais estudadas, agrupando dados que apresentam comportamentos semelhantes e atribuindo variáveis categóricas para cada cluster. Ao final, geramos os dados utilizando as CTGANs (Conditional Tabular Generative Adversarial Networks) que produzem os dados sintéticos de acordo com o regime de mercado, descrito através da variável categórica.
 
-O diagrama abaixo ilustra um exemplo, em que temos a série temporal de retornos (retornos dos índices em cada instante t):
+O diagrama abaixo ilustra um exemplo, em que temos a série temporal de retornos (retornos dos índices em cada instante t) :
 
 $$ R_{1:N}  ={r(1), r(2), ..., r(N)}  $$
+
+O processo de clusterização irá separar os retornos que apresentam comportamenho semelhante, categorizando os regimes de mercado. No exemplo, isso gera três séries temporais, tal que:
+
+$$ C1_{1:N} \union C2_{1:N} \union C3_{1:N} = R_{1:N} $$ 
 
 ![Histograma](Diagrama.drawio.png "Diagrama")
 
