@@ -13,11 +13,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
  | Letícia Levin Diniz | 201438  | Eng. Elétrica |
 
 ## Resumo (Abstract)
-As tomografias computadorizadas (CT) pulmonares e a segmentação das vias aéreas desempenham um papel crucial no diagnóstico preciso de doenças pulmonares. 
-Propõe-se o desenvolvimento da PulmoNet, uma rede para síntese de imagens 2D de CTs pulmonares, com o intuito de apoiar redes de segmentação e gerar dados sintéticos para incorporação em bases de dados para outras redes neurais (e.g. classificadores de tumores).
-Utilizando a base de dados ATM'22, implementa-se uma arquitetura GAN, sendo o gerador uma rede Pix2Pix e o discriminador uma PatchGAN, que receberá uma máscara binária do pulmão e preencherá esta fatia com as vias aéreas.
-Tal rede será avaliada em três análises: qualitativa (observação dos resultados no estágio inicial do projeto),  quantitativa (métricas FID e SSIM) e utilidade (aplicação do gerador como *feature extractor*).
-Os resultados parciais até o momento não foram bem-sucedidos, uma vez que se enfrenta problemas no treinamento, principalmente com relação a velocidade de aprendizado do discriminador comparada ao do gerador.
+As tomografias computadorizadas (CT) pulmonares e a segmentação das vias aéreas são essenciais para o diagnóstico preciso de doenças pulmonares. Propõe-se a PulmoNet, uma rede para síntese de imagens 2D de CTs pulmonares, visando apoiar redes de segmentação e gerar dados sintéticos para bases de dados de outras redes neurais, como classificadores de tumores. Utilizando a base ATM'22, implementa-se uma arquitetura GAN com gerador Pix2Pix e discriminador PatchGAN, que preencherá máscaras binárias do pulmão com vias aéreas. A rede será avaliada qualitativamente, quantitativamente (métricas FID e SSIM) e em utilidade. Resultados parciais indicam problemas no treinamento devido à velocidade de aprendizado do discriminador.
 
 ## Descrição do Problema/Motivação
 As tomografias computadorizadas (CT) pulmonares, juntamente com a segmentação das vias aéreas, desempenham um papel crucial no diagnóstico preciso de doenças pulmonares. Ao gerar imagens detalhadas da região torácica, ela permite que médicos mapeiem a anatomia das vias aéreas antes de procedimentos cirúrgicos, avaliando a extensão de lesões e facilitando o acompanhamento da progressão de doenças respiratórias [[2]](#2). Além disso, a CT é fundamental para monitorar a eficácia de tratamentos e detectar seus possíveis efeitos colaterais [[5]](#5).
@@ -57,7 +53,7 @@ As duas imagens abaixo ilustram as arquiteturas do gerador e discriminador, resp
 
 A função de loss aplica o critério de *Binary Cross Entropy*, conforme a seguinte a equação matemática:
 
-$arg\ min_{𝐺}\ max_{𝐷}\ E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)] + E_{𝑥,𝑧}[log(1 − 𝐷(𝑥, 𝐺(𝑥, 𝑧)))] + 𝜆E_{𝑥,𝑦,𝑧}[‖𝑦 − 𝐺(𝑥, 𝑧)‖_{1}]$
+$$arg\ min_{𝐺}\ max_{𝐷}\ E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)] + E_{𝑥,𝑧}[log(1 − 𝐷(𝑥, 𝐺(𝑥, 𝑧)))] + 𝜆E_{𝑥,𝑦,𝑧}[‖𝑦 − 𝐺(𝑥, 𝑧)‖_{1}]$$
 
 ### Bases de Dados e Evolução
 Apesar de inspirar-se no artigo [[1]](#1), o desenvolvimento deste projeto utilizará a base de dados ATM'22, cuja descrição está na tabela abaixo. Tal base de dados não foi usada no desenvolvimento do projeto em [[1]](#1), mas foi escolhida no presente projeto devido a sua amplitude, a presença de dados volumétricos e em razão das imagens possuírem a delimitação das vias aéreas obtidas através de especialistas. Os volumes da base ATM'22 foram adquiridos em diferentes clínicas e considerando diferentes contextos clínicos. Construída para a realização de um desafio de segmentação automática de vias aéria utilizando IA, a base de dados está dividida em 300 volumes para treino, 50 para validação e 150 para teste.
@@ -125,25 +121,23 @@ A análise quantitativa trata de uma avaliação sobre as imagens a partir dos m
 Entrando em mais detalhes, a métrica FID avalia o desempenho da rede generativa e será calculada utilizando uma rede neural pré-treinada *InceptionV3*, que extrairá *features* das fatias pulmonares geradas e das fatias originais. Com isso, as distribuições dos dados sintéticos e dos dados reais, obtidas pelo encoder desta rede, são usadas para calcular a FID e, assim, avaliar a qualidade da imagem gerada.
 A expressão matemática que descreve o cálculo da FID entre duas distribuições gaussianas criadas pelas *features* da última camada de *pooling* do modelo *Inception-v3* é dada por:
 
-$FID = ‖𝜇_{𝑟} − 𝜇_{𝑔}‖^{2} + Tr(\sum_{𝑟} + \sum_{𝑔} − 2(\sum_{𝑟}\sum_{𝑔})^{1∕2})$
+$$FID = ‖𝜇_{𝑟} − 𝜇_{𝑔}‖^{2} + Tr(\sum_{𝑟} + \sum_{𝑔} − 2(\sum_{𝑟}\sum_{𝑔})^{1∕2})$$
 
 onde $𝜇_{𝑟}$ e $𝜇_{𝑔}$ são as médias entre as imagens reais e sintéticas, e $\sum_{𝑟},\ \sum_{𝑔}$ são as matrizes de convariância para os vetores de *features* dos dados reais e gerados, respectivamente.
 Quanto menor for o FID, maior a qualidade da imagem gerada.
 
 Por sua vez, a métrica SSIM compara a imagem gerada com seu respectivo *ground-truth* com base em três características: luminância, distorção de contraste e perda de correlação estrutural.
-Casos as imagens sejam iguais, o resultado desta métrica será igual a 1, ao passo que se as imagens forem completamente diferentes, o SSIM será nulo.
-Ressalta-se que não queremos que esta métrica fique em nenhum deste extremos, mas sim em um valor intermediário.
 As expressões matemáticas usadas para o cálculo desta métrica são:
 
-$SSIM(𝑥, 𝑦) = l(𝑥, 𝑦) \times 𝑐(𝑥, 𝑦) \times 𝑠(𝑥, 𝑦)$
+$$SSIM(𝑥, 𝑦) = l(𝑥, 𝑦) \times 𝑐(𝑥, 𝑦) \times 𝑠(𝑥, 𝑦)$$
 
-$l(𝑥, 𝑦) = \frac{2𝜇_{𝑥}𝜇_{𝑦} + 𝐶_{1}}{𝜇^{2}_{𝑥}+ 𝜇^{2}_{𝑦} + 𝐶_{1}}$
+$$l(x, y) = \frac{2\mu_{x}\mu_{y} + C_{1}}{\mu^{2}_{x} + \mu^{2}_{y} + C_{1}}$$
 
-$𝑐(𝑥, 𝑦) = \frac{2𝜎_{𝑥}𝜎_{𝑦} + 𝐶_{2}}{𝜎^{2}_{𝑥} + 𝜎^{2}_{𝑦} + 𝐶_{2}}$
+$$c(x, y) = \frac{2\sigma_{x}\sigma_{y} + C_{2}}{\sigma^{2}_{x} + \sigma^{2}_{y} + C_{2}}$$
 
-$𝑠(𝑥, 𝑦) = \frac{𝜎_{𝑥𝑦} + 𝐶_{3}}{𝜎_{𝑥}𝜎_{𝑦} + 𝐶_{3}}$
+$$𝑠(𝑥, 𝑦) = \frac{𝜎_{𝑥𝑦} + 𝐶_{3}}{𝜎_{𝑥}𝜎_{𝑦} + 𝐶_{3}}$$
 
-onde $𝜇_{𝑥}$, $𝜇_{𝑦}$, $𝜎_{𝑥}$, $𝜎_{𝑦}$, e $𝜎_{𝑥𝑦}$ são as médias locais, variâncias e covariâncias cruzadas para as imagens 𝑥, 𝑦, respectivament. $𝐶_{1}$, $𝐶_{2}$ $𝐶_{3}$ são constantes.
+onde $𝜇_{𝑥}$, $𝜇_{𝑦}$, $𝜎_{𝑥}$, $𝜎_{𝑦}$, e $𝜎_{𝑥𝑦}$ são as médias locais, variâncias e covariâncias cruzadas para as imagens 𝑥, 𝑦, respectivamente. $𝐶_{1}$, $𝐶_{2}$ $𝐶_{3}$ são constantes.
 
 #### Análise de Utilidade
 Dado que o objetivo do projeto é gerar imagens sintéticas (2D) de CTs pulmonares realistas, avalia-se nesta etapa duas perspectivas. A primeira delas trata da segmentação das fatias sintéticas por meio da biblioteca *lungmask* e comparação desta saída com a máscara binária original que gerou esta imagem sintética. Isto é feito para avaliar se o gerador conseguiu manter o formato do pulmão original ou algo próximo a isso. Utiliza-se o SSIM para comparação destas duas fatias pulmonares segmentadas.
