@@ -37,6 +37,7 @@ class FID():
         self.cuda = cuda
         self.dims = dims
         self.batch_size = batch_size
+        self._last_num_imgs = 0
 
         self.model = None
         if init_model:
@@ -57,6 +58,8 @@ class FID():
 
         for _ in tqdm(range(math.ceil(len(imgs) / self.batch_size))):
             batch = imgs[start_idx:start_idx + self.batch_size]
+            if self.cuda:
+                batch = batch.cuda()
             with torch.no_grad():
                 pred = self.model(batch)[0]
 
@@ -79,11 +82,9 @@ class FID():
 
     def get(self, images_real, images_fake):
         """Calculate FID between real and fake images."""
-        if self.cuda:
-            images_real = images_real.cuda()
-            images_fake = images_fake.cuda()
-        self._init_model()
+        self._last_num_imgs = len(images_real) + len(images_fake)
 
+        self._init_model()
         m1, s1 = self._compute_statistics_of_imgs(images_real)
         m2, s2 = self._compute_statistics_of_imgs(images_fake)
         return fid_score.calculate_frechet_distance(m1, s1, m2, s2)

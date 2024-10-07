@@ -48,6 +48,7 @@ class LPIPS():
         self.no_grad = no_grad
         self.batch_size = batch_size
         self.max_pairs = max_pairs
+        self._last_num_pairs = 0
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -62,13 +63,27 @@ class LPIPS():
             all_pairs = self._get_all_pairs(img0, img1)
         else:
             all_pairs = np.array([(i, i) for i in range(len(img0))])
+        self._last_num_pairs = len(all_pairs)
+
         pred_arr = None
         start_idx = 0
         for _ in tqdm(range(math.ceil(len(all_pairs) / self.batch_size))):
             i0 = all_pairs[start_idx:start_idx + self.batch_size, 0]
             i1 = all_pairs[start_idx:start_idx + self.batch_size, 1]
 
-            lpips_values = self.model.forward(img0[i0], img1[i1], normalize=normalize)
+            if self.cuda:
+                img0_ = img0[i0].cuda()
+                img1_ = img1[i1].cuda()
+            else:
+                img0_ = img0[i0]
+                img1_ = img1[i1]
+
+            if self.no_grad:
+                with torch.no_grad():
+                    lpips_values = self.model.forward(img0_, img1_, normalize=normalize)
+            else:
+                lpips_values = self.model.forward(img0_, img1_, normalize=normalize)
+
             if pred_arr is None:
                 pred_arr = lpips_values
             else:
@@ -90,15 +105,4 @@ class LPIPS():
                 msg = 'Number of real and fake images must be the same.'
                 raise ValueError(msg)
 
-        if self.cuda:
-            images_real = images_real.cuda()
-            images_fake = images_fake.cuda()
-
-        if self.no_grad:
-            with torch.no_grad():
-                lpips_value = self._lpips(images_real, images_fake,
-                                          normalize=self.rescale, use_all_pairs=all_pairs)
-        else:
-            lpips_value = self._lpips(images_real, images_fake,
-                                      normalize=self.rescale, use_all_pairs=all_pairs)
-        return lpips_value
+        return self._lpips(images_real, images_fake, normalize=self.rescale, use_all_pairs=all_pairs)
