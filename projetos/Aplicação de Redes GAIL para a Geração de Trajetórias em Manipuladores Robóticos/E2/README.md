@@ -107,10 +107,76 @@ no ambiente de simulação.
 
 * **Transformações e Tratamentos:** os dados são coletados em tempo real, logo, não há necessidade de limpeza adicional, visto que foram coletados em um ambiente controlado.
 
-### Workflow
-> Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nessa seção.
-> Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
-> Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos. 
+## Workflow
+
+Este projeto adota um workflow bem definido para alcançar o objetivo de gerar trajetórias válidas para manipuladores robóticos de 7 graus de liberdade (DoF), utilizando redes GAIL (Generative Adversarial Imitation Learning). O processo foi dividido em seis etapas principais, que cobrem desde a definição do escopo até a validação e testes, conforme ilustrado nas imagens a seguir.
+
+### 1. Definição do Escopo do Projeto
+
+O objetivo principal é desenvolver um modelo baseado em GAIL para gerar trajetórias seguras e eficientes. Para avaliar a qualidade das trajetórias, utilizamos métricas como a distância cartesiana e a diferença de orientação entre as trajetórias geradas e as trajetórias de referência. 
+
+O ambiente de simulação foi implementado no Unity, o que nos permite flexibilidade na coleta de dados e a capacidade de testar diferentes cenários de maneira precisa.
+
+### 2. Coleta de Dados Especialistas
+
+Nesta fase, configuramos o ambiente de simulação no **Unity** e geramos dados especialistas controlando o manipulador robótico manualmente, via joystick. As informações coletadas incluem as posições cartesianas (x, y, z) e as orientações (roll, pitch, yaw) da garra do manipulador, além dos ângulos das juntas. Após a coleta, os dados são organizados e validados para garantir sua qualidade e consistência.
+
+**Atividades principais (Figura 1 e Figura 2, Etapa 2)**:
+- Preparação do ambiente de simulação.
+- Programação de trajetórias de referência para o manipulador.
+- Coleta manual dos dados.
+- Armazenamento e organização dos dados coletados.
+- Validação para garantir a integridade dos dados.
+
+### 3. Pré-processamento dos Dados
+
+Antes de treinar o modelo, realizamos uma etapa essencial de pré-processamento dos dados coletados. Isso inclui a limpeza para remover outliers ou dados inconsistentes, além da normalização das posições angulares para garantir escalas compatíveis para o treinamento. Por fim, os dados são divididos em conjuntos de treino e validação, fundamentais para monitorar a performance do modelo durante o treinamento.
+
+**Atividades principais (Figura 1 e Figura 2, Etapa 3)**:
+- Limpeza dos dados: Remoção de outliers e inconsistências.
+- Normalização: Ajuste das escalas das posições angulares.
+- Divisão dos dados: Separação dos dados em conjuntos de treino e validação.
+
+### 4. Modelagem da Rede GAIL
+
+A modelagem da rede GAIL consiste em definir tanto a **rede geradora** quanto a **rede discriminadora**, além de integrar ambas no modelo final. A rede geradora é responsável por criar novas trajetórias a partir dos dados especialistas, enquanto a rede discriminadora avalia a validade dessas trajetórias, comparando-as com as trajetórias de referência. Também definimos as funções de perda para cada uma das redes, essenciais para o processo de aprendizado adversarial.
+
+**Atividades principais (Figura 1 e Figura 2, Etapa 4)**:
+- Definição da arquitetura da rede geradora.
+- Definição da arquitetura da rede discriminadora.
+- Integração das redes GAIL (geradora e discriminadora).
+- Definição e ajuste das funções de perda.
+
+### 5. Treinamento da Rede GAIL
+
+Uma vez que a rede GAIL foi modelada, iniciamos o treinamento com os dados especialistas. Ajustamos os hiperparâmetros, como a taxa de aprendizado, conforme necessário, para otimizar a performance da rede. Durante o treinamento, as trajetórias geradas são continuamente avaliadas e comparadas às trajetórias especialistas, garantindo que o modelo esteja aprendendo a imitar com precisão.
+
+**Atividades principais (Figura 1 e Figura 2, Etapa 5)**:
+- Treinamento inicial utilizando os dados especialistas.
+- Ajuste dos hiperparâmetros para otimização do modelo.
+- Avaliação contínua das trajetórias geradas para verificar melhorias.
+
+### 6. Validação e Testes
+
+Após o treinamento, as trajetórias geradas passam por uma fase de validação rigorosa, que inclui simulações no Unity para verificar a viabilidade física das trajetórias. Conduzimos testes de robustez e generalização para garantir que o modelo seja capaz de lidar com diferentes condições. Também realizamos uma análise de colisões para assegurar que as trajetórias respeitem as limitações físicas do manipulador. Ao final, geramos um relatório de desempenho detalhado e documentamos os resultados.
+
+**Atividades principais (Figura 1 e Figura 2, Etapa 6)**:
+- Validação das trajetórias geradas.
+- Simulações no Unity para testar a viabilidade física.
+- Testes de robustez e generalização para diferentes cenários.
+- Análise de colisões no Unity para garantir segurança.
+- Revisão e ajuste após iterações de testes.
+- Geração de relatório de desempenho e documentação final dos resultados.
+
+### Imagens de Fluxograma:
+
+#### Figura 1:
+![Workflow-Página-1](Workflow-Página-1.drawio.png)
+
+#### Figura 2:
+![Workflow-Página-2](Workflow-Página-2.drawio.png)
+
+
 
 
 
