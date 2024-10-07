@@ -96,7 +96,7 @@ Após tratados, o formato dos datasets será como o disposto na Figura 06, em qu
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-Até o momento, considerar-se que os principais avanços estão vinculados à compreesão do dataset e ao sucesso em conseguir executar o repositório de referência. Entretanto, devido a complexidade do cógido e ao seu grande número de parâmetros, será necessário realizar um estudo de sua estrutura para que a mesma possa ser melhor compreendida. Isso possibilitará verificar parametros e realizar modificações nestes a fim de testar quais impactos eles podem ter nas métricas finais. 
+Até o momento, considerar-se que os principais avanços estão vinculados à compreesão do dataset e ao sucesso em conseguir executar o repositório de referência. Entretanto, devido a complexidade do cógido e ao seu grande número de parâmetros, será necessário realizar um estudo de sua estrutura para que a mesma possa ser melhor compreendida. Isso possibilitará verificar parametros e realizar modificações nestes a fim de testar quais impactos eles podem ter nas métricas adotadas. 
 
 <div style="text-align: center;">
     <img src="/projetos/HTF/images/distribuicao01.jpeg" alt="Figura 08: width="600"/>
@@ -120,6 +120,7 @@ Levando em conta os modelos pré-treinados disponibilizados no repositório, for
 
 ## Conclusão
 
+Para os próximos passos, espera-se compreender os detalhes da rede e conduzir novos treinamentos mediante variação de parâmentros para a fim de obter resultados que possam ser iguais ou melhores aos fornecidos pelas referências.
 
 
 ## Referências Bibliográficas
