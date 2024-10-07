@@ -96,21 +96,26 @@ Após tratados, o formato dos datasets será como o disposto na Figura 06, em qu
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-Até o momento, considerar-se que os principais avanços estão vinculados à compreesão do dataset e ao sucesso em conseguir executar o repositório de referência. Entretanto, devido a complexidade do cógido e ao seu grande número de parâmetros, será necessário realizar um estudo de sua estrutura para que a mesma possa ser melhor compreendida. Isso possibilitará verificar parametros e realizar modificações nestes a fim de testar quais impactos eles podem ter nas métricas finais. Levando em conta os modelos pré-treinados disponibilizados no repositório, foram realizadas implementações cujos resultados podem ser observados na Figuraa
+Até o momento, considerar-se que os principais avanços estão vinculados à compreesão do dataset e ao sucesso em conseguir executar o repositório de referência. Entretanto, devido a complexidade do cógido e ao seu grande número de parâmetros, será necessário realizar um estudo de sua estrutura para que a mesma possa ser melhor compreendida. Isso possibilitará verificar parametros e realizar modificações nestes a fim de testar quais impactos eles podem ter nas métricas finais. 
 
 <div style="text-align: center;">
-    <img src="/projetos/HTF/images/workflow.png" alt="Figura 07: width="600"/>
+    <img src="/projetos/HTF/images/distribuicao01.jpeg" alt="Figura 08: width="600"/>
     <p><em>Figura 08: </em></p>
 </div>
 
 <div style="text-align: center;">
-    <img src="/projetos/HTF/images/workflow.png" alt="Figura 07: width="600"/>
+    <img src="/projetos/HTF/images/distribuicao02.jpeg" alt="Figura 09: width="600"/>
     <p><em>Figura 09: </em></p>
 </div>
 
+Fonte: Social-Implicit: Rethinking Trajectory Prediction Evaluation and The Effectiveness of Implicit Maximum Likelihood Estimation (Abduallah Mohamed, Deyao Zhu, Warren Vu, Mohamed Elhoseiny, Christian Claudel, 2022)*
+
+
+Levando em conta os modelos pré-treinados disponibilizados no repositório, foram realizadas implementações cujos resultados podem ser observados na Figura 10 em que cada cor representa um pedestre, sendo que as linhas tracejadas representam os dados verdadeiros e a pontilhadas as previsões realisadas.
+
 <div style="text-align: center;">
-    <img src="/projetos/HTF/images/workflow.png" alt="Figura 07: width="600"/>
-    <p><em>Figura 10: </em></p>
+    <img src="/projetos/HTF/images/avquali.jpeg" alt="Figura 010: width="600"/>
+    <p><em>Figura 10: Amostras verdadeiras (linhas tracejadas) e previsões (linhas pontilhadas) </em></p>
 </div> 
 
 ## Conclusão
