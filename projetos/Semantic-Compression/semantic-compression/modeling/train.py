@@ -20,7 +20,7 @@ def train(gan, dataloader_train, dataloader_val, epochs, save_every, model_fname
         d_losses_val.append(vdl)
         g_losses_val.append(vgl)
         if epoch % save_every == 0:
-            gan.save_weights(f'../models/{model_fname}_{epoch}.weights.h5')
+            gan.save(f'../models/{model_fname}_{epoch}.keras')
         pbar.set_description(f'train: ({tdl:.2f}; {tgl:.2f}); val: ({vdl:.2f}; {vgl:.2f})')
     return d_losses_train, g_losses_train, d_losses_val, g_losses_val
 
