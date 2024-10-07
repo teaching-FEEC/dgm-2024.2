@@ -96,7 +96,9 @@ Dessa forma, os dados de treinamento são séries temporais, em que a informaç�
 $$ [r(t), i(t) ] $$
 
 Sendo:
+
 r(t): retorno do índice no instante t.
+
 i(t): taxa de juros no instante t.
 
 
