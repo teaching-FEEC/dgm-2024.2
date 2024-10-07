@@ -150,7 +150,7 @@ Dado que o objetivo do projeto é gerar imagens sintéticas (2D) de CTs pulmonar
 
 Já a segunda perspectiva trata da utilidade do gerador, em termos de **feature extraction**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza as *features* extraídas pelo nosso gerador. Esta comparação será avaliada ao comparar as saídas com a própria segmentação presente na base de dados ATM'22, feita por especialistas. Além disso, será calculado o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2), e considera-se também calcular o tempo de processamento das redes U-Net e U-Net com *features* extraídos pela nossa Pix2Pix, a fim de verificar se também há uma otimização neste quesito.
 
-Por fim, é importante destacar o caminho a ser seguido para a avaliação da rede generativa para as saídas em 3D, caso seja possível implementá-las dentro do prazo do projeto. Para esta aplicação, utilizaríamos 5 fatias de CTs pulmonares sequenciais, removeríamos a segunda e a quarta fatias e sinetizaríamos esas fatias faltantes. Feito isso, analisaríamos o volume formado em comparação com o volume original. Com isso, seria possível avaliar se a PulmoNet é capaz de gerar imagens relevantes e realistas, além de possibilitar sua implementação no auxílio a **interpolação de CTs pulmonares**.
+Por fim, é importante destacar o caminho a ser seguido para a avaliação da rede generativa para as saídas em 3D, caso seja possível implementá-las dentro do prazo do projeto. Para esta aplicação, geraríamos um volume sintético e passaríamos esta saída pela rede de segmentação *medpseg* [[10]](#10). Feito isso, compararíamos as vias aéreas segmentadas com o *ground-truth* estabelecido na própria base de dados ATM'22.
 
 ### Cronograma
 O projeto será implementado seguindo o seguinte fluxo lógico:
@@ -213,5 +213,7 @@ Os próximos passos do projeto tratam da finalização do treinamento do modelo,
 <a id="8">[8]</a> : Isola, P., Zhu, J. Y., Zhou, T., & Efros, A. A. (2017). Image-to-image translation with conditional adversarial networks. In Proceedings - 30th IEEE conference on computer vision and pattern recognition, CVPR 2017. http://dx.doi.org/10.1109/CVPR.2017. 632, arXiv:1611.07004.
 
 <a id="9">[9]</a> : Radford, A., Metz, L., and Chintala, S., “Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks”, <i>arXiv e-prints</i>, Art. no. arXiv:1511.06434, 2015. doi:10.48550/arXiv.1511.06434.
+
+<a id="10">[10]</a> : Carmo, D. S., “MEDPSeg: Hierarchical polymorphic multitask learning for the segmentation of ground-glass opacities, consolidation, and pulmonary structures on computed tomography”, <i>arXiv e-prints</i>, Art. no. arXiv:2312.02365, 2023. doi:10.48550/arXiv.2312.02365.
 
 Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
