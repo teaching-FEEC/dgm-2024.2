@@ -52,7 +52,6 @@ Serão coletados dados de teleoperação utilizando o manipulador robótico Kino
 - **Posições angulares das juntas**: obtidas em tempo real durante a teleoperação.
 - **Posição cartesiana da garra**: [x, y, z].
 - **Orientação da garra**: Representada por [roll, pitch, yaw].
-
 Os dados serão armazenados em arquivos JSON para fácil acesso e manipulação. 
 
 ### 2. Treinamento da Rede GAIL
@@ -170,7 +169,9 @@ Após o treinamento, as trajetórias geradas passam por uma fase de validação,
 ### Imagens de Fluxograma:
 
 #### Figura 1:
-![Workflow-Página-1](Workflow-Página-1.drawio.png)
+
+![Workflow_Etapas_1-Página-1 drawio](https://github.com/user-attachments/assets/0e3f4347-f6cd-4dd5-8b65-15fb8fb9c08a)
+
 
 #### Figura 2:
 ![Workflow-Página-2](Workflow-Página-2.drawio.png)
