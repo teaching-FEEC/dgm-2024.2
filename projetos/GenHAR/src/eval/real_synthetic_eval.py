@@ -6,6 +6,8 @@ from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 from scipy.signal import spectrogram
 import plotly.express as px
+from sklearn.preprocessing import MinMaxScaler
+
 
 class RealSyntheticComparator:
     def __init__(self, df_real, df_synthetic, label_col,activity_names):
@@ -457,3 +459,58 @@ class RealSyntheticComparator:
 
         plt.tight_layout(rect=[0, 0, 1, 0.97])
         return fig
+    
+
+
+    def visualize_distribution(self, result_path, save_file_name):
+        # Obter os dados reais e sintéticos
+        x_real = self.df_real[self.time_cols].values
+        x_synthetic = self.df_synthetic[self.time_cols].values
+        y_real = self.df_real[self.label_col].values
+        y_synthetic = self.df_synthetic[self.label_col].values
+
+        # Certificar que o número de amostras seja o mínimo entre os dois conjuntos
+        sample_num = min([1000, len(x_real), len(x_synthetic)])
+        
+        # Selecionar amostras aleatórias
+        idx = np.random.permutation(len(x_real))[:sample_num]
+
+        # Selecionar os dados reais e sintéticos com base nas amostras
+        x_real = x_real[idx]
+        x_synthetic = x_synthetic[:sample_num]  # Garantir que não acesse índices fora de alcance
+
+        # Cálculo da média ao longo da série temporal
+        prep_data = np.mean(x_real, axis=1)
+        prep_data_hat = np.mean(x_synthetic, axis=1)
+
+        # Aplicar MinMaxScaler para escalar os dados entre 0 e 1
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        prep_data_scaled = scaler.fit_transform(prep_data.reshape(-1, 1)).flatten()
+        prep_data_hat_scaled = scaler.transform(prep_data_hat.reshape(-1, 1)).flatten()
+
+        # Plotar a distribuição
+        fig, ax = plt.subplots(1, 1, figsize=(6, 6))
+        
+        # KDE plot para os dados reais
+        sns.kdeplot(prep_data_scaled, color='C0', linewidth=2, label='Real', ax=ax)
+        
+        # KDE plot para os dados gerados
+        sns.kdeplot(prep_data_hat_scaled, color='C1', linewidth=2, linestyle='--', label='Generated', ax=ax)
+        
+        # Definindo os limites do eixo X entre 0 e 1 (após escalamento)
+        ax.set_xlim(0, 1)
+
+        # Customização do gráfico
+        ax.set_xlabel('')
+        ax.set_ylabel('')
+        for pos in ['top', 'right']:
+            ax.spines[pos].set_visible(False)
+        
+        # Salvar o gráfico
+        import os
+        save_path = os.path.join(result_path, 'distribution_' + save_file_name + '.png')
+        # self.make_sure_path_exist(save_path)
+        # plt.savefig(save_path, dpi=400, bbox_inches='tight')
+        plt.close(fig)  # Fechar a figura após salvar
+        return fig
+
