@@ -13,7 +13,9 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Resumo (Abstract)
 
+Na tarefa de reconhecimento de atividades humanas (HAR) busca-se determinar qual a ação realizada pelo usuário de um dispositivo móvel a partir dos dados de acelerômetro e giroscópio gerados pelo mesmo. A coleta de dados rotulados para HAR apresenta diversas dificuldades, gerando datasets pequenos para representar toda a complexidade do dado e desbalanceados. 
 
+Diante disso, neste trabalho propomos modelos de geração de séries temporais adaptados para dados HAR. Comparamos as arquiteturas DoppelGAN e BioDiffusion em diferentes datasets. Os dados de todos os datasets são padronizados para amostragens em 20Hz e janelas de tempos de 3 segundos retirados do conjunto de dados tratados DAGHAR.
 
 ## Descrição do Problema/Motivação
 
@@ -31,11 +33,11 @@ Diante do contexto e motivação apresentados, temos como objetivo geral a imple
 
 ## Metodologia
 
-Neste trabalho, utilizamos os dados de 5 datasets (MotionSense[ref], KuHAR[ref], RealWorld[ref], UCI[ref] e WISDM[ref]) para reconhecimento de atividades humanas a partir de dados de acelerômetro e giroscópio. Ao invés dos dados brutos de cada dataset, são utilizados os dados processados do repositório DAGHAR[ref]. 
+Neste trabalho, utilizamos os dados de 5 datasets (MotionSense[1], KuHAR[2], RealWorld[3], UCI[4] e WISDM[5]) para reconhecimento de atividades humanas a partir de dados de acelerômetro e giroscópio. Ao invés dos dados brutos de cada dataset, são utilizados os dados processados do repositório DAGHAR[6]. 
 
 Três arquiteturas de geração de séries temporais são comparadas: DoppelGAN, TimeGAN e BioDiffusion. Esses modelos foram escolhidos por serem projetados para geração de séries temporais e implementam diferentes técnicas para alcançar isso.
 
-### DoppelGAN
+### DoppelGAN [7]
 
 ![DoppelGAN](docs/figures/doppelgan_model.png)
 
@@ -62,13 +64,13 @@ Learning rate (gerador, discriminador auxiliar e discriminador) | 0.001|
 |Beta 1 para Adam (gerador, discriminador auxiliar e discriminador) | 0.5|
 |Batch size | 32|
 
-### BioDiffusion
+### BioDiffusion [8]
 
-![DoppelGAN](docs/figures/biodiffusion_model.png)
+![BioDiffusion](docs/figures/biodiffusion_model.png)
 
 O BioDiffusion é um modelo generativo de difusão para séries temporais multidimensionais de dados médicos. A arquitetura consiste em um modelo U-Net adaptado para séries temporais, onde camadas de convolução 1D são adicionadas no início e final do pipeline da rede. O modelo BioDiffusion pode ser utilizado com dados condicionados (presença de uma classe ou outro sinal ‘guia’) ou não-condicionados. 
 
-A implementação utilizada é uma reprodução do código disponível no repositório do artigo [ref].
+A implementação utilizada é uma reprodução do código disponível no [repositório do artigo](https://github.com/imics-lab/biodiffusion).
 
 A configuração utilizada nos experimentos é a padrão, com os seguintes hiperparâmetros:
 | Parâmetro| Valor|
@@ -82,9 +84,9 @@ A configuração utilizada nos experimentos é a padrão, com os seguintes hiper
 |Multiplicadores de número de canais por bloco | [1, 2, 4, 8, 8]|
 |Camadas ResNet por bloco | 3|
 
-### TimeGAN
+### TimeGAN [9]
 
-![DoppelGAN](docs/figures/timegan_model.png)
+![TimeGAN](docs/figures/timegan_model.png)
 
 A proposta apresentada pelo modelo TimeGAN é a união dos métodos de treinamento de GANs e modelos autorregressivos para o aprendizado de um espaço latente representativo. Amostras reais são representadas em espaço latente por um embeder e dados sintéticos também são gerados diretamente na dimensão do espaço latente. O discriminador é treinado com base nas representações dos dados projetados no espaço latente e um reconstrutor é treinado para recuperar os dados na representação original a partir de sua projeção no espaço latente. Por fim, uma tarefa de supervisão é treinada conjuntamente, cujo objetivo é prever o próximo instante de tempo de um dado, real ou sintético, que foi projetado para o espaço latente.
 
@@ -104,7 +106,7 @@ Adicionalmente, os subconjuntos de treino, teste e validação foram organizados
 
 ### Workflow
 
-![DoppelGAN](docs/figures/GenHAR_Worflow.png)
+![Workflow](docs/figures/GenHAR_Worflow.png)
 
 #### Configuração do Ambiente
 
@@ -122,7 +124,7 @@ Adicionalmente, os subconjuntos de treino, teste e validação foram organizados
 
 #### Preparação dos Dados
 
-- Download do repositório de dados padronizados do DAGHAR [ref], caso não exista no diretório `/data`;
+- Download do repositório de dados padronizados do DAGHAR [6], caso não exista no diretório `/data`;
 - Leitura dos dados referente aos datasets selecionados no arquivo de configuração YAML;
   - Cada amostra consiste de 60 instantes de tempo dos sensores de acelerômetro (eixos x, y e z) e giroscópio (eixos x, y e z) e uma classe de atividade;
   - O conjunto de dados é organizado em uma tabela com uma amostra por linha e 361 dados por amostra (6 eixos x 60 instantes de tempo + 1 classe)
@@ -131,17 +133,17 @@ Adicionalmente, os subconjuntos de treino, teste e validação foram organizados
 #### Treinamento de Modelos
 
 - O modelo definido pelo arquivo de configuração é inicializado e treinado:
-- DGAN [ref]
+- DoppelGAN [7]
   - Os dados possuem dimensões (n_amostras, 361) e são organizados para um `np.array` de tamanho (n_amostras, 6, 60) contendo os dados das séries temporais e um `np.array` tamanho (n_amostras, ) com as classes das amostras;
-  - A implementação da DGAN da biblioteca Gretel Synthetics [ref] é utilizada para treinamento do modelo;
-- TimeGAN [ref]
+  - A implementação da DGAN da biblioteca Gretel Synthetics [10] é utilizada para treinamento do modelo;
+- TimeGAN [8]
   - Os dados possuem dimensões (n_amostras, 361) e são organizados para um `np.array` de tamanho (n_amostras, 6, 60) contendo os dados das séries temporais e um `np.array` tamanho (n_amostras, ) com as classes das amostras;
   - Os dados são separados por classe e é treinado um modelo TimeGAN incondicional por classe, ou seja, obtêm-se 6 diferentes modelos TimeGAN, cada um treinado para gerar dados de uma classe de atividade diferente;
   - A implementação do repositório XX foi reproduzida para o treinamento do modelo TimeGAN;
-- BioDiffusion [https://www.mdpi.com/2306-5354/11/4/299]:
+- BioDiffusion [9]:
   - Os dados possuem dimensões (n_amostras, 361) e são organizados para um `np.array` de tamanho (n_amostras, 6, 60) contendo os dados das séries temporais e um `np.array` tamanho (n_amostras, ) com as classes das amostras;
   - Os dados são separados por classe e é treinado um modelo BioDiffusion incondicional por classe, ou seja, obtêm-se 6 diferentes modelos BioDiffusion, cada um treinado para gerar dados de uma classe de atividade diferente;
-  - A implementação do repositório [https://github.com/imics-lab/biodiffusion/tree/main] foi reproduzido para o treinamento do modelo BioDiffusion e uma normalização por média e desvio padrão é aplicada nos dados de treino antes de serem passados para o modelo. Os parâmetros de normalização para cada classe são salvos para aplicação nos dados sintéticos gerados pelo modelo;
+  - A implementação do (repositório de referência do artigo)[https://github.com/imics-lab/biodiffusion/tree/main] foi reproduzido para o treinamento do modelo BioDiffusion e uma normalização por média e desvio padrão é aplicada nos dados de treino antes de serem passados para o modelo. Os parâmetros de normalização para cada classe são salvos para aplicação nos dados sintéticos gerados pelo modelo;
 
 #### Avaliação de Modelos
 
@@ -236,18 +238,30 @@ GenHar/
 
 ## Conclusão
 
+Este projeto realiza a adaptação e comparação de modelos de geração de séries temporais para dados de sensores de acelerômetro e giroscópio voltados para tarefa de reconhecimento de atividades humanas. São utilizados dados de 5 datasets diferentes, os quais são padronizados e balanceados segundo a metodologia do benchmark DAGHAR.
 
+Três modelos generativos foram implementados e avaliados até o momento: TimeGAN, DoppelGAN e BioDiffusion. Esses modelos utilizam diferentes técnicas de geração de dados e melhorias do processo de treinamento específicas para séries temporais. Os resultados parciais mostram que ….
+
+Os próximos passos do trabalho incluem o estudo de adaptações e ajuste dos hiperparâmetros dos modelos implementados de forma a melhorar a qualidade dos dados sintéticos gerados. Adicionalmente, outras métricas de avaliação serão implementadas para comparar propriedades das distribuições de dados reais e sintéticos, permitindo descrever melhor aspectos da qualidade dos dados sintéticos. Por fim, pretende-se realizar um estudo comparativo do desempenho dos modelos entre diferentes datasets, realizando o treinamento do modelo em um mais datasets e avaliando-o em outro dataset.
 
 ## Referências Bibliográficas
 
-HUANG, S.; CHEN, P.-Y.; MCCANN, J. DiffAR: Adaptive Conditional Diffusion Model for Temporal-augmented Human Activity Recognition. Proceedings of the Thirty-Second International Joint Conference on Artificial Intelligence. Anais... Em: THIRTY-SECOND INTERNATIONAL JOINT CONFERENCE ON ARTIFICIAL INTELLIGENCE {IJCAI-23}. Macau, SAR China: International Joint Conferences on Artificial Intelligence Organization, ago. 2023. Disponível em: <https://www.ijcai.org/proceedings/2023/424>
+[1] Malekzadeh, M., Clegg, R.G., Cavallaro, A. and Haddadi, H., 2019, April. Mobile sensor data anonymization. In Proceedings of the international conference on internet of things design and implementation (pp. 49-58)
 
-MALEKZADEH, M. et al. Protecting Sensory Data against Sensitive Inferences. Proceedings of the 1st Workshop on Privacy by Design in Distributed Systems. Anais... Em: EUROSYS ’18: THIRTEENTH EUROSYS CONFERENCE 2018. Porto Portugal: ACM, 23 abr. 2018. Disponível em: <https://dl.acm.org/doi/10.1145/3195258.3195260>.
+[2] Sikder, N. and Nahid, A.A., 2021. KU-HAR: An open dataset for heterogeneous human activity recognition. Pattern Recognition Letters, 146, pp.46-54
 
-NORGAARD, S. et al. Synthetic Sensor Data Generation for Health Applications: A Supervised Deep Learning Approach. 2018 40th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC). Anais... Em: 2018 40TH ANNUAL INTERNATIONAL CONFERENCE OF THE IEEE ENGINEERING IN MEDICINE AND BIOLOGY SOCIETY (EMBC). Honolulu, HI: IEEE, jul. 2018. Disponível em: <https://ieeexplore.ieee.org/document/8512470/>.
+[3] Sztyler, T. and Stuckenschmidt, H., 2016, March. On-body localization of wearable devices: An investigation of position-aware activity recognition. In 2016 IEEE international conference on pervasive computing and communications (PerCom) (pp. 1-9). IEEE
 
-RAVURU, C.; SAKHINANA, S. S.; RUNKANA, V. Agentic Retrieval-Augmented Generation for Time Series Analysis. arXiv, , 18 ago. 2024. Disponível em: <http://arxiv.org/abs/2408.14484>.
+[4] Reyes-Ortiz, J.L., Oneto, L., Samà, A., Parra, X. and Anguita, D., 2016. Transition-aware human activity recognition using smartphones. Neurocomputing, 171, pp.754-767
 
-VAIZMAN, Y.; ELLIS, K.; LANCKRIET, G. Recognizing Detailed Human Context in the Wild from Smartphones and Smartwatches. IEEE Pervasive Computing, v. 16, n. 4, p. 62–74, out. 2017. 
+[5] Weiss, G.M., Yoneda, K. and Hayajneh, T., 2019. Smartphone and smartwatch-based biometrics using activities of daily living. Ieee Access, 7, pp.133190-133202
 
-ydataai/ydata-profiling. YData, , 9 set. 2024. Disponível em: <https://github.com/ydataai/ydata-profiling>.
+[6] Oliveira Napoli, O., Duarte, D., Alves, P., Hubert Palo Soto, D., Evangelista de Oliveira, H., Rocha, A., Boccato, L., & Borin, E. (2024). DAGHAR: A Benchmark for Domain Adaptation and Generalization in Smartphone-Based Human Activity Recognition [Data set]. Zenodo. https://doi.org/10.5281/zenodo.11992126
+
+[7] Zinan Lin, Alankar Jain, Chen Wang, Giulia Fanti, and Vyas Sekar. 2020. Using GANs for Sharing Networked Time Series Data: Challenges, Initial Promise, and Open Questions. In Proceedings of the ACM Internet Measurement Conference (IMC '20). Association for Computing Machinery, New York, NY, USA, 464–483. https://doi.org/10.1145/3419394.3423643
+
+[8] Li X, Sakevych M, Atkinson G, Metsis V. BioDiffusion: A Versatile Diffusion Model for Biomedical Signal Synthesis. Bioengineering. 2024; 11(4):299. https://doi.org/10.3390/bioengineering11040299 
+
+[9] Yoon, Jinsung and Jarrett, Daniel and van der Schaar, Mihaela. Time-series Generative Adversarial Networks. Advances in Neural Information Processing Systems, 2019. https://papers.nips.cc/paper_files/paper/2019/hash/c9efe5f26cd17ba6216bbe2a7d26d490-Abstract.html
+
+[10] Gretel Synthetics. Disponível em: https://synthetics.docs.gretel.ai/en/stable/ 
