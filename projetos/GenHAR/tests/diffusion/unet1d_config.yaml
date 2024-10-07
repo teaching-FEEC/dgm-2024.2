@@ -58,6 +58,7 @@ datasets:
             gyro
             
 transformations:
+    - name: fft
     - name: None
 
 # Generative models
