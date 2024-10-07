@@ -176,6 +176,7 @@ Existem diversas bibliotecas Python disponíveis para geração de dados sintét
 
 ### Workflow
 O workflow se baseia nos passos descritos na metodologia.
+
 ![Workflow](Diagrama2.png "Workflow")
 
 ## Experimentos, Resultados e Discussão dos Resultados
