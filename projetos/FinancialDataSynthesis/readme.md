@@ -105,12 +105,6 @@ i(t): taxa de juros no instante t.
 
 
 ## Metodologia Proposta
-> Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
-> Descrever bases de dados utilizadas.
-> Citar algoritmos de referência.
-> Justificar os porquês dos métodos escolhidos.
-> Apontar ferramentas relevantes.
-> Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
 
 A metodologia proposta consiste nos seguintes passos:
 
