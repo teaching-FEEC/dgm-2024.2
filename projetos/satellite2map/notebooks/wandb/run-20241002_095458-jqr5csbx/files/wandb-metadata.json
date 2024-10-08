@@ -1,0 +1,31 @@
+{
+  "os": "Linux-5.15.0-122-generic-x86_64-with-glibc2.31",
+  "python": "3.12.4",
+  "startedAt": "2024-10-02T12:54:58.826537Z",
+  "program": "/home/viniciusandreossi/Documents/dgm-2024.2/projetos/satellite2map/notebooks/1.1-vva-pix2pix_ny.ipynb",
+  "git": {
+    "remote": "https://github.com/cosmerodolfo/dgm-2024.2",
+    "commit": "cd33a0cb41fe80de2b2e9b66236562522e161a16"
+  },
+  "email": "vinicius.andreossi@eldorado.org.br",
+  "root": "/home/viniciusandreossi/Documents/dgm-2024.2/projetos/satellite2map/notebooks",
+  "host": "CPQGESPE07Z61T",
+  "username": "viniciusandreossi",
+  "executable": "/home/viniciusandreossi/anaconda3/envs/ia376/bin/python",
+  "codePathLocal": "1.1-vva-pix2pix_ny.ipynb",
+  "cpu_count": 4,
+  "cpu_count_logical": 8,
+  "disk": {
+    "/": {
+      "total": "499835289600",
+      "used": "131744665600"
+    }
+  },
+  "memory": {
+    "total": "16450609152"
+  },
+  "cpu": {
+    "count": 4,
+    "countLogical": 8
+  }
+}
