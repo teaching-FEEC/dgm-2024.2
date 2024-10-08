@@ -1,10 +1,8 @@
 """Module that holds the image DataLoader."""
 
 from pathlib import Path
-# import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from torchvision import datasets
 from PIL import Image
 import pandas as pd
 
@@ -56,5 +54,8 @@ def get_img_dataloader(csv_file, img_dir=None, transformation=None, file_name_co
     """
     if img_dir is None:
         img_dir = Path(csv_file).parent / Path(csv_file).stem
+    if not Path(img_dir).exists():
+        msg = f"Folder {img_dir} not found."
+        raise FileNotFoundError(msg)
     dataset = ImageDataset(csv_file, img_dir, transformation, file_name_col)
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
