@@ -80,7 +80,7 @@ root_path/
 > Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
 > Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos. 
 
-![Workflow](Workflow.drawio.png)
+![Workflow](https://drive.google.com/file/d/1ReUO2nS8wlV9Qu4_g4GLrmAKfuDyc6r2/view?usp=sharing)
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
@@ -91,7 +91,7 @@ A exploração inicial realizada até este momento teve dois principais intuitos
 * Definir a forma de estruturação do dataset e integrá-la ao formatador de dados do Coqui
 * Compreender como os diferentes componentes do YourTTS são implementados dentro do Coqui e quais as configurações devem ser usadas a fim de rodar o modelo desejado.
 
-O material de referência adotado foi [este notebook](/notebooks/train_yourtts.py). A implementação básica da estrutura do dataset e cálculo de embeddings de falante pode ser encontrada em [```1-datasetStructure_speakerEmbeddings```](/notebooks/1-datasetStructure_speakerEmbeddings.ipynb). 
+O material de referência adotado foi [este notebook](/notebooks/train_yourtts.py). A implementação básica da estrutura do dataset e cálculo de embeddings de falante pode ser encontrada em [```1-datasetStructure_speakerEmbeddings```](projetos/TTS-Sotaques/notebooks/1_datasetStructure_speakerEmbeddings.ipynb). 
 
 A biblioteca Coqui emprega muitas das etapas intermediárias de processamento de dados de maneira integrada à definição de configuração de datasets e de modelos. A função de extração de embeddings de falante mostra em sua saída uma chamada ao componente Audio Processor, porém não identificamos exatamente qual parte do código interno do Coqui faz isso. É interessante controlar a chamada ao Audio Processor a fim de tornar possível ajustar suas configurações. 
 
