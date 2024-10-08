@@ -124,7 +124,7 @@ De forma a identificar as tuplas ( r(t), i(t) ) que exibem características e si
 
 **4.** Associar uma variável categórica a cada conjunto, ou seja, a cada regime de mercado.
 
-**5.** Gerar amostras sintéticas Ds condicionadas à cada conjunto através da CTGANs:
+**5.** Gerar amostras sintéticas (Ds) condicionadas à cada conjunto através da CTGANs:
 
 $$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
 
