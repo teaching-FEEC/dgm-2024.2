@@ -51,7 +51,7 @@ As duas imagens abaixo ilustram as arquiteturas do gerador e discriminador, resp
 
 *Figura 2: Arquitetura PatchGAN proposta para discriminador.*
 
-A função de loss aplica o critério de *Binary Cross Entropy*, conforme a seguinte a equação matemática:
+A função de *loss* aplica um critério similar à *Binary Cross Entropy*, com regularização por MAE (*Mean Absolute Error*), conforme a seguinte a equação matemática:
 
 $$arg\ min_{𝐺}\ max_{𝐷}\ E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)] + E_{𝑥,𝑧}[log(1 − 𝐷(𝑥, 𝐺(𝑥, 𝑧)))] + 𝜆E_{𝑥,𝑦,𝑧}[‖𝑦 − 𝐺(𝑥, 𝑧)‖_{1}]$$
 
