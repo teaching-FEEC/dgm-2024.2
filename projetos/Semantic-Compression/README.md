@@ -71,7 +71,7 @@ Também serão usadas métricas adversárias (e.g. Feature Matching) e a rede MU
 
 * A métrica PSNR é uma medida utilizada na avaliação da qualidade de imagens e vídeos comprimidos ou processados. Ela compara a similaridade entre uma imagem ou vídeo original e sua versão comprimida ou modificada. É definida como $10*log _{10}\Big(\frac{MAX^2}{MSE}\Big)$, onde $MAX$ é máximo valor que um pixel pode ter;
 
-* O MS-SSIM expande o SSIM ao calcular a similaridade estrutural em diferentes escalas, obtidas através de um processo de subamostragem ou redimensionamento da imagem em várias resoluções. O objetivo é capturar as informações tanto de detalhes finos quanto de padrões globais da imagem. É definido como $MS-SSIM(x,y) = \prod_{j=1}^M [l(x,y)]^{\alpha_j}*[c(x,y)]^{\beta_j}*[s(x,y)]^{\gamma_j}$, onde $l(x,y)$, $c(x,y)$ e $s(x,y)$ são luminância, contraste e estrutura, respectivamente, e $\alpha_j$, $\beta_j$ e $\gamma_j$ são os pesos para cada escala. O range é 0-1;
+* O MS-SSIM expande o SSIM ao calcular a similaridade estrutural em diferentes escalas, obtidas através de um processo de subamostragem ou redimensionamento da imagem em várias resoluções. O objetivo é capturar as informações tanto de detalhes finos quanto de padrões globais da imagem. É definido como $`MS-SSIM(x,y) = \prod_{j=1}^M [l(x,y)]^{\alpha_j}*[c(x,y)]^{\beta_j}*[s(x,y)]^{\gamma_j}$, onde $l(x,y)$, $c(x,y)$ e $s(x,y)`$ são luminância, contraste e estrutura, respectivamente, e $\alpha_j$, $\beta_j$ e $\gamma_j$ são os pesos para cada escala. O range é 0-1;
 
 * O IoU é uma métrica utilizada para avaliar a precisão de modelos de detecção e segmentação de objetos em visão computacional. Ela mede a sobreposição entre a área prevista pelo modelo e a área real do objeto, sendo um indicador de quão bem o modelo localizou ou delimitou o objeto. É definido como $IoU=\frac{Área \_ de \_ Interseção}{Área \_ de \_ União}$. O range é 0-1;
 
@@ -104,7 +104,9 @@ Na figura abaixo, mostramos a visão geral do modelo baseado em GAN implementado
 Trata-se de um autoencoder no qual o decoder consiste em uma GAN.
 Além disso, um quantizador permite o controle da taxa de bits utilizada na representação latente da imagem comprimida.
 
-Mais especificamente, um vetor latente $w = E(x)$ é gerado a partir do encoder $E$; esse vetor é quantizado em $L$ níveis de quantização pelo quantizador $Q$, a partir da qual o gerador G gera uma imagem reconstruída $\hat{x}=G(\hat{w})$. Durante o treinamento, o discriminador $D$ busca maximizar os acertos no discernimento entre imagens reais e geradas, enquanto o autoencoder minimiza esse mesmo objetivo somado a uma distorção entre as imagens de entrada e saída.
+Mais especificamente, um vetor latente $w = E(x)$ é gerado a partir do encoder $E$; esse vetor é quantizado em $L$ níveis de quantização pelo quantizador $Q$, a partir da qual o gerador G gera uma imagem reconstruída $\hat{x}=G(\hat{w})$. 
+Os níveis do quantizador são fixos a priori e seu gradiente é ignorado durante a retropropagação, já que não é uma operação diferenciável.
+Durante o treinamento, o discriminador $D$ busca maximizar os acertos no discernimento entre imagens reais e geradas, enquanto o autoencoder minimiza esse mesmo objetivo somado a uma distorção entre as imagens de entrada e saída.
 De fato, o problema de otimização característico pode ser escrito na forma:
 
 $$\min_{E,G} \max_{D} \mathbb{E}[(D(x)-1)^2] + \mathbb{E}[D(\hat{x})^2] + \lambda d(x,\hat{x})$$
@@ -132,7 +134,7 @@ O aumento da complexidade da rede também levantou comportamentos indesejados no
 
 Dentre as opções analisadas, o modelo pequeno com taxas 1E-4 para o discriminador e 1E-3 para o autoencoder se mostrou com melhor desempenho.
 A figura abaixo mostra a evolução de suas funções custo, com o discriminador convergindo para um equilíbrio em torno de 0.25 e o autoencoder sendo capaz de reduzir quase monotonicamente a distorção (foi utilizado fator $\lambda=10$). 
-No lado direito, mostramos também um exemplo de reconstrução para uma imagem do conjunto de teste do Cityscapes, ilustrando qualitativamente a significância desse nível de distorção atingido.
+No lado direito, mostramos também um exemplo de reconstrução para uma imagem do conjunto de teste do Cityscapes, ilustrando qualitativamente a significância desse nível de distorção 
 
 ![](figs/plot_01280256032032560001000100.png)
 
