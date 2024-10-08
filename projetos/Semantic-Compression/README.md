@@ -64,7 +64,20 @@ Finalmente, a avaliação se dará de maneira quantitativa através de dois grup
 Isso se deve ao compromisso matemático existente entre a **distorção** observada entre valores de pixels individuais e a **percepção** da qualidade da imagem [[9]](#9).
 Para medir a distorção entre as imagens reconstruídas e as imagens originais, serão usadas as métricas usuais de PSNR (peak signal-to-noise ratio) e MS-SSIM (multi-scale structural similarity).
 Já no caso da percepção, será comparada a representação semântica obtida nas imagens reconstruídas pelo reuso do codificador com a representação semântica da imagem original, através da relação IoU (intersection-over-union) dos vetores latentes encontrados.
-Para as GANs, também serão usadas métricas adversárias (e.g. Feature Matching), e para o modelo de difusão, será utilizada a rede MUSIQ [[10]](#9), que computa uma métrica de qualidade da imagem reconstruída.
+Também serão usadas métricas adversárias (e.g. Feature Matching) e a rede MUSIQ [[10]](#9), que computa uma métrica de qualidade da imagem reconstruída.
+
+* A métrica PSNR é uma medida utilizada na avaliação da qualidade de imagens e vídeos comprimidos ou processados. Ela compara a similaridade entre uma imagem ou vídeo original e sua versão comprimida ou modificada. É definida como $10*log _{10}\Big(\frac{MAX^2}{MSE}\Big)$, onde $MAX$ é máximo valor que um pixel pode ter;
+
+* O MS-SSIM expande o SSIM ao calcular a similaridade estrutural em diferentes escalas, obtidas através de um processo de subamostragem ou redimensionamento da imagem em várias resoluções. O objetivo é capturar as informações tanto de detalhes finos quanto de padrões globais da imagem. É definido como $MS-SSIM(x,y) = \prod_{j=1}^M [l(x,y)]^{\alpha_j}*[c(x,y)]^{\beta_j}*[s(x,y)]^{\gamma_j}$, onde $l(x,y)$, $c(x,y)$ e $s(x,y)$ são luminância, contraste e estrutura, respectivamente, e $\alpha_j$, $\beta_j$ e $\gamma_j$ são os pesos para cada escala. O range é 0-1;
+
+* O IoU é uma métrica utilizada para avaliar a precisão de modelos de detecção e segmentação de objetos em visão computacional. Ela mede a sobreposição entre a área prevista pelo modelo e a área real do objeto, sendo um indicador de quão bem o modelo localizou ou delimitou o objeto. É definido como $IoU=\frac{Área \_ de \_ Interseção}{Área \_ de \_ União}$. O range é 0-1;
+
+* A métrica MUSIQ é um método mais recente para avaliar a qualidade perceptiva de imagens. Diferente de métricas tradicionais como PSNR e SSIM, que calculam a qualidade com base em medidas objetivas de diferenças entre pixels, o MUSIQ é um modelo baseado em aprendizado profundo que captura a percepção de qualidade visual de forma mais próxima ao que os humanos experimentam. Ele foi treinado em grandes conjuntos de dados contendo anotações de qualidade de imagens fornecidas por observadores humanos, permitindo uma avaliação mais precisa da qualidade subjetiva. O range é 0-100;
+
+* Feature Matching é uma técnica em visão computacional usada para identificar e emparelhar pontos de interesse (features) entre duas ou mais imagens. Esses pontos são características visíveis em uma imagem, como cantos, bordas ou regiões específicas com texturas distintas, que podem ser identificadas e comparadas entre diferentes imagens.
+
+
+
 
 Em uma avaliação de ordem qualitativa para teste inicial do conceito também serão consideradas imagens da base de dados da Kodak, comumente utilizada para benchmarks de compressão de imagens.
 
@@ -72,7 +85,7 @@ Em uma avaliação de ordem qualitativa para teste inicial do conceito também s
 >| Tarefa          | Data de Finalização     | Número de Semanas| Progresso  |
 >|-----------------|------------|-----------|------------|
 >| Revisão bibliográfica        | 17/09/2024 | 2 | ██████████ 100% |
->| Desenvolvimento BPG/VVC | 24/09/2024 | 1 | ░░░░░░░░░░ 0% |
+>| Webp | 24/09/2024 | 1 | ░░░░░░░░░░ 0% |
 >| Desenvolvimento GAN | 08/10/2024 | 2 | ░░░░░░░░░░ 0%  
 >| Entrega 2          | 08/10/2024 | 0 | ░░░░░░░░░░ 0% |
 >| Rede de segmentação semântica | 15/10/2024 | 1 | ░░░░░░░░░░ 0% |
