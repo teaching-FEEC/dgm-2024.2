@@ -167,8 +167,15 @@ class AutoEncoder(models.Model):
 
 
 class GenerativeCompressionGAN(models.Model):
-    def __init__(self, e_filters, e_blocks, g_filters, g_blocks, d_filters, L=5, c_min=-2, c_max=2, lambda_d=10):
-        super().__init__()
+    def __init__(self, e_filters, e_blocks, g_filters, g_blocks, d_filters, *, L=5, c_min=-2, c_max=2, lambda_d=10, **kwargs):
+        super().__init__(**kwargs)
+        self.e_filters = e_filters
+        self.e_blocks = e_blocks
+        self.g_filters = g_filters
+        self.g_blocks = g_blocks
+        self.d_filters = d_filters
+        self.c_min = c_min
+        self.c_max = c_max
         self.autoencoder = AutoEncoder(L, e_filters, e_blocks, g_filters, g_blocks, c_min, c_max)
         self.discriminator = Discriminator(d_filters)
         self.quantizer = quantizer(L=L, c_min=c_min, c_max=c_max)
@@ -244,3 +251,20 @@ class GenerativeCompressionGAN(models.Model):
         d_loss_avg = d_loss / len(dataloader_train)
         g_loss_avg = g_loss / len(dataloader_train)
         return d_loss_avg, g_loss_avg
+
+    def get_config(self):
+        config = super().get_config()
+        config.update(
+            {
+                "e_filters": self.e_filters,
+                "e_blocks": self.e_blocks,
+                "g_filters": self.g_filters,
+                "g_blocks": self.g_blocks,
+                "d_filters": self.d_filters,
+                "L": self.L,
+                "c_min": self.c_min,
+                "c_max": self.c_max,
+                "lambda_d": self.lambda_d,
+            }
+        )
+        return config
