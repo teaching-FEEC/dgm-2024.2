@@ -12,6 +12,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 | João Gabriel Teixeira Lima  | 237473  | Eng. de Computação|
 | Rita Braga Soares da Silva  | 251627  | Graduação Estatística|
 
+Link para os slides de apresentação da Entrega 2 [aqui](https://docs.google.com/presentation/d/e/2PACX-1vQikFuBtzlrPWVnxrWJvFwhY--e8GFf5YpjGtCYTuwvlJ8whJlT63VM438m4BwytQ/pub?start=false&loop=false&delayms=60000).
+
 ## Resumo (Abstract)
 
 Este trabalho propõe a implementação de um modelo de síntese text-to-speech (TTS) em português brasileiro com variação de sotaque, tomando como base um modelo de TTS end-to-end. O fine-tuning será realizado com as ferramentas da biblioteca Coqui TTS. Até o momento, foram exploradas as bases de dados selecionadas e estruturados os datasets. Também foi iniciada a implementação do modelo no Coqui, com a realização da etapa de extração de embeddings de falante.
