@@ -17,7 +17,9 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 ## Resumo (Abstract)
 
-O objetivo é explorar abordagens e desenvolver algoritmos para produzir dados sintéticos financeiros, retendo ao máximo de informações estatísticas para permitir o desenvolvimento de modelos de otimização de portfólios e outras aplicações financeiras.. 
+Nosso projeto foca na geração de dados financeiros sintéticos, especificamente sobre índices que medem o desempenho de mercados, como o índice Bovespa. Esses dados são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto, como na otimização de portfólios.
+
+Nossa abordagem inclui o uso de informações contextuais, como a taxa de juros, para explicar as variações dos índices. Como esses índices variam conforme o período econômico, usaremos técnicas de clusterização para identificar diferentes regimes de mercado. Assim, geraremos dados sintéticos usando GANs condicionadas aos períodos econômicos. Por exemplo, podemos criar uma série temporal com tuplas (r(t), j(t)), sendo r(t) o valor do índice e j(t) a taxa de juros, considerando um período de alta.
 
 ## Descrição do Problema/Motivação
 O desenvolvimento de modelos precisos que utilizam dados financeiros é consideravelmente desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos [5].
