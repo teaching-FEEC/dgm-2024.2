@@ -57,6 +57,10 @@ Conforme a evolução das redes, o dataset será aumentado gradativamente com di
 -As pessoas deverão classificar a partir de quais músicas as amostras sintéticas vieram e, também, o estilo musical do áudio gerado (rock, jazz, clássico etc).
 
 
+### Workflow
+
+![*workflow* do projeto desde a captura das dos áudios até a geração dos áudios sintéticos.](images/workflow_IA376.png)
+
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
