@@ -180,7 +180,7 @@ Em suma, o projeto proposto aborda a geração sintética de imagens de PRPD com
 
 A partir de uma exploração detalhada da base de dados, foram extraídas características relevantes como textura e contornos, evidenciando a complexidade das imagens de PRPD. A implementação de uma variante da GAN (ACWGAN), junto com experimentos de análise e visualização de clusters, mostrou que o modelo é capaz de gerar imagens sintéticas. No entanto, ainda são necessários ajustes visto que o modelo gerou imagens ruidosas.
 
-Apesar dos resultados promissores, o projeto ainda está em fase preliminar, ainda serão implemetados modelos como InfoGAN e VAE, além dos ajustes de hiperparâmetros e otimização dos modelos em andamento. Com o progresso contínuo, espera-se que os modelos generativos desenvolvidos possam ser utilizados para aumentar significativamente a variabilidade dos dados de PRPD, contribuindo para diagnósticos mais precisos e eficientes no futuro.
+Com isso, o projeto está em fase preliminar, ainda serão implemetados modelos como InfoGAN e VAE, além da otimização dos modelos desenvolvidos. Com o progresso contínuo, espera-se que os modelos generativos desenvolvidos possam ser utilizados para aumentar significativamente a variabilidade dos dados de PRPD, contribuindo para diagnósticos mais precisos e eficientes no futuro.
 
 ## Referências Bibliográficas
 1. Lv, F., Liu, G., Wang, Q., Lu, X., Lei, S., Wang, S., & Ma, K. (2023). Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN. Journal of Electrical Engineering & Technology, 18(2), 829–841. https://doi.org/10.1007/s42835-022-01260-7
