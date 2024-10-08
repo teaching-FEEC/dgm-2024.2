@@ -51,7 +51,7 @@ As duas imagens abaixo ilustram as arquiteturas do gerador e discriminador, resp
 
 *Figura 2: Arquitetura PatchGAN proposta para discriminador.*
 
-A função de loss aplica o critério de *Binary Cross Entropy*, conforme a seguinte a equação matemática:
+A função de *loss* aplica um critério similar à *Binary Cross Entropy*, com regularização por MAE (*Mean Absolute Error*), conforme a seguinte a equação matemática:
 
 $$arg\ min_{𝐺}\ max_{𝐷}\ E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)] + E_{𝑥,𝑧}[log(1 − 𝐷(𝑥, 𝐺(𝑥, 𝑧)))] + 𝜆E_{𝑥,𝑦,𝑧}[‖𝑦 − 𝐺(𝑥, 𝑧)‖_{1}]$$
 
@@ -131,9 +131,13 @@ As expressões matemáticas usadas para o cálculo desta métrica são:
 
 $$SSIM(𝑥, 𝑦) = l(𝑥, 𝑦) \times 𝑐(𝑥, 𝑦) \times 𝑠(𝑥, 𝑦)$$
 
-$$l(x, y) = \frac{2\mu_{x}\mu_{y} + C_{1}}{\mu^{2}_{x} + \mu^{2}_{y} + C_{1}}$$
+$$
+l(x, y) = \frac{2\mu_{x}\mu_{y} + C_{1}}{\mu_{x}^{2} + \mu_{y}^{2} + C_{1}}
+$$
 
-$$c(x, y) = \frac{2\sigma_{x}\sigma_{y} + C_{2}}{\sigma^{2}_{x} + \sigma^{2}_{y} + C_{2}}$$
+$$
+c(x, y) = \frac{2\sigma_{x}\sigma_{y} + C_{2}}{\sigma_{x}^{2} + \sigma_{y}^{2} + C_{2}}
+$$
 
 $$𝑠(𝑥, 𝑦) = \frac{𝜎_{𝑥𝑦} + 𝐶_{3}}{𝜎_{𝑥}𝜎_{𝑦} + 𝐶_{3}}$$
 
@@ -175,9 +179,9 @@ Atualmente, estamos enfrentando dificuldades nesta etapa de treinamento, já que
 
 O resultado atual do nosso treinamento é apresentado na figura abaixo. Nota-se que a saída do gerador ainda está distante do esperado e precisa ser aprimorada.
 
-![Fatia original, fatia segmentada e saída da PulmoNet na terceira época de treinamento.](figs/example_generated_epoch_3.png?raw=true)
+![Fatia original, fatia segmentada, saída do gerador e saída do discriminador.](figs/resultado_parcial_e2.jpeg?raw=true)
 
-*Figura 8: Fatia original, fatia segmentada e saída da PulmoNet na terceira época de treinamento.*
+*Figura 8: Fatia original, fatia segmentada, saída do gerador e saída do discriminador.*
 
 Ademais outros problemas que estamos enfrentando durante a etapa do treinamento tratam do tamanho da nossa base de dados, que é bem grande e resulta em um processamento demorado, e o uso de recursos em GPU.
 
