@@ -173,21 +173,21 @@ O workflow se baseia nos passos descritos na metodologia.
 ![Workflow](Diagrama2.png "Workflow")
 
 ## Experimentos, Resultados e Discussão dos Resultados
-> A continuação se apresenta uma compativa dos dados generados usando uma Gaussiana Multivariavel como Modelo Base, 
-![PairPlot](reports/figures/Baseline/PairPlot.png "Pair Plot")
-> Se pode visualizar que uma Gaussiana Multivariavel não possue a capacidade para capturar todas as correlações nescesarias, porque
-os dados generados ficam concentrados na media e os valores nas caldas técnicamente não se conseguem obter.
 
-Os principais resultados esperados são:
+Como experimento inicial, resolvemos gerar dados financeiros sintéticos utilizando técnicas tradicionais de estatística, no caso, modelamos os dados através de uma Gaussiana Multivariável. A figura abaixo apresenta uma comparação entre os dados gerados e os reais.  
+![PairPlot](reports/figures/Baseline/PairPlot.png "Pair Plot")
+
+Podemos observar que uma Gaussiana Multivariavel não possui a capacidade para capturar todas as correlações necessárias, visto que os dados gerados ficam concentrados na média, e ela foi incapaz de gerar dados mais afastados.
+
+Ao final, temos que o principal resultado esperado é:
 
 - Um conjunto de dados sintéticos gerado para complementação das bases financeiras históricas, capaz de capturar variações de retorno plausíveis que não foram observadas nos dados originais.
-  
-- Análise de como os dados sintéticos podem melhorar as estratégias de alocação de ativos, levando em consideração diferentes níveis de risco.
+
 
 ### Proposta de Avaliação
-Para a avaliação da qualidade dos nossos geradores de dados sintéticos, vamos considerar várias métricas utilizando amostras reais e sintéticas. As métricas de avaliação se encaixam nas seguintes categorias principais:
+Para a avaliação da qualidade dos nossos geradores de dados sintéticos, além dos fatos estilizados, vamos considerar várias outras métricas utilizando amostras reais e sintéticas. As métricas de avaliação que pretendemos utilizar são:
 
-- **Fidelidade**: Comparação entre as distribuições sintéticos e históricos, usando métricas que capturam os aspectos distribucionais dos dados sintéticos com relação às amostras reais. Neste caso vamos usar o teste Kolmogorov-Smirnov (KS), teste Qui-quadrado (CS) que medem a similaridade para variáveis ​​contínuas e categóricas (colunas) respectivamente. A medidas de divergência distribucional como distância de Jensen-Shannon, Discrepância Média Máxima (MMD) e distância de Wasserstein. Gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos. 
+Comparação entre as distribuições sintéticos e históricos usando métricas que capturam os aspectos distribucionais dos dados sintéticos com relação às amostras reais. Neste caso vamos usar o teste Kolmogorov-Smirnov (KS), teste Qui-quadrado (CS) que medem a similaridade para variáveis ​​contínuas e categóricas (colunas) respectivamente. A medidas de divergência distribucional como distância de Jensen-Shannon, Discrepância Média Máxima (MMD) e distância de Wasserstein. Gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos. 
 
 ## Conclusão
 
