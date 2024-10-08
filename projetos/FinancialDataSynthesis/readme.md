@@ -177,7 +177,7 @@ O workflow se baseia nos passos descritos na metodologia.
 Como experimento inicial, resolvemos gerar dados financeiros sintéticos utilizando técnicas tradicionais de estatística, no caso, modelamos os dados através de uma Gaussiana Multivariável. A figura abaixo apresenta uma comparação entre os dados gerados e os reais.  
 ![PairPlot](reports/figures/Baseline/PairPlot.png "Pair Plot")
 
-Podemos observar que uma Gaussiana Multivariavel não possui a capacidade para capturar todas as correlações necessárias, visto que os dados gerados ficam concentrados na média, e ela foi incapaz de gerar dados mais afastados.
+Podemos observar que uma Gaussiana Multivariavel não possui a capacidade para capturar todas as correlações necessárias, visto que os dados gerados ficam concentrados na média, sendo incapaz de gerar dados mais dispersos.
 
 Ao final, temos que o principal resultado esperado é:
 
