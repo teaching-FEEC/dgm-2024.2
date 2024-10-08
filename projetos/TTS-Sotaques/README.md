@@ -14,7 +14,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Resumo (Abstract)
 
-O projeto visa desenvolver um modelo de síntese de fala capaz de gerar amostras com sotaques variados do português brasileiro. A metodologia se baseia no modelo SYNTACC, adaptado para o contexto brasileiro, com o uso da biblioteca Coqui TTS e dados da base CORAA. O projeto envolve etapas de pré-processamento de áudio, extração de embeddings de sotaque e fine-tuning do modelo YourTTS. O objetivo é aumentar a representatividade de diferentes sotaques no cenário TTS, promovendo maior inclusão linguística e diversidade nas aplicações comerciais e sociais.
+Este trabalho propõe a implementação de um modelo de síntese text-to-speech (TTS) em português brasileiro com variação de sotaque, tomando como base um modelo de TTS end-to-end. O fine-tuning será realizado com as ferramentas da biblioteca Coqui TTS. Até o momento, foram exploradas as bases de dados selecionadas e estruturados os datasets. Também foi iniciada a implementação do modelo no Coqui, com a realização da etapa de extração de embeddings de falante.
 
 ## Descrição do Problema/Motivação
 
