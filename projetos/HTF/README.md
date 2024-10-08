@@ -91,7 +91,7 @@ Após tratados, o formato dos datasets será como o disposto na Figura 06, em qu
 
 <div style="text-align: center;">
     <img src="/projetos/HTF/images/Workflow.png" alt="Figura 07: width="600"/>
-    <p><em>Figura 07: </em></p>
+    <p><em>Figura 07: Workflow do projeto </em></p>
 </div>
 
 ## Experimentos, Resultados e Discussão dos Resultados
