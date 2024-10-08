@@ -9,8 +9,6 @@
 > | Leonardo Colussi Mazzamboni| 220129 | Aluno Especial|
 
 
-
-
 ## Introdução ao problema
 
 O objetivo da aplicação do projeto é geração de ritmos musicais diferentes a partir de um ritmo de entrada. Por exemplo, a partir de uma música de jazz conseguir sintetizá-la no ritmo rock.
@@ -19,9 +17,23 @@ Espera-se que a rede consiga aproveitar as informações da música de entrada e
 
 O interesse do grupo para essa aplicação vêm pois trabalhar com áudio (e sinais) é algo ainda não explorado.
 
-## Possíveis abordagens
+
+## Metodologia
+
+A partir da literatura de referência, o grupo decidiu trabalhar com imagens de espectrogramas dos áudios que serão capturados para o projeto, via [pixabay](https://pixabay.com/music/search/music/) / [Midi World](https://www.midiworld.com/) evitando violar direitos autorais. Para a transformação do áudio em seus respectivos espectrogramas será utilizado o (Riffusion)[https://github.com/riffusion/riffusion-hobby]
+
+Em uma primeira abordagem prática, o grupo decidiu trabalhar com CycleGANs (como presente neste [repositório](https://github.com/moslehi/deep-learning-music-style-transfer)) devido a aspectos de simplicidade quando comparado a outras técnicas mais sofisticadas.
+Assim, se essa primeira abordagem for bem sucedida, serão explorados as demais técnicas que, provavelmente, trarão resultados mais satisfatórios.
+
+### Datasets
+
+Para o início dos testes, um gênero musical será fixado e escolhido um conjunto de músicas para a avaliação dos resultados iniciais.
+Conforme a evolução das redes, o dataset será aumentado gradativamente com diferentes gêneros musicais de entrada.
+
+### Possíveis abordagens
 
 **Variantes das GANs:**
+- CycleGAN (Zhu et el., 2017)
 - WaveGAN (Donahue et el., 2019);
 - SpecGAN (Donahue et el., 2019).
 
@@ -34,14 +46,7 @@ O interesse do grupo para essa aplicação vêm pois trabalhar com áudio (e sin
 - Jukebox, OpenAI;
 - MuseNet, OpenAI
 
-## Datasets
-
-Para o início dos testes, um gênero musical será fixado e escolhido um conjunto de músicas para a avaliação dos resultados iniciais.
-Conforme a evolução das redes, o dataset será aumentado gradativamente com diferentes gêneros musicais de entrada.
-
-Como o projeto tem apenas finalidade de aprendizado no âmbito acadêmico, as músicas podem ser obtidas do Youtube ou em datasets já criados para síntese e análise musical, como Midi World (https://www.midiworld.com/).
-
-## Métricas de avaliação
+### Métricas de avaliação
 
 **Quantitativas**
 - Inception score;
@@ -57,8 +62,7 @@ Como o projeto tem apenas finalidade de aprendizado no âmbito acadêmico, as m�
 
 Até o momento desta entrega parcial do projeto (E2), explorou-se teoricamente diferentes aplicações de *Music Style Transfer*, ainda não tendo contato essencialmente prático por parte do grupo. Devido ao deste projeto ser de aplicação inusitada pela dupla, algumas dificuldades foram encontradas e atrasando o cronograma proposto.
 
-A partir da literatura de referência, o grupo decidiu trabalhar com imagens de espectrogramas dos áudios que serão capturados para o projeto, via [pixabay](https://pixabay.com/music/search/music/) evitando violar direitos autorais. Em uma primeira abordagem prática, o grupo decidiu trabalhar com CycleGANs (como presente neste [repositório](https://github.com/moslehi/deep-learning-music-style-transfer)) devido a aspectos de simplicidade quando comparado a outras técnicas mais sofisticadas.
-Assim, se essa primeira abordagem for bem sucedida, serão explorados as demais técnicas que, provavelmente, trarão resultados mais satisfatórios.
+
 
 
 ## Referências
