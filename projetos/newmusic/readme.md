@@ -7,7 +7,7 @@
 
  |Mariana Ap. Ferreira | 183670 | Ciência da Computação |
 
- |Leonardo Colussi Mazzamboni | 220129 | Ciência da Computação |
+ |Leonardo Colussi Mazzamboni | 220129 | Aluno especial |
  
 
 
@@ -51,6 +51,15 @@ Como o projeto tem apenas finalidade de aprendizado no âmbito acadêmico, as m�
 - Será selecionada uma amostra de pessoas (a definir), bem como uma amostra de músicas sintéticas;
 -As pessoas deverão classificar a partir de quais músicas as amostras sintéticas vieram e, também, o estilo musical do áudio gerado (rock, jazz, clássico etc).
 
+
+
+## Experimentos, Resultados e Discussão dos Resultados
+
+Até o momento desta entrega parcial do projeto (E2), explorou-se teoricamente diferentes aplicações de \textit{Music Style Transfer}, ainda não tendo contato essencialmente prático por parte do grupo. Devido ao deste projeto ser de aplicação inusitada pela dupla, algumas dificuldades foram encontradas e atrasando o cronograma proposto.
+No entanto, a partir da literatura de referência, o grupo decidiu trabalhar com imagens de espectogramas dos áudios que serão capturados para o projeto, via [pixabay] (https://pixabay.com/music/search/music/) evitando violar direitos autorais. Em uma primeira abordagem prática, o grupo decidiu trabalhar com CycleGANs (como presente neste [repositório](https://github.com/moslehi/deep-learning-music-style-transfer)) devido a aspectos de simplicidade quando comparado a outras técnicas mais sofisticadas.
+Assim, se essa primeira abordagem for bem sucedida, serão explorados as demais técnicas que, provavelmente, trarão resultados mais satisfatórios.
+
+
 ## Referências
 
 Brunner, Gino, et al. "MIDI-VAE: Modeling dynamics and instrumentation of music with applications to style transfer." arXiv preprint arXiv:1809.07600 (2018).
@@ -60,3 +69,5 @@ Dhariwal, Prafulla, et al. "Jukebox: A generative model for music." arXiv prepri
 Donahue, Chris, Julian McAuley, and Miller Puckette. "Adversarial audio synthesis." arXiv preprint arXiv:1802.04208 (2018).
 
 Dash, Adyasha, and Kathleen Agres. "AI-Based Affective Music Generation Systems: A Review of Methods and Challenges." ACM Computing Surveys 56.11 (2024)
+
+
