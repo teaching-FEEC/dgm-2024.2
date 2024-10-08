@@ -175,9 +175,9 @@ Atualmente, estamos enfrentando dificuldades nesta etapa de treinamento, já que
 
 O resultado atual do nosso treinamento é apresentado na figura abaixo. Nota-se que a saída do gerador ainda está distante do esperado e precisa ser aprimorada.
 
-![Fatia original, fatia segmentada e saída da PulmoNet na terceira época de treinamento.](figs/example_generated_epoch_3.png?raw=true)
+![Fatia original, fatia segmentada, saída do gerador e saída do discriminador.](figs/resultado_parcial_e2.jpeg.png?raw=true)
 
-*Figura 8: Fatia original, fatia segmentada e saída da PulmoNet na terceira época de treinamento.*
+*Figura 8: Fatia original, fatia segmentada, saída do gerador e saída do discriminador.*
 
 Ademais outros problemas que estamos enfrentando durante a etapa do treinamento tratam do tamanho da nossa base de dados, que é bem grande e resulta em um processamento demorado, e o uso de recursos em GPU.
 
