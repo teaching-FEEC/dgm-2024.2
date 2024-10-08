@@ -116,6 +116,7 @@ Outros objetivos incluem:
 A base de dados é pensada para modelos supervisionados (que aprendem a partir de imagens pareadas nos dois domínios de interesse). Até o momento, as transformações utilizadas foram apenas um redimensionamento para 256x256 (por questões de limitação de recursos computacionais) e normalização para o intervalo (-1, 1).
 
 Exemplos de pares de imagens da base de dados:
+
 ![data](reports/figures/data.png)
 
 
