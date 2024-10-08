@@ -5,7 +5,7 @@
  
 > |Nome  | RA | Curso|
 > |--|--|--|
-> | Mariana Ap. Ferreira| 183670 | Eng. de Computação|
+> | Mariana Ap. Ferreira| 183670 | Ciência da Computação|
 > | Leonardo Colussi Mazzamboni| 220129 | Aluno Especial|
 
 ## Resumo (Abstract)
@@ -80,7 +80,11 @@ Assim, se essa primeira abordagem for bem sucedida, serão explorados as demais 
 
 Até o momento desta entrega parcial do projeto (E2), explorou-se teoricamente diferentes aplicações de *Music Style Transfer*, ainda não tendo contato essencialmente prático por parte do grupo. Devido ao deste projeto ser de aplicação inusitada pela dupla, algumas dificuldades foram encontradas e atrasando o cronograma proposto.
 
+<<<<<<< HEAD
 Link da apresentação: [link](https://docs.google.com/presentation/d/1Lmz1MJK1Uv_xe4088bim_Fi-xjDIJQS_qYM_uYwuQuc/edit#slide=id.g2d3fc101b55_0_71)
+=======
+Link da apresentação: [PPT](https://docs.google.com/presentation/d/1Lmz1MJK1Uv_xe4088bim_Fi-xjDIJQS_qYM_uYwuQuc/edit#slide=id.g2d3fc101b55_0_71)
+>>>>>>> 6cdda3aa8c89a4e07d9b3ae19b22aeef9dc8ddbf
 
 
 ## Referências
