@@ -162,6 +162,18 @@ Os hiperparâmetros usados nesta iteraçao inícial foram os seguintes:
 
 #### Resultados parciais
 
+Se utilizaram as curvas de perdas, acurácias e exemplos de imagens sinteticas para avaliar esta implementação preliminar da ACWGAN.
+
+##### Curvas de perdas e acurácias
+
+![losses](./reports/figures/losses_ACWGAN.png)
+
+![accuracies](./reports/figures/accuracies_ACWGAN.png)
+
+##### Exemplos de imagens sintéticas geradas pela ACWGAN
+
+![GLCM&Contours-tSNE](./reports/figures/out_ACWGAN.png)
+
 ## Conclusão
 
 ## Referências Bibliográficas
