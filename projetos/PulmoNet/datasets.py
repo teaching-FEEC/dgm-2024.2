@@ -4,6 +4,8 @@ import numpy as np
 from glob import glob
 import SimpleITK as sitk
 from lungmask import LMInferer
+from typing import Optional, Callable
+import os
 
 
 class rawCTData(Dataset):
@@ -53,17 +55,17 @@ class lungCTData(Dataset):
     def __init__(self, processed_data_folder: str, mode: str, start: Optional[int] = None, end: Optional[int] = None, transform: Optional[Callable] = None):
         super().__init__()
         if start is not None and end is not None:
-            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))[start:end]
-            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))[start:end]
+            self.cts = sorted(glob(os.path.join(processed_data_folder, "imagesTr", "*.npz")))[start:end]
+            self.labels = sorted(glob(os.path.join(processed_data_folder, "lungsTr", "*.npz")))[start:end]
         elif start is not None and end == None:
-            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))[start:]
-            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))[start:]
+            self.cts = sorted(glob(os.path.join(processed_data_folder, "imagesTr", "*.npz")))[start:]
+            self.labels = sorted(glob(os.path.join(processed_data_folder, "lungsTr", "*.npz")))[start:]
         elif start == None and end is not None:
-            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))[:end]
-            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))[:end]
+            self.cts = sorted(glob(os.path.join(processed_data_folder, "imagesTr", "*.npz")))[:end]
+            self.labels = sorted(glob(os.path.join(processed_data_folder, "lungsTr", "*.npz")))[:end]
         else:
-            self.cts = sorted(glob(os.path.join(processed_data_folder, mode, "imagesTr", "*.npz")))
-            self.labels = sorted(glob(os.path.join(processed_data_folder, mode, "lungsTr", "*.npz")))
+            self.cts = sorted(glob(os.path.join(processed_data_folder, "imagesTr", "*.npz")))
+            self.labels = sorted(glob(os.path.join(processed_data_folder, "lungsTr", "*.npz")))
         self.transform = transform
         assert len(self.cts) == len(self.labels)
 

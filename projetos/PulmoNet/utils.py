@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import random
 from datasets import rawCTData, lungCTData
+import os
+import glob
 
 class MinMaxNormalize():
     '''
@@ -88,11 +90,14 @@ def clean_directory(dir_path):
             os.rmdir(file_absolute_path)
 
 def plt_save_example_synth_img(input_img_ref, input_mask_ref, gen_img_ref, disc_ans, epoch, save_dir): 
-        fig, ax = plt.subplots(1,3,figsize=(18,4))
+        fig, ax = plt.subplots(1,4,figsize=(18,4))
         ax.flat[0].imshow(input_img_ref,cmap='gray')
         ax.flat[1].imshow(input_mask_ref,cmap='gray')
         ax.flat[2].imshow(gen_img_ref,cmap='gray')
+        im = ax.flat[3].imshow(disc_ans,cmap='gray')
         ax.flat[0].set_title('Original')
         ax.flat[1].set_title('Mask')
-        ax.flat[2].set_title('Generated: Disc answer: '+str(disc_ans))
+        ax.flat[2].set_title('Generated')
+        ax.flat[3].set_title('Disc Output')
+        fig.colorbar(im, ax=ax[3])
         plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')

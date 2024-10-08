@@ -3,6 +3,7 @@ from tqdm import trange
 import torch
 import gc
 from losses import get_gen_loss, get_disc_loss
+from utils import plt_save_example_synth_img
 
 def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt, gen_opt, 
                     epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device):
@@ -10,7 +11,7 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
     mean_loss_gen = 0
     mean_loss_disc = 0
 
-    conter_batches_used_to_upd_disc = 0
+    counter_batches_used_to_upd_disc = 0
     counter_batches_used_to_upd_gen = 0
 
     counter_steps_before_upd_disc = 0
@@ -84,7 +85,7 @@ def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoc
     return (mean_loss_gen/len(data_loader)), (mean_loss_disc / len(data_loader))
 
 
-def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir):
+def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir,device):
 
     gen.eval()
     disc.eval()
@@ -93,9 +94,10 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir):
         for batch in data_loader:
             input_img_batch = batch[0]
             input_mask_batch = batch[1]
-
+            
             input_img = input_img_batch[:1,:,:,:].to(device)
             input_mask = input_mask_batch[:1,:,:,:].to(device)
+           
 
             gen_img = gen(input_mask)
             ans_gen = disc(gen_img)
@@ -104,7 +106,7 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir):
         plt_save_example_synth_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 
                                     input_mask_ref=input_mask[0,0,:,:].detach().cpu().numpy(), 
                                     gen_img_ref=gen_img[0,0,:,:].detach().cpu().numpy(), 
-                                    disc_ans=ans_gen[0].detach().cpu().numpy(), 
+                                    disc_ans=ans_gen[0,0,:,:].detach().cpu().numpy(), 
                                     epoch=epoch+1, 
                                     save_dir=save_dir)
             
