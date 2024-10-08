@@ -72,9 +72,6 @@ root_path/
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-> Na entrega parcial do projeto (E2), essa seção pode conter resultados parciais, explorações de implementações realizadas e 
-> discussões sobre tais experimentos, incluindo decisões de mudança de trajetória ou descrição de novos experimentos, como resultado dessas explorações.
-
 A exploração inicial realizada até este momento teve dois principais intuitos:
 * Definir a forma de estruturação do dataset e integrá-la ao formatador de dados do Coqui
 * Compreender como os diferentes componentes do YourTTS são implementados dentro do Coqui e quais as configurações devem ser usadas a fim de rodar o modelo desejado.
