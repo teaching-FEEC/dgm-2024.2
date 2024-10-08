@@ -117,7 +117,7 @@ Se implementou uma variação da rede generativa condicional conhecida como Auxi
 
 #### Hiperparâmetros
 
-Os hiperparâmetros usados nesta iteraçao inícial foram os seguintes:
+Os hiperparâmetros usados nesta iteração inícial foram os seguintes:
 
 - z_dim = 128
 - n_embedding = 64
@@ -130,6 +130,7 @@ Os hiperparâmetros usados nesta iteraçao inícial foram os seguintes:
 - &lambda; = 20
 - Dropout rate = 0.5
 - Leaky ReLU slope = 0.2
+- Tamanho das imagens = (128, 165, 3)
 
 #### Arquiteturas
 
