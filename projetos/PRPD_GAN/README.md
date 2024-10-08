@@ -45,11 +45,11 @@ A escolha desse dataset se justifica por sua qualidade e relevância no contexto
 
 A imagem dos dataset possui tamanho de 640 x480 pixels. As anotações são pelo defeito do motor. A seguir é apresentada a quantidade percentual de cada tipo de defeito nos dados. 
 
-![defect](.\reports\figures\dataset_distribution_by_class.png)
+![defect](./reports/figures/dataset_distribution_by_class.png)
 
 Foi realizada a divisão por tipo de motor anotado. Dessa forma, a representação do mesmo motor não estará no conjunto de teste e treino, evitando *data leakage*. Posteriormente há o gráfico da quantidade de cada motor por defeito analisado. 
 
-![motor_and_defect](.\reports\figures\dataset_distribution_by_motor_and_defect.png)
+![motor_and_defect](./reports/figures/dataset_distribution_by_motor_and_defect.png)
 
 ### Separação de dados
 O dataset será separado em três grupos: treino, validação e teste. O primeiro conjunto será utilizado para treinar as arquiteturas escolhidas, o segundo para otimizar os hiperparâmetros, e o terceiro para avaliar o desempenho dos modelos treinados.
@@ -61,7 +61,7 @@ Para a geração dessas imagens, acredita-se que os modelos mais adequados sejam
 
 O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de modelos de geração de sinais sintéticos no contexto de análise de falhas.
 
-![Workflow](.\reports\figures\workflowPRPD.drawio.png)
+![Workflow](./reports/figures/workflowPRPD.drawio.png)
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
