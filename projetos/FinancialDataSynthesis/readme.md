@@ -197,7 +197,6 @@ Comparação entre as distribuições sintéticos e históricos usando métricas
 
 ## Conclusão
 
-> A seção de Conclusão deve ser uma seção que recupera as principais informações já apresentadas no relatório e que aponta para trabalhos futuros.
 > Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas ou como o projeto será conduzido até a sua finalização.
  
 ## Referências Bibliográficas
