@@ -1,0 +1,68 @@
+1 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])
+2 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])
+3 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])
+4 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])
+/tmp/ipykernel_43951/392202045.py:1: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  generator = torch.load('../models/pix2pix/checkpoints/checkpoint_100.pth')['gen_weights']
+/tmp/ipykernel_43951/3724911691.py:1: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  gen_state_dict = torch.load('../models/pix2pix/checkpoints/checkpoint_100.pth')['gen_weights']
+/tmp/ipykernel_43951/3724911691.py:1: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  gen_state_dict = torch.load('../models/pix2pix/checkpoints/checkpoint_100.pth')['gen_weights']
+maps: 1.0, 0.545098066329956
+gen maps: 1.0, -0.9285314083099365
+maps: 1.0, 0.23137259483337402
+gen maps: 1.0, -0.9198761582374573
+maps: 1.0, -0.9058823585510254
+gen maps: 1.0, -0.85066157579422
+maps: 1.0, 0.22352945804595947
+gen maps: 1.0, -0.6108551025390625
+maps: 1.0, 0.16078436374664307
+gen maps: 1.0, -0.7171553373336792
+maps: 1.0, -0.9215686321258545
+gen maps: 1.0, -0.9716708064079285
+maps: 1.0, 0.2705882787704468
+gen maps: 1.0, -0.8630540370941162
+maps: 1.0, 0.20784318447113037
+gen maps: 1.0, -0.9996151924133301
+/tmp/ipykernel_43951/2472257840.py:1: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  gen_state_dict = torch.load('../models/pix2pix/checkpoints/checkpoint_50.pth')['gen_weights']
+maps: 1.0, 0.13725495338439941
+gen maps: 1.0, -0.7682744860649109
+maps: 1.0, 0.5215686559677124
+gen maps: 1.0, -0.8400993943214417
+maps: 1.0, 0.22352945804595947
+gen maps: 1.0, -0.532647967338562
+maps: 1.0, -0.9215686321258545
+gen maps: 1.0, -0.988906741142273
+/tmp/ipykernel_43951/980459677.py:1: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  gen_state_dict = torch.load('../models/pix2pix/checkpoints/checkpoint_10.pth')['gen_weights']
+maps: 1.0, 0.32549023628234863
+gen maps: 0.9999986290931702, -0.9999357461929321
+maps: 1.0, 0.16862750053405762
+gen maps: 0.9999998807907104, -0.9999670386314392
+maps: 1.0, 0.24705886840820312
+gen maps: 0.9999735951423645, -0.9999842643737793
+maps: 1.0, 0.2862745523452759
+gen maps: 0.9999196529388428, -0.9999905824661255
+maps: 1.0, 0.18431377410888672
+gen maps: 0.9992191791534424, -0.9672297239303589
+maps: 1.0, 0.21568632125854492
+gen maps: 0.9999772906303406, -0.9999508261680603
+maps: 1.0, 0.20000004768371582
+gen maps: 0.9997372627258301, -0.9969395399093628
+maps: 1.0, 0.5921568870544434
+gen maps: 0.9999704360961914, -0.9998350739479065
+/tmp/ipykernel_43951/3724911691.py:1: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  gen_state_dict = torch.load('../models/pix2pix/checkpoints/checkpoint_100.pth')['gen_weights']
+maps: 1.0, 0.21568632125854492
+gen maps: 1.0, -0.649103045463562
+maps: 1.0, 0.2549020051956177
+gen maps: 1.0, -0.9815718531608582
+maps: 1.0, -0.8980392217636108
+gen maps: 1.0, -0.8215075731277466
+maps: 1.0, 0.21568632125854492
+gen maps: 1.0, -0.8469658493995667
+1 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])
+2 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])
+3 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])
+4 torch.Size([3, 256, 256]) torch.Size([3, 256, 256])

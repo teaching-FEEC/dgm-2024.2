@@ -690,3 +690,4 @@ maps: 1.0, -0.8901960849761963
 gen maps: 1.0, -0.9486535787582397
 maps: 1.0, -0.3803921341896057
 gen maps: 1.0, -0.04381292313337326
+[34m[1mwandb[0m: [33mWARNING[0m Fatal error while uploading data. Some run data will not be synced, but it will still be written to disk. Use `wandb sync` at the end of the run to try uploading.

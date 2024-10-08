@@ -22,7 +22,7 @@ Como objetivo principal do projeto, tentaremos extrair o mapa da Unicamp de sua 
 
 ## Metodologia Proposta
 
-- **Base de dados**: Inicialmente, a base de dados a ser utilizada será a mesma utilizada pelos autores da Pix2Pix e consiste em 2196 pares de imagens da cidade de Nova Iorque. As imagens possuem dimensões 256x256 e são separadas em conjuntos de treino, teste e validação com 1099, 550 e 547 imagens, respectivamente. O dataset encontra-se disponibilizado gratuitamente na [internet](http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/). 
+- **Base de dados**: Até o momento, a única base de dados de acesso público encontrada foi a fornecida pelos autores da Pix2Pix que consiste em 2196 pares de imagens da cidade de Nova Iorque. As imagens possuem dimensões 256x256 e são separadas em conjuntos de treino, teste e validação com 1099, 550 e 547 imagens, respectivamente. O dataset encontra-se disponibilizado na [internet](http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/). 
 
     Outras base de dados utilizadas por outros trabalhos até foram encontradas, mas não são disponibilizadas gratuitamente [[2]](#2)[[5]](#5).
 
