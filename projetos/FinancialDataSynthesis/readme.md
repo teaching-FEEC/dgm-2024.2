@@ -16,7 +16,8 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  |Byron Alejandro Acuña Acurio  | 209428  | Eng. Elétrica |
 
 ## Resumo (Abstract)
-> O objetivo é explorar abordagens e desenvolver algoritmos para produzir dados sintéticos financeiros, retendo o máximo de informações estatísticas para permitir o desenvolvimento de modelos de otimização de portfólios e outras aplicações financeiras.. 
+
+O objetivo é explorar abordagens e desenvolver algoritmos para produzir dados sintéticos financeiros, retendo ao máximo de informações estatísticas para permitir o desenvolvimento de modelos de otimização de portfólios e outras aplicações financeiras.. 
 
 ## Descrição do Problema/Motivação
 O desenvolvimento de modelos precisos que utilizam dados financeiros é consideravelmente desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos [5].
