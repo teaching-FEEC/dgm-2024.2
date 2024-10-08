@@ -20,17 +20,21 @@ class Mode(Enum):
 
 class DatasetName(Enum):
     NEXET = "nexet"
+    O_HAZE = "o_haze"
+    I_HAZE = "i_haze"
+    D_HAZE = "d_haze"
 
 def manage_db(dataset_type: DatasetName, mode: Mode, local_db_root: str = ""):
+    
+    if dataset_type in {DatasetName.NEXET, DatasetName.O_HAZE, DatasetName.I_HAZE, DatasetName.D_HAZE}:
+        local_db_filepath = Path(local_db_root) / Constants.DATASET_FILEPATH / dataset_type.value
+            
+    wb_db_name = local_db_filepath.stem
 
-	if dataset_type == DatasetName.NEXET:
-		local_db_filepath = Path(local_db_root) / Constants.DATASET_FILEPATH 
-	wb_db_name = local_db_filepath.stem
-
-	if mode == Mode.UPLOAD:
-		_push_db_to_wandb(local_db_filepath, wb_db_name)
-	elif mode == Mode.DOWNLOAD:
-		_pull_db_from_wandb(wb_db_name, local_db_filepath.parent)
+    if mode == Mode.UPLOAD:
+        _push_db_to_wandb(local_db_filepath, wb_db_name)
+    elif mode == Mode.DOWNLOAD:
+        _pull_db_from_wandb(wb_db_name, local_db_filepath.parent)
 
 
 def _push_db_to_wandb(local_db_filepath: Path, wb_db_name: str):

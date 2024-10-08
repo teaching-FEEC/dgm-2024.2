@@ -9,10 +9,12 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torchvision.utils import make_grid
+import torch
+import wandb
 import pynvml
 
 class Constants:
-    DATASET_FILEPATH = "./data/external/nexet"
+    DATASET_FILEPATH = "./data/external"
     WB_PROJECT = "cyclegan"
     WB_DB_UPLOAD_JOB = "dataset_upload"
     WB_DB_ARTIFACT_TYPE = "datasets"
@@ -194,6 +196,100 @@ def image_folder_to_tensor(img_dir, img_size=(256, 256), img_glob='*'):
 
     all_images_tensor = torch.stack(image_tensors)
     return all_images_tensor
+
+def save_model(model, local_path='model.pth', wandb_log=True):
+    """
+    Saves the model state to a local file and optionally logs it to Weights & Biases (WandB).
+
+    Args:
+    - model (torch.nn.Module): The model instance to save.
+    - local_path (str): The file path where the model will be saved locally. Defaults to 'model.pth'.
+    - wandb_log (bool): Whether to log the model to WandB for version control and experiment tracking. Defaults to True.
+    
+    Saves:
+    - A checkpoint of the model's state dictionary to the specified local file.
+    - If `wandb_log` is True, the model will also be saved to WandB for remote logging.
+    """
+    # Save locally
+    torch.save(model.state_dict(), local_path)
+
+    # Save to WandB
+    if wandb_log:
+        wandb.save(local_path)
+
+def save_losses(loss_G, loss_D_A, loss_D_B, filename='losses.txt'):
+    """
+    Saves the generator and discriminator losses to a text file.
+
+    Args:
+    - loss_G (list): List of generator losses over the training epochs.
+    - loss_D_A (list): List of discriminator A losses over the training epochs.
+    - loss_D_B (list): List of discriminator B losses over the training epochs.
+    - filename (str): The file path where the losses will be saved. Defaults to 'losses.txt'.
+    
+    Saves:
+    - A text file containing the losses for the generator and discriminators (A and B) over the training epochs.
+    """
+    np.savetxt(filename, np.column_stack((loss_G, loss_D_A, loss_D_B)), header='Generator total loss, Discriminator A loss, Discriminator B loss')
+
+def train_one_epoch(epoch, model, train_A, train_B, device):
+    """
+    Trains the CycleGAN model for a single epoch and returns the generator and discriminator losses.
+
+    Args:
+    - epoch (int): The current epoch number.
+    - model (CycleGAN): The CycleGAN model instance.
+    - train_A (DataLoader): DataLoader for domain A training images.
+    - train_B (DataLoader): DataLoader for domain B training images.
+    - device (torch.device): The device on which the model and data are loaded (e.g., 'cuda' or 'cpu').
+
+    Returns:
+    - loss_G (float): The total loss of the generator for this epoch.
+    - loss_D_A (float): The total loss of discriminator A for this epoch.
+    - loss_D_B (float): The total loss of discriminator B for this epoch.
+
+    During training:
+    - It iterates through the batches of both domains (A and B) and performs optimization on the generators and discriminators.
+    - Progress is tracked with a `tqdm` progress bar that shows current generator and discriminator losses.
+    """
+
+    progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}', leave=False)
+
+    for batch_A, batch_B in progress_bar:
+        real_A = batch_A[0].to(device)
+        real_B = batch_B[0].to(device)
+
+        # Perform one optimization step
+        loss_G, loss_D_A, loss_D_B = model.optimize(real_A, real_B)
+
+        progress_bar.set_postfix({
+            'G_loss': f'{loss_G:.4f}',
+            'D_A_loss': f'{loss_D_A:.4f}',
+            'D_B_loss': f'{loss_D_B:.4f}'
+        })
+    
+    return loss_G, loss_D_A, loss_D_B
+
+# Plot losses
+def plot_losses(train_losses, val_losses):
+    """
+    Plots the training and validation losses over the epochs.
+
+    Args:
+    - train_losses (list): List of training losses (e.g., generator losses) over the epochs.
+    - val_losses (list): List of validation losses over the epochs.
+    
+    Displays:
+    - A line plot showing the progression of training and validation losses.
+    - Training and validation losses are plotted against the number of epochs.
+    """
+    plt.plot(range(1, len(train_losses) + 1), train_losses, label='Training Loss', linewidth=2, alpha=0.7)
+    plt.plot(range(1, len(val_losses) + 1), val_losses, label='Validation Loss', linewidth=2, alpha=0.7)
+    plt.title('CycleGAN Training Losses')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
 
 
 def get_gpu_memory_usage():
