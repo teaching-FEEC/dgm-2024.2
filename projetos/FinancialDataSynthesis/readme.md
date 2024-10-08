@@ -179,9 +179,10 @@ O workflow se baseia nos passos descritos na metodologia.
 ![Workflow](Diagrama2.png "Workflow")
 
 ## Experimentos, Resultados e Discussão dos Resultados
-
-> Na entrega parcial do projeto (E2), essa seção pode conter resultados parciais, explorações de implementações realizadas e 
-> discussões sobre tais experimentos, incluindo decisões de mudança de trajetória ou descrição de novos experimentos, como resultado dessas explorações.
+> A continuação se apresenta uma compativa dos dados generados usando uma Gaussiana Multivariavel como Modelo Base, 
+![PairPlot](reports/figures/Baseline/PairPlot.png "Pair Plot")
+> Se pode visualizar que uma Gaussiana Multivariavel não possue a capacidade para capturar todas as correlações nescesarias, porque
+os dados generados ficam concentrados na media e os valores nas caldas técnicamente não se conseguem obter.
 
 Os principais resultados esperados são:
 
