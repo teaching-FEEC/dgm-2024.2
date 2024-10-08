@@ -131,9 +131,13 @@ As expressões matemáticas usadas para o cálculo desta métrica são:
 
 $$SSIM(𝑥, 𝑦) = l(𝑥, 𝑦) \times 𝑐(𝑥, 𝑦) \times 𝑠(𝑥, 𝑦)$$
 
-$$l(x, y) = \frac{2\mu_{x}\mu_{y} + C_{1}}{\mu^{2}_{x} + \mu^{2}_{y} + C_{1}}$$
+$$
+l(x, y) = \frac{2\mu_{x}\mu_{y} + C_{1}}{\mu_{x}^{2} + \mu_{y}^{2} + C_{1}}
+$$
 
-$$c(x, y) = \frac{2\sigma_{x}\sigma_{y} + C_{2}}{\sigma^{2}_{x} + \sigma^{2}_{y} + C_{2}}$$
+$$
+c(x, y) = \frac{2\sigma_{x}\sigma_{y} + C_{2}}{\sigma_{x}^{2} + \sigma_{y}^{2} + C_{2}}
+$$
 
 $$𝑠(𝑥, 𝑦) = \frac{𝜎_{𝑥𝑦} + 𝐶_{3}}{𝜎_{𝑥}𝜎_{𝑦} + 𝐶_{3}}$$
 
