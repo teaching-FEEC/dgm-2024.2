@@ -85,3 +85,4 @@ class Images():
             csv_file=Path(output_folder).parent / f'{Path(output_folder).name}.csv',
             split=split,
             seed=random_seed)
+        return img_ok
