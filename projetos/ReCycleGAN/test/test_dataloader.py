@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
 from utils.data_loader import get_img_dataloader  # pylint: disable=all
-from utils import show_img  # pylint: disable=all
+from utils import show_img, image_folder_to_tensor  # pylint: disable=all
 
 class TestImageDataLoader(unittest.TestCase):
 
@@ -60,6 +60,20 @@ class TestImageDataLoader(unittest.TestCase):
         show_img(imgs, title='Train B images', figsize = (10, 6), show=False)
         plt.savefig('test_dataloader_B.png')
 
+
+    def test_image_folder_to_tensor(self):
+        """Test image_folder_to_tensor function."""
+        img_dir = Path(__file__).resolve().parent.parent / 'docs/assets/haze'
+        imgs_A = image_folder_to_tensor(img_dir, img_glob='*_A.jpg')
+        imgs_B = image_folder_to_tensor(img_dir, img_glob='*_B.jpg')
+
+        shp = imgs_A.shape
+        self.assertEqual(shp[0], 4, 'Batch size should be 4.')
+        shp = imgs_B.shape
+        self.assertEqual(shp[0], 4, 'Batch size should be 4.')
+
+        show_img(torch.vstack([imgs_A, imgs_B]), title='', figsize = (10, 6), show=False)
+        plt.savefig('test_folder_to_tensor.png')
 
 
 if __name__ == '__main__':

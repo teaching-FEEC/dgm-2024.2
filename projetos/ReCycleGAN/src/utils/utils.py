@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from PIL import Image
+import torch
+from torchvision import transforms
 from torchvision.utils import make_grid
 import pynvml
 
@@ -157,6 +159,42 @@ def show_img(img, title=None, figsize=(4, 3), show=False):
         plt.show()
         return None
     return fig
+
+def image_folder_to_tensor(img_dir, img_size=(256, 256), img_glob='*'):
+    """
+    Reads all images in a folder and puts them into a single PyTorch tensor.
+
+    Parameters:
+    ------------
+    img_dir: str or Path
+        Path to the directory containing images.
+    img_size: tuple, optional
+        Desired size of the images (width, height).
+        (default=(256, 256))
+    img_glob: str, optional
+        Glob pattern to filter images.
+        (default='*')
+
+    Returns:
+    ------------
+        torch.Tensor: A tensor containing all images.
+    """
+    img_dir = Path(img_dir)
+    transform = transforms.Compose([
+        transforms.Resize(img_size),
+        transforms.ToTensor()
+    ])
+
+    image_tensors = []
+    for img_path in img_dir.glob(img_glob):
+        if img_path.suffix.lower() in ['.jpg', '.jpeg', '.png', '.bmp', '.gif']:
+            img = Image.open(img_path).convert('RGB')
+            img_tensor = transform(img)
+            image_tensors.append(img_tensor)
+
+    all_images_tensor = torch.stack(image_tensors)
+    return all_images_tensor
+
 
 def get_gpu_memory_usage():
     """Get the memory usage of all GPUs."""
