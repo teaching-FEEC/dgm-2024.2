@@ -83,7 +83,7 @@ $$ R_{1:N}  = [{ r(1), r(2), ..., r(N) }]  $$
 
 O processo de clusterização irá separar os retornos que apresentam comportamenho semelhante, categorizando os regimes de mercado. No exemplo, isso gera três séries temporais C1, C2 e C3 que são subséries da original:
 
-$$ C1_{1:n} \\ U \\ C2_{1:m} \\ U \\ C3_{1:o} = R_{1:N} $$ 
+$$ \left(C1_{1:n}\right) \\ U \\ \left(C2_{1:m}\right) \\ U \\ \left(C3_{1:o}\right) = R_{1:N} $$ 
 
 ![Diagrama](Diagrama_Cluster.png "Diagrama")
 
