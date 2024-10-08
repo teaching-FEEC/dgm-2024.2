@@ -41,9 +41,9 @@ Contruir e comparar modelos gerativos voltados para compressão semântica de da
 
 ### Objetivos específicos
 
-* Montar e treinar uma GAN simples que reconstrua uma imagem a partir do espaço semântico da original;
+* Montar e treinar uma GAN simples que reconstrua uma imagem a partir do espaço latente da original;
 * Montar e treinar uma GAN/cGAN que construa uma imagem semanticamente parecida com a imagem original;
-* Montar e treinar um LDM que conprime e reconstroi semanticamente uma imagem.
+* Comparar o comportamento e desempenho dos modelos implementados ao variar a função de distorção e a codificação semântica.
 
 ## Metodologia Proposta
 
@@ -85,12 +85,12 @@ Em uma avaliação de ordem qualitativa para teste inicial do conceito também s
 >| Tarefa          | Data de Finalização     | Número de Semanas| Progresso  |
 >|-----------------|------------|-----------|------------|
 >| Revisão bibliográfica        | 17/09/2024 | 2 | ██████████ 100% |
->| Webp | 24/09/2024 | 1 | ░░░░░░░░░░ 0% |
->| Desenvolvimento GAN | 08/10/2024 | 2 | ░░░░░░░░░░ 0%  
->| Entrega 2          | 08/10/2024 | 0 | ░░░░░░░░░░ 0% |
+>| Webp | 24/09/2024 | 1 | ██████████ 100% |
+>| Desenvolvimento GAN | 08/10/2024 | 2 | █████████░ 90%  
+>| Entrega 2          | 08/10/2024 | 0 | ██████████ 100% |
 >| Rede de segmentação semântica | 15/10/2024 | 1 | ░░░░░░░░░░ 0% |
 >| Desenvolvimento cGAN    | 29/10/2024 | 2 | ░░░░░░░░░░ 0%  |
->| Desenvolvimento Difusão    | 12/11/2024 | 2 | ░░░░░░░░░░ 0%  |
+>| GAN/cGAN com distoção semântica    | 12/11/2024 | 2 | ░░░░░░░░░░ 0%  |
 >| Análise dos resultados    | 25/11/2024 | 2 | ░░░░░░░░░░ 0%  |
 >| Montar entrega 3   | 25/11/2024 | 0 | ░░░░░░░░░░ 0%  |
 
