@@ -92,6 +92,12 @@ A configuração utilizada nos experimentos é a padrão, com os seguintes hiper
 
 A proposta apresentada pelo modelo TimeGAN é a união dos métodos de treinamento de GANs e modelos autorregressivos para o aprendizado de um espaço latente representativo. Amostras reais são representadas em espaço latente por um embeder e dados sintéticos também são gerados diretamente na dimensão do espaço latente. O discriminador é treinado com base nas representações dos dados projetados no espaço latente e um reconstrutor é treinado para recuperar os dados na representação original a partir de sua projeção no espaço latente. Por fim, uma tarefa de supervisão é treinada conjuntamente, cujo objetivo é prever o próximo instante de tempo de um dado, real ou sintético, que foi projetado para o espaço latente.
 
+A implementação utilizada é uma reprodução do código disponível no [repositório do artigo](https://github.com/benearnthof/TimeGAN/).
+Artigo: **[Time-series Generative Adversarial Networks](https://www.researchgate.net/publication/344464212_Time-series_Generative_Adversarial_Networks)**  
+Authors: Jinsung Yoon, Daniel Jarrett, Mihaela van der Schaar, Published: September 2020
+
+
+
 ### Bases de Dados e Evolução
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
