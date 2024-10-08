@@ -47,7 +47,10 @@ Geração de metadados como condicionamento da geração de dados temporais;
 Uso de uma heurística de auto-normalização, onde cada amostra é normalizada individualmente pelo seu máximo e mínimo e esses parâmetros são aprendidos como metadados da amostra. Para isso, um gerador de máximo e mínimo é utilizado especificamente para a geração desses metadados sintéticos;
 Geração da série temporal em batches condicionada pelos metadados. A rede recorrente utilizada para geração da série temporal fornece, a cada iteração, $s$ instantes de tempo, ao invés de somente 1, como tradicionalmente se utiliza as redes recorrentes;
 
-A implementação do modelo está disponível na biblioteca Gretel Synthetics.
+**[Time-series Generative Adversarial Networks](https://arxiv.org/abs/1909.13403)**  
+Submitted on 30 Sep 2019 (v1), last revised 17 Jan 2021 (this version, v5)
+
+A implementação do modelo está disponível na biblioteca Gretel Synthetics. [link da biblioteca](https://synthetics.docs.gretel.ai/en/stable/models/timeseries_dgan.html).
 
 A configuração utilizada nos experimentos é a padrão, com os seguintes hiperparâmetros:
 | Parâmetro| Valor|
