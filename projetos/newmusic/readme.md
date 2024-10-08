@@ -20,7 +20,7 @@ O interesse do grupo para essa aplicação vêm pois trabalhar com áudio (e sin
 
 ## Metodologia
 
-A partir da literatura de referência, o grupo decidiu trabalhar com imagens de espectrogramas dos áudios que serão capturados para o projeto, via [pixabay](https://pixabay.com/music/search/music/) / [Midi World](https://www.midiworld.com/) evitando violar direitos autorais. Para a transformação do áudio em seus respectivos espectrogramas será utilizado o (Riffusion)[https://github.com/riffusion/riffusion-hobby]
+A partir da literatura de referência, o grupo decidiu trabalhar com imagens de espectrogramas dos áudios que serão capturados para o projeto, via [pixabay](https://pixabay.com/music/search/music/) / [Midi World](https://www.midiworld.com/) evitando violar direitos autorais. Para a transformação do áudio em seus respectivos espectrogramas será utilizado o [Riffusion](https://github.com/riffusion/riffusion-hobby).
 
 Em uma primeira abordagem prática, o grupo decidiu trabalhar com CycleGANs (como presente neste [repositório](https://github.com/moslehi/deep-learning-music-style-transfer)) devido a aspectos de simplicidade quando comparado a outras técnicas mais sofisticadas.
 Assim, se essa primeira abordagem for bem sucedida, serão explorados as demais técnicas que, provavelmente, trarão resultados mais satisfatórios.
