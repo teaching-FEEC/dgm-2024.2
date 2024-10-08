@@ -13,7 +13,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Resumo (Abstract)
 
-
+Phase-Resolved Partial Discharge (PRPD) é uma forma gráfica de representar a atividade de descargas parciais (PD) ao longo dos 360º de um ciclo de corrente alternada (CA), amplamente utilizada para diagnosticar falhas em motores elétricos. Apesar de haver fontes que relacionam tipos de falhas a suas representações gráficas, encontrar bases de dados com alto volume de dados e de qualidade torna-se difícil, devido à questões de privacidade. No entanto, grandes quantidades de dados são necessárias para treinar eficazmente modelos de deep learning. Dada a escassez de bases de dados apropriadas, a geração sintética de imagens surge como uma solução promissora. Este projeto busca desenvolver e avaliar modelos generativos de imagens de PRPD, com o intuito de aumentar a quantidade e diversidade de dados disponíveis.
 
 ## Descrição do Problema/Motivação
 
@@ -45,11 +45,11 @@ A escolha desse dataset se justifica por sua qualidade e relevância no contexto
 
 A imagem dos dataset possui tamanho de 640 x480 pixels. As anotações são pelo defeito do motor. A seguir é apresentada a quantidade percentual de cada tipo de defeito nos dados. 
 
-![defect](.\reports\figures\dataset_distribution_by_class.png)
+![defect](./reports/figures/dataset_distribution_by_class.png)
 
 Foi realizada a divisão por tipo de motor anotado. Dessa forma, a representação do mesmo motor não estará no conjunto de teste e treino, evitando *data leakage*. Posteriormente há o gráfico da quantidade de cada motor por defeito analisado. 
 
-![motor_and_defect](.\reports\figures\dataset_distribution_by_motor_and_defect.png)
+![motor_and_defect](./reports/figures/dataset_distribution_by_motor_and_defect.png)
 
 ### Separação de dados
 O dataset será separado em três grupos: treino, validação e teste. O primeiro conjunto será utilizado para treinar as arquiteturas escolhidas, o segundo para otimizar os hiperparâmetros, e o terceiro para avaliar o desempenho dos modelos treinados.
@@ -61,7 +61,7 @@ Para a geração dessas imagens, acredita-se que os modelos mais adequados sejam
 
 O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de modelos de geração de sinais sintéticos no contexto de análise de falhas.
 
-![Workflow](.\reports\figures\workflowPRPD.drawio.png)
+![Workflow](./reports/figures/workflowPRPD.drawio.png)
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
@@ -176,6 +176,12 @@ Se utilizaram as curvas de perdas, acurácias e exemplos de imagens sinteticas p
 ![GLCM&Contours-tSNE](./reports/figures/out_ACWGAN.png)
 
 ## Conclusão
+
+Em suma, o projeto proposto aborda a geração sintética de imagens de PRPD como uma solução para a escassez de bases de dados com alto volume de dados e de qualidade, necessárias para o treinamento de modelos de deep learning para o diagnóstico de falhas em motores elétricos. A metodologia proposta, se apoia em modelos generativos como GANs e VAEs, visa aumentar a diversidade e quantidade de dados disponíveis. Para isso, é utilizado um conjunto de dados real sobre descargas parciais.
+
+A partir de uma exploração detalhada da base de dados, foram extraídas características relevantes como textura e contornos, evidenciando a complexidade das imagens de PRPD. A implementação de uma variante da GAN (ACWGAN), junto com experimentos de análise e visualização de clusters, mostrou que o modelo é capaz de gerar imagens sintéticas. No entanto, ainda são necessários ajustes visto que o modelo gerou imagens ruidosas.
+
+Com isso, o projeto está em fase preliminar, ainda serão implemetados modelos como InfoGAN e VAE, além da otimização dos modelos desenvolvidos. Com o progresso contínuo, espera-se que os modelos generativos desenvolvidos possam ser utilizados para aumentar significativamente a variabilidade dos dados de PRPD, contribuindo para diagnósticos mais precisos e eficientes no futuro.
 
 ## Referências Bibliográficas
 1. Lv, F., Liu, G., Wang, Q., Lu, X., Lei, S., Wang, S., & Ma, K. (2023). Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN. Journal of Electrical Engineering & Technology, 18(2), 829–841. https://doi.org/10.1007/s42835-022-01260-7
