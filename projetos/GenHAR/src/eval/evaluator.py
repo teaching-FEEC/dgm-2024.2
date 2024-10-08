@@ -21,7 +21,9 @@ class Evaluator:
         self.model = config["model"]
         self.activity_names = ["sit", "stand", "walk", "stair up", "stair down", "run"]
         self.folder_reports = f"{self.config['folder_reports']}/reports/"
+        self.folder_images = f"{self.config['folder_reports']}/images/"
         os.makedirs(self.folder_reports, exist_ok=True)
+        os.makedirs(self.folder_images, exist_ok=True)
 
     def eval_dataset(self, dataset, title):
         from eval.metrics.unsupervised_metrics import UnsupervisedLearningMetrics
@@ -124,13 +126,16 @@ class Evaluator:
             comparator = RealSyntheticComparator(
                 self.df_train, self.df_synthetic, label_col, self.activity_names
             )
-
+            fig0=comparator.visualize_distribution("", "disti")
+            fig0.savefig(f"{self.folder_images}{self.dataset}{self.transform}_{self.model}_distribution.jpg", format='jpg', dpi=300)
             # Comparar distribuição de classes
             fig1 = comparator.compare_class_distribution()
 
             # Comparar t-SNE
             fig2 = comparator.compare_tsne()
             fig3 = comparator.visualize_tsne_unlabeled()
+            fig3.savefig(f"{self.folder_images}{self.dataset}{self.transform}_{self.model}_tsne.jpg", format='jpg', dpi=300)
+
             fig4 = comparator.tsne_subplots_by_labels()
             fig5 = comparator.plot_samplesT_by_label(num_samples=3)
 
@@ -143,6 +148,7 @@ class Evaluator:
             fig8 = comparator.plot_random_samples_comparison_by_labels(num_samples=5)
             r_ut.save_fig_pdf(
                 f"{self.folder_reports}{self.dataset}_{self.transform}_{self.model}_real_vs_gen.pdf",
+                fig0,
                 fig1,
                 fig2,
                 fig3,

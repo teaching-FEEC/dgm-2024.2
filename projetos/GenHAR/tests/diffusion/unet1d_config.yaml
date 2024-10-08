@@ -1,6 +1,4 @@
 # Configuration for Synthetic Data Generation and Comparison
-
-# Datasets to be compared
 datasets:
   - name: MotionSense
     path: data
@@ -19,7 +17,48 @@ datasets:
             accel
             gyro
 
+  - name: RealWorld_thigh
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_upperarm
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: RealWorld_waist
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: UCI
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: WISDM
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+            
 transformations:
+    - name: fft
     - name: None
 
 # Generative models
@@ -31,7 +70,7 @@ generative_models:
       in_channel: 6
       out_channel: 6
     n_gen_samples: 3000
-    epochs: 100
+    epochs: 500
     folder_save_generate_df: data/synthetic/unconditional_unet
 
 # Evaluations for comparing real and synthetic data
