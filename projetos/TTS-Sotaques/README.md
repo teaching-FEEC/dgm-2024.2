@@ -14,7 +14,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Resumo (Abstract)
 
-> Resumo do objetivo, metodologia **e resultados** obtidos (na entrega E2 é possível relatar resultados parciais). Sugere-se máximo de 100 palavras. 
+> O projeto visa desenvolver um modelo de síntese de fala capaz de gerar amostras com sotaques variados do português brasileiro. A metodologia se baseia no modelo SYNTACC, adaptado para o contexto brasileiro, com o uso da biblioteca Coqui TTS e dados da base CORAA. O projeto envolve etapas de pré-processamento de áudio, extração de embeddings de sotaque e fine-tuning do modelo YourTTS. O objetivo é aumentar a representatividade de diferentes sotaques no cenário TTS, promovendo maior inclusão linguística e diversidade nas aplicações comerciais e sociais.
 
 ## Descrição do Problema/Motivação
 
@@ -28,13 +28,6 @@ O objetivo principal deste projeto é implementar um modelo de síntese de fala 
 
 ## Metodologia
 
-> Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
-> Descrever bases de dados utilizadas.
-> Citar algoritmos de referência.
-> Justificar os porquês dos métodos escolhidos.
-> Apontar ferramentas relevantes.
-> Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
-
 A metodologia adotada é inspirada pelo modelo de TTS SYNTACC **[1]**, que é capaz de produzir amostras de fala em inglês com sotaque de falantes estrangeiros.
 
 O SYNTACC é um modelo de TTS end-to-end, ou seja, que realiza todas as etapas de conversão texto-fala em um único loop de treinamento. Para isso, integra vários componentes distintos que são otimizados em conjunto. A fim de inserir a variação de sotaque no treinamento, o SYNTACC produz embeddings de sotaque que são concatenados às saídas do seu encoder de texto.
@@ -44,8 +37,6 @@ Este trabalho busca reproduzir os procedimentos reportados pelos autores do SYNT
 Os dados de treinamento foram extraídos da base CORAA **[3]**, que agrega amostras de áudio transcrito de corpora variados, abrangendo variedades do português de Minas Gerais, São Paulo (capital e interior) e Pernambuco.
 
 ### Bases de Dados e Evolução
-> Elencar bases de dados utilizadas no projeto.
-> Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento sobre como ela foi analisada/usada, conforme exemplo a seguir.
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
@@ -76,9 +67,6 @@ root_path/
 │   └── ...
 ```
 ### Workflow
-> Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nessa seção.
-> Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
-> Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos. 
 
 ![Workflow](https://lh3.googleusercontent.com/d/1ReUO2nS8wlV9Qu4_g4GLrmAKfuDyc6r2)
 
@@ -97,11 +85,9 @@ A biblioteca Coqui emprega muitas das etapas intermediárias de processamento de
 
 ## Conclusão
 
-> A seção de Conclusão deve ser uma seção que recupera as principais informações já apresentadas no relatório e que aponta para trabalhos futuros.
-> Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas ou como o projeto será conduzido até a sua finalização.
-> Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outros aspectos, possibilidades de continuidade do projeto.
 > Até o momento, o projeto avançou em várias frentes, incluindo a estruturação do dataset, o pré-processamento das amostras de áudio e a implementação de um pipeline simples com o modelo que desempenha o papel de `encoder `. 
-> 
+> No entanto, ainda há desafios a serem enfrentados, particularmente em relação ao tratamento de ruído nos áudios selecionados, o que justifica a necessidade de mais pesquisas sobre técnicas eficazes de remoção de ruído, conforme destacado na primeira etapa do fluxo de trabalho.
+> Os próximos passos incluem a conclusão da etapa de seleção e tratamento de amostras, o que envolverá experimentações com diferentes técnicas de filtragem de ruído para garantir uma qualidade adequada para o treinamento do modelo. Com essa etapa finalizada, será possível avançar para o carregamento e configuração do modelo no Coqui, seguidos do fine-tuning do YourTTS. Em seguida, o modelo será submetido a um forward pass de teste para identificar possíveis erros, ajustando as configurações conforme necessário.
 
 ## Referências Bibliográficas
 **[1]** NGUYEN, T.-N.; PHAM, N.-Q.; WAIBEL, A. SYNTACC : Synthesizing Multi-Accent Speech By Weight Factorization. In: ICASSP 2023 - 2023 IEEE INTERNATIONAL CONFERENCE ON ACOUSTICS, SPEECH AND SIGNAL PROCESSING (ICASSP), jun. 2023. ICASSP 2023 - 2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) [...]. [S. l.: s. n.], jun. 2023. p. 1–5. Disponível em: https://ieeexplore.ieee.org/document/10096431/?arnumber=10096431. Acesso em: 9 set. 2024.
