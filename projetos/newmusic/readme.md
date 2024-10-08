@@ -55,9 +55,9 @@ Como o projeto tem apenas finalidade de aprendizado no âmbito acadêmico, as m�
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-Até o momento desta entrega parcial do projeto (E2), explorou-se teoricamente diferentes aplicações de \textit{Music Style Transfer}, ainda não tendo contato essencialmente prático por parte do grupo. Devido ao deste projeto ser de aplicação inusitada pela dupla, algumas dificuldades foram encontradas e atrasando o cronograma proposto.
+Até o momento desta entrega parcial do projeto (E2), explorou-se teoricamente diferentes aplicações de *Music Style Transfer*, ainda não tendo contato essencialmente prático por parte do grupo. Devido ao deste projeto ser de aplicação inusitada pela dupla, algumas dificuldades foram encontradas e atrasando o cronograma proposto.
 
-A partir da literatura de referência, o grupo decidiu trabalhar com imagens de espectrogramas dos áudios que serão capturados para o projeto, via [pixabay] (https://pixabay.com/music/search/music/) evitando violar direitos autorais. Em uma primeira abordagem prática, o grupo decidiu trabalhar com CycleGANs (como presente neste [repositório](https://github.com/moslehi/deep-learning-music-style-transfer)) devido a aspectos de simplicidade quando comparado a outras técnicas mais sofisticadas.
+A partir da literatura de referência, o grupo decidiu trabalhar com imagens de espectrogramas dos áudios que serão capturados para o projeto, via [pixabay](https://pixabay.com/music/search/music/) evitando violar direitos autorais. Em uma primeira abordagem prática, o grupo decidiu trabalhar com CycleGANs (como presente neste [repositório](https://github.com/moslehi/deep-learning-music-style-transfer)) devido a aspectos de simplicidade quando comparado a outras técnicas mais sofisticadas.
 Assim, se essa primeira abordagem for bem sucedida, serão explorados as demais técnicas que, provavelmente, trarão resultados mais satisfatórios.
 
 
