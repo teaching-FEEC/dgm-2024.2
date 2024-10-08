@@ -80,7 +80,7 @@ Assim, se essa primeira abordagem for bem sucedida, serão explorados as demais 
 
 Até o momento desta entrega parcial do projeto (E2), explorou-se teoricamente diferentes aplicações de *Music Style Transfer*, ainda não tendo contato essencialmente prático por parte do grupo. Devido ao deste projeto ser de aplicação inusitada pela dupla, algumas dificuldades foram encontradas e atrasando o cronograma proposto.
 
-Link da apresentação: https://docs.google.com/presentation/d/1Lmz1MJK1Uv_xe4088bim_Fi-xjDIJQS_qYM_uYwuQuc/edit#slide=id.g2d3fc101b55_0_71
+Link da apresentação: [link](https://docs.google.com/presentation/d/1Lmz1MJK1Uv_xe4088bim_Fi-xjDIJQS_qYM_uYwuQuc/edit#slide=id.g2d3fc101b55_0_71)
 
 
 ## Referências
