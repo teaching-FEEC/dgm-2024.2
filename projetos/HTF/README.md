@@ -113,22 +113,18 @@ Fonte: Social-Implicit: Rethinking Trajectory Prediction Evaluation and The Effe
 
 Levando em conta os modelos pré-treinados disponibilizados no repositório, foram realizadas implementações cujos resultados podem ser observados na Figura 10 em que cada cor representa um pedestre, sendo que as linhas tracejadas representam os dados verdadeiros e as pontilhadas as previsões realizadas.
 
-<div style="text-align: center;">
-    <img src="/projetos/HTF/images/avquali.jpeg" alt="Figura 010: width="600"/>
-    <p><em>Figura 10: Amostras verdadeiras (linhas tracejadas) e previsões (linhas pontilhadas) </em></p>
-</div> 
-
 
 <div style="text-align: center;">
     <!-- Primeira linha de 3 imagens -->
-    <img src="/projetos/HTF/images/image1.png" alt="Imagem 1" width="200"/>
-    <img src="/projetos/HTF/images/image2.png" alt="Imagem 2" width="200"/>
-    <img src="/projetos/HTF/images/image3.png" alt="Imagem 3" width="200"/>
+    <img src="/projetos/HTF/images/Figure_1.png" alt="Imagem 1" width="320"/>
+    <img src="/projetos/HTF/images/Figure_2.png" alt="Imagem 2" width="320"/>
+    <img src="/projetos/HTF/images/Figure_3.png" alt="Imagem 3" width="320"/>
     <br>
     <!-- Segunda linha de 3 imagens -->
-    <img src="/projetos/HTF/images/image4.png" alt="Imagem 4" width="200"/>
-    <img src="/projetos/HTF/images/image5.png" alt="Imagem 5" width="200"/>
-    <img src="/projetos/HTF/images/image6.png" alt="Imagem 6" width="200"/>
+    <img src="/projetos/HTF/images/Figure_4.png" alt="Imagem 4" width="320"/>
+    <img src="/projetos/HTF/images/Figure_5.png" alt="Imagem 5" width="320"/>
+    <img src="/projetos/HTF/images/Figure_6.png" alt="Imagem 6" width="320"/>
+    <p><em>Figura 10: Exemplos de predições comparadas aos dados reais </em></p>
 </div>
 
 ## Conclusão
