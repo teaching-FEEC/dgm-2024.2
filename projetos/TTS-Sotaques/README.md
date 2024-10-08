@@ -93,13 +93,15 @@ A exploração inicial realizada até este momento teve dois principais intuitos
 
 O material de referência adotado foi [este notebook](/notebooks/train_yourtts.py). A implementação básica da estrutura do dataset e cálculo de embeddings de falante pode ser encontrada em [```1-datasetStructure_speakerEmbeddings```](/notebooks/1-datasetStructure_speakerEmbeddings.ipynb). 
 
-A biblioteca Coqui emprega muitas das etapas intermediárias de processamento de dados de maneira integrada à definição de configuração de datasets e de modelos. A função de extração de embeddings de falante mostra em sua saída uma chamada ao componente Audio Processor, porém não identificamos exatamente qual parte do código interno do Coqui faz isso. É interessante controlar a chamada ao audio processor a fim de tornar possível ajustar suas configurações. 
+A biblioteca Coqui emprega muitas das etapas intermediárias de processamento de dados de maneira integrada à definição de configuração de datasets e de modelos. A função de extração de embeddings de falante mostra em sua saída uma chamada ao componente Audio Processor, porém não identificamos exatamente qual parte do código interno do Coqui faz isso. É interessante controlar a chamada ao Audio Processor a fim de tornar possível ajustar suas configurações. 
 
 ## Conclusão
 
 > A seção de Conclusão deve ser uma seção que recupera as principais informações já apresentadas no relatório e que aponta para trabalhos futuros.
 > Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas ou como o projeto será conduzido até a sua finalização.
 > Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outros aspectos, possibilidades de continuidade do projeto.
+> Até o momento, o projeto avançou em várias frentes, incluindo a estruturação do dataset, o pré-processamento das amostras de áudio e a implementação de um pipeline simples com o modelo que desempenha o papel de `encoder `. 
+> 
 
 ## Referências Bibliográficas
 **[1]** NGUYEN, T.-N.; PHAM, N.-Q.; WAIBEL, A. SYNTACC : Synthesizing Multi-Accent Speech By Weight Factorization. In: ICASSP 2023 - 2023 IEEE INTERNATIONAL CONFERENCE ON ACOUSTICS, SPEECH AND SIGNAL PROCESSING (ICASSP), jun. 2023. ICASSP 2023 - 2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) [...]. [S. l.: s. n.], jun. 2023. p. 1–5. Disponível em: https://ieeexplore.ieee.org/document/10096431/?arnumber=10096431. Acesso em: 9 set. 2024.
