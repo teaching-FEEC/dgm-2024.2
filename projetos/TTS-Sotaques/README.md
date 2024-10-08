@@ -14,7 +14,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ## Resumo (Abstract)
 
-> O projeto visa desenvolver um modelo de síntese de fala capaz de gerar amostras com sotaques variados do português brasileiro. A metodologia se baseia no modelo SYNTACC, adaptado para o contexto brasileiro, com o uso da biblioteca Coqui TTS e dados da base CORAA. O projeto envolve etapas de pré-processamento de áudio, extração de embeddings de sotaque e fine-tuning do modelo YourTTS. O objetivo é aumentar a representatividade de diferentes sotaques no cenário TTS, promovendo maior inclusão linguística e diversidade nas aplicações comerciais e sociais.
+O projeto visa desenvolver um modelo de síntese de fala capaz de gerar amostras com sotaques variados do português brasileiro. A metodologia se baseia no modelo SYNTACC, adaptado para o contexto brasileiro, com o uso da biblioteca Coqui TTS e dados da base CORAA. O projeto envolve etapas de pré-processamento de áudio, extração de embeddings de sotaque e fine-tuning do modelo YourTTS. O objetivo é aumentar a representatividade de diferentes sotaques no cenário TTS, promovendo maior inclusão linguística e diversidade nas aplicações comerciais e sociais.
 
 ## Descrição do Problema/Motivação
 
@@ -85,9 +85,11 @@ A biblioteca Coqui emprega muitas das etapas intermediárias de processamento de
 
 ## Conclusão
 
-> Até o momento, o projeto avançou em várias frentes, incluindo a estruturação do dataset, o pré-processamento das amostras de áudio e a implementação de um pipeline simples com o modelo que desempenha o papel de `encoder `. 
-> No entanto, ainda há desafios a serem enfrentados, particularmente em relação ao tratamento de ruído nos áudios selecionados, o que justifica a necessidade de mais pesquisas sobre técnicas eficazes de remoção de ruído, conforme destacado na primeira etapa do fluxo de trabalho.
-> Os próximos passos incluem a conclusão da etapa de seleção e tratamento de amostras, o que envolverá experimentações com diferentes técnicas de filtragem de ruído para garantir uma qualidade adequada para o treinamento do modelo. Com essa etapa finalizada, será possível avançar para o carregamento e configuração do modelo no Coqui, seguidos do fine-tuning do YourTTS. Em seguida, o modelo será submetido a um forward pass de teste para identificar possíveis erros, ajustando as configurações conforme necessário.
+Até o momento, o projeto avançou em várias frentes, incluindo a estruturação do dataset, o pré-processamento das amostras de áudio e a implementação de um pipeline simples com o modelo que desempenha o papel de `encoder `. 
+
+No entanto, ainda há desafios a serem enfrentados, particularmente em relação ao tratamento de ruído nos áudios selecionados, o que justifica a necessidade de mais pesquisas sobre técnicas eficazes de remoção de ruído, conforme destacado na primeira etapa do fluxo de trabalho.
+
+Os próximos passos incluem a conclusão da etapa de seleção e tratamento de amostras, o que envolverá experimentações com diferentes técnicas de filtragem de ruído para garantir uma qualidade adequada para o treinamento do modelo. Com essa etapa finalizada, será possível avançar para o carregamento e configuração do modelo no Coqui, seguidos do fine-tuning do YourTTS. Em seguida, o modelo será submetido a um forward pass de teste para identificar possíveis erros, ajustando as configurações conforme necessário.
 
 ## Referências Bibliográficas
 **[1]** NGUYEN, T.-N.; PHAM, N.-Q.; WAIBEL, A. SYNTACC : Synthesizing Multi-Accent Speech By Weight Factorization. In: ICASSP 2023 - 2023 IEEE INTERNATIONAL CONFERENCE ON ACOUSTICS, SPEECH AND SIGNAL PROCESSING (ICASSP), jun. 2023. ICASSP 2023 - 2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) [...]. [S. l.: s. n.], jun. 2023. p. 1–5. Disponível em: https://ieeexplore.ieee.org/document/10096431/?arnumber=10096431. Acesso em: 9 set. 2024.
