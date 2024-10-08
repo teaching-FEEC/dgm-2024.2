@@ -175,7 +175,7 @@ Atualmente, estamos enfrentando dificuldades nesta etapa de treinamento, já que
 
 O resultado atual do nosso treinamento é apresentado na figura abaixo. Nota-se que a saída do gerador ainda está distante do esperado e precisa ser aprimorada.
 
-![Fatia original, fatia segmentada, saída do gerador e saída do discriminador.](figs/resultado_parcial_e2.jpeg.png?raw=true)
+![Fatia original, fatia segmentada, saída do gerador e saída do discriminador.](figs/resultado_parcial_e2.jpeg?raw=true)
 
 *Figura 8: Fatia original, fatia segmentada, saída do gerador e saída do discriminador.*
 
