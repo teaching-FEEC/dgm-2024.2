@@ -186,8 +186,6 @@ Os ativos foram retirados do Bloomberg Dataset, e representam diferentes índice
 Ao final, temos que o principal resultado esperado é:
 
 - Um conjunto de dados sintéticos gerado para complementação das bases financeiras históricas, capaz de capturar variações de retorno plausíveis que não foram observadas nos dados originais.
-![utilidade_Originais](reports/figures/Baseline/utilidade_Originais.png "utilidade_Originais")
-![utilidade_Generados](reports/figures/Baseline/utilidade_Generados.png "utilidade_Generados")
 
 
 ### Proposta de Avaliação
