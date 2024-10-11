@@ -1,9 +1,9 @@
 # pylint: disable=invalid-name
 """Module with CycleGAN class."""
-from .basemodel import BaseModel
-from .networks import Generator, Discriminator, CycleGANLoss
 import torch
 from torch import nn
+from .basemodel import BaseModel
+from .networks import Generator, Discriminator, CycleGANLoss
 
 class CycleGAN(BaseModel):
     """
@@ -55,6 +55,55 @@ class CycleGAN(BaseModel):
 
         self.cycle_loss_weight = cycle_loss_weight
         self.id_loss_weight = id_loss_weight
+
+    def __str__(self):
+        """String representation of the CycleGAN model."""
+        return (
+            f'CycleGAN Model\n'
+            f'Generators:\n'
+            f'  A to B: {self.gen_AtoB}\n'
+            f'  B to A: {self.gen_BtoA}\n'
+            f'Discriminators:\n'
+            f'  A: {self.dis_A}\n'
+            f'  B: {self.dis_B}\n'
+            f'Losses:\n'
+            f'  Adversarial: {self.adversarial_loss}\n'
+            f'  Cycle: {self.cycle_loss}\n'
+            f'  Identity: {self.identity_loss}\n'
+        )
+
+    def eval(self):
+        """
+        Set the CycleGAN model and its submodules to evaluation mode.
+        """
+        self.gen_AtoB.eval()
+        self.gen_BtoA.eval()
+        self.dis_A.eval()
+        self.dis_B.eval()
+
+    def train(self):
+        """
+        Set the CycleGAN model and its submodules to training mode.
+        """
+        self.gen_AtoB.train()
+        self.gen_BtoA.train()
+        self.dis_A.train()
+        self.dis_B.train()
+
+    def state_dict(self):
+        """
+        Get the model state dictionary.
+        """
+        return {
+            'gen_AtoB': self.gen_AtoB.state_dict(),
+            'gen_BtoA': self.gen_BtoA.state_dict(),
+            'dis_A': self.dis_A.state_dict(),
+            'dis_B': self.dis_B.state_dict(),
+            'optimizer_G': self.optimizer_G.state_dict(),
+            'optimizer_D_A': self.optimizer_D_A.state_dict(),
+            'optimizer_D_B': self.optimizer_D_B.state_dict(),
+        }
+
 
     def forward(self, real_A, real_B): # pylint: disable=arguments-differ
         """
