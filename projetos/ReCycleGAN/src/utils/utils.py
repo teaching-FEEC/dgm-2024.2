@@ -137,8 +137,27 @@ def resize_and_crop(image_path, output_path, target_size, size_filter=None):
         return True
     return False
 
-def show_img(img, title=None, figsize=(4, 3), show=False):
-    """Show an image using matplotlib."""
+def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False):
+    """Show an image using matplotlib.
+
+    Attributes:
+    ------------
+    img: torch.Tensor or np.ndarray
+        Image tensor or array.
+    title: str
+        Title of the image.
+    figsize: tuple
+        Figure size (width, height).
+        (Default: (4, 3))
+    show: bool
+        Whether to display the image.
+        (Default: False)
+    change_scale: bool
+        Whether to change the scale of the image
+        from [-1, 1] to [0, 1].
+    """
+    if change_scale:
+        img = (img + 1) / 2
     if len(img.shape) > 4:
         msg = 'Image tensor has more than 4 dimensions.'
         raise ValueError(msg)
@@ -205,7 +224,7 @@ def save_model(model, local_path='model.pth', wandb_log=True):
     - model (torch.nn.Module): The model instance to save.
     - local_path (str): The file path where the model will be saved locally. Defaults to 'model.pth'.
     - wandb_log (bool): Whether to log the model to WandB for version control and experiment tracking. Defaults to True.
-    
+
     Saves:
     - A checkpoint of the model's state dictionary to the specified local file.
     - If `wandb_log` is True, the model will also be saved to WandB for remote logging.
@@ -226,7 +245,7 @@ def save_losses(loss_G, loss_D_A, loss_D_B, filename='losses.txt'):
     - loss_D_A (list): List of discriminator A losses over the training epochs.
     - loss_D_B (list): List of discriminator B losses over the training epochs.
     - filename (str): The file path where the losses will be saved. Defaults to 'losses.txt'.
-    
+
     Saves:
     - A text file containing the losses for the generator and discriminators (A and B) over the training epochs.
     """
@@ -267,7 +286,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device):
             'D_A_loss': f'{loss_D_A:.4f}',
             'D_B_loss': f'{loss_D_B:.4f}'
         })
-    
+
     return loss_G, loss_D_A, loss_D_B
 
 # Plot losses
@@ -278,7 +297,7 @@ def plot_losses(train_losses, val_losses):
     Args:
     - train_losses (list): List of training losses (e.g., generator losses) over the epochs.
     - val_losses (list): List of validation losses over the epochs.
-    
+
     Displays:
     - A line plot showing the progression of training and validation losses.
     - Training and validation losses are plotted against the number of epochs.
