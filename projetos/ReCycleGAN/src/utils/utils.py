@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """Assorted functions."""
 
 from pathlib import Path
@@ -222,14 +223,20 @@ def save_model(model, local_path='model.pth', wandb_log=True):
     """
     Saves the model state to a local file and optionally logs it to Weights & Biases (WandB).
 
-    Args:
-    - model (torch.nn.Module): The model instance to save.
-    - local_path (str): The file path where the model will be saved locally. Defaults to 'model.pth'.
-    - wandb_log (bool): Whether to log the model to WandB for version control and experiment tracking. Defaults to True.
+    Saves a checkpoint of the model's state dictionary to the specified local file.
+    If `wandb_log` is True, the model will also be saved to WandB for remote logging.
 
-    Saves:
-    - A checkpoint of the model's state dictionary to the specified local file.
-    - If `wandb_log` is True, the model will also be saved to WandB for remote logging.
+    Parameters:
+    ------------
+    model: torch.nn.Module
+        Model instance to save.
+    local_path: str
+        File path where the model will be saved locally.
+        (default: 'model.pth')
+    wandb_log: bool
+        Whether to log the model to WandB for version control
+        and experiment tracking.
+        (default: True)
     """
     # Save locally
     torch.save(model.state_dict(), local_path)
@@ -242,16 +249,19 @@ def save_losses(loss_G, loss_D_A, loss_D_B, filename='losses.txt'):
     """
     Saves the generator and discriminator losses to a text file.
 
+    Saves a text file containing the losses for the generator and discriminators
+    (A and B) over the training epochs.
+
     Args:
     - loss_G (list): List of generator losses over the training epochs.
     - loss_D_A (list): List of discriminator A losses over the training epochs.
     - loss_D_B (list): List of discriminator B losses over the training epochs.
     - filename (str): The file path where the losses will be saved. Defaults to 'losses.txt'.
-
-    Saves:
-    - A text file containing the losses for the generator and discriminators (A and B) over the training epochs.
     """
-    np.savetxt(filename, np.column_stack((loss_G, loss_D_A, loss_D_B)), header='Generator total loss, Discriminator A loss, Discriminator B loss')
+    np.savetxt(
+        filename,
+        np.column_stack((loss_G, loss_D_A, loss_D_B)),
+        header='Generator total loss, Discriminator A loss, Discriminator B loss')
 
 def train_one_epoch(epoch, model, train_A, train_B, device):
     """
@@ -262,7 +272,8 @@ def train_one_epoch(epoch, model, train_A, train_B, device):
     - model (CycleGAN): The CycleGAN model instance.
     - train_A (DataLoader): DataLoader for domain A training images.
     - train_B (DataLoader): DataLoader for domain B training images.
-    - device (torch.device): The device on which the model and data are loaded (e.g., 'cuda' or 'cpu').
+    - device (torch.device): The device on which the model and data are
+    loaded (e.g., 'cuda' or 'cpu').
 
     Returns:
     - loss_G (float): The total loss of the generator for this epoch.
@@ -270,8 +281,10 @@ def train_one_epoch(epoch, model, train_A, train_B, device):
     - loss_D_B (float): The total loss of discriminator B for this epoch.
 
     During training:
-    - It iterates through the batches of both domains (A and B) and performs optimization on the generators and discriminators.
-    - Progress is tracked with a `tqdm` progress bar that shows current generator and discriminator losses.
+    - It iterates through the batches of both domains (A and B) and performs
+    optimization on the generators and discriminators.
+    - Progress is tracked with a `tqdm` progress bar that shows current generator
+    and discriminator losses.
     """
 
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}', leave=False)
@@ -304,8 +317,16 @@ def plot_losses(train_losses, val_losses):
     - A line plot showing the progression of training and validation losses.
     - Training and validation losses are plotted against the number of epochs.
     """
-    plt.plot(range(1, len(train_losses) + 1), train_losses, label='Training Loss', linewidth=2, alpha=0.7)
-    plt.plot(range(1, len(val_losses) + 1), val_losses, label='Validation Loss', linewidth=2, alpha=0.7)
+    plt.plot(
+        range(1, len(train_losses) + 1),
+        train_losses,
+        label='Training Loss',
+        linewidth=2, alpha=0.7)
+    plt.plot(
+        range(1, len(val_losses) + 1),
+        val_losses,
+        label='Validation Loss',
+        linewidth=2, alpha=0.7)
     plt.title('CycleGAN Training Losses')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
