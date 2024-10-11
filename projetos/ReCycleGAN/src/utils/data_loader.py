@@ -37,7 +37,8 @@ def get_img_dataloader(csv_file, img_dir=None, transformation=None, file_name_co
         Path to the CSV file containing image names.
     img_dir: str, optional
         Path to the images folder. If None, uses the folder
-        with the same name as the CSV file.
+        with the same name as the CSV file, deleting
+        '_train' and '_test'.
         (Default: None)
     transformation: torchvision.transforms
         Image transformation.
@@ -53,7 +54,7 @@ def get_img_dataloader(csv_file, img_dir=None, transformation=None, file_name_co
         (Default: True)
     """
     if img_dir is None:
-        img_dir = Path(csv_file).parent / Path(csv_file).stem
+        img_dir = Path(csv_file).parent / Path(csv_file).stem.replace('_train', '').replace('_test', '')
     if not Path(img_dir).exists():
         msg = f"Folder {img_dir} not found."
         raise FileNotFoundError(msg)
