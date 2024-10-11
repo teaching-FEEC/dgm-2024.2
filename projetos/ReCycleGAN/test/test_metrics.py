@@ -23,27 +23,15 @@ class TestFID(unittest.TestCase):
         self.run_fid = True
 
         folder = Path(__file__).resolve().parent.parent / 'data' / 'external' / 'nexet'
-        self.train_A_csv = folder / 'input_A_train.csv'
-        self.test_A_csv = folder / 'input_A_test.csv'
-        self.train_B_csv = folder / 'input_B_train.csv'
-        self.test_B_csv = folder / 'input_B_test.csv'
+        train_A_csv = folder / 'input_A_train.csv'
+        test_A_csv = folder / 'input_A_test.csv'
+        train_B_csv = folder / 'input_B_train.csv'
+        test_B_csv = folder / 'input_B_test.csv'
 
-        train_A = get_img_dataloader(
-            csv_file=self.train_A_csv,
-            img_dir=Path(self.train_A_csv).parent / Path(self.train_A_csv).stem.replace('_train', ''),
-            batch_size=self.n)
-        test_A = get_img_dataloader(
-            csv_file=self.test_A_csv,
-            img_dir=Path(self.test_A_csv).parent / Path(self.test_A_csv).stem.replace('_test', ''),
-            batch_size=self.n)
-        train_B = get_img_dataloader(
-            csv_file=self.train_B_csv,
-            img_dir=Path(self.train_B_csv).parent / Path(self.train_B_csv).stem.replace('_train', ''),
-            batch_size=self.n)
-        test_B = get_img_dataloader(
-            csv_file=self.test_B_csv,
-            img_dir=Path(self.test_B_csv).parent / Path(self.test_B_csv).stem.replace('_test', ''),
-            batch_size=self.n)
+        train_A = get_img_dataloader(csv_file=train_A_csv, batch_size=self.n)
+        test_A = get_img_dataloader(csv_file=test_A_csv, batch_size=self.n)
+        train_B = get_img_dataloader(csv_file=train_B_csv, batch_size=self.n)
+        test_B = get_img_dataloader(csv_file=test_B_csv, batch_size=self.n)
 
         self.train_A_imgs = next(iter(train_A))
         self.test_A_imgs = next(iter(test_A))
