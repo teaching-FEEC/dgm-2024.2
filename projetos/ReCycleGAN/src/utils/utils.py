@@ -290,8 +290,8 @@ def train_one_epoch(epoch, model, train_A, train_B, device):
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}', leave=False)
 
     for batch_A, batch_B in progress_bar:
-        real_A = batch_A[0].to(device)
-        real_B = batch_B[0].to(device)
+        real_A = batch_A.to(device)
+        real_B = batch_B.to(device)
 
         # Perform one optimization step
         loss_G, loss_D_A, loss_D_B = model.optimize(real_A, real_B)
@@ -335,7 +335,7 @@ def plot_losses(train_losses, val_losses):
 
 
 def get_gpu_memory_usage():
-    """Get the memory usage of all GPUs."""
+    """Get list of dict with memory usage of all GPUs."""
     pynvml.nvmlInit()
     device_count = pynvml.nvmlDeviceGetCount()
 
@@ -354,7 +354,19 @@ def get_gpu_memory_usage():
     return gpu_memory_info
 
 def print_gpu_memory_usage(msg=None, short_msg=False):
-    """Print the memory usage of all GPUs."""
+    """Print the memory usage of all GPUs.
+
+    Attibutes:
+    ------------
+    msg: str, optional
+        Message to print before the memory usage. If None
+        provided, the default message is "GPU Memory Usage".
+        (default=None)
+    short_msg: bool
+        If True, prints a single line message with the total
+        memory usage across all GPUs.
+        (default=False)
+    """
     gpu_memory_info = get_gpu_memory_usage()
     if short_msg:
         if msg is None:
@@ -375,3 +387,19 @@ def print_gpu_memory_usage(msg=None, short_msg=False):
         print(f"{ident}  Total Memory: {info['total_memory'] / (1024 ** 2):.2f} MB")
         print(f"{ident}  Used Memory: {info['used_memory'] / (1024 ** 2):.2f} MB")
         print(f"{ident}  Free Memory: {info['free_memory'] / (1024 ** 2):.2f} MB")
+
+
+def count_parameters(model: torch.nn.Module) -> int:
+    """
+    Count the number of parameters in a PyTorch model.
+
+    Attributes:
+    ------------
+    model: nn.Module
+        The PyTorch model.
+
+    Returns:
+    ------------
+        The total number of parameters: int
+    """
+    return sum(p.numel() for p in model.parameters())
