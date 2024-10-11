@@ -163,7 +163,7 @@ def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False):
         raise ValueError(msg)
     if len(img.shape) == 4:
         nrow = max(4, min(8, np.ceil(img.shape[0] / 2)))
-        grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False).cpu()
+        grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False)
         return show_img(grid, title=title, figsize=figsize, show=show)
 
     img = img.permute(1, 2, 0)
@@ -173,6 +173,8 @@ def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False):
     fig, axs = plt.subplots(1,1,figsize=figsize)
     if title is not None:
         axs.set_title(title)
+    if isinstance(img, torch.Tensor):
+        img = img.cpu().numpy()
     axs.imshow(img)
     axs.axis('off')
     plt.tight_layout()
