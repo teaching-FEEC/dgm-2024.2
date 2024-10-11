@@ -9,11 +9,11 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torchvision.utils import make_grid
-import torch
 import wandb
 import pynvml
 
 class Constants:
+    """Project constants"""
     DATASET_FILEPATH = "./data/external"
     WB_PROJECT = "cyclegan"
     WB_DB_UPLOAD_JOB = "dataset_upload"
