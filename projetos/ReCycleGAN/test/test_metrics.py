@@ -1,13 +1,9 @@
 """Test metrics module."""
 
-import gc
 import time
 import unittest
 import sys
 from pathlib import Path
-import pandas as pd
-import numpy as np
-from PIL import Image
 import torch
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
