@@ -53,6 +53,7 @@ class CycleGAN(BaseModel):
         self.optimizer_D_A = self.setup_optimizers(self.dis_A.parameters(), lr, beta1, beta2)
         self.optimizer_D_B = self.setup_optimizers(self.dis_B.parameters(), lr, beta1, beta2)
 
+        self.device = device
         self.cycle_loss_weight = cycle_loss_weight
         self.id_loss_weight = id_loss_weight
 
@@ -174,23 +175,21 @@ class CycleGAN(BaseModel):
 
         return loss_G.item(), loss_D_A.item(), loss_D_B.item()
 
-    def save_model(self, epoch, path='cycle_gan_model.pth'):
+    def save_model(self, path='cycle_gan_model.pth'):
         """
         Save the current model state.
 
         Args:
-        - epoch: Current epoch number.
-        - path: Path to save the model.
+        - path: Path to save the model. Default is 'cycle_gan_model.pth'.
         """
         torch.save({
-            'epoch': epoch,
-            'gen_AtoB_state_dict': self.gen_AtoB.state_dict(),
-            'gen_BtoA_state_dict': self.gen_BtoA.state_dict(),
-            'dis_A_state_dict': self.dis_A.state_dict(),
-            'dis_B_state_dict': self.dis_B.state_dict(),
-            'optimizer_G_state_dict': self.optimizer_G.state_dict(),
-            'optimizer_D_A_state_dict': self.optimizer_D_A.state_dict(),
-            'optimizer_D_B_state_dict': self.optimizer_D_B.state_dict(),
+            'gen_AtoB': self.gen_AtoB.state_dict(),
+            'gen_BtoA': self.gen_BtoA.state_dict(),
+            'dis_A': self.dis_A.state_dict(),
+            'dis_B': self.dis_B.state_dict(),
+            'optimizer_G': self.optimizer_G.state_dict(),
+            'optimizer_D_A': self.optimizer_D_A.state_dict(),
+            'optimizer_D_B': self.optimizer_D_B.state_dict(),
         }, path)
 
     def load_model(self, path):
@@ -200,11 +199,11 @@ class CycleGAN(BaseModel):
         Args:
         - path: Path to the saved model.
         """
-        checkpoint = torch.load(path)
-        self.gen_AtoB.load_state_dict(checkpoint['gen_AtoB_state_dict'])
-        self.gen_BtoA.load_state_dict(checkpoint['gen_BtoA_state_dict'])
-        self.dis_A.load_state_dict(checkpoint['dis_A_state_dict'])
-        self.dis_B.load_state_dict(checkpoint['dis_B_state_dict'])
-        self.optimizer_G.load_state_dict(checkpoint['optimizer_G_state_dict'])
-        self.optimizer_D_A.load_state_dict(checkpoint['optimizer_D_A_state_dict'])
-        self.optimizer_D_B.load_state_dict(checkpoint['optimizer_D_B_state_dict'])
+        checkpoint = torch.load(path, weights_only=True)
+        self.gen_AtoB.load_state_dict(checkpoint['gen_AtoB'])
+        self.gen_BtoA.load_state_dict(checkpoint['gen_BtoA'])
+        self.dis_A.load_state_dict(checkpoint['dis_A'])
+        self.dis_B.load_state_dict(checkpoint['dis_B'])
+        self.optimizer_G.load_state_dict(checkpoint['optimizer_G'])
+        self.optimizer_D_A.load_state_dict(checkpoint['optimizer_D_A'])
+        self.optimizer_D_B.load_state_dict(checkpoint['optimizer_D_B'])
