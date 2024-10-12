@@ -44,7 +44,7 @@ class TestCycleGAN(unittest.TestCase):
             # "img_size" : 256,
             "channels" : 3,
             # "sample_interval" : 100,
-            "checkpoint_interval" : 2,
+            "checkpoint_interval" : 10,
         }
 
         cls.use_cuda = cls.hyperparameters["device"] == torch.device("cuda")
@@ -161,7 +161,7 @@ class TestCycleGAN(unittest.TestCase):
                 train_A=self.train_A,
                 train_B=self.train_B,
                 device=self.hyperparameters["device"],
-                n_samples=5)
+                n_samples=None)
 
             avg_loss_G   = loss_G / len(self.train_A)
             avg_loss_D_A = loss_D_A / len(self.train_A)
@@ -226,7 +226,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     # suite.addTest(TestCycleGAN('test_shapes'))
     suite.addTest(TestCycleGAN('test_few_epochs'))
-    # suite.addTest(TestCycleGAN('test_reading_model'))
+    suite.addTest(TestCycleGAN('test_reading_model'))
 
     # Run the test suite
     runner = unittest.TextTestRunner()
