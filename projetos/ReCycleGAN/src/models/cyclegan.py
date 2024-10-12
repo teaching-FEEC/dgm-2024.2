@@ -112,16 +112,15 @@ class CycleGAN(BaseModel):
         """
         fake_B = self.gen_AtoB(real_A)
         fake_A = self.gen_BtoA(real_B)
-        recovered_A = self.gen_BtoA(fake_B)
-        recovered_B = self.gen_AtoB(fake_A)
-        return fake_B, fake_A, recovered_A, recovered_B
+
+        return fake_B, fake_A
 
     def compute_loss(self, real_A, real_B): # pylint: disable=arguments-differ
         """
         Computes the total loss for generators and discriminators
         using CycleGANLoss for adversarial loss.
         """
-        fake_B, fake_A, recovered_A, recovered_B = self.forward(real_A, real_B)
+        fake_B, fake_A = self.forward(real_A, real_B)
 
         # Identity loss
         loss_identity_A = self.identity_loss(self.gen_BtoA(real_A), real_A)
@@ -132,13 +131,14 @@ class CycleGAN(BaseModel):
         loss_G_BtoA = self.adversarial_loss(self.dis_A(fake_A), target_is_real=True)
 
         # Cycle-consistency loss
-        loss_cycle_A = self.cycle_loss(recovered_A, real_A)
-        loss_cycle_B = self.cycle_loss(recovered_B, real_B)
+        loss_cycle_A = self.cycle_loss(self.gen_BtoA(fake_B), real_A)
+        loss_cycle_B = self.cycle_loss(self.gen_AtoB(fake_A), real_B)
 
         # Total generator loss
-        loss_G = loss_G_AtoB + loss_G_BtoA
-        loss_G += self.cycle_loss_weight * (loss_cycle_A + loss_cycle_B)
-        loss_G += self.id_loss_weight * (loss_identity_A + loss_identity_B)
+        loss_G_ad = loss_G_AtoB + loss_G_BtoA
+        loss_G_cycle = loss_cycle_A + loss_cycle_B
+        loss_G_id = loss_identity_A + loss_identity_B
+        loss_G = loss_G_ad + self.cycle_loss_weight * loss_G_cycle + self.id_loss_weight * loss_G_id
 
         # Discriminator A loss (real vs fake)
         loss_real_A = self.adversarial_loss(self.dis_A(real_A), target_is_real=True)
@@ -150,13 +150,13 @@ class CycleGAN(BaseModel):
         loss_fake_B = self.adversarial_loss(self.dis_B(fake_B.detach()), target_is_real=False)
         loss_D_B = (loss_real_B + loss_fake_B) * 0.5
 
-        return loss_G, loss_D_A, loss_D_B
+        return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id
 
     def optimize(self, real_A, real_B): # pylint: disable=arguments-differ
         """
         Perform one optimization step for the generators and discriminators.
         """
-        loss_G, loss_D_A, loss_D_B = self.compute_loss(real_A, real_B)
+        loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id = self.compute_loss(real_A, real_B)
 
         # Optimize Generators
         self.optimizer_G.zero_grad()
@@ -173,7 +173,7 @@ class CycleGAN(BaseModel):
         loss_D_B.backward()
         self.optimizer_D_B.step()
 
-        return loss_G.item(), loss_D_A.item(), loss_D_B.item()
+        return loss_G.item(), loss_D_A.item(), loss_D_B.item(), loss_G_ad.item(), loss_G_cycle.item(), loss_G_id.item()
 
     def save_model(self, path='cycle_gan_model.pth'):
         """

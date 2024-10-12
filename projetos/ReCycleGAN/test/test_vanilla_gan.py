@@ -22,7 +22,6 @@ class TestCycleGAN(unittest.TestCase):
 
         cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model'
         cls.out_folder.mkdir(parents=True, exist_ok=True)
-        # utils.remove_all_files(cls.out_folder)
 
         cls.hyperparameters = {
             "batch_size" : 16,
@@ -44,7 +43,7 @@ class TestCycleGAN(unittest.TestCase):
             # "img_size" : 256,
             "channels" : 3,
             # "sample_interval" : 100,
-            "checkpoint_interval" : 10,
+            "checkpoint_interval" : 2,
         }
 
         cls.use_cuda = cls.hyperparameters["device"] == torch.device("cuda")
@@ -129,22 +128,18 @@ class TestCycleGAN(unittest.TestCase):
             utils.print_gpu_memory_usage("Memory usage after loading images", short_msg=True)
 
         self.cycle_gan.eval()
-        fake_B, fake_A, recovered_A, recovered_B = self.cycle_gan.forward(real_A, real_B)
+        fake_B, fake_A = self.cycle_gan.forward(real_A, real_B)
 
         if self.print_memory:
             utils.print_gpu_memory_usage("Memory usage after model forward call", short_msg=True)
 
         self.assertEqual(real_A.shape, fake_B.shape, 'real_A.shape != fake_B.shape')
         self.assertEqual(real_B.shape, fake_A.shape, 'real_B.shape != fake_A.shape')
-        self.assertEqual(real_A.shape, recovered_A.shape, 'real_A.shape != recovered_A.shape')
-        self.assertEqual(real_B.shape, recovered_B.shape, 'real_B.shape != recovered_B.shape')
 
         real_A = None
         real_B = None
         fake_B = None
         fake_A = None
-        recovered_A = None
-        recovered_B = None
         torch.cuda.empty_cache()
 
 
@@ -152,10 +147,12 @@ class TestCycleGAN(unittest.TestCase):
         """Test running few epochs."""
         print("Testing running few epochs")
 
+        utils.remove_all_files(self.out_folder)
         train_losses_G, train_losses_D_A, train_losses_D_B = [], [], []
+        train_losses_G_ad, train_losses_G_cycle, train_losses_G_id = [], [], []
 
-        for epoch in range(self.hyperparameters["checkpoint_interval"]+1):
-            loss_G, loss_D_A, loss_D_B = utils.train_one_epoch(
+        for epoch in range(10):
+            loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id = utils.train_one_epoch(
                 epoch=epoch,
                 model=self.cycle_gan,
                 train_A=self.train_A,
@@ -163,31 +160,30 @@ class TestCycleGAN(unittest.TestCase):
                 device=self.hyperparameters["device"],
                 n_samples=None)
 
-            avg_loss_G   = loss_G / len(self.train_A)
-            avg_loss_D_A = loss_D_A / len(self.train_A)
-            avg_loss_D_B = loss_D_B / len(self.train_B)
-
-            train_losses_G.append(avg_loss_G)
-            train_losses_D_A.append(avg_loss_D_A)
-            train_losses_D_B.append(avg_loss_D_B)
+            train_losses_G.append(loss_G)
+            train_losses_D_A.append(loss_D_A)
+            train_losses_D_B.append(loss_D_B)
+            train_losses_G_ad.append(loss_G_ad)
+            train_losses_G_cycle.append(loss_G_cycle)
+            train_losses_G_id.append(loss_G_id)
 
             # Save the average losses to a file
             utils.save_losses(
                 train_losses_G, train_losses_D_A, train_losses_D_B,
+                train_losses_G_ad, train_losses_G_cycle, train_losses_G_id,
                 filename=self.out_folder / 'train_losses.txt')
 
             if epoch % self.hyperparameters["checkpoint_interval"] == 0:
-                # self.cycle_gan.save_model(self.out_folder / f'cycle_gan_epoch_{epoch}.pth')
-                utils.save_model(
-                    self.cycle_gan,
-                    local_path=self.out_folder / f'cycle_gan_epoch_{epoch}.pth',
-                    wandb_log=self.run_wnadb)
+                self.cycle_gan.save_model(self.out_folder / f'cycle_gan_epoch_{epoch}.pth')
 
             if self.run_wnadb:
                 wandb.log({
-                    'G_loss/train': avg_loss_G,
-                    'D_A_loss/train': avg_loss_D_A,
-                    'D_B_loss/train': avg_loss_D_B,
+                    'G_loss/train': loss_G,
+                    'D_A_loss/train': loss_D_A,
+                    'D_B_loss/train': loss_D_B,
+                    'G_loss_ad/train': loss_G_ad,
+                    'G_loss_cycle/train': loss_G_cycle,
+                    'G_loss_id/train': loss_G_id,
                 })
 
     def test_reading_model(self):
@@ -206,17 +202,20 @@ class TestCycleGAN(unittest.TestCase):
             real_B = real_B[:n_images].cuda()
 
         self.cycle_gan.eval()
-        fake_B, fake_A, recovered_A, recovered_B = self.cycle_gan.forward(real_A, real_B)
+        fake_B, fake_A = self.cycle_gan.forward(real_A, real_B)
+
+        recovered_A, recovered_B = self.cycle_gan.forward(fake_B, fake_A)
+        id_B, id_A = self.cycle_gan.forward(real_B, real_A)
 
         utils.show_img(
-            torch.vstack([real_A, fake_B, recovered_A]),
-            title='A Images', figsize = (20, 12), change_scale=True, nrow=n_images)
+            torch.vstack([real_A, fake_B, recovered_A, id_A]),
+            title='A Images\nRows are: Real, Fake, Recovered, Identity', figsize = (20, 16), change_scale=True, nrow=n_images)
         test_file = self.out_folder / 'A_imgs.png'
         plt.savefig(test_file)
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
-        utils.show_img(torch.vstack([real_B, fake_A, recovered_B]),
-                       title='B Images', figsize = (20, 12), change_scale=True, nrow=n_images)
+        utils.show_img(torch.vstack([real_B, fake_A, recovered_B, id_B]),
+                       title='B Images\nRows are: Real, Fake, Recovered, Identity', figsize = (20, 16), change_scale=True, nrow=n_images)
         test_file = self.out_folder / 'B_imgs.png'
         plt.savefig(test_file)
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
@@ -224,7 +223,7 @@ class TestCycleGAN(unittest.TestCase):
 if __name__ == '__main__':
     # Create a test suite with the desired order
     suite = unittest.TestSuite()
-    # suite.addTest(TestCycleGAN('test_shapes'))
+    suite.addTest(TestCycleGAN('test_shapes'))
     suite.addTest(TestCycleGAN('test_few_epochs'))
     suite.addTest(TestCycleGAN('test_reading_model'))
 

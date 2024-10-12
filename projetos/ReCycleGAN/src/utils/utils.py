@@ -251,7 +251,7 @@ def save_model(model, local_path='model.pth', wandb_log=True):
     if wandb_log:
         wandb.save(local_path)
 
-def save_losses(loss_G, loss_D_A, loss_D_B, filename='losses.txt'):
+def save_losses(loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, filename='losses.txt'):
     """
     Saves the generator and discriminator losses to a text file.
 
@@ -266,7 +266,7 @@ def save_losses(loss_G, loss_D_A, loss_D_B, filename='losses.txt'):
     """
     np.savetxt(
         filename,
-        np.column_stack((loss_G, loss_D_A, loss_D_B)),
+        np.column_stack((loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id)),
         header='Generator total loss, Discriminator A loss, Discriminator B loss')
 
 def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
@@ -295,12 +295,10 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
     and discriminator losses.
     """
 
-    # progress_bar = tqdm(train_loader, desc=f'Epoch {epoch:03d}', leave=False, disable=False)
-
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
-    loss_G, loss_D_A, loss_D_B = 0, 0, 0
+    loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id = 0, 0, 0, 0, 0, 0
     for batch_A, batch_B in progress_bar:
         progress_bar.set_description(f'Epoch {epoch:03d}')
 
@@ -312,10 +310,13 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
         real_B = batch_B.to(device)
 
         # Perform one optimization step
-        loss_G_, loss_D_A_, loss_D_B_ = model.optimize(real_A, real_B)
+        loss_G_, loss_D_A_, loss_D_B_, loss_G_ad_, loss_G_cycle_, loss_G_id_ = model.optimize(real_A, real_B)
         loss_G += loss_G_
         loss_D_A += loss_D_A_
         loss_D_B += loss_D_B_
+        loss_G_ad += loss_G_ad_
+        loss_G_cycle += loss_G_cycle_
+        loss_G_id += loss_G_id_
 
         progress_bar.set_postfix({
             'G_loss': f'{loss_G_:.4f}',
@@ -324,12 +325,18 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
         })
     progress_bar.close()
 
-    loss_G /= len(train_A)
+    loss_G /= (len(train_A) + len(train_B)) / 2
     loss_D_A /= len(train_A)
     loss_D_B /= len(train_B)
+    loss_G_ad /= (len(train_A) + len(train_B)) / 2
+    loss_G_cycle /= (len(train_A) + len(train_B)) / 2
+    loss_G_id /= (len(train_A) + len(train_B)) / 2
 
-    print(f'Epoch {epoch:03d}: G_loss={loss_G:.4f}, D_A_loss={loss_D_A:.4f}, D_B_loss={loss_D_B:.4f}')
-    return loss_G, loss_D_A, loss_D_B
+    msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4f}, '
+    msg += f'D_A_loss={loss_D_A:.4f}, D_B_loss={loss_D_B:.4f}, '
+    msg += f'G_ad={loss_G_ad:.4f}, G_cycle={loss_G_cycle:.4f}, G_id={loss_G_id:.4f}'
+    print(msg)
+    return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id
 
 # Plot losses
 def plot_losses(train_losses, val_losses):
