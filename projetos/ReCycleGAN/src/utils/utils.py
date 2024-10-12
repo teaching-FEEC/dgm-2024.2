@@ -300,6 +300,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
+    loss_G, loss_D_A, loss_D_B = 0, 0, 0
     for batch_A, batch_B in progress_bar:
         progress_bar.set_description(f'Epoch {epoch:03d}')
 
@@ -311,15 +312,23 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
         real_B = batch_B.to(device)
 
         # Perform one optimization step
-        loss_G, loss_D_A, loss_D_B = model.optimize(real_A, real_B)
+        loss_G_, loss_D_A_, loss_D_B_ = model.optimize(real_A, real_B)
+        loss_G += loss_G_
+        loss_D_A += loss_D_A_
+        loss_D_B += loss_D_B_
 
         progress_bar.set_postfix({
-            'G_loss': f'{loss_G:.4f}',
-            'D_A_loss': f'{loss_D_A:.4f}',
-            'D_B_loss': f'{loss_D_B:.4f}'
+            'G_loss': f'{loss_G_:.4f}',
+            'D_A_loss': f'{loss_D_A_:.4f}',
+            'D_B_loss': f'{loss_D_B_:.4f}'
         })
     progress_bar.close()
 
+    loss_G /= len(train_A)
+    loss_D_A /= len(train_A)
+    loss_D_B /= len(train_B)
+
+    print(f'Epoch {epoch:03d}: G_loss={loss_G:.4f}, D_A_loss={loss_D_A:.4f}, D_B_loss={loss_D_B:.4f}')
     return loss_G, loss_D_A, loss_D_B
 
 # Plot losses
