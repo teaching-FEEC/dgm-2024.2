@@ -16,6 +16,10 @@ class ImageDataset(Dataset):
     def __len__(self):
         return len(self.image_paths)
 
+    def set_len(self, new_len):
+        """Set the length of the dataset."""
+        self.image_paths = self.image_paths[:new_len]
+
     def __getitem__(self, idx):
         img_path = self.img_dir / self.image_paths[idx]
         image = Image.open(img_path).convert('RGB')

@@ -25,7 +25,7 @@ class TestCycleGAN(unittest.TestCase):
         # utils.remove_all_files(cls.out_folder)
 
         cls.hyperparameters = {
-            "batch_size" : 32,
+            "batch_size" : 16,
             "n_features" : 32, #64
             "n_residual_blocks": 2, #9
             "n_downsampling": 2, #2
@@ -90,6 +90,16 @@ class TestCycleGAN(unittest.TestCase):
         cls.train_B = get_img_dataloader(csv_file=train_B_csv, batch_size=batch_size, transformation=transformation)
         cls.test_B = get_img_dataloader(csv_file=test_B_csv, batch_size=batch_size, transformation=transformation)
 
+        n_train = min(len(cls.train_A.dataset), len(cls.train_B.dataset))
+        cls.train_A.dataset.set_len(n_train)
+        cls.train_B.dataset.set_len(n_train)
+        print(f"Number of training samples: {n_train}")
+
+        n_test = min(len(cls.test_A.dataset), len(cls.test_B.dataset))
+        cls.test_A.dataset.set_len(n_test)
+        cls.test_B.dataset.set_len(n_test)
+        print(f"Number of test samples: {n_test}")
+
         if cls.run_wnadb:
             # from wandb_utils import init_wandb, log_hyperparameters
             # init_wandb()
@@ -150,7 +160,8 @@ class TestCycleGAN(unittest.TestCase):
                 model=self.cycle_gan,
                 train_A=self.train_A,
                 train_B=self.train_B,
-                device=self.hyperparameters["device"])
+                device=self.hyperparameters["device"],
+                n_samples=5)
 
             avg_loss_G   = loss_G / len(self.train_A)
             avg_loss_D_A = loss_D_A / len(self.train_A)
@@ -161,7 +172,9 @@ class TestCycleGAN(unittest.TestCase):
             train_losses_D_B.append(avg_loss_D_B)
 
             # Save the average losses to a file
-            utils.save_losses(train_losses_G, train_losses_D_A, train_losses_D_B, filename=self.out_folder / 'train_losses.txt')
+            utils.save_losses(
+                train_losses_G, train_losses_D_A, train_losses_D_B,
+                filename=self.out_folder / 'train_losses.txt')
 
             if epoch % self.hyperparameters["checkpoint_interval"] == 0:
                 # self.cycle_gan.save_model(self.out_folder / f'cycle_gan_epoch_{epoch}.pth')
@@ -212,8 +225,8 @@ if __name__ == '__main__':
     # Create a test suite with the desired order
     suite = unittest.TestSuite()
     # suite.addTest(TestCycleGAN('test_shapes'))
-    # suite.addTest(TestCycleGAN('test_few_epochs'))
-    suite.addTest(TestCycleGAN('test_reading_model'))
+    suite.addTest(TestCycleGAN('test_few_epochs'))
+    # suite.addTest(TestCycleGAN('test_reading_model'))
 
     # Run the test suite
     runner = unittest.TextTestRunner()
