@@ -1,9 +1,20 @@
 # pylint: disable=invalid-name
 """Module with CycleGAN class."""
+from dataclasses import dataclass
 import torch
 from torch import nn
 from .basemodel import BaseModel
 from .networks import Generator, Discriminator, CycleGANLoss
+
+@dataclass
+class Loss:
+    """Dataclass for CycleGAN losses."""
+    loss_G: torch.Tensor
+    loss_D_A: torch.Tensor
+    loss_D_B: torch.Tensor
+    loss_G_ad: torch.Tensor
+    loss_G_cycle: torch.Tensor
+    loss_G_id: torch.Tensor
 
 class CycleGAN(BaseModel):
     """
@@ -150,30 +161,38 @@ class CycleGAN(BaseModel):
         loss_fake_B = self.adversarial_loss(self.dis_B(fake_B.detach()), target_is_real=False)
         loss_D_B = (loss_real_B + loss_fake_B) * 0.5
 
-        return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id
+        return Loss(
+            loss_G=loss_G,
+            loss_D_A=loss_D_A,
+            loss_D_B=loss_D_B,
+            loss_G_ad=loss_G_ad.detach(),
+            loss_G_cycle=loss_G_cycle.detach(),
+            loss_G_id=loss_G_id.detach()
+        )
 
     def optimize(self, real_A, real_B): # pylint: disable=arguments-differ
         """
         Perform one optimization step for the generators and discriminators.
         """
-        loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id = self.compute_loss(real_A, real_B)
+        self.train()
+        loss = self.compute_loss(real_A, real_B)
 
         # Optimize Generators
         self.optimizer_G.zero_grad()
-        loss_G.backward()
+        loss.loss_G.backward()
         self.optimizer_G.step()
 
         # Optimize Discriminator A
         self.optimizer_D_A.zero_grad()
-        loss_D_A.backward()
+        loss.loss_D_A.backward()
         self.optimizer_D_A.step()
 
         # Optimize Discriminator B
         self.optimizer_D_B.zero_grad()
-        loss_D_B.backward()
+        loss.loss_D_B.backward()
         self.optimizer_D_B.step()
 
-        return loss_G.item(), loss_D_A.item(), loss_D_B.item(), loss_G_ad.item(), loss_G_cycle.item(), loss_G_id.item()
+        return loss
 
     def save_model(self, path='cycle_gan_model.pth'):
         """
@@ -207,3 +226,21 @@ class CycleGAN(BaseModel):
         self.optimizer_G.load_state_dict(checkpoint['optimizer_G'])
         self.optimizer_D_A.load_state_dict(checkpoint['optimizer_D_A'])
         self.optimizer_D_B.load_state_dict(checkpoint['optimizer_D_B'])
+
+    def generate_samples(self, real_A, real_B, n_images=4):
+        """
+        Generate samples for with real, fake, reconstructed and identity images.
+        """
+        real_A = real_A[:n_images]
+        real_B = real_B[:n_images]
+
+        fake_B, fake_A = self.forward(real_A, real_B)
+
+        self.eval()
+        recovered_B, recovered_A = self.forward(fake_A, fake_B)
+        id_B, id_A = self.forward(real_B, real_A) # pylint: disable=arguments-out-of-order
+
+        imgs_A = torch.vstack([real_A, fake_B, recovered_A, id_A])
+        imgs_B = torch.vstack([real_B, fake_A, recovered_B, id_B])
+
+        return imgs_A, imgs_B

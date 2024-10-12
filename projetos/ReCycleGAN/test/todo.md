@@ -14,7 +14,8 @@
     * Keep track of GPU memory with Tensorboard.
 
 * Networks
-    * Add LoRA + skip connection options.
+    * Add LoRA (https://pypi.org/project/lora-pytorch/)
+    * Add skip connection options.
 
 * Data-base
     * Remove bad examples:
