@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """Assorted functions."""
 
 from pathlib import Path
@@ -9,11 +10,11 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torchvision.utils import make_grid
-import torch
 import wandb
 import pynvml
 
 class Constants:
+    """Project constants"""
     DATASET_FILEPATH = "./data/external"
     WB_PROJECT = "cyclegan"
     WB_DB_UPLOAD_JOB = "dataset_upload"
@@ -137,14 +138,39 @@ def resize_and_crop(image_path, output_path, target_size, size_filter=None):
         return True
     return False
 
-def show_img(img, title=None, figsize=(4, 3), show=False):
-    """Show an image using matplotlib."""
+def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False, nrow=None):
+    """Show an image using matplotlib.
+
+    Attributes:
+    ------------
+    img: torch.Tensor or np.ndarray
+        Image tensor or array.
+    title: str
+        Title of the image.
+    figsize: tuple
+        Figure size (width, height).
+        (Default: (4, 3))
+    show: bool
+        Whether to display the image.
+        (Default: False)
+    change_scale: bool
+        Whether to change the scale of the image
+        from [-1, 1] to [0, 1].
+    nrow: int
+        Number of images per row to display if the image is a tensor.
+        If None, the number of rows is calculated based on the
+        number of images in the tensor.
+        (Default: None)
+    """
+    if change_scale:
+        img = (img + 1) / 2
     if len(img.shape) > 4:
         msg = 'Image tensor has more than 4 dimensions.'
         raise ValueError(msg)
     if len(img.shape) == 4:
-        nrow = max(4, min(8, np.ceil(img.shape[0] / 2)))
-        grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False).cpu()
+        if nrow is None:
+            nrow = int(max(4, min(8, np.ceil(img.shape[0] / 2))))
+        grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False)
         return show_img(grid, title=title, figsize=figsize, show=show)
 
     img = img.permute(1, 2, 0)
@@ -154,6 +180,8 @@ def show_img(img, title=None, figsize=(4, 3), show=False):
     fig, axs = plt.subplots(1,1,figsize=figsize)
     if title is not None:
         axs.set_title(title)
+    if isinstance(img, torch.Tensor):
+        img = img.cpu().numpy()
     axs.imshow(img)
     axs.axis('off')
     plt.tight_layout()
@@ -201,14 +229,20 @@ def save_model(model, local_path='model.pth', wandb_log=True):
     """
     Saves the model state to a local file and optionally logs it to Weights & Biases (WandB).
 
-    Args:
-    - model (torch.nn.Module): The model instance to save.
-    - local_path (str): The file path where the model will be saved locally. Defaults to 'model.pth'.
-    - wandb_log (bool): Whether to log the model to WandB for version control and experiment tracking. Defaults to True.
-    
-    Saves:
-    - A checkpoint of the model's state dictionary to the specified local file.
-    - If `wandb_log` is True, the model will also be saved to WandB for remote logging.
+    Saves a checkpoint of the model's state dictionary to the specified local file.
+    If `wandb_log` is True, the model will also be saved to WandB for remote logging.
+
+    Parameters:
+    ------------
+    model: torch.nn.Module
+        Model instance to save.
+    local_path: str
+        File path where the model will be saved locally.
+        (default: 'model.pth')
+    wandb_log: bool
+        Whether to log the model to WandB for version control
+        and experiment tracking.
+        (default: True)
     """
     # Save locally
     torch.save(model.state_dict(), local_path)
@@ -221,18 +255,21 @@ def save_losses(loss_G, loss_D_A, loss_D_B, filename='losses.txt'):
     """
     Saves the generator and discriminator losses to a text file.
 
+    Saves a text file containing the losses for the generator and discriminators
+    (A and B) over the training epochs.
+
     Args:
     - loss_G (list): List of generator losses over the training epochs.
     - loss_D_A (list): List of discriminator A losses over the training epochs.
     - loss_D_B (list): List of discriminator B losses over the training epochs.
     - filename (str): The file path where the losses will be saved. Defaults to 'losses.txt'.
-    
-    Saves:
-    - A text file containing the losses for the generator and discriminators (A and B) over the training epochs.
     """
-    np.savetxt(filename, np.column_stack((loss_G, loss_D_A, loss_D_B)), header='Generator total loss, Discriminator A loss, Discriminator B loss')
+    np.savetxt(
+        filename,
+        np.column_stack((loss_G, loss_D_A, loss_D_B)),
+        header='Generator total loss, Discriminator A loss, Discriminator B loss')
 
-def train_one_epoch(epoch, model, train_A, train_B, device):
+def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
     """
     Trains the CycleGAN model for a single epoch and returns the generator and discriminator losses.
 
@@ -241,7 +278,10 @@ def train_one_epoch(epoch, model, train_A, train_B, device):
     - model (CycleGAN): The CycleGAN model instance.
     - train_A (DataLoader): DataLoader for domain A training images.
     - train_B (DataLoader): DataLoader for domain B training images.
-    - device (torch.device): The device on which the model and data are loaded (e.g., 'cuda' or 'cpu').
+    - device (torch.device): The device on which the model and data are
+    loaded (e.g., 'cuda' or 'cpu').
+    - n_samples (int): Number of samples to train on per batch.
+    If None, train on all samples. Default is None.
 
     Returns:
     - loss_G (float): The total loss of the generator for this epoch.
@@ -249,25 +289,46 @@ def train_one_epoch(epoch, model, train_A, train_B, device):
     - loss_D_B (float): The total loss of discriminator B for this epoch.
 
     During training:
-    - It iterates through the batches of both domains (A and B) and performs optimization on the generators and discriminators.
-    - Progress is tracked with a `tqdm` progress bar that shows current generator and discriminator losses.
+    - It iterates through the batches of both domains (A and B) and performs
+    optimization on the generators and discriminators.
+    - Progress is tracked with a `tqdm` progress bar that shows current generator
+    and discriminator losses.
     """
 
-    progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}', leave=False)
+    # progress_bar = tqdm(train_loader, desc=f'Epoch {epoch:03d}', leave=False, disable=False)
 
+    progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
+                        leave=False, disable=False)
+
+    loss_G, loss_D_A, loss_D_B = 0, 0, 0
     for batch_A, batch_B in progress_bar:
-        real_A = batch_A[0].to(device)
-        real_B = batch_B[0].to(device)
+        progress_bar.set_description(f'Epoch {epoch:03d}')
+
+        if n_samples is not None:
+            batch_A = batch_A[:n_samples]
+            batch_B = batch_B[:n_samples]
+
+        real_A = batch_A.to(device)
+        real_B = batch_B.to(device)
 
         # Perform one optimization step
-        loss_G, loss_D_A, loss_D_B = model.optimize(real_A, real_B)
+        loss_G_, loss_D_A_, loss_D_B_ = model.optimize(real_A, real_B)
+        loss_G += loss_G_
+        loss_D_A += loss_D_A_
+        loss_D_B += loss_D_B_
 
         progress_bar.set_postfix({
-            'G_loss': f'{loss_G:.4f}',
-            'D_A_loss': f'{loss_D_A:.4f}',
-            'D_B_loss': f'{loss_D_B:.4f}'
+            'G_loss': f'{loss_G_:.4f}',
+            'D_A_loss': f'{loss_D_A_:.4f}',
+            'D_B_loss': f'{loss_D_B_:.4f}'
         })
-    
+    progress_bar.close()
+
+    loss_G /= len(train_A)
+    loss_D_A /= len(train_A)
+    loss_D_B /= len(train_B)
+
+    print(f'Epoch {epoch:03d}: G_loss={loss_G:.4f}, D_A_loss={loss_D_A:.4f}, D_B_loss={loss_D_B:.4f}')
     return loss_G, loss_D_A, loss_D_B
 
 # Plot losses
@@ -278,13 +339,21 @@ def plot_losses(train_losses, val_losses):
     Args:
     - train_losses (list): List of training losses (e.g., generator losses) over the epochs.
     - val_losses (list): List of validation losses over the epochs.
-    
+
     Displays:
     - A line plot showing the progression of training and validation losses.
     - Training and validation losses are plotted against the number of epochs.
     """
-    plt.plot(range(1, len(train_losses) + 1), train_losses, label='Training Loss', linewidth=2, alpha=0.7)
-    plt.plot(range(1, len(val_losses) + 1), val_losses, label='Validation Loss', linewidth=2, alpha=0.7)
+    plt.plot(
+        range(1, len(train_losses) + 1),
+        train_losses,
+        label='Training Loss',
+        linewidth=2, alpha=0.7)
+    plt.plot(
+        range(1, len(val_losses) + 1),
+        val_losses,
+        label='Validation Loss',
+        linewidth=2, alpha=0.7)
     plt.title('CycleGAN Training Losses')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
@@ -293,7 +362,7 @@ def plot_losses(train_losses, val_losses):
 
 
 def get_gpu_memory_usage():
-    """Get the memory usage of all GPUs."""
+    """Get list of dict with memory usage of all GPUs."""
     pynvml.nvmlInit()
     device_count = pynvml.nvmlDeviceGetCount()
 
@@ -312,7 +381,19 @@ def get_gpu_memory_usage():
     return gpu_memory_info
 
 def print_gpu_memory_usage(msg=None, short_msg=False):
-    """Print the memory usage of all GPUs."""
+    """Print the memory usage of all GPUs.
+
+    Attibutes:
+    ------------
+    msg: str, optional
+        Message to print before the memory usage. If None
+        provided, the default message is "GPU Memory Usage".
+        (default=None)
+    short_msg: bool
+        If True, prints a single line message with the total
+        memory usage across all GPUs.
+        (default=False)
+    """
     gpu_memory_info = get_gpu_memory_usage()
     if short_msg:
         if msg is None:
@@ -333,3 +414,19 @@ def print_gpu_memory_usage(msg=None, short_msg=False):
         print(f"{ident}  Total Memory: {info['total_memory'] / (1024 ** 2):.2f} MB")
         print(f"{ident}  Used Memory: {info['used_memory'] / (1024 ** 2):.2f} MB")
         print(f"{ident}  Free Memory: {info['free_memory'] / (1024 ** 2):.2f} MB")
+
+
+def count_parameters(model: torch.nn.Module) -> int:
+    """
+    Count the number of parameters in a PyTorch model.
+
+    Attributes:
+    ------------
+    model: nn.Module
+        The PyTorch model.
+
+    Returns:
+    ------------
+        The total number of parameters: int
+    """
+    return sum(p.numel() for p in model.parameters())
