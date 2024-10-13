@@ -195,7 +195,7 @@ def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False, nr
     if labels is None:
         axs.axis('off')
     else:
-        # axs.xaxis.set_visible(False)
+        axs.xaxis.set_visible(False)
         num_labels = len(labels) * 2 + 1
         y_ticks = np.linspace(0, img.shape[0] - 1, num_labels)
         y_lab = [labels[i//2] if i % 2 == 1 else '' for i in range(num_labels)]
