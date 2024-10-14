@@ -138,7 +138,7 @@ def resize_and_crop(image_path, output_path, target_size, size_filter=None):
         return True
     return False
 
-def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False, nrow=None):
+def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False, nrow=None, labels=None):
     """Show an image using matplotlib.
 
     Attributes:
@@ -161,7 +161,15 @@ def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False, nr
         If None, the number of rows is calculated based on the
         number of images in the tensor.
         (Default: None)
+    labels: list of str
+        List of labels to display along the vertical axis.
+        If None, no labels are displayed.
+        (Default: None)
     """
+
+    width, height = figsize
+    f_size = int(min(width, height) * 1.5)
+
     if change_scale:
         img = (img + 1) / 2
     if len(img.shape) > 4:
@@ -171,7 +179,7 @@ def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False, nr
         if nrow is None:
             nrow = int(max(4, min(8, np.ceil(img.shape[0] / 2))))
         grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False)
-        return show_img(grid, title=title, figsize=figsize, show=show)
+        return show_img(grid, title=title, figsize=figsize, show=show, labels=labels)
 
     img = img.permute(1, 2, 0)
     if img.shape[2]==1:
@@ -179,11 +187,20 @@ def show_img(img, title=None, figsize=(4, 3), show=False, change_scale=False, nr
 
     fig, axs = plt.subplots(1,1,figsize=figsize)
     if title is not None:
-        axs.set_title(title)
+        axs.set_title(title, fontsize=f_size+2, fontweight='bold')
     if isinstance(img, torch.Tensor):
         img = img.cpu().numpy()
     axs.imshow(img)
-    axs.axis('off')
+
+    if labels is None:
+        axs.axis('off')
+    else:
+        axs.xaxis.set_visible(False)
+        num_labels = len(labels) * 2 + 1
+        y_ticks = np.linspace(0, img.shape[0] - 1, num_labels)
+        y_lab = [labels[i//2] if i % 2 == 1 else '' for i in range(num_labels)]
+        axs.set_yticks(ticks=y_ticks, labels=y_lab, rotation=90, fontsize=f_size)
+
     plt.tight_layout()
     if show:
         plt.show()
@@ -310,18 +327,18 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
         real_B = batch_B.to(device)
 
         # Perform one optimization step
-        loss_G_, loss_D_A_, loss_D_B_, loss_G_ad_, loss_G_cycle_, loss_G_id_ = model.optimize(real_A, real_B)
-        loss_G += loss_G_
-        loss_D_A += loss_D_A_
-        loss_D_B += loss_D_B_
-        loss_G_ad += loss_G_ad_
-        loss_G_cycle += loss_G_cycle_
-        loss_G_id += loss_G_id_
+        loss = model.optimize(real_A, real_B)
+        loss_G += loss.loss_G.item()
+        loss_D_A += loss.loss_D_A.item()
+        loss_D_B += loss.loss_D_B.item()
+        loss_G_ad += loss.loss_G_ad.item()
+        loss_G_cycle += loss.loss_G_cycle.item()
+        loss_G_id += loss.loss_G_id.item()
 
         progress_bar.set_postfix({
-            'G_loss': f'{loss_G_:.4f}',
-            'D_A_loss': f'{loss_D_A_:.4f}',
-            'D_B_loss': f'{loss_D_B_:.4f}'
+            'G_loss': f'{loss.loss_G.item():.4f}',
+            'D_A_loss': f'{loss.loss_D_A.item():.4f}',
+            'D_B_loss': f'{loss.loss_D_B.item():.4f}'
         })
     progress_bar.close()
 

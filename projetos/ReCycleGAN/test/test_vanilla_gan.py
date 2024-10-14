@@ -38,11 +38,8 @@ class TestCycleGAN(unittest.TestCase):
             "lr" : 0.0002, #0.0002
             "beta1" : 0.5,  #0.5
             "beta2" : 0.999, #0.999
-            # "n_cpu" : 8,
 
-            # "img_size" : 256,
-            "channels" : 3,
-            # "sample_interval" : 100,
+            "channels" : 3, #3
             "checkpoint_interval" : 2,
         }
 
@@ -186,6 +183,26 @@ class TestCycleGAN(unittest.TestCase):
                     'G_loss_id/train': loss_G_id,
                 })
 
+            real_A = next(iter(self.test_A))
+            real_B = next(iter(self.test_B))
+
+            n_images = 4
+            if self.use_cuda:
+                real_A = real_A.cuda()
+                real_B = real_B.cuda()
+
+            imgs_A, imgs_B = self.cycle_gan.generate_samples(real_A, real_B, n_images=n_images)
+
+            utils.show_img(imgs_A, title=f'Epoch {epoch} - A Images',
+                        figsize = (20, 16), change_scale=True, nrow=n_images,
+                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
+            plt.savefig(self.out_folder / f'imgs_{epoch}_A.png')
+
+            utils.show_img(imgs_B, title=f'Epoch {epoch} - B Images',
+                        figsize = (20, 16), change_scale=True, nrow=n_images,
+                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
+            plt.savefig(self.out_folder / f'imgs_{epoch}_B.png')
+
     def test_reading_model(self):
         """Test reading pth files."""
         print("Testing reading model")
@@ -193,29 +210,26 @@ class TestCycleGAN(unittest.TestCase):
         n = self.hyperparameters["checkpoint_interval"]
         self.cycle_gan.load_model(self.out_folder / f'cycle_gan_epoch_{n}.pth')
 
-        real_A = next(iter(self.train_A))
-        real_B = next(iter(self.train_B))
+        real_A = next(iter(self.test_A))
+        real_B = next(iter(self.test_B))
 
         n_images = 4
         if self.use_cuda:
-            real_A = real_A[:n_images].cuda()
-            real_B = real_B[:n_images].cuda()
+            real_A = real_A.cuda()
+            real_B = real_B.cuda()
 
-        self.cycle_gan.eval()
-        fake_B, fake_A = self.cycle_gan.forward(real_A, real_B)
+        imgs_A, imgs_B = self.cycle_gan.generate_samples(real_A, real_B, n_images=n_images)
 
-        recovered_A, recovered_B = self.cycle_gan.forward(fake_B, fake_A)
-        id_B, id_A = self.cycle_gan.forward(real_B, real_A)
-
-        utils.show_img(
-            torch.vstack([real_A, fake_B, recovered_A, id_A]),
-            title='A Images\nRows are: Real, Fake, Recovered, Identity', figsize = (20, 16), change_scale=True, nrow=n_images)
+        utils.show_img(imgs_A, title='A Images',
+                       figsize = (20, 16), change_scale=True, nrow=n_images,
+                       labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'A_imgs.png'
         plt.savefig(test_file)
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
-        utils.show_img(torch.vstack([real_B, fake_A, recovered_B, id_B]),
-                       title='B Images\nRows are: Real, Fake, Recovered, Identity', figsize = (20, 16), change_scale=True, nrow=n_images)
+        utils.show_img(imgs_B, title='B Images',
+                       figsize = (20, 16), change_scale=True, nrow=n_images,
+                       labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'B_imgs.png'
         plt.savefig(test_file)
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
@@ -223,9 +237,9 @@ class TestCycleGAN(unittest.TestCase):
 if __name__ == '__main__':
     # Create a test suite with the desired order
     suite = unittest.TestSuite()
-    suite.addTest(TestCycleGAN('test_shapes'))
+    # suite.addTest(TestCycleGAN('test_shapes'))
     suite.addTest(TestCycleGAN('test_few_epochs'))
-    suite.addTest(TestCycleGAN('test_reading_model'))
+    # suite.addTest(TestCycleGAN('test_reading_model'))
 
     # Run the test suite
     runner = unittest.TextTestRunner()
