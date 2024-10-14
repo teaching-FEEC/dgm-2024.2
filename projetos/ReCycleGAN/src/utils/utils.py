@@ -109,10 +109,28 @@ def resize_and_crop(image_path, output_path, target_size, size_filter=None):
         True if the image was resized, False otherwise.
     """
     with Image.open(image_path) as img:
+
         original_width, original_height = img.size
         if size_filter is not None:
             if (original_width, original_height) not in size_filter:
                 return False
+
+        gray_img = img.convert('L')
+        np_gray = np.array(gray_img)
+        mask = np_gray > 5
+        coords = np.argwhere(mask)
+        if coords.size > 0:
+            x0, y0 = coords.min(axis=0)
+            x1, y1 = coords.max(axis=0) + 1  # slices are exclusive at the top
+            bbox = (y0, x0, y1, x1)
+
+            # Crop the image to the bounding box
+            img = img.crop(bbox)
+            original_width, original_height = img.size
+        else:
+            return False
+
+
 
         target_width, target_height = target_size
 
