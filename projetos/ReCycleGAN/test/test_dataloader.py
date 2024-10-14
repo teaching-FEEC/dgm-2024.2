@@ -14,14 +14,14 @@ from utils.data_loader import get_img_dataloader  # pylint: disable=all
 from utils import show_img, image_folder_to_tensor, remove_all_files  # pylint: disable=all
 
 class TestImageDataLoader(unittest.TestCase):
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         # Load image paths from CSV files
         folder = Path(__file__).resolve().parent.parent / 'data' / 'external' / 'nexet'
-        self.train_A_csv = folder / 'input_A_train.csv'
-        self.test_A_csv = folder / 'input_A_test.csv'
-        self.train_B_csv = folder / 'input_B_train.csv'
-        self.test_B_csv = folder / 'input_B_test.csv'
+        self.train_A_csv = folder / 'input_A_train_filtered.csv'
+        self.test_A_csv = folder / 'input_A_test_filtered.csv'
+        self.train_B_csv = folder / 'input_B_train_filtered.csv'
+        self.test_B_csv = folder / 'input_B_test_filtered.csv'
 
         self.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/imgs'
         self.out_folder.mkdir(parents=True, exist_ok=True)
@@ -31,7 +31,7 @@ class TestImageDataLoader(unittest.TestCase):
         """Test loading images."""
         train_A = get_img_dataloader(
             csv_file=self.train_A_csv,
-            img_dir=Path(self.train_A_csv).parent / Path(self.train_A_csv).stem.replace('_train', ''),
+            img_dir=Path(self.train_A_csv).parent / Path(self.train_A_csv).stem.replace('_train_filtered', ''),
             transformation=None,
             file_name_col='file_name',
             batch_size=32,
@@ -79,11 +79,11 @@ class TestImageDataLoader(unittest.TestCase):
 
         turbo_A = get_img_dataloader(
             csv_file=self.test_B_csv,
-            img_dir=Path(self.test_B_csv).parent / Path(self.test_B_csv).stem.replace('_test', '_turbo').replace('in', 'out'))
+            img_dir=Path(self.test_B_csv).parent / Path(self.test_B_csv).stem.replace('_test_filtered', '_turbo').replace('in', 'out'))
         imgs_A = next(iter(turbo_A))
         turbo_B = get_img_dataloader(
             csv_file=self.test_A_csv,
-            img_dir=Path(self.test_A_csv).parent / Path(self.test_A_csv).stem.replace('_test', '_turbo').replace('in', 'out'))
+            img_dir=Path(self.test_A_csv).parent / Path(self.test_A_csv).stem.replace('_test_filtered', '_turbo').replace('in', 'out'))
         imgs_B = next(iter(turbo_B))
 
         show_img(torch.vstack([imgs_A[:4], imgs_B[:4]]), title='', figsize = (10, 6), show=False)

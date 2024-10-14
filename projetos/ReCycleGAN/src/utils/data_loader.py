@@ -58,7 +58,13 @@ def get_img_dataloader(csv_file, img_dir=None, transformation=None, file_name_co
         (Default: True)
     """
     if img_dir is None:
-        img_dir = Path(csv_file).parent / Path(csv_file).stem.replace('_train', '').replace('_test', '')
+        stem = Path(csv_file).stem
+        if '_test' in stem:
+            stem = stem.split('_test')[0]
+        elif '_train' in stem:
+            stem = stem.split('_train')[0]
+
+        img_dir = Path(csv_file).parent / stem
     if not Path(img_dir).exists():
         msg = f"Folder {img_dir} not found."
         raise FileNotFoundError(msg)
