@@ -73,10 +73,11 @@ class TimeGAN:
         self.discriminator = self.Discriminator(self.hidden_dim, self.num_layers).to(device)
 
         # Optimizers
-        self.e_optimizer = optim.Adam(list(self.embedder.parameters()) + list(self.recovery.parameters()))
+        self.e_optimizer = optim.Adam(self.embedder.parameters())
+        self.r_optimizer = optim.Adam(self.recovery.parameters())
         self.d_optimizer = optim.Adam(self.discriminator.parameters())
-        self.g_optimizer = optim.Adam(list(self.generator.parameters()) + list(self.supervisor.parameters()))
-        self.gs_optimizer = optim.Adam(list(self.generator.parameters()) + list(self.supervisor.parameters()))
+        self.g_optimizer = optim.Adam(self.generator.parameters())
+        self.s_optimizer = optim.Adam(self.supervisor.parameters())
 
     class Embedder(nn.Module):
         def __init__(self, input_dim, hidden_dim, num_layers):
@@ -182,15 +183,17 @@ class TimeGAN:
             T_mb = torch.tensor(T_mb, dtype=torch.long).to(device)
 
             self.e_optimizer.zero_grad()
+            self.r_optimizer.zero_grad()
             H = self.embedder(X_mb)
             X_tilde = self.recovery(H)
             e_loss_t0 = nn.MSELoss()(X_mb, X_tilde)
             e_loss_t0.backward()
             self.e_optimizer.step()
+            self.r_optimizer.step()
             
             print(f'Epoch {itt}/{self.iterations} -- E_loss: {e_loss_t0.item()}')
 
-        print('Start Training Discriminator')
+        print('Train with Supervised Loss')
         for itt in range(self.iterations):
             self.d_optimizer.zero_grad()
             X_mb, T_mb = batch_generator(ori_data, self.ori_time, self.batch_size)
@@ -199,53 +202,137 @@ class TimeGAN:
 
             
             H = self.embedder(X_mb)
-            X_tilde = self.recovery(H)
-            Z_mb = random_generator(self.batch_size, self.z_dim, T_mb, self.max_seq_len)
-            Z_mb = Z_mb.clone().detach().to(device)
-            #Z_mb = Z_mb.clone().detach().to(device)
+            h_hat_sup = self.supervisor(H)
+            
+            S_loss = nn.MSELoss()(H[:,1:,:], h_hat_sup[:,:-1,:])
 
+            self.s_optimizer.zero_grad()
+            S_loss.backward()
+            self.s_optimizer.step()
             
-            X_hat = self.generator(Z_mb)
-            H_hat = self.embedder(X_hat)
-            
-            y_real = self.discriminator(H)
-            y_fake = self.discriminator(H_hat)
-            
-            h_real = self.supervisor(H)
-            h_fake = self.supervisor(H_hat)
-            
-            d_loss, _, _ = self.loss(y_real, y_fake, h_real, h_fake, X_mb, X_tilde, X_hat, self.gamma)
-            d_loss.backward()
-            self.d_optimizer.step()
-            
-            print(f'Epoch {itt}/{self.iterations} -- D_loss: {d_loss.item()}')
+            print(f'Epoch {itt}/{self.iterations} -- S_loss: {d_loss.item()}')
 
         print('Start Training Generator and Supervisor')
-        for itt in range(self.iterations):
-            self.gs_optimizer.zero_grad()
+        for _ in range(2):
             X_mb, T_mb = batch_generator(ori_data, self.ori_time, self.batch_size)
             X_mb = torch.tensor(X_mb, dtype=torch.float).to(device)
             T_mb = torch.tensor(T_mb, dtype=torch.long).to(device)
 
-            H = self.embedder(X_mb)
-            X_tilde = self.recovery(H)
             Z_mb = random_generator(self.batch_size, self.z_dim, T_mb, self.max_seq_len)
             Z_mb = torch.tensor(Z_mb, dtype=torch.float).to(device)
             
-            X_hat = self.generator(Z_mb)
-            H_hat = self.embedder(X_hat)
+            e_hat = self.generator(Z_mb)
+            h_hat = self.supervisor(e_hat)
+            y_fake = self.discriminator(h_hat)
+            x_hat = self.recovery(h_hat)
+            h = self.embedder(X_mb)
+            h_hat_sup = self.supervisor(h)
+
+            G_loss_S = nn.MSELoss()(h[:,1:,:], h_hat_sup[:,:-1,:])
+            G_loss_U = nn.BCEWithLogitsLoss()(y_fake, torch.ones_like(y_fake))
+            G_loss_V1 = torch.mean(torch.abs((torch.std(x_hat, [0], unbiased = False)) + 1e-6 - (torch.std(X_mb, [0]) + 1e-6)))
+            G_loss_V2 = torch.mean(torch.abs((torch.mean(x_hat, [0]) - (torch.mean(X_mb, [0])))))
+            G_loss_V = G_loss_V1 + G_loss_V2
+            G_loss = 100 * torch.sqrt(G_loss_S) + G_loss_U + 100*G_loss_V
+
+            self.g_optimizer.zero_grad()
+            self.s_optimizer.zero_grad()
+            self.d_optimizer.zero_grad()
+            G_loss.backward()
+            self.g_optimizer.step()
+            self.s_optimizer.step()
+            self.d_optimizer.step()
             
-            y_real = self.discriminator(H)
-            y_fake = self.discriminator(H_hat)
-            
-            h_real = self.supervisor(H)
-            h_fake = self.supervisor(H_hat)
-            
-            g_loss, _, _ = self.loss(y_real, y_fake, h_real, h_fake, X_mb, X_tilde, X_hat, self.gamma)
-            g_loss.backward()
-            self.gs_optimizer.step()
-            
-            print(f'Epoch {itt}/{self.iterations} -- G_loss: {g_loss.item()}')
+            h = self.embedder(X_mb)
+            x_tilde = self.recovery(h)
+
+            E_loss_t0 = nn.MSELoss()(X_mb, x_tilde)
+
+            h_hat_sup = self.supervisor(h)
+
+            G_loss_S = nn.MSELoss()(h[:,1:,:], h_hat_sup[:,:-1,:])
+
+            self.e_optimizer.zero_grad()
+            self.r_optimizer.zero_grad()
+            self.s_optimizer.zero_grad()
+            G_loss_S.backward(retain_graph=True)
+            E_loss_t0.backward()
+            self.e_optimizer.step()
+            self.r_optimizer.step()
+            self.s_optimizer.step()
+
+        for itt in range(self.iterations):
+            X_mb, T_mb = batch_generator(ori_data, self.ori_time, self.batch_size)
+            X_mb = torch.tensor(X_mb, dtype=torch.float).to(device)
+            T_mb = torch.tensor(T_mb, dtype=torch.long).to(device)
+
+            Z_mb = random_generator(self.batch_size, self.z_dim, T_mb, self.max_seq_len)
+            Z_mb = torch.tensor(Z_mb, dtype=torch.float).to(device)
+
+            h = self.embedder(X_mb)
+            y_real = self.discriminator(h)
+            e_hat = self.generator(Z_mb)
+            y_fake_e = self.discriminator(e_hat)
+            h_hat = self.supervisor(e_hat)
+            y_fake = self.discriminator(h_hat)
+            x_hat = self.recovery(h_hat)
+
+            self.d_optimizer.zero_grad()
+            self.g_optimizer.zero_grad()
+            self.s_optimizer.zero_grad()
+            self.r_optimizer.zero_grad()
+            self.e_optimizer.zero_grad()
+
+            D_loss_real = nn.BCEWithLogitsLoss()
+            DLR = D_loss_real(y_real, torch.ones_like(y_real))
+
+            D_loss_fake = nn.BCEWithLogitsLoss()
+            DLF = D_loss_fake(y_fake, torch.zeros_like(y_fake))
+
+            D_loss_fake_e = nn.BCEWithLogitsLoss()
+            DLF_e = D_loss_fake_e(y_fake_e, torch.zeros_like(y_fake_e))
+
+            D_loss = DLR + DLF + DLF_e
+
+            # check discriminator loss before updating
+            check_d_loss = D_loss
+            # This is the magic number 0.15 we mentioned above. Set exactly like in the original implementation
+            if (check_d_loss > 0.15):
+              D_loss.backward(retain_graph=True)
+              self.d_optimizer.step()
+
+
+            Z_mb = random_generator(self.batch_size, self.z_dim, T_mb, self.max_seq_len)
+            Z_mb = torch.tensor(Z_mb, dtype=torch.float).to(device)
+
+            h = self.embedder(X_mb)
+            x_tilde = self.recovery(h)
+            e_hat = self.generator(Z_mb)
+            h_hat = self.supervisor(e_hat)
+            y_fake = self.discriminator(h_hat)
+            x_hat = self.recovery(h_hat)
+            h_hat_sup = self.supervisor(h)
+
+            G_loss_S = nn.MSELoss()(h[:,1:,:], h_hat_sup[:,:-1,:])
+            G_loss_U = nn.BCEWithLogitsLoss()(y_fake, torch.ones_like(y_fake))
+            G_loss_V1 = torch.mean(torch.abs((torch.std(x_hat, [0], unbiased = False)) + 1e-6 - (torch.std(X_mb, [0]) + 1e-6)))
+            G_loss_V2 = torch.mean(torch.abs((torch.mean(x_hat, [0]) - (torch.mean(X_mb, [0])))))
+            G_loss_V = G_loss_V1 + G_loss_V2
+            G_loss = 100 * torch.sqrt(G_loss_S) + G_loss_U + 100*G_loss_V
+
+            E_loss_t0 = nn.MSELoss()(X_mb, x_tilde)
+            E_loss0 = 10 * torch.sqrt(MSE_loss(X_mb, x_tilde))  
+            E_loss = E_loss0  + 0.1 * G_loss_S
+
+            G_loss.backward(retain_graph=True)
+            E_loss.backward()
+
+            self.g_optimizer.step()
+            self.s_optimizer.step()
+            self.e_optimizer.step()
+            self.r_optimizer.step()
+
+            print(f'Epoch {itt}/{self.iterations} -- G_loss: {g_loss.item()} -- D_loss: {D_loss.detach().item()}')
 
         return self
     
