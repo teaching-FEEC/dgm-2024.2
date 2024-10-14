@@ -111,28 +111,29 @@ def resize_and_crop(image_path, output_path, target_size, size_filter=None):
     with Image.open(image_path) as img:
 
         original_width, original_height = img.size
+        target_width, target_height = target_size
+
         if size_filter is not None:
             if (original_width, original_height) not in size_filter:
                 return False
 
         gray_img = img.convert('L')
         np_gray = np.array(gray_img)
-        mask = np_gray > 5
+        mask = np_gray > 10
         coords = np.argwhere(mask)
         if coords.size > 0:
             x0, y0 = coords.min(axis=0)
-            x1, y1 = coords.max(axis=0) + 1  # slices are exclusive at the top
-            bbox = (y0, x0, y1, x1)
+            x1, y1 = coords.max(axis=0) + 1
 
-            # Crop the image to the bounding box
+            if (x1-x0<target_width) or (y1-y0<target_height):
+                return False
+
+            bbox = (y0, x0, y1, x1)
             img = img.crop(bbox)
             original_width, original_height = img.size
         else:
             return False
 
-
-
-        target_width, target_height = target_size
 
         original_aspect = original_width / original_height
         target_aspect = target_width / target_height
