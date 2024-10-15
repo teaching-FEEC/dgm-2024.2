@@ -1,0 +1,1 @@
+Pasta destinada a modelos treinados e/ou modelos em treinamento
