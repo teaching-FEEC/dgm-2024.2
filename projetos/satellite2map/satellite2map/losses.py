@@ -8,9 +8,10 @@ class GeneratorLoss(nn.Module):
         self.bce=nn.BCEWithLogitsLoss()
         self.l1=nn.L1Loss()
         
-    def forward(self, fake, real, fake_pred):
+    def forward(self, fake, real, fake_pred, use_l1=True):
+        use_l1 = 1 if use_l1 else 0
         fake_target = torch.ones_like(fake_pred)
-        loss = self.bce(fake_pred, fake_target) + self.alpha* self.l1(fake, real)
+        loss = self.bce(fake_pred, fake_target) + self.alpha * self.l1(fake, real) * use_l1
         return loss
     
 class DiscriminatorLoss(nn.Module):
@@ -25,3 +26,11 @@ class DiscriminatorLoss(nn.Module):
         real_loss = self.loss_fn(real_pred, real_target)
         loss = (fake_loss + real_loss)/2
         return loss
+    
+class CycleConsistencyLoss(nn.Module):
+    def __init__(self,):
+        super().__init__()
+        self.cc_loss = nn.L1Loss()
+        
+    def forward(self, x, x_pred, y, y_pred):
+        return self.cc_loss(x, x_pred) + self.cc_loss(y, y_pred)
