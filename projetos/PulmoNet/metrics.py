@@ -43,44 +43,47 @@ def crop_center_tensor(tensor, cropx, cropy):
     starty = y//2 - cropy//2    
     return tensor[:, :, starty:starty+cropy, startx:startx+cropx]
 
+def crop_center_array(array, cropx, cropy):
+    y, x = array.shape
+    startx = x//2 - cropx//2
+    starty = y//2 - cropy//2    
+    return array[starty:starty+cropy, startx:startx+cropx]
+
 # Obtém as features do InceptionV3
-def get_features(feature_extractor, range_list, dataset_test, choose_transform=1):
-    features = []
-    for idx in range_list:
-        # Carrega imagens reais
-        input_tensor, lung = dataset_test.__getitem__(idx) # shape = 1, 512, 512
+def get_features(feature_extractor, input_tensor, choose_transform=1, device='cpu'):
+    
+      # Adiciona canal de dimensão já que está em escala cinza
+      if input_tensor.dim() == 3:
+          input_tensor = input_tensor.unsqueeze(0)  # Now shape is (1, 1, 512, 512)
 
-        # Adiciona canal de dimensão já que está em escala cinza
-        if input_tensor.dim() == 3:
-            input_tensor = input_tensor.unsqueeze(0)  # Now shape is (1, 1, 512, 512)
+      # Define o pré-processamento
+      if (choose_transform==1):
+          transform = transforms.Compose([
+              transforms.Resize((299, 299)),  # Resize to 299x299
+              transforms.Lambda(lambda x: x.repeat(1, 3, 1, 1)), # Repeat grayscale to 3 channels if necessary
+          ])
+      else:
+          transform = transforms.Compose([
+              transforms.Lambda(lambda x: x.repeat(1, 3, 1, 1)), # Repeat grayscale to 3 channels if necessary
+          ])
 
-        # Define o pré-processamento
-        if (choose_transform==1):
-            transform = transforms.Compose([
-                transforms.Resize((299, 299)),  # Resize to 299x299
-                transforms.Lambda(lambda x: x.repeat(1, 3, 1, 1)), # Repeat grayscale to 3 channels if necessary
-            ])
-        else:
-            transform = transforms.Compose([
-                transforms.Lambda(lambda x: x.repeat(1, 3, 1, 1)), # Repeat grayscale to 3 channels if necessary
-            ])
+      # Aplica a transformação
+      if (choose_transform==1):
+          input_batch = transform(input_tensor.float())  # shape = 1, 3, 299, 299
+      else:
+          cropped_tensor = crop_center_tensor(input_tensor.float(), 299, 299)
+          input_batch = transform(cropped_tensor.float())  # shape = 1, 3, 299, 299
 
-        # Aplica a transformação
-        if (choose_transform==1):
-            input_batch = transform(input_tensor.float())  # shape = 1, 3, 299, 299
-        else:
-            cropped_tensor = crop_center_tensor(input_tensor.float(), 299, 299)
-            input_batch = transform(cropped_tensor.float())  # shape = 1, 3, 299, 299
+      # move the input and model to GPU for speed if available
+      input_batch = input_batch.to(device)
+      feature_extractor.to(device)
 
-        # move the input and model to GPU for speed if available
-        if torch.cuda.is_available():
-            input_batch = input_batch.to('cuda')
-            feature_extractor.to('cuda')
+      # Obtem as features para os dados reais
+      features = feature_extractor(input_batch).detach().cpu().numpy() #torch.Size([1, 2048])
 
-        # Obtem as features para os dados reais
-        features.append(feature_extractor(input_batch).detach().numpy()) # torch.Size([1, 2048])
+      return features
 
-    return features
+
 
 # SSIM --------------------------------------------------------------------------------
 
@@ -128,7 +131,7 @@ def my_ssim(img1, img2, C1, C2, C3):
   l = luminance(img1, img2, C1)
   c = contrast(img1, img2, C2)
   s = structure_similarity(img1, img2, C3)
-  print(f"luminance: {l:.2f}")
-  print(f"contrast: {c:.2f}")
-  print(f"structure_similarity: {s:.2f}")
-  return l * c * s
+  #print(f"luminance: {l:.2f}")
+  #print(f"contrast: {c:.2f}")
+  #print(f"structure_similarity: {s:.2f}")
+  return l * c * s, l, c, s

@@ -4,9 +4,10 @@ import torch
 import gc
 from losses import get_gen_loss, get_disc_loss
 from utils import plt_save_example_synth_img
+import wandb
 
 def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt, gen_opt, 
-                    epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device):
+                    epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device, use_wandb):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
@@ -53,10 +54,14 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
                 desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
                       f'gen loss: {mean_loss_gen / (counter_batches_used_to_upd_gen)},'
                       f'disc loss: {mean_loss_disc / (counter_batches_used_to_upd_disc)}'))
+            
+    if use_wandb == True:
+        wandb.log({"gen_loss_train": mean_loss_gen/(counter_batches_used_to_upd_gen), 
+                    "disc_loss_train": mean_loss_disc/(counter_batches_used_to_upd_disc)})
     
     return (mean_loss_gen/(counter_batches_used_to_upd_gen)), (mean_loss_disc/(counter_batches_used_to_upd_disc))
 
-def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoch, device):
+def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoch, device, use_wandb):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
@@ -81,6 +86,10 @@ def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoc
                 desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
                       f'gen loss: {mean_loss_gen / (batch_idx + 1)},'
                       f'disc loss: {mean_loss_disc / (batch_idx + 1)}'))
+                
+    if use_wandb == True:
+        wandb.log({'gen_loss_val': mean_loss_gen/len(data_loader),
+                   'disc_loss_val': mean_loss_disc/len(data_loader)})
 
     return (mean_loss_gen/len(data_loader)), (mean_loss_disc / len(data_loader))
 
