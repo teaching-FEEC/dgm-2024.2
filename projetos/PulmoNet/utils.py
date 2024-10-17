@@ -56,6 +56,29 @@ def preprocessing_for_lung(raw_data_folder, processed_data_folder, threshold=100
                     np.savez_compressed(lung_filename, ct_lung)
 
 
+def preprocessing_all_data(raw_data_folder, processed_data_folder, threshold=100):
+    transform = MinMaxNormalize()
+    file_number = 0
+    for mode in ['train']:
+        os.makedirs(os.path.join(processed_data_folder, mode, 'imagesTr'), exist_ok=True)
+        os.makedirs(os.path.join(processed_data_folder, mode, 'labelsTr'), exist_ok=True)
+        os.makedirs(os.path.join(processed_data_folder, mode, 'lungsTr'), exist_ok=True)
+    raw_data = rawCTData(raw_data_folder=raw_data_folder, mode=mode, transform=transform)
+    for volume, airway, lung in tqdm(raw_data):
+        print(volume.shape, airway.shape, lung.shape)
+        for ct_slice, ct_label, ct_lung in zip(volume, airway, lung):
+            # Só estou processando fatias que tenham pulmão
+            if np.sum(ct_lung) > threshold:
+                img_filename = os.path.join(processed_data_folder, mode, 'imagesTr', f"{file_number}.npz")
+                # label_filename = os.path.join(processed_data_folder, mode, 'labelsTr',f"{file_number}.npz")
+                lung_filename = os.path.join(processed_data_folder, mode, 'lungsTr',f"{file_number}.npz")
+                file_number += 1
+                np.savez_compressed(img_filename, ct_slice)
+                # np.savez_compressed(label_filename, ct_slice)
+                np.savez_compressed(lung_filename, ct_lung)
+
+
+
 def test_processed_data(processed_data_folder):
     ct_path = sorted(glob(os.path.join(processed_data_folder, 'train', 'imagesTr', '*.npz')))
     lung_path = sorted(glob(os.path.join(processed_data_folder, 'train', 'lungsTr', '*.npz')))
