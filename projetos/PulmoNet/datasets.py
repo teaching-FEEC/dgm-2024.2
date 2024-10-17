@@ -4,8 +4,8 @@ import numpy as np
 from glob import glob
 import SimpleITK as sitk
 from lungmask import LMInferer
-import os
 from typing import Optional, Callable
+import os
 
 
 class rawCTData(Dataset):

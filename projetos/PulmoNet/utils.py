@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import random
 from datasets import rawCTData, lungCTData
+import os
+import glob
+import json
+
 
 class MinMaxNormalize():
     '''
@@ -24,7 +28,7 @@ def test_lung_segmentator(data):
     for volume, _, lung in data:
         return lung
 
-def preprocessing_for_lung(raw_data_folder, processed_data_folder):
+def preprocessing_for_lung(raw_data_folder, processed_data_folder, threshold=100):
     transform = MinMaxNormalize()
     file_number = 0
     for mode in ['train']: #, 'val']:
@@ -40,7 +44,7 @@ def preprocessing_for_lung(raw_data_folder, processed_data_folder):
             print(volume.shape, lung.shape)
             for ct_slice, ct_lung in zip(volume, lung):
                 # Só estou processando fatias que tenham pulmão
-                if np.sum(ct_lung) > 100:
+                if np.sum(ct_lung) > threshold:
                     img_filename = os.path.join(processed_data_folder, mode, 'imagesTr', f"{file_number}.npz")
                     #label_filename = os.path.join(processed_data_folder, mode, 'labelsTr',f"{file_number}.npz")
                     lung_filename = os.path.join(processed_data_folder, mode, 'lungsTr',f"{file_number}.npz")
@@ -88,11 +92,44 @@ def clean_directory(dir_path):
             os.rmdir(file_absolute_path)
 
 def plt_save_example_synth_img(input_img_ref, input_mask_ref, gen_img_ref, disc_ans, epoch, save_dir): 
-        fig, ax = plt.subplots(1,3,figsize=(18,4))
+        fig, ax = plt.subplots(1,4,figsize=(18,4))
         ax.flat[0].imshow(input_img_ref,cmap='gray')
         ax.flat[1].imshow(input_mask_ref,cmap='gray')
         ax.flat[2].imshow(gen_img_ref,cmap='gray')
+        im = ax.flat[3].imshow(disc_ans,cmap='gray')
         ax.flat[0].set_title('Original')
         ax.flat[1].set_title('Mask')
-        ax.flat[2].set_title('Generated: Disc answer: '+str(disc_ans))
+        ax.flat[2].set_title('Generated')
+        ax.flat[3].set_title('Disc Output')
+        fig.colorbar(im, ax=ax[3])
         plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+
+
+def plt_save_example_synth_during_test(input_img_ref,  gen_img_ref, save_dir, img_idx): 
+        fig, ax = plt.subplots(1,2,figsize=(12,4))
+        ax.flat[0].imshow(input_img_ref,cmap='gray')
+        ax.flat[1].imshow(gen_img_ref,cmap='gray')
+        ax.flat[0].set_title('Original')
+        ax.flat[1].set_title('Generated')
+        plt.savefig(save_dir+'test_'+str(img_idx)+'.png')
+        plt.close()
+
+
+def save_quantitative_results(fid,ssim_complete,luminance_complete,contrast_complete,struct_sim_complete,
+                              ssim_center,luminance_center,contrast_center,struct_sim_center,save_path):
+    
+    dict_qnttive_metrics = {
+        'fid': fid,
+        'ssim_complete_mean': np.mean(ssim_complete),
+        'ssim_complete_std': np.std(ssim_complete),
+        'luminance_complete': np.mean(luminance_complete),
+        'contrast_complete': np.mean(contrast_complete),
+        'struct_sim_complete': np.mean(struct_sim_complete),
+        'ssim_center_mean': np.mean(ssim_center),
+        'ssim_center_std': np.std(ssim_center),
+        'luminance_center': np.mean(luminance_center),
+        'contrast_center': np.mean(contrast_center),
+        'struct_sim_center': np.mean(struct_sim_center)
+    }
+    with open(save_path, "w") as outfile:
+        outfile.write(json.dumps(dict_qnttive_metrics,indent=4))

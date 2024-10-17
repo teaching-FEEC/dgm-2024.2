@@ -3,14 +3,16 @@ from tqdm import trange
 import torch
 import gc
 from losses import get_gen_loss, get_disc_loss
+from utils import plt_save_example_synth_img
+import wandb
 
 def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt, gen_opt, 
-                    epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device):
+                    epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device, use_wandb, center_emphasys):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
 
-    conter_batches_used_to_upd_disc = 0
+    counter_batches_used_to_upd_disc = 0
     counter_batches_used_to_upd_gen = 0
 
     counter_steps_before_upd_disc = 0
@@ -39,7 +41,7 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
             
             if counter_steps_before_upd_gen == 0:
                 gen_opt.zero_grad()
-                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device)
+                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device,center_emphasys)
                 gen_loss.backward(retain_graph=True)
                 gen_opt.step()
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
@@ -52,10 +54,14 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
                 desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
                       f'gen loss: {mean_loss_gen / (counter_batches_used_to_upd_gen)},'
                       f'disc loss: {mean_loss_disc / (counter_batches_used_to_upd_disc)}'))
+            
+    if use_wandb == True:
+        wandb.log({"gen_loss_train": mean_loss_gen/(counter_batches_used_to_upd_gen), 
+                    "disc_loss_train": mean_loss_disc/(counter_batches_used_to_upd_disc)})
     
     return (mean_loss_gen/(counter_batches_used_to_upd_gen)), (mean_loss_disc/(counter_batches_used_to_upd_disc))
 
-def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoch, device):
+def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoch, device, use_wandb, center_emphasys):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
@@ -73,18 +79,22 @@ def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoc
                 input_mask = input_mask_batch.to(device)
                 disc_loss = get_disc_loss(gen,disc,criterion,input_mask,input_img,device)
                 mean_loss_disc = mean_loss_disc + disc_loss.item() 
-                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device)
+                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device, center_emphasys)
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
 
                 progress_bar.set_postfix(
                 desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
                       f'gen loss: {mean_loss_gen / (batch_idx + 1)},'
                       f'disc loss: {mean_loss_disc / (batch_idx + 1)}'))
+                
+    if use_wandb == True:
+        wandb.log({'gen_loss_val': mean_loss_gen/len(data_loader),
+                   'disc_loss_val': mean_loss_disc/len(data_loader)})
 
     return (mean_loss_gen/len(data_loader)), (mean_loss_disc / len(data_loader))
 
 
-def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir):
+def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir,device):
 
     gen.eval()
     disc.eval()
@@ -93,9 +103,10 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir):
         for batch in data_loader:
             input_img_batch = batch[0]
             input_mask_batch = batch[1]
-
+            
             input_img = input_img_batch[:1,:,:,:].to(device)
             input_mask = input_mask_batch[:1,:,:,:].to(device)
+           
 
             gen_img = gen(input_mask)
             ans_gen = disc(gen_img)
@@ -104,7 +115,7 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir):
         plt_save_example_synth_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 
                                     input_mask_ref=input_mask[0,0,:,:].detach().cpu().numpy(), 
                                     gen_img_ref=gen_img[0,0,:,:].detach().cpu().numpy(), 
-                                    disc_ans=ans_gen[0].detach().cpu().numpy(), 
+                                    disc_ans=ans_gen[0,0,:,:].detach().cpu().numpy(), 
                                     epoch=epoch+1, 
                                     save_dir=save_dir)
             
