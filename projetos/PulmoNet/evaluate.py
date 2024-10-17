@@ -15,8 +15,8 @@ from utils import plt_save_example_synth_during_test, save_quantitative_results
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-trained_gen_dir = './first_model/'
-trained_gen_path = trained_gen_dir+'models/my_first_model_gen_trained.pt'
+trained_gen_dir = './model_reg_center_thr_25k/'
+trained_gen_path = trained_gen_dir+'models/model_reg_center_thr_25k_gen_trained.pt'
 dir_to_save_gen_imgs = trained_gen_dir+'generated_imgs/'
 path_to_save_metrics = trained_gen_dir+'quantitative_metrics.json'
 os.makedirs(dir_to_save_gen_imgs, exist_ok=True)

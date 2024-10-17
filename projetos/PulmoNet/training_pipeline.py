@@ -30,6 +30,7 @@ initial_lr = 0.0002
 epoch_to_switch_to_lr_scheduler = 100
 #loss
 criterion = torch.nn.BCELoss()
+center_emphasys=True
 regularization = 5
 steps_to_complete_bfr_upd_disc = 1
 steps_to_complete_bfr_upd_gen = 1
@@ -37,10 +38,10 @@ steps_to_complete_bfr_upd_gen = 1
 step_to_safe_save_models = 10
 #save results directory
 new_model = True
-dir_save_results = './model_reg_5_thr_25k/'
+dir_save_results = './model_reg_center_thr_25k/'
 dir_save_models = dir_save_results+'models/'
 dir_save_example = dir_save_results+'examples/'
-name_model = 'model_reg_5_thr_25k'
+name_model = 'model_reg_center_thr_25k'
 processed_data_folder = '/mnt/shared/ctdata_thr25'
 #connect to wandb
 use_wandb = True
@@ -104,13 +105,13 @@ for epoch in range(n_epochs):
     loss_train_gen, loss_train_disc = run_train_epoch(gen=gen, disc=disc, criterion=criterion, regularization=regularization, 
                                         data_loader=data_loader_train, disc_opt=disc_opt, gen_opt=gen_opt, 
                                         epoch=epoch, steps_to_complete_bfr_upd_disc=steps_to_complete_bfr_upd_disc, 
-                                        steps_to_complete_bfr_upd_gen=steps_to_complete_bfr_upd_gen, device=device,use_wandb=use_wandb)
+                                        steps_to_complete_bfr_upd_gen=steps_to_complete_bfr_upd_gen, device=device,use_wandb=use_wandb,center_emphasys=center_emphasys)
 
     mean_loss_train_gen_list.append(loss_train_gen)
     mean_loss_train_disc_list.append(loss_train_disc)
 
     loss_validation_gen, loss_validation_disc = run_validation_epoch(gen=gen, disc=disc, criterion=criterion, regularization=regularization, 
-                                                data_loader=data_loader_validation, epoch=epoch, device=device, use_wandb=use_wandb)
+                                                data_loader=data_loader_validation, epoch=epoch, device=device, use_wandb=use_wandb,center_emphasys=center_emphasys)
 
     mean_loss_validation_gen_list.append(loss_validation_gen)
     mean_loss_validation_disc_list.append(loss_validation_disc)

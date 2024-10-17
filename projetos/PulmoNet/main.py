@@ -7,7 +7,7 @@ from utils import plt_save_example_synth_img
 import wandb
 
 def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt, gen_opt, 
-                    epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device, use_wandb):
+                    epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device, use_wandb, center_emphasys):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
@@ -41,7 +41,7 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
             
             if counter_steps_before_upd_gen == 0:
                 gen_opt.zero_grad()
-                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device)
+                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device,center_emphasys)
                 gen_loss.backward(retain_graph=True)
                 gen_opt.step()
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
@@ -61,7 +61,7 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
     
     return (mean_loss_gen/(counter_batches_used_to_upd_gen)), (mean_loss_disc/(counter_batches_used_to_upd_disc))
 
-def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoch, device, use_wandb):
+def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoch, device, use_wandb, center_emphasys):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
@@ -79,7 +79,7 @@ def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoc
                 input_mask = input_mask_batch.to(device)
                 disc_loss = get_disc_loss(gen,disc,criterion,input_mask,input_img,device)
                 mean_loss_disc = mean_loss_disc + disc_loss.item() 
-                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device)
+                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device, center_emphasys)
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
 
                 progress_bar.set_postfix(
