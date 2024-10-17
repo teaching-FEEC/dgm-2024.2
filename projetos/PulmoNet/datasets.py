@@ -73,8 +73,8 @@ class lungCTData(Dataset):
                                                 "imagesTr",
                                                 "*.npz")))[start:end]
             self.labels = sorted(glob(os.path.join(processed_data_folder,
-                                                   mode, 
-                                                   "lungsTr", 
+                                                   mode,
+                                                   "lungsTr",
                                                    "*.npz")))[start:end]
         elif start is not None and end is None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
