@@ -6,6 +6,7 @@ import SimpleITK as sitk
 from lungmask import LMInferer
 from typing import Optional, Callable
 import os
+import utils
 
 
 class rawCTData(Dataset):
