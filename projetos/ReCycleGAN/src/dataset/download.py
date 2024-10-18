@@ -16,6 +16,7 @@ def download_and_extract(url, path):
     """
     path = Path(path)
     zip_path = path / 'file.zip'
+    zip_path.parent.mkdir(parents=True, exist_ok=True)
     response = requests.get(url, timeout=10)
     with open(zip_path, 'wb') as f:
         f.write(response.content)
