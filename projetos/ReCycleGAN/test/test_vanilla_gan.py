@@ -20,7 +20,7 @@ class TestCycleGAN(unittest.TestCase):
         cls.run_wnadb = False
         cls.print_memory = True
 
-        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model'
+        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_skip'
         cls.out_folder.mkdir(parents=True, exist_ok=True)
 
         cls.hyperparameters = {
@@ -28,6 +28,8 @@ class TestCycleGAN(unittest.TestCase):
             "n_features" : 32, #64
             "n_residual_blocks": 2, #9
             "n_downsampling": 2, #2
+
+            "add_skip": False, #False
 
             "cycle_loss_weight":10, #10
             "id_loss_weight":5, #5
@@ -58,6 +60,7 @@ class TestCycleGAN(unittest.TestCase):
             n_features=cls.hyperparameters["n_features"],
             n_residual_blocks=cls.hyperparameters["n_residual_blocks"],
             n_downsampling=cls.hyperparameters["n_downsampling"],
+            add_skip=cls.hyperparameters["add_skip"],
             cycle_loss_weight=cls.hyperparameters["cycle_loss_weight"],
             id_loss_weight=cls.hyperparameters["id_loss_weight"],
             lr=cls.hyperparameters["lr"],
