@@ -11,7 +11,7 @@ import os
 class rawCTData(Dataset):
     def __init__(self,
                  raw_data_folder: str,
-                 mode: str,
+                 mode: str = 'train',
                  transform: Optional[Callable] = None):
         super().__init__()
         if mode == 'train':
@@ -35,7 +35,7 @@ class rawCTData(Dataset):
 
     def __getitem__(self, idx: int):
         '''
-        Carregar, transformar e retornar o item 'i' do dataset 
+        Carregar, transformar e retornar o item 'i' do dataset
         '''
         ct_path = self.cts[idx]
         ct_labels_path = self.labels[idx]
@@ -137,7 +137,7 @@ class lungCTData(Dataset):
 
 class processedCTData(Dataset):
     def __init__(self, processed_data_folder: str,
-                 mode: str,
+                 mode: str = 'train',
                  start: Optional[int] = None,
                  end: Optional[int] = None,
                  transform: Optional[Callable] = None):
@@ -208,8 +208,7 @@ class processedCTData(Dataset):
         ct_labels_path = self.labels[idx]
         ct_airways_path = self.airways[idx]
 
-        # Ler imagem usando a biblioteca SimpleITK
-        # O objeto image contêm tambem metadados
+        # Ler os .npz salvos no pre processamento
         # print(f'Reading {ct_path} and {ct_labels_path}.......')
         image_npz = np.load(ct_path)
         lung_npz = np.load(ct_labels_path)
