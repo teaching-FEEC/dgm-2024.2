@@ -35,6 +35,7 @@ class CycleGAN(BaseModel):
     """
     def __init__(self, input_nc=3, output_nc=3,
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
+                 add_skip=False,
                  cycle_loss_weight=10, id_loss_weight=5,
                  lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
         super().__init__(device)
@@ -67,6 +68,7 @@ class CycleGAN(BaseModel):
         self.device = device
         self.cycle_loss_weight = cycle_loss_weight
         self.id_loss_weight = id_loss_weight
+        self.add_skip = add_skip
 
     def __str__(self):
         """String representation of the CycleGAN model."""
@@ -123,6 +125,9 @@ class CycleGAN(BaseModel):
         """
         fake_B = self.gen_AtoB(real_A)
         fake_A = self.gen_BtoA(real_B)
+        if self.add_skip:
+            fake_B = real_A + fake_B
+            fake_A = real_B + fake_A
 
         return fake_B, fake_A
 
