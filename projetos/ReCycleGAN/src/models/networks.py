@@ -1,7 +1,35 @@
 """Module with network constructors and loss functions."""
+import functools
 import torch
 from torch import nn
 import torch.nn.functional as F
+
+class Identity(nn.Module):
+    """Identity layer."""
+    def forward(self, x):
+        """Forward pass through the identity layer."""
+        return x
+
+def get_norm_layer(norm_type='instance'):
+    """Return a normalization layer
+
+    Args:
+    - norm_type: Normalization layer type: 'batch', 'instance' or 'none'. Default is 'instance'.
+
+    For BatchNorm, we use learnable affine parameters and track running statistics (mean/stddev).
+    For InstanceNorm, we do not use learnable affine parameters. We do not track running statistics.
+    """
+    if norm_type == 'batch':
+        norm_layer = functools.partial(nn.BatchNorm2d, affine=True, track_running_stats=True)
+    elif norm_type == 'instance':
+        norm_layer = functools.partial(nn.InstanceNorm2d, affine=False, track_running_stats=False)
+    elif norm_type == 'none':
+        def norm_layer(x):
+            return Identity()
+    else:
+        raise NotImplementedError(f'normalization layer {norm_type} is not valid.')
+    return norm_layer
+
 
 class ResidualBlock(nn.Module):
     """
@@ -9,18 +37,19 @@ class ResidualBlock(nn.Module):
 
     Args:
     - in_features: Number of features.
+    - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
-    def __init__(self, in_features):
+    def __init__(self, in_features, norm_layer=nn.InstanceNorm2d):
         super().__init__()
 
         conv_block = [
             nn.ReflectionPad2d(1),
             nn.Conv2d(in_features, in_features, 3),
-            nn.InstanceNorm2d(in_features),
+            norm_layer(in_features),
             nn.ReLU(inplace=True),
             nn.ReflectionPad2d(1),
             nn.Conv2d(in_features, in_features, 3),
-            nn.InstanceNorm2d(in_features)
+            norm_layer(in_features)
         ]
 
         self.conv_block = nn.Sequential(*conv_block)
@@ -40,14 +69,21 @@ class Generator(nn.Module):
     - n_features: Number of features. Default is 64.
     - n_downsampling: Number of downsampling layers. Default is 2.
     - add_skip: If True, add skip connections. Default is False.
+    - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
-    def __init__(self, input_nc, output_nc, n_residual_blocks=9, n_features=64, n_downsampling=2, add_skip=False):
+    def __init__(self,
+                 input_nc, output_nc,
+                 n_residual_blocks=9,
+                 n_features=64,
+                 n_downsampling=2,
+                 add_skip=False,
+                 norm_layer=nn.InstanceNorm2d):
         super().__init__()
 
         self.initial_layers = nn.Sequential(
             nn.ReflectionPad2d(3),
             nn.Conv2d(input_nc, n_features, 7),
-            nn.InstanceNorm2d(n_features),
+            norm_layer(n_features),
             nn.ReLU(inplace=True),
         )
 
@@ -56,12 +92,12 @@ class Generator(nn.Module):
             n_feat = n_features * 2 ** i
             self.encoder.append(nn.Sequential(
                 nn.Conv2d(n_feat, 2 * n_feat, 3, stride=2, padding=1),
-                nn.InstanceNorm2d(2 * n_feat),
+                norm_layer(2 * n_feat),
             ))
 
         n_feat = n_features * 2 ** n_downsampling
         self.residual_blocks = nn.Sequential(
-            *[ResidualBlock(n_feat) for _ in range(n_residual_blocks)]
+            *[ResidualBlock(n_feat, norm_layer) for _ in range(n_residual_blocks)]
         )
 
         self.decoder = nn.ModuleList()
@@ -70,7 +106,7 @@ class Generator(nn.Module):
             self.decoder.append(nn.Sequential(
                 nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
                                    stride=2, padding=1, output_padding=1),
-                nn.InstanceNorm2d(n_feat // 2),
+                norm_layer(n_feat // 2),
                 nn.ReLU(inplace=True),
             ))
 
@@ -110,22 +146,23 @@ class Discriminator(nn.Module):
     Args:
     - input_nc: Number of input channels.
     - n_features: Number of features. Default is 64.
+    - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
-    def __init__(self, input_nc, n_features=64):
+    def __init__(self, input_nc, n_features=64, norm_layer=nn.InstanceNorm2d):
         super().__init__()
 
         self.model = nn.Sequential(
             nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
             nn.LeakyReLU(0.2, inplace=True),
 
-            self.discriminator_block(n_features, 2 * n_features),
-            self.discriminator_block(2 * n_features, 4 * n_features),
-            self.discriminator_block(4 * n_features, 8 * n_features),
+            self.discriminator_block(n_features, 2 * n_features, norm_layer),
+            self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
+            self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
 
             nn.Conv2d(8 * n_features, 1, 4, padding=1)
         )
 
-    def discriminator_block(self, input_dim, output_dim):
+    def discriminator_block(self, input_dim, output_dim, norm_layer):
         """
         Returns downsampling layers of each discriminator block
 
@@ -135,7 +172,7 @@ class Discriminator(nn.Module):
         """
         return nn.Sequential(
             nn.Conv2d(input_dim, output_dim, kernel_size=4, stride=2, padding=1),
-            nn.InstanceNorm2d(output_dim),
+            norm_layer(output_dim),
             nn.LeakyReLU(0.2, inplace=True)
         )
 

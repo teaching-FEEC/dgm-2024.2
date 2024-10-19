@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import torch
 from torch import nn
 from .basemodel import BaseModel
-from .networks import Generator, Discriminator, CycleGANLoss
+from .networks import Generator, Discriminator, CycleGANLoss, get_norm_layer
 
 @dataclass
 class Loss:
@@ -26,6 +26,7 @@ class CycleGAN(BaseModel):
     - n_residual_blocks: Number of residual blocks in generators. Default is 9.
     - n_features: Number of features in generators and discriminators. Default is 64.
     - n_downsampling: Number of downsampling layers in generators. Default is 2.
+    - norm_type: Normalization layer type: 'batch', 'instance' or 'none'. Default is 'instance'.
     - add_skip: If True, add skip connections to the generators. Default is False.
     - vanilla_loss: If True, use BCEWithLogitsLoss. Otherwise, use MSELoss. Default is True.
     - cycle_loss_weight: Weight for cycle-consistency loss. Default is 10.
@@ -37,11 +38,13 @@ class CycleGAN(BaseModel):
     """
     def __init__(self, input_nc=3, output_nc=3,
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
+                 norm_type='instance',
                  add_skip=False, vanilla_loss=True,
                  cycle_loss_weight=10, id_loss_weight=5,
                  lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
         super().__init__(device)
 
+        norm_layer = get_norm_layer(norm_type)
         # Initialize generators and discriminators
         gen_params = {
             'input_nc': input_nc,
@@ -50,11 +53,12 @@ class CycleGAN(BaseModel):
             'n_features': n_features,
             'n_downsampling': n_downsampling,
             'add_skip': add_skip,
+            'norm_layer': norm_layer,
         }
         self.gen_AtoB = Generator(**gen_params).to(self.device)
         self.gen_BtoA = Generator(**gen_params).to(self.device)
-        self.dis_A = Discriminator(input_nc, n_features=n_features).to(self.device)
-        self.dis_B = Discriminator(input_nc, n_features=n_features).to(self.device)
+        self.dis_A = Discriminator(input_nc, n_features, norm_layer).to(self.device)
+        self.dis_B = Discriminator(input_nc, n_features, norm_layer).to(self.device)
 
         # Define losses
         self.adversarial_loss = CycleGANLoss(vanilla_loss=vanilla_loss).to(self.device)

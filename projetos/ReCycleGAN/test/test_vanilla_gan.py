@@ -32,8 +32,9 @@ class TestCycleGAN(unittest.TestCase):
             "n_residual_blocks": 2, #9
             "n_downsampling": 2, #2
 
+            "norm_type": "instance", #"instance"
             "add_skip": True, #False
-            "vanilla_loss": True, #False
+            "vanilla_loss": False, #True
 
             "cycle_loss_weight": 10, #10
             "id_loss_weight": 5, #5
@@ -75,10 +76,10 @@ class TestCycleGAN(unittest.TestCase):
 
 
         folder = Path(__file__).resolve().parent.parent / 'data' / 'external' / 'nexet'
-        train_A_csv = folder / 'input_A_train.csv'
-        test_A_csv = folder / 'input_A_test.csv'
-        train_B_csv = folder / 'input_B_train.csv'
-        test_B_csv = folder / 'input_B_test.csv'
+        train_A_csv = folder / 'input_A_train_filtered.csv'
+        test_A_csv = folder / 'input_A_test_filtered.csv'
+        train_B_csv = folder / 'input_B_train_filtered.csv'
+        test_B_csv = folder / 'input_B_test_filtered.csv'
 
         transformation = transforms.Compose([
             transforms.Resize(int(cls.hyperparameters["img_height"] * 1.12), transforms.InterpolationMode.BICUBIC),
