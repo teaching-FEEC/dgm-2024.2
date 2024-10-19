@@ -39,46 +39,69 @@ class Generator(nn.Module):
     - n_residual_blocks: Number of residual blocks. Default is 9.
     - n_features: Number of features. Default is 64.
     - n_downsampling: Number of downsampling layers. Default is 2.
+    - add_skip: If True, add skip connections. Default is False.
     """
-    def __init__(self, input_nc, output_nc, n_residual_blocks=9, n_features=64, n_downsampling=2):
+    def __init__(self, input_nc, output_nc, n_residual_blocks=9, n_features=64, n_downsampling=2, add_skip=False):
         super().__init__()
 
-        model = [
+        self.initial_layers = nn.Sequential(
             nn.ReflectionPad2d(3),
             nn.Conv2d(input_nc, n_features, 7),
             nn.InstanceNorm2d(n_features),
             nn.ReLU(inplace=True),
-        ]
+        )
 
+        self.encoder = nn.ModuleList()
         for i in range(n_downsampling):
             n_feat = n_features * 2 ** i
-            model += [
+            self.encoder.append(nn.Sequential(
                 nn.Conv2d(n_feat, 2 * n_feat, 3, stride=2, padding=1),
                 nn.InstanceNorm2d(2 * n_feat),
-            ]
+            ))
 
         n_feat = n_features * 2 ** n_downsampling
-        for i in range(n_residual_blocks):
-            model += [ResidualBlock(n_feat)]
+        self.residual_blocks = nn.Sequential(
+            *[ResidualBlock(n_feat) for _ in range(n_residual_blocks)]
+        )
 
+        self.decoder = nn.ModuleList()
         for i in range(n_downsampling):
             n_feat = n_features * 2 ** (n_downsampling - i)
-            model += [
+            self.decoder.append(nn.Sequential(
                 nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
                                    stride=2, padding=1, output_padding=1),
                 nn.InstanceNorm2d(n_feat // 2),
                 nn.ReLU(inplace=True),
-            ]
+            ))
 
-        model += [nn.ReflectionPad2d(3)]
-        model += [nn.Conv2d(n_features, output_nc, 7)]
-        model += [nn.Tanh()]
+        self.final_layers = nn.Sequential(
+            nn.ReflectionPad2d(3),
+            nn.Conv2d(n_features, output_nc, 7),
+            nn.Tanh(),
+        )
 
-        self.model = nn.Sequential(*model)
+        self.add_skip = add_skip
 
     def forward(self, x):
         """Forward pass through the generator."""
-        return self.model(x)
+        x = self.initial_layers(x)
+
+        skips = []
+        for layer in self.encoder:
+            x = layer(x)
+            if self.add_skip:
+                skips.append(x)
+
+        x = self.residual_blocks(x)
+
+        if self.add_skip:
+            for i, layer in enumerate(self.decoder):
+                x = layer(x + skips[-(i+1)])
+        else:
+            for layer in self.decoder:
+                x = layer(x)
+
+        return self.final_layers(x)
 
 class Discriminator(nn.Module):
     """
@@ -131,13 +154,17 @@ class CycleGANLoss(nn.Module):
     Args:
     - target_real_label: Target label for real images. Default is 1.0.
     - target_fake_label: Target label for fake images. Default is 0.0.
+    - vanilla_loss: If True, use BCEWithLogitsLoss. Otherwise, use MSELoss. Default is True.
     """
 
-    def __init__(self, target_real_label=1.0, target_fake_label=0.0):
+    def __init__(self, target_real_label=1.0, target_fake_label=0.0, vanilla_loss=True):
         super().__init__()
         self.register_buffer('real_label', torch.tensor(target_real_label))
         self.register_buffer('fake_label', torch.tensor(target_fake_label))
-        self.loss = nn.BCEWithLogitsLoss()
+        if vanilla_loss:
+            self.loss = nn.BCEWithLogitsLoss()
+        else:
+            self.loss = nn.MSELoss()
 
     def _get_target_tensor(self, prediction, target_is_real):
         """Create label tensors with the same size as the input.

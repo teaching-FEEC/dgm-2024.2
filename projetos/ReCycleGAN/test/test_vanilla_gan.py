@@ -24,15 +24,19 @@ class TestCycleGAN(unittest.TestCase):
         cls.out_folder.mkdir(parents=True, exist_ok=True)
 
         cls.hyperparameters = {
+            "img_height" : 256,
+            "img_width" : 256,
+
             "batch_size" : 16,
             "n_features" : 32, #64
             "n_residual_blocks": 2, #9
             "n_downsampling": 2, #2
 
-            "add_skip": False, #False
+            "add_skip": True, #False
+            "vanilla_loss": True, #False
 
-            "cycle_loss_weight":10, #10
-            "id_loss_weight":5, #5
+            "cycle_loss_weight": 10, #10
+            "id_loss_weight": 5, #5
 
             "num_epochs" : 100,
             "device" : torch.device("cuda" if (torch.cuda.is_available() and cls.use_cuda) else "cpu"),
@@ -61,6 +65,7 @@ class TestCycleGAN(unittest.TestCase):
             n_residual_blocks=cls.hyperparameters["n_residual_blocks"],
             n_downsampling=cls.hyperparameters["n_downsampling"],
             add_skip=cls.hyperparameters["add_skip"],
+            vanilla_loss=cls.hyperparameters["vanilla_loss"],
             cycle_loss_weight=cls.hyperparameters["cycle_loss_weight"],
             id_loss_weight=cls.hyperparameters["id_loss_weight"],
             lr=cls.hyperparameters["lr"],
@@ -76,6 +81,9 @@ class TestCycleGAN(unittest.TestCase):
         test_B_csv = folder / 'input_B_test.csv'
 
         transformation = transforms.Compose([
+            transforms.Resize(int(cls.hyperparameters["img_height"] * 1.12), transforms.InterpolationMode.BICUBIC),
+            transforms.RandomCrop((cls.hyperparameters["img_height"], cls.hyperparameters["img_width"])),
+            transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
         ])

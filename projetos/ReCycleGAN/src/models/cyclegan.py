@@ -26,6 +26,8 @@ class CycleGAN(BaseModel):
     - n_residual_blocks: Number of residual blocks in generators. Default is 9.
     - n_features: Number of features in generators and discriminators. Default is 64.
     - n_downsampling: Number of downsampling layers in generators. Default is 2.
+    - add_skip: If True, add skip connections to the generators. Default is False.
+    - vanilla_loss: If True, use BCEWithLogitsLoss. Otherwise, use MSELoss. Default is True.
     - cycle_loss_weight: Weight for cycle-consistency loss. Default is 10.
     - id_loss_weight: Weight for identity loss. Default is 5.
     - lr: Learning rate. Default is 0.0002.
@@ -35,7 +37,7 @@ class CycleGAN(BaseModel):
     """
     def __init__(self, input_nc=3, output_nc=3,
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
-                 add_skip=False,
+                 add_skip=False, vanilla_loss=True,
                  cycle_loss_weight=10, id_loss_weight=5,
                  lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
         super().__init__(device)
@@ -46,7 +48,8 @@ class CycleGAN(BaseModel):
             'output_nc': output_nc,
             'n_residual_blocks': n_residual_blocks,
             'n_features': n_features,
-            'n_downsampling': n_downsampling
+            'n_downsampling': n_downsampling,
+            'add_skip': add_skip,
         }
         self.gen_AtoB = Generator(**gen_params).to(self.device)
         self.gen_BtoA = Generator(**gen_params).to(self.device)
@@ -54,7 +57,7 @@ class CycleGAN(BaseModel):
         self.dis_B = Discriminator(input_nc, n_features=n_features).to(self.device)
 
         # Define losses
-        self.adversarial_loss = CycleGANLoss().to(self.device)
+        self.adversarial_loss = CycleGANLoss(vanilla_loss=vanilla_loss).to(self.device)
         self.cycle_loss = nn.L1Loss().to(self.device)
         self.identity_loss = nn.L1Loss().to(self.device)
 
@@ -68,7 +71,6 @@ class CycleGAN(BaseModel):
         self.device = device
         self.cycle_loss_weight = cycle_loss_weight
         self.id_loss_weight = id_loss_weight
-        self.add_skip = add_skip
 
     def __str__(self):
         """String representation of the CycleGAN model."""
@@ -125,9 +127,6 @@ class CycleGAN(BaseModel):
         """
         fake_B = self.gen_AtoB(real_A)
         fake_A = self.gen_BtoA(real_B)
-        if self.add_skip:
-            fake_B = real_A + fake_B
-            fake_A = real_B + fake_A
 
         return fake_B, fake_A
 
@@ -139,8 +138,12 @@ class CycleGAN(BaseModel):
         fake_B, fake_A = self.forward(real_A, real_B)
 
         # Identity loss
-        loss_identity_A = self.identity_loss(self.gen_BtoA(real_A), real_A)
-        loss_identity_B = self.identity_loss(self.gen_AtoB(real_B), real_B)
+        if self.id_loss_weight > 0:
+            loss_identity_A = self.identity_loss(self.gen_BtoA(real_A), real_A)
+            loss_identity_B = self.identity_loss(self.gen_AtoB(real_B), real_B)
+        else:
+            loss_identity_A = torch.tensor(0.0, device=self.device)
+            loss_identity_B = torch.tensor(0.0, device=self.device)
 
         # GAN loss using CycleGANLoss
         loss_G_AtoB = self.adversarial_loss(self.dis_B(fake_B), target_is_real=True)
@@ -234,14 +237,13 @@ class CycleGAN(BaseModel):
 
     def generate_samples(self, real_A, real_B, n_images=4):
         """
-        Generate samples for with real, fake, reconstructed and identity images.
+        Generate samples with real, fake, reconstructed and identity images.
         """
         real_A = real_A[:n_images]
         real_B = real_B[:n_images]
 
-        fake_B, fake_A = self.forward(real_A, real_B)
-
         self.eval()
+        fake_B, fake_A = self.forward(real_A, real_B)
         recovered_B, recovered_A = self.forward(fake_A, fake_B)
         id_B, id_A = self.forward(real_B, real_A) # pylint: disable=arguments-out-of-order
 
