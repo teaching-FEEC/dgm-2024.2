@@ -141,8 +141,12 @@ class CycleGAN(BaseModel):
         fake_B, fake_A = self.forward(real_A, real_B)
 
         # Identity loss
-        loss_identity_A = self.identity_loss(self.gen_BtoA(real_A), real_A)
-        loss_identity_B = self.identity_loss(self.gen_AtoB(real_B), real_B)
+        if self.id_loss_weight > 0:
+            loss_identity_A = self.identity_loss(self.gen_BtoA(real_A), real_A)
+            loss_identity_B = self.identity_loss(self.gen_AtoB(real_B), real_B)
+        else:
+            loss_identity_A = torch.tensor(0.0, device=self.device)
+            loss_identity_B = torch.tensor(0.0, device=self.device)
 
         # GAN loss using CycleGANLoss
         loss_G_AtoB = self.adversarial_loss(self.dis_B(fake_B), target_is_real=True)
