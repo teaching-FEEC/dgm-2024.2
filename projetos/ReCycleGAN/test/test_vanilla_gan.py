@@ -29,7 +29,8 @@ class TestCycleGAN(unittest.TestCase):
             "n_residual_blocks": 2, #9
             "n_downsampling": 2, #2
 
-            "add_skip": False, #False
+            "add_skip": True, #False
+            "vanilla_loss": True, #False
 
             "cycle_loss_weight":10, #10
             "id_loss_weight":5, #5
@@ -61,6 +62,7 @@ class TestCycleGAN(unittest.TestCase):
             n_residual_blocks=cls.hyperparameters["n_residual_blocks"],
             n_downsampling=cls.hyperparameters["n_downsampling"],
             add_skip=cls.hyperparameters["add_skip"],
+            vanilla_loss=cls.hyperparameters["vanilla_loss"],
             cycle_loss_weight=cls.hyperparameters["cycle_loss_weight"],
             id_loss_weight=cls.hyperparameters["id_loss_weight"],
             lr=cls.hyperparameters["lr"],

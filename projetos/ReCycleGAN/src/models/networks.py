@@ -131,13 +131,17 @@ class CycleGANLoss(nn.Module):
     Args:
     - target_real_label: Target label for real images. Default is 1.0.
     - target_fake_label: Target label for fake images. Default is 0.0.
+    - vanilla_loss: If True, use BCEWithLogitsLoss. Otherwise, use MSELoss. Default is True.
     """
 
-    def __init__(self, target_real_label=1.0, target_fake_label=0.0):
+    def __init__(self, target_real_label=1.0, target_fake_label=0.0, vanilla_loss=True):
         super().__init__()
         self.register_buffer('real_label', torch.tensor(target_real_label))
         self.register_buffer('fake_label', torch.tensor(target_fake_label))
-        self.loss = nn.BCEWithLogitsLoss()
+        if vanilla_loss:
+            self.loss = nn.BCEWithLogitsLoss()
+        else:
+            self.loss = nn.MSELoss()
 
     def _get_target_tensor(self, prediction, target_is_real):
         """Create label tensors with the same size as the input.

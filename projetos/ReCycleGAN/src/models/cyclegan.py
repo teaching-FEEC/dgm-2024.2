@@ -26,6 +26,8 @@ class CycleGAN(BaseModel):
     - n_residual_blocks: Number of residual blocks in generators. Default is 9.
     - n_features: Number of features in generators and discriminators. Default is 64.
     - n_downsampling: Number of downsampling layers in generators. Default is 2.
+    - add_skip: If True, add skip connections to the generators. Default is False.
+    - vanilla_loss: If True, use BCEWithLogitsLoss. Otherwise, use MSELoss. Default is True.
     - cycle_loss_weight: Weight for cycle-consistency loss. Default is 10.
     - id_loss_weight: Weight for identity loss. Default is 5.
     - lr: Learning rate. Default is 0.0002.
@@ -35,7 +37,7 @@ class CycleGAN(BaseModel):
     """
     def __init__(self, input_nc=3, output_nc=3,
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
-                 add_skip=False,
+                 add_skip=False, vanilla_loss=True,
                  cycle_loss_weight=10, id_loss_weight=5,
                  lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
         super().__init__(device)
@@ -54,7 +56,7 @@ class CycleGAN(BaseModel):
         self.dis_B = Discriminator(input_nc, n_features=n_features).to(self.device)
 
         # Define losses
-        self.adversarial_loss = CycleGANLoss().to(self.device)
+        self.adversarial_loss = CycleGANLoss(vanilla_loss=vanilla_loss).to(self.device)
         self.cycle_loss = nn.L1Loss().to(self.device)
         self.identity_loss = nn.L1Loss().to(self.device)
 
@@ -234,7 +236,7 @@ class CycleGAN(BaseModel):
 
     def generate_samples(self, real_A, real_B, n_images=4):
         """
-        Generate samples for with real, fake, reconstructed and identity images.
+        Generate samples with real, fake, reconstructed and identity images.
         """
         real_A = real_A[:n_images]
         real_B = real_B[:n_images]
