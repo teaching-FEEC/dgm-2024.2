@@ -6,8 +6,18 @@ from losses import get_gen_loss, get_disc_loss
 from utils import plt_save_example_synth_img
 import wandb
 
-def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt, gen_opt, 
-                    epoch, steps_to_complete_bfr_upd_disc, steps_to_complete_bfr_upd_gen, device, use_wandb, center_emphasys):
+def run_train_epoch(gen, 
+                    disc, 
+                    criterion, 
+                    data_loader, 
+                    disc_opt, 
+                    gen_opt, 
+                    epoch, 
+                    steps_to_complete_bfr_upd_disc, 
+                    steps_to_complete_bfr_upd_gen, device,
+                    use_wandb, 
+                    regularization_type=None,
+                    regularization_level=None):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
@@ -30,7 +40,9 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
             
             if counter_steps_before_upd_disc == 0:
                 disc_opt.zero_grad()
-                disc_loss = get_disc_loss(gen,disc,criterion,input_mask,input_img,device)
+                disc_loss = get_disc_loss(gen=gen,disc=disc,criterion=criterion,
+                                          input_mask=input_mask,input_img=input_img,
+                                          device=device)
                 disc_loss.backward(retain_graph=True)
                 disc_opt.step()
                 mean_loss_disc = mean_loss_disc + disc_loss.item() 
@@ -41,7 +53,9 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
             
             if counter_steps_before_upd_gen == 0:
                 gen_opt.zero_grad()
-                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device,center_emphasys)
+                gen_loss = get_gen_loss(gen=gen,disc=disc,criterion=criterion,input_mask=input_mask,
+                                        input_img=input_img,device=device,regularization_type=regularization_type,
+                                        regularization_level=regularization_level)
                 gen_loss.backward(retain_graph=True)
                 gen_opt.step()
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
@@ -61,7 +75,15 @@ def run_train_epoch(gen, disc, criterion, regularization, data_loader, disc_opt,
     
     return (mean_loss_gen/(counter_batches_used_to_upd_gen)), (mean_loss_disc/(counter_batches_used_to_upd_disc))
 
-def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoch, device, use_wandb, center_emphasys):
+def run_validation_epoch(gen, 
+                         disc, 
+                         criterion, 
+                         data_loader, 
+                         epoch, 
+                         device, 
+                         use_wandb, 
+                         regularization_type=None,
+                         regularization_level=None):
 
     mean_loss_gen = 0
     mean_loss_disc = 0
@@ -77,9 +99,13 @@ def run_validation_epoch(gen, disc, criterion, regularization, data_loader, epoc
 
                 input_img = input_img_batch.to(device)
                 input_mask = input_mask_batch.to(device)
-                disc_loss = get_disc_loss(gen,disc,criterion,input_mask,input_img,device)
+                disc_loss = get_disc_loss(gen=gen,disc=disc,criterion=criterion,
+                                          input_mask=input_mask,input_img=input_img,
+                                          device=device)
                 mean_loss_disc = mean_loss_disc + disc_loss.item() 
-                gen_loss = get_gen_loss(gen,disc,criterion,input_mask,input_img,regularization,device, center_emphasys)
+                gen_loss = get_gen_loss(gen=gen,disc=disc,criterion=criterion,input_mask=input_mask,
+                                        input_img=input_img,device=device,regularization_type=regularization_type,
+                                        regularization_level=regularization_level)
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
 
                 progress_bar.set_postfix(

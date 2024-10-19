@@ -1,4 +1,38 @@
 import torch
+import torch.nn as nn
+from utils import check_for_zero_loss
+
+
+def get_criterion(criterion_type, **kwargs):
+    if criterion_type == 'BCELoss':
+        return nn.BCELoss(**kwargs)
+    elif criterion_type == 'BCEWithLogitsLoss':
+        return nn.BCEWithLogitsLoss(**kwargs)
+    else:
+        raise ValueError(f"Invalid criterion_type: {criterion_type}, check losses.py and add the desired criterion.")
+
+
+def get_regularization(regularizer_type, input_mask, input_img, gen_img):
+    if regularizer_type == 'MAE':
+        return check_for_zero_loss(torch.sum(torch.abs((input_img-gen_img)), dim=(1, 2)).mean())
+    elif regularizer_type == 'MSE':
+        return check_for_zero_loss(torch.sum(((input_img-gen_img)**2), dim=(1, 2)).mean())
+    elif regularizer_type == 'RMSE':
+        return check_for_zero_loss(torch.sqrt(torch.sum(((input_img-gen_img)**2), dim=(1, 2)).mean()))
+    elif regularizer_type == 'MAE_mask':
+        return check_for_zero_loss(torch.sum(torch.abs(input_mask*(input_img-gen_img)), dim=(1, 2)).mean())
+    elif regularizer_type == 'MSE_mask':
+        return check_for_zero_loss(torch.sum(((input_mask*(input_img-gen_img))**2), dim=(1, 2)).mean())
+    elif regularizer_type == 'RMSE_mask':
+        return check_for_zero_loss(torch.sqrt(torch.sum(((input_mask*(input_img-gen_img))**2), dim=(1, 2)).mean()))
+    elif regularizer_type == 'MAE_outside_mask':
+        return check_for_zero_loss(torch.sum(torch.abs((1-input_mask)*(input_img-gen_img)), dim=(1, 2)).mean())
+    elif regularizer_type == 'MSE_outside_mask':
+        return check_for_zero_loss(torch.sum((((1-input_mask)*(input_img-gen_img))**2), dim=(1, 2)).mean())
+    elif regularizer_type == 'RMSE_outside_mask':
+        return check_for_zero_loss(torch.sqrt(torch.sum((((1-input_mask)*(input_img-gen_img))**2), dim=(1, 2)).mean()))
+    else:
+        raise ValueError(f"Invalid regularizer_type: {regularizer_type}, check losses.py and add the desired regularization.")
 
 
 def get_disc_loss(gen, disc, criterion, input_mask, input_img, device):
@@ -16,16 +50,16 @@ def get_disc_loss(gen, disc, criterion, input_mask, input_img, device):
     return loss.mean()
 
 
-def get_gen_loss(gen, disc, criterion, input_mask, input_img, regularization, device, center_emphasys=None):
+def get_gen_loss(gen, disc, criterion, input_mask, input_img, device, regularization_type=None, regularization_level=None):
     gen_img = gen(input_mask)
     ans_gen = disc(gen_img)
     # we want ans_gen close to 1: to trick the disc
     gt_gen = torch.ones_like(ans_gen)
-    loss_pt1 = criterion(ans_gen, gt_gen).mean()
-    if center_emphasys is True:
-        loss_pt2 = torch.sum(torch.abs(input_mask*(input_img-gen_img)), dim=(1, 2)).mean()
-        loss_pt3 = torch.sum(torch.abs((1-input_mask)*(input_img-gen_img)), dim=(1, 2)).mean()
-        return loss_pt1+(2*regularization/3)*loss_pt2+(regularization/3)*loss_pt3
-    else:
-        loss_pt2 = torch.sum(torch.abs(input_img-gen_img), dim=(1, 2)).mean()
-        return loss_pt1+regularization*loss_pt2
+    loss = criterion(ans_gen, gt_gen).mean()
+    if regularization_type is not None:
+        if isinstance(regularization_type, list):
+            for idx, regularization in enumerate(regularization_type):
+                loss = loss + regularization_level[idx]*get_regularization(regularizer_type=regularization_type[idx], input_mask=input_mask, input_img=input_img, gen_img=gen_img)
+        else:
+            loss = loss + regularization_level*get_regularization(regularizer_type=regularization_type, input_mask=input_mask, input_img=input_img, gen_img=gen_img)
+    return loss

@@ -6,7 +6,7 @@ from datasets import rawCTData, lungCTData
 import os
 import glob
 import json
-
+import yaml
 
 class MinMaxNormalize():
     '''
@@ -162,3 +162,18 @@ def save_quantitative_results(fid, ssim_complete, luminance_complete, contrast_c
     }
     with open(save_path, "w") as outfile:
         outfile.write(json.dumps(dict_qnttive_metrics, indent=4))
+
+def read_yaml(file: str) -> yaml.loader.FullLoader:
+    # credits: Gabriel Dias (g172441@dac.unicamp.br), Mateus Oliveira (m203656@dac.unicamp.br)
+    # from Github repo: https://github.com/MICLab-Unicamp/Spectro-ViT
+    with open(file, "r") as yaml_file:
+        configurations = yaml.load(yaml_file, Loader=yaml.FullLoader)
+
+    return configurations
+
+def check_for_zero_loss(value,eps=1e-10):
+    if value == 0:
+        return value+eps
+    else:
+        return value
+    

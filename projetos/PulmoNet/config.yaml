@@ -1,0 +1,51 @@
+model:
+  name_model: "model_reg10_center_thr_25k"
+  dir_save_results: "./model_reg10_center_thr_25k/"
+  new_model: True
+
+data:
+  processed_data_folder: "/mnt/shared/ctdata_thr25"
+  start_point_train_data: 0
+  end_point_train_data: 100
+  start_point_validation_data: 100
+  end_point_validation_data: 105
+
+training:
+  batch_size_train: 20
+  batch_size_validation: 8
+  n_epochs: 5
+  steps_to_complete_bfr_upd_disc: 1
+  steps_to_complete_bfr_upd_gen: 1
+
+loss: 
+  criterion: 
+    name: "BCELoss"
+  regularizer:
+    type:
+      - "MAE_mask"
+      - "MAE_outside_mask"
+    regularization:
+      - 6.6666
+      - 3.3333
+  
+optimizer:
+  type: "Adam"
+  lr: 0.0002
+  info:
+    betas: [0.5, 0.999]
+
+lr_scheduler:
+  activate: True
+  scheduler_type: "LinearLR"
+  epoch_to_switch_to_lr_scheduler: 100
+  info:
+    start_factor: 1.0
+    end_factor: 0.0
+    total_iters: 5
+
+save_models_and_results:
+  step_to_safe_save_models: 3
+  save_best_model: True
+
+wandb:
+  activate: False
