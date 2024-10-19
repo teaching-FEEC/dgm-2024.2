@@ -287,7 +287,7 @@ def save_model(model, local_path='model.pth', wandb_log=True):
     if wandb_log:
         wandb.save(local_path)
 
-def save_losses(loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, filename='losses.txt'):
+def save_losses(loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp, filename='losses.txt'):
     """
     Saves the generator and discriminator losses to a text file.
 
@@ -302,10 +302,10 @@ def save_losses(loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, 
     """
     np.savetxt(
         filename,
-        np.column_stack((loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id)),
+        np.column_stack((loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp)),
         header='Generator total loss, Discriminator A loss, Discriminator B loss')
 
-def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
+def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_step=0):
     """
     Trains the CycleGAN model for a single epoch and returns the generator and discriminator losses.
 
@@ -318,6 +318,8 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
     loaded (e.g., 'cuda' or 'cpu').
     - n_samples (int): Number of samples to train on per batch.
     If None, train on all samples. Default is None.
+    - plp_step: Steps between Path Length Penalty calculations. Used to adjust
+    PLP loss value. Default is 0.
 
     Returns:
     - loss_G (float): The total loss of the generator for this epoch.
@@ -334,7 +336,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
-    loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id = 0, 0, 0, 0, 0, 0
+    loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp = 0, 0, 0, 0, 0, 0, 0
     for batch_A, batch_B in progress_bar:
         progress_bar.set_description(f'Epoch {epoch:03d}')
 
@@ -353,6 +355,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
         loss_G_ad += loss.loss_G_ad.item()
         loss_G_cycle += loss.loss_G_cycle.item()
         loss_G_id += loss.loss_G_id.item()
+        loss_G_plp += loss.loss_G_plp.item()
 
         progress_bar.set_postfix({
             'G_loss': f'{loss.loss_G.item():.4f}',
@@ -367,12 +370,14 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None):
     loss_G_ad /= (len(train_A) + len(train_B)) / 2
     loss_G_cycle /= (len(train_A) + len(train_B)) / 2
     loss_G_id /= (len(train_A) + len(train_B)) / 2
+    loss_G_plp /= (len(train_A) + len(train_B)) / 2 * plp_step
 
     msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4f}, '
     msg += f'D_A_loss={loss_D_A:.4f}, D_B_loss={loss_D_B:.4f}, '
-    msg += f'G_ad={loss_G_ad:.4f}, G_cycle={loss_G_cycle:.4f}, G_id={loss_G_id:.4f}'
+    msg += f'G_ad={loss_G_ad:.4f}, G_cycle={loss_G_cycle:.4f}, '
+    msg += f'G_id={loss_G_id:.4f}, G_plp={loss_G_plp:.4f}'
     print(msg)
-    return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id
+    return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp
 
 # Plot losses
 def plot_losses(train_losses, val_losses):

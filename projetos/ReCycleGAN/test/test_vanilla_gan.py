@@ -32,11 +32,20 @@ class TestCycleGAN(unittest.TestCase):
             "n_residual_blocks": 2, #9
             "n_downsampling": 2, #2
 
+            "norm_type": "instance", #"instance"
+
+            "use_replay_buffer": True, #False
+            "replay_buffer_size": 50, #50
+
             "add_skip": True, #False
-            "vanilla_loss": True, #False
+            "vanilla_loss": False, #True
 
             "cycle_loss_weight": 10, #10
             "id_loss_weight": 5, #5
+            "plp_loss_weight": 1, #5
+
+            "plp_step": 16, #0
+            "plp_beta":0.99, #0.99
 
             "num_epochs" : 100,
             "device" : torch.device("cuda" if (torch.cuda.is_available() and cls.use_cuda) else "cpu"),
@@ -65,9 +74,14 @@ class TestCycleGAN(unittest.TestCase):
             n_residual_blocks=cls.hyperparameters["n_residual_blocks"],
             n_downsampling=cls.hyperparameters["n_downsampling"],
             add_skip=cls.hyperparameters["add_skip"],
+            use_replay_buffer=cls.hyperparameters["use_replay_buffer"],
+            replay_buffer_size=cls.hyperparameters["replay_buffer_size"],
             vanilla_loss=cls.hyperparameters["vanilla_loss"],
             cycle_loss_weight=cls.hyperparameters["cycle_loss_weight"],
             id_loss_weight=cls.hyperparameters["id_loss_weight"],
+            plp_loss_weight=cls.hyperparameters["plp_loss_weight"],
+            plp_step=cls.hyperparameters["plp_step"],
+            plp_beta=cls.hyperparameters["plp_beta"],
             lr=cls.hyperparameters["lr"],
             beta1=cls.hyperparameters["beta1"],
             beta2=cls.hyperparameters["beta2"],
@@ -75,10 +89,10 @@ class TestCycleGAN(unittest.TestCase):
 
 
         folder = Path(__file__).resolve().parent.parent / 'data' / 'external' / 'nexet'
-        train_A_csv = folder / 'input_A_train.csv'
-        test_A_csv = folder / 'input_A_test.csv'
-        train_B_csv = folder / 'input_B_train.csv'
-        test_B_csv = folder / 'input_B_test.csv'
+        train_A_csv = folder / 'input_A_train_filtered.csv'
+        test_A_csv = folder / 'input_A_test_filtered.csv'
+        train_B_csv = folder / 'input_B_train_filtered.csv'
+        test_B_csv = folder / 'input_B_test_filtered.csv'
 
         transformation = transforms.Compose([
             transforms.Resize(int(cls.hyperparameters["img_height"] * 1.12), transforms.InterpolationMode.BICUBIC),
@@ -157,16 +171,18 @@ class TestCycleGAN(unittest.TestCase):
 
         utils.remove_all_files(self.out_folder)
         train_losses_G, train_losses_D_A, train_losses_D_B = [], [], []
-        train_losses_G_ad, train_losses_G_cycle, train_losses_G_id = [], [], []
+        train_losses_G_ad, train_losses_G_cycle, train_losses_G_id, train_losses_G_plp = [], [], [], []
 
         for epoch in range(10):
-            loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id = utils.train_one_epoch(
+            loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp = utils.train_one_epoch(
                 epoch=epoch,
                 model=self.cycle_gan,
                 train_A=self.train_A,
                 train_B=self.train_B,
                 device=self.hyperparameters["device"],
-                n_samples=None)
+                n_samples=None,
+                plp_step=self.hyperparameters["plp_step"],
+            )
 
             train_losses_G.append(loss_G)
             train_losses_D_A.append(loss_D_A)
@@ -174,11 +190,13 @@ class TestCycleGAN(unittest.TestCase):
             train_losses_G_ad.append(loss_G_ad)
             train_losses_G_cycle.append(loss_G_cycle)
             train_losses_G_id.append(loss_G_id)
+            train_losses_G_plp.append(loss_G_plp)
 
             # Save the average losses to a file
             utils.save_losses(
                 train_losses_G, train_losses_D_A, train_losses_D_B,
-                train_losses_G_ad, train_losses_G_cycle, train_losses_G_id,
+                train_losses_G_ad, train_losses_G_cycle,
+                train_losses_G_id, train_losses_G_plp,
                 filename=self.out_folder / 'train_losses.txt')
 
             if epoch % self.hyperparameters["checkpoint_interval"] == 0:
@@ -192,6 +210,7 @@ class TestCycleGAN(unittest.TestCase):
                     'G_loss_ad/train': loss_G_ad,
                     'G_loss_cycle/train': loss_G_cycle,
                     'G_loss_id/train': loss_G_id,
+                    'G_loss_plp/train': loss_G_plp,
                 })
 
             real_A = next(iter(self.test_A))

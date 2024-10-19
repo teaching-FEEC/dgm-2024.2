@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import torch
 from torch import nn
 from .basemodel import BaseModel
-from .networks import Generator, Discriminator, CycleGANLoss
+from .networks import Generator, Discriminator, CycleGANLoss, get_norm_layer, ReplayBuffer, PathLengthPenalty
 
 @dataclass
 class Loss:
@@ -15,6 +15,7 @@ class Loss:
     loss_G_ad: torch.Tensor
     loss_G_cycle: torch.Tensor
     loss_G_id: torch.Tensor
+    loss_G_plp: torch.Tensor
 
 class CycleGAN(BaseModel):
     """
@@ -26,10 +27,16 @@ class CycleGAN(BaseModel):
     - n_residual_blocks: Number of residual blocks in generators. Default is 9.
     - n_features: Number of features in generators and discriminators. Default is 64.
     - n_downsampling: Number of downsampling layers in generators. Default is 2.
+    - norm_type: Normalization layer type: 'batch', 'instance' or 'none'. Default is 'instance'.
     - add_skip: If True, add skip connections to the generators. Default is False.
+    - use_replay_buffer: If True, use a replay buffer for adversarial loss. Default is False.
+    - replay_buffer_size: Size of the replay buffer. Default is 50.
     - vanilla_loss: If True, use BCEWithLogitsLoss. Otherwise, use MSELoss. Default is True.
     - cycle_loss_weight: Weight for cycle-consistency loss. Default is 10.
     - id_loss_weight: Weight for identity loss. Default is 5.
+    - plp_loss_weight: Weight for PLP loss. Default is 1.
+    - plp_step: Steps between Path Length Penalty calculations. If zero, never use. Default is 0.
+    - plp_beta: Beta for Path Length Penalty. Default is 0.99.
     - lr: Learning rate. Default is 0.0002.
     - beta1: Beta1 for Adam optimizer. Default is 0.5.
     - beta2: Beta2 for Adam optimizer. Default is 0.999.
@@ -37,11 +44,18 @@ class CycleGAN(BaseModel):
     """
     def __init__(self, input_nc=3, output_nc=3,
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
-                 add_skip=False, vanilla_loss=True,
-                 cycle_loss_weight=10, id_loss_weight=5,
+                 norm_type='instance',
+                 add_skip=False,
+                 use_replay_buffer=False,
+                 replay_buffer_size=50,
+                 vanilla_loss=True,
+                 cycle_loss_weight=10.0, id_loss_weight=5.0, plp_loss_weight=1.0,
+                 plp_step=0,
+                 plp_beta=0.99,
                  lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
         super().__init__(device)
 
+        norm_layer = get_norm_layer(norm_type)
         # Initialize generators and discriminators
         gen_params = {
             'input_nc': input_nc,
@@ -50,11 +64,12 @@ class CycleGAN(BaseModel):
             'n_features': n_features,
             'n_downsampling': n_downsampling,
             'add_skip': add_skip,
+            'norm_layer': norm_layer,
         }
         self.gen_AtoB = Generator(**gen_params).to(self.device)
         self.gen_BtoA = Generator(**gen_params).to(self.device)
-        self.dis_A = Discriminator(input_nc, n_features=n_features).to(self.device)
-        self.dis_B = Discriminator(input_nc, n_features=n_features).to(self.device)
+        self.dis_A = Discriminator(input_nc, n_features, norm_layer).to(self.device)
+        self.dis_B = Discriminator(input_nc, n_features, norm_layer).to(self.device)
 
         # Define losses
         self.adversarial_loss = CycleGANLoss(vanilla_loss=vanilla_loss).to(self.device)
@@ -71,6 +86,17 @@ class CycleGAN(BaseModel):
         self.device = device
         self.cycle_loss_weight = cycle_loss_weight
         self.id_loss_weight = id_loss_weight
+        self.plp_loss_weight = plp_loss_weight
+
+        if use_replay_buffer:
+            self.fake_buffer_A = ReplayBuffer(replay_buffer_size).push_and_pop
+            self.fake_buffer_B = ReplayBuffer(replay_buffer_size).push_and_pop
+        else:
+            self.fake_buffer_A = lambda x: x
+            self.fake_buffer_B = lambda x: x
+
+        self.plp_A = PathLengthPenalty(beta=plp_beta, step=plp_step, device=device)
+        self.plp_B = PathLengthPenalty(beta=plp_beta, step=plp_step, device=device)
 
     def __str__(self):
         """String representation of the CycleGAN model."""
@@ -135,6 +161,11 @@ class CycleGAN(BaseModel):
         Computes the total loss for generators and discriminators
         using CycleGANLoss for adversarial loss.
         """
+        if self.plp_A.is_plp_step(step_count=True) and self.plp_loss_weight > 0:
+            real_A.requires_grad_()
+        if self.plp_B.is_plp_step(step_count=True) and self.plp_loss_weight > 0:
+            real_B.requires_grad_()
+
         fake_B, fake_A = self.forward(real_A, real_B)
 
         # Identity loss
@@ -153,20 +184,32 @@ class CycleGAN(BaseModel):
         loss_cycle_A = self.cycle_loss(self.gen_BtoA(fake_B), real_A)
         loss_cycle_B = self.cycle_loss(self.gen_AtoB(fake_A), real_B)
 
+        # Path Length Penalty
+        if self.plp_A.is_plp_step() and self.plp_loss_weight > 0:
+            loss_G_plp = self.plp_A(real_A, fake_B)
+            loss_G_plp += self.plp_B(real_B, fake_A)
+        else:
+            loss_G_plp = torch.tensor(0.0, device=self.device)
+
         # Total generator loss
         loss_G_ad = loss_G_AtoB + loss_G_BtoA
         loss_G_cycle = loss_cycle_A + loss_cycle_B
         loss_G_id = loss_identity_A + loss_identity_B
-        loss_G = loss_G_ad + self.cycle_loss_weight * loss_G_cycle + self.id_loss_weight * loss_G_id
+        loss_G = loss_G_ad
+        loss_G += self.cycle_loss_weight * loss_G_cycle
+        loss_G += self.id_loss_weight * loss_G_id
+        loss_G += self.plp_loss_weight * loss_G_plp
 
         # Discriminator A loss (real vs fake)
         loss_real_A = self.adversarial_loss(self.dis_A(real_A), target_is_real=True)
-        loss_fake_A = self.adversarial_loss(self.dis_A(fake_A.detach()), target_is_real=False)
+        d_fake_A = self.fake_buffer_A(fake_A.detach())
+        loss_fake_A = self.adversarial_loss(self.dis_A(d_fake_A), target_is_real=False)
         loss_D_A = (loss_real_A + loss_fake_A) * 0.5
 
         # Discriminator B loss (real vs fake)
         loss_real_B = self.adversarial_loss(self.dis_B(real_B), target_is_real=True)
-        loss_fake_B = self.adversarial_loss(self.dis_B(fake_B.detach()), target_is_real=False)
+        d_fake_B = self.fake_buffer_B(fake_B.detach())
+        loss_fake_B = self.adversarial_loss(self.dis_B(d_fake_B), target_is_real=False)
         loss_D_B = (loss_real_B + loss_fake_B) * 0.5
 
         return Loss(
@@ -175,7 +218,8 @@ class CycleGAN(BaseModel):
             loss_D_B=loss_D_B,
             loss_G_ad=loss_G_ad.detach(),
             loss_G_cycle=loss_G_cycle.detach(),
-            loss_G_id=loss_G_id.detach()
+            loss_G_id=loss_G_id.detach(),
+            loss_G_plp=loss_G_plp.detach()
         )
 
     def optimize(self, real_A, real_B): # pylint: disable=arguments-differ
