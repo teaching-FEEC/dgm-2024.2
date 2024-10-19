@@ -1,4 +1,5 @@
 """Module with network constructors and loss functions."""
+import math
 import random
 import functools
 import torch
@@ -271,3 +272,53 @@ class ReplayBuffer:
                 else:
                     res.append(element)
         return torch.stack(res)
+
+class PathLengthPenalty(nn.Module):
+    """Path Length Regularization.
+
+    This regularization encourages a fixed-size step in w to result in a
+    fixed-magnitude change in the image.
+
+    Arg:
+    - beta: Used to calculate the exponential moving average a. Default is 0.99.
+    - step: Number of steps between PLP calculations. If zero, never calculates. Default is 0.
+
+    Source: https://nn.labml.ai/gan/stylegan/index.html
+    """
+    def __init__(self, beta=0.99, step=0, device='cuda'):
+        super().__init__()
+        self.beta = beta
+        self.step = step
+        self.steps = 0
+        self.passes = nn.Parameter(torch.tensor(0.), requires_grad=False).to(device)
+        self.exp_sum_a = nn.Parameter(torch.tensor(0.), requires_grad=False).to(device)
+
+    def is_plp_step(self, step_count=False):
+        """Check if the step is a PLP step."""
+        if step_count:
+            self.steps += 1
+        return (self.steps+1) % self.step == 0
+
+    def forward(self, w: torch.Tensor, x: torch.Tensor):
+        """Forward pass through the PathLengthPenalty loss calculation."""
+        if self.step <= 0:
+            return w.new_tensor
+
+        device = x.device
+        image_size = x.shape[2] * x.shape[3]
+        y = torch.randn(x.shape, device=device)
+        output = (x * y).sum() / math.sqrt(image_size)
+        gradients, *_ = torch.autograd.grad(outputs=output,
+                                            inputs=w,
+                                            grad_outputs=torch.ones(output.shape, device=device),
+                                            create_graph=True)
+        norm = (gradients ** 2).sum(dim=2).mean(dim=1).sqrt()
+        if self.passes > 0:
+            a = self.exp_sum_a / (1 - self.beta ** self.passes)
+            loss = torch.mean((norm - a) ** 2)
+        else:
+            loss = norm.new_tensor(0)
+        mean = norm.mean().detach()
+        self.exp_sum_a.mul_(self.beta).add_(mean, alpha=1 - self.beta)
+        self.passes.add_(1.)
+        return loss
