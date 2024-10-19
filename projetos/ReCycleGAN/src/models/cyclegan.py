@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import torch
 from torch import nn
 from .basemodel import BaseModel
-from .networks import Generator, Discriminator, CycleGANLoss, get_norm_layer
+from .networks import Generator, Discriminator, CycleGANLoss, get_norm_layer, ReplayBuffer
 
 @dataclass
 class Loss:
@@ -28,6 +28,8 @@ class CycleGAN(BaseModel):
     - n_downsampling: Number of downsampling layers in generators. Default is 2.
     - norm_type: Normalization layer type: 'batch', 'instance' or 'none'. Default is 'instance'.
     - add_skip: If True, add skip connections to the generators. Default is False.
+    - use_replay_buffer: If True, use a replay buffer for adversarial loss. Default is False.
+    - replay_buffer_size: Size of the replay buffer. Default is 50.
     - vanilla_loss: If True, use BCEWithLogitsLoss. Otherwise, use MSELoss. Default is True.
     - cycle_loss_weight: Weight for cycle-consistency loss. Default is 10.
     - id_loss_weight: Weight for identity loss. Default is 5.
@@ -39,7 +41,10 @@ class CycleGAN(BaseModel):
     def __init__(self, input_nc=3, output_nc=3,
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
                  norm_type='instance',
-                 add_skip=False, vanilla_loss=True,
+                 add_skip=False,
+                 use_replay_buffer=False,
+                 replay_buffer_size=50,
+                 vanilla_loss=True,
                  cycle_loss_weight=10, id_loss_weight=5,
                  lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
         super().__init__(device)
@@ -75,6 +80,15 @@ class CycleGAN(BaseModel):
         self.device = device
         self.cycle_loss_weight = cycle_loss_weight
         self.id_loss_weight = id_loss_weight
+
+        if use_replay_buffer:
+            replay_buffer_A = ReplayBuffer(replay_buffer_size)
+            self.fake_buffer_A = lambda x: replay_buffer_A.push_and_pop(x)
+            replay_buffer_B = ReplayBuffer(replay_buffer_size)
+            self.fake_buffer_B = lambda x: replay_buffer_B.push_and_pop(x)
+        else:
+            self.fake_buffer_A = lambda x: x
+            self.fake_buffer_B = lambda x: x
 
     def __str__(self):
         """String representation of the CycleGAN model."""
@@ -165,12 +179,14 @@ class CycleGAN(BaseModel):
 
         # Discriminator A loss (real vs fake)
         loss_real_A = self.adversarial_loss(self.dis_A(real_A), target_is_real=True)
-        loss_fake_A = self.adversarial_loss(self.dis_A(fake_A.detach()), target_is_real=False)
+        d_fake_A = self.fake_buffer_A(fake_A.detach())
+        loss_fake_A = self.adversarial_loss(self.dis_A(d_fake_A), target_is_real=False)
         loss_D_A = (loss_real_A + loss_fake_A) * 0.5
 
         # Discriminator B loss (real vs fake)
         loss_real_B = self.adversarial_loss(self.dis_B(real_B), target_is_real=True)
-        loss_fake_B = self.adversarial_loss(self.dis_B(fake_B.detach()), target_is_real=False)
+        d_fake_B = self.fake_buffer_B(fake_B.detach())
+        loss_fake_B = self.adversarial_loss(self.dis_B(d_fake_B), target_is_real=False)
         loss_D_B = (loss_real_B + loss_fake_B) * 0.5
 
         return Loss(

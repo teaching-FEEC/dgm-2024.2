@@ -33,6 +33,10 @@ class TestCycleGAN(unittest.TestCase):
             "n_downsampling": 2, #2
 
             "norm_type": "instance", #"instance"
+
+            "use_replay_buffer": True, #False
+            "replay_buffer_size": 50, #50
+
             "add_skip": True, #False
             "vanilla_loss": False, #True
 
@@ -66,6 +70,8 @@ class TestCycleGAN(unittest.TestCase):
             n_residual_blocks=cls.hyperparameters["n_residual_blocks"],
             n_downsampling=cls.hyperparameters["n_downsampling"],
             add_skip=cls.hyperparameters["add_skip"],
+            use_replay_buffer=cls.hyperparameters["use_replay_buffer"],
+            replay_buffer_size=cls.hyperparameters["replay_buffer_size"],
             vanilla_loss=cls.hyperparameters["vanilla_loss"],
             cycle_loss_weight=cls.hyperparameters["cycle_loss_weight"],
             id_loss_weight=cls.hyperparameters["id_loss_weight"],

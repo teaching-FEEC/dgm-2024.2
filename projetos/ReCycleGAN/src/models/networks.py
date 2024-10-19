@@ -1,4 +1,5 @@
 """Module with network constructors and loss functions."""
+import random
 import functools
 import torch
 from torch import nn
@@ -18,6 +19,8 @@ def get_norm_layer(norm_type='instance'):
 
     For BatchNorm, we use learnable affine parameters and track running statistics (mean/stddev).
     For InstanceNorm, we do not use learnable affine parameters. We do not track running statistics.
+
+    Source: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/models/networks.py
     """
     if norm_type == 'batch':
         norm_layer = functools.partial(nn.BatchNorm2d, affine=True, track_running_stats=True)
@@ -235,3 +238,36 @@ class CycleGANLoss(nn.Module):
 
     def forward(self, x):
         """Forward pass through the CycleGANLoss."""
+
+class ReplayBuffer:
+    """
+    Replay buffer is used to train the discriminator.
+
+    Generated images are added to the replay buffer and sampled from it.
+    The replay buffer returns the newly added image with a probability of 0.5. Otherwise,
+    it sends an older generated image and replaces the older image with the newly generated image.
+    This is done to reduce model oscillation.
+
+    Source: https://nn.labml.ai/gan/cycle_gan/index.html
+    """
+
+    def __init__(self, max_size: int = 50):
+        self.max_size = max_size
+        self.data = []
+
+    def push_and_pop(self, data: torch.Tensor):
+        """Add/retrieve an image."""
+        data = data.detach()
+        res = []
+        for element in data:
+            if len(self.data) < self.max_size:
+                self.data.append(element)
+                res.append(element)
+            else:
+                if random.uniform(0, 1) > 0.5:
+                    i = random.randint(0, self.max_size - 1)
+                    res.append(self.data[i].clone())
+                    self.data[i] = element
+                else:
+                    res.append(element)
+        return torch.stack(res)
