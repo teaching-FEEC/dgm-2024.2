@@ -60,7 +60,7 @@ class TestCycleGAN(unittest.TestCase):
             "channels" : 3, #3
             "checkpoint_interval" : 2,
 
-            "n_samples" : 2, #None
+            "n_samples" : None, #None
         }
 
         commit_hash, commit_msg = utils.get_current_commit()
