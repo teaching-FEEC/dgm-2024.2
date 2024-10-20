@@ -2,6 +2,7 @@
 """Assorted functions."""
 
 import gc
+import time
 import subprocess
 import json
 from pathlib import Path
@@ -335,7 +336,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     - Progress is tracked with a `tqdm` progress bar that shows current generator
     and discriminator losses.
     """
-
+    time_start = time.time()
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
@@ -383,7 +384,8 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4g}, '
     msg += f'D_A_loss={loss_D_A:.4g}, D_B_loss={loss_D_B:.4g}, '
     msg += f'G_ad={loss_G_ad:.4g}, G_cycle={loss_G_cycle:.4g}, '
-    msg += f'G_id={loss_G_id:.4g}, G_plp={loss_G_plp:.4g}'
+    msg += f'G_id={loss_G_id:.4g}, G_plp={loss_G_plp:.4g}, '
+    msg += f'Time={time.time() - time_start:.2f} s'
     print(msg)
     return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp
 
