@@ -1,6 +1,7 @@
 # pylint: disable=invalid-name
 """Assorted functions."""
 
+import gc
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -360,8 +361,13 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
         progress_bar.set_postfix({
             'G_loss': f'{loss.loss_G.item():.4f}',
             'D_A_loss': f'{loss.loss_D_A.item():.4f}',
-            'D_B_loss': f'{loss.loss_D_B.item():.4f}'
+            'D_B_loss': f'{loss.loss_D_B.item():.4f}',
+            'GPU': f'{print_gpu_memory_usage("",True):.2f}%',
         })
+
+        torch.cuda.empty_cache()
+        gc.collect()
+
     progress_bar.close()
 
     loss_G /= (len(train_A) + len(train_B)) / 2
@@ -379,7 +385,6 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     print(msg)
     return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp
 
-# Plot losses
 def plot_losses(train_losses, val_losses):
     """
     Plots the training and validation losses over the epochs.
@@ -439,7 +444,8 @@ def print_gpu_memory_usage(msg=None, short_msg=False):
         (default=None)
     short_msg: bool
         If True, prints a single line message with the total
-        memory usage across all GPUs.
+        memory usage across all GPUs. If msg=='' and
+        short_msg==True, returns the percentage of memory used.
         (default=False)
     """
     gpu_memory_info = get_gpu_memory_usage()
@@ -448,8 +454,10 @@ def print_gpu_memory_usage(msg=None, short_msg=False):
             msg = "GPU Memory Usage"
         total = sum(info['total_memory'] for info in gpu_memory_info)
         used = sum(info['used_memory'] for info in gpu_memory_info)
-        print(f"{msg}: {used / (1024 ** 2):.2f} MB ({used / total * 100:.2f}% used)")
-        return
+        if len(msg):
+            print(f"{msg}: {used / (1024 ** 2):.2f} MB ({used / total * 100:.2f}% used)")
+        else:
+            return used / total * 100
 
     ident = ""
     if msg is not None:

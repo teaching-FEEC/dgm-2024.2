@@ -4,7 +4,8 @@ from dataclasses import dataclass
 import torch
 from torch import nn
 from .basemodel import BaseModel
-from .networks import Generator, Discriminator, CycleGANLoss, get_norm_layer, ReplayBuffer, PathLengthPenalty
+from .networks import Generator, Discriminator, CycleGANLoss
+from .networks import get_norm_layer, ReplayBuffer, PathLengthPenalty
 
 @dataclass
 class Loss:
@@ -97,6 +98,8 @@ class CycleGAN(BaseModel):
 
         self.plp_A = PathLengthPenalty(beta=plp_beta, step=plp_step, device=device)
         self.plp_B = PathLengthPenalty(beta=plp_beta, step=plp_step, device=device)
+
+        self.scaler = torch.amp.GradScaler()
 
     def __str__(self):
         """String representation of the CycleGAN model."""
@@ -227,22 +230,23 @@ class CycleGAN(BaseModel):
         Perform one optimization step for the generators and discriminators.
         """
         self.train()
-        loss = self.compute_loss(real_A, real_B)
 
-        # Optimize Generators
         self.optimizer_G.zero_grad()
-        loss.loss_G.backward()
-        self.optimizer_G.step()
-
-        # Optimize Discriminator A
         self.optimizer_D_A.zero_grad()
-        loss.loss_D_A.backward()
-        self.optimizer_D_A.step()
-
-        # Optimize Discriminator B
         self.optimizer_D_B.zero_grad()
-        loss.loss_D_B.backward()
-        self.optimizer_D_B.step()
+
+        with torch.autocast(device_type="cuda"):
+            loss = self.compute_loss(real_A, real_B)
+
+        self.scaler.scale(loss.loss_G).backward()
+        self.scaler.scale(loss.loss_D_A).backward()
+        self.scaler.scale(loss.loss_D_B).backward()
+
+        self.scaler.step(self.optimizer_G)
+        self.scaler.step(self.optimizer_D_A)
+        self.scaler.step(self.optimizer_D_B)
+
+        self.scaler.update()
 
         return loss
 
@@ -287,9 +291,10 @@ class CycleGAN(BaseModel):
         real_B = real_B[:n_images]
 
         self.eval()
-        fake_B, fake_A = self.forward(real_A, real_B)
-        recovered_B, recovered_A = self.forward(fake_A, fake_B)
-        id_B, id_A = self.forward(real_B, real_A) # pylint: disable=arguments-out-of-order
+        with torch.no_grad():
+            fake_B, fake_A = self.forward(real_A, real_B)
+            recovered_B, recovered_A = self.forward(fake_A, fake_B)
+            id_B, id_A = self.forward(real_B, real_A) # pylint: disable=arguments-out-of-order
 
         imgs_A = torch.vstack([real_A, fake_B, recovered_A, id_A])
         imgs_B = torch.vstack([real_B, fake_A, recovered_B, id_B])

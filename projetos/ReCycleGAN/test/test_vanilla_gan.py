@@ -223,6 +223,9 @@ class TestCycleGAN(unittest.TestCase):
 
             imgs_A, imgs_B = self.cycle_gan.generate_samples(real_A, real_B, n_images=n_images)
 
+            imgs_A.to('cpu')
+            imgs_B.to('cpu')
+
             utils.show_img(imgs_A, title=f'Epoch {epoch} - A Images',
                         figsize = (20, 16), change_scale=True, nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
