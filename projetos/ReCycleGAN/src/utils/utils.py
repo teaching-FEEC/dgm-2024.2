@@ -1,6 +1,10 @@
 # pylint: disable=invalid-name
 """Assorted functions."""
 
+import gc
+import time
+import subprocess
+import json
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -332,7 +336,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     - Progress is tracked with a `tqdm` progress bar that shows current generator
     and discriminator losses.
     """
-
+    time_start = time.time()
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
@@ -360,8 +364,13 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
         progress_bar.set_postfix({
             'G_loss': f'{loss.loss_G.item():.4f}',
             'D_A_loss': f'{loss.loss_D_A.item():.4f}',
-            'D_B_loss': f'{loss.loss_D_B.item():.4f}'
+            'D_B_loss': f'{loss.loss_D_B.item():.4f}',
+            'GPU': f'{print_gpu_memory_usage("",True):.2f}%',
         })
+
+        torch.cuda.empty_cache()
+        gc.collect()
+
     progress_bar.close()
 
     loss_G /= (len(train_A) + len(train_B)) / 2
@@ -372,14 +381,14 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     loss_G_id /= (len(train_A) + len(train_B)) / 2
     loss_G_plp /= (len(train_A) + len(train_B)) / 2 * plp_step
 
-    msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4f}, '
-    msg += f'D_A_loss={loss_D_A:.4f}, D_B_loss={loss_D_B:.4f}, '
-    msg += f'G_ad={loss_G_ad:.4f}, G_cycle={loss_G_cycle:.4f}, '
-    msg += f'G_id={loss_G_id:.4f}, G_plp={loss_G_plp:.4f}'
+    msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4g}, '
+    msg += f'D_A_loss={loss_D_A:.4g}, D_B_loss={loss_D_B:.4g}, '
+    msg += f'G_ad={loss_G_ad:.4g}, G_cycle={loss_G_cycle:.4g}, '
+    msg += f'G_id={loss_G_id:.4g}, G_plp={loss_G_plp:.4g}, '
+    msg += f'Time={time.time() - time_start:.2f} s'
     print(msg)
     return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp
 
-# Plot losses
 def plot_losses(train_losses, val_losses):
     """
     Plots the training and validation losses over the epochs.
@@ -439,7 +448,8 @@ def print_gpu_memory_usage(msg=None, short_msg=False):
         (default=None)
     short_msg: bool
         If True, prints a single line message with the total
-        memory usage across all GPUs.
+        memory usage across all GPUs. If msg=='' and
+        short_msg==True, returns the percentage of memory used.
         (default=False)
     """
     gpu_memory_info = get_gpu_memory_usage()
@@ -448,8 +458,10 @@ def print_gpu_memory_usage(msg=None, short_msg=False):
             msg = "GPU Memory Usage"
         total = sum(info['total_memory'] for info in gpu_memory_info)
         used = sum(info['used_memory'] for info in gpu_memory_info)
-        print(f"{msg}: {used / (1024 ** 2):.2f} MB ({used / total * 100:.2f}% used)")
-        return
+        if len(msg):
+            print(f"{msg}: {used / (1024 ** 2):.2f} MB ({used / total * 100:.2f}% used)")
+        else:
+            return used / total * 100
 
     ident = ""
     if msg is not None:
@@ -478,3 +490,30 @@ def count_parameters(model: torch.nn.Module) -> int:
         The total number of parameters: int
     """
     return sum(p.numel() for p in model.parameters())
+
+def get_current_commit():
+    """Get current git hash of the repository."""
+    try:
+        git_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode('utf-8')
+        commit_message = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).strip().decode('utf-8')
+        return git_hash, commit_message
+    except subprocess.CalledProcessError:
+        return None, None
+
+def save_dict_as_json(data, file_path):
+    """
+    Save a dictionary as a formatted JSON file.
+
+    Parameters:
+    ------------
+    data: dict
+        The dictionary to save.
+    file_path: str
+        The path to the output JSON file.
+    """
+    out = {}
+    for k,v in data.items():
+        out[k] = str(v)
+
+    with open(file_path, 'w', encoding='utf-8') as json_file:
+        json.dump(out, json_file, indent=4, sort_keys=True)
