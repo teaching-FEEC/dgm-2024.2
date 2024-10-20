@@ -1,5 +1,6 @@
 # pylint: disable=invalid-name
 """Module with CycleGAN class."""
+import gc
 from dataclasses import dataclass
 import torch
 from torch import nn
@@ -41,6 +42,7 @@ class CycleGAN(BaseModel):
     - lr: Learning rate. Default is 0.0002.
     - beta1: Beta1 for Adam optimizer. Default is 0.5.
     - beta2: Beta2 for Adam optimizer. Default is 0.999.
+    - amp: If True, use automatic mixed precision. Default is False.
     - device: 'cuda' or 'cpu'. Default is 'cpu'.
     """
     def __init__(self, input_nc=3, output_nc=3,
@@ -53,8 +55,12 @@ class CycleGAN(BaseModel):
                  cycle_loss_weight=10.0, id_loss_weight=5.0, plp_loss_weight=1.0,
                  plp_step=0,
                  plp_beta=0.99,
+                 amp=False,
                  lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
         super().__init__(device)
+
+        torch.cuda.empty_cache()
+        gc.collect()
 
         norm_layer = get_norm_layer(norm_type)
         # Initialize generators and discriminators
@@ -99,7 +105,9 @@ class CycleGAN(BaseModel):
         self.plp_A = PathLengthPenalty(beta=plp_beta, step=plp_step, device=device)
         self.plp_B = PathLengthPenalty(beta=plp_beta, step=plp_step, device=device)
 
-        self.scaler = torch.amp.GradScaler()
+        self.amp = amp
+        if self.amp:
+            self.scaler = torch.amp.GradScaler()
 
     def __str__(self):
         """String representation of the CycleGAN model."""
@@ -235,18 +243,29 @@ class CycleGAN(BaseModel):
         self.optimizer_D_A.zero_grad()
         self.optimizer_D_B.zero_grad()
 
-        with torch.autocast(device_type="cuda"):
+        if self.amp:
+            with torch.autocast(device_type="cuda"):
+                loss = self.compute_loss(real_A, real_B)
+
+            self.scaler.scale(loss.loss_G).backward()
+            self.scaler.scale(loss.loss_D_A).backward()
+            self.scaler.scale(loss.loss_D_B).backward()
+
+            self.scaler.step(self.optimizer_G)
+            self.scaler.step(self.optimizer_D_A)
+            self.scaler.step(self.optimizer_D_B)
+
+            self.scaler.update()
+        else:
             loss = self.compute_loss(real_A, real_B)
 
-        self.scaler.scale(loss.loss_G).backward()
-        self.scaler.scale(loss.loss_D_A).backward()
-        self.scaler.scale(loss.loss_D_B).backward()
+            loss.loss_G.backward()
+            loss.loss_D_A.backward()
+            loss.loss_D_B.backward()
 
-        self.scaler.step(self.optimizer_G)
-        self.scaler.step(self.optimizer_D_A)
-        self.scaler.step(self.optimizer_D_B)
-
-        self.scaler.update()
+            self.optimizer_G.step()
+            self.optimizer_D_A.step()
+            self.optimizer_D_B.step()
 
         return loss
 
