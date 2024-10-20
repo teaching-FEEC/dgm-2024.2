@@ -2,6 +2,8 @@
 """Assorted functions."""
 
 import gc
+import subprocess
+import json
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -378,10 +380,10 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     loss_G_id /= (len(train_A) + len(train_B)) / 2
     loss_G_plp /= (len(train_A) + len(train_B)) / 2 * plp_step
 
-    msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4f}, '
-    msg += f'D_A_loss={loss_D_A:.4f}, D_B_loss={loss_D_B:.4f}, '
-    msg += f'G_ad={loss_G_ad:.4f}, G_cycle={loss_G_cycle:.4f}, '
-    msg += f'G_id={loss_G_id:.4f}, G_plp={loss_G_plp:.4f}'
+    msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4g}, '
+    msg += f'D_A_loss={loss_D_A:.4g}, D_B_loss={loss_D_B:.4g}, '
+    msg += f'G_ad={loss_G_ad:.4g}, G_cycle={loss_G_cycle:.4g}, '
+    msg += f'G_id={loss_G_id:.4g}, G_plp={loss_G_plp:.4g}'
     print(msg)
     return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp
 
@@ -486,3 +488,34 @@ def count_parameters(model: torch.nn.Module) -> int:
         The total number of parameters: int
     """
     return sum(p.numel() for p in model.parameters())
+
+def get_current_commit():
+    """Get current git hash of the repository."""
+    try:
+        git_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode('utf-8')
+        commit_message = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).strip().decode('utf-8')
+        return git_hash, commit_message
+    except subprocess.CalledProcessError:
+        return None, None
+
+def save_dict_as_json(data, file_path):
+    """
+    Save a dictionary as a formatted JSON file.
+
+    Parameters:
+    ------------
+    data: dict
+        The dictionary to save.
+    file_path: str
+        The path to the output JSON file.
+    """
+    out = {}
+    for k,v in data.items():
+        out[k] = str(v)
+
+    # out_file = open(file_path, "w")
+    # json.dump(out, out_file, indent = 6)
+    # out_file.close()
+
+    with open(file_path, 'w', encoding='utf-8') as json_file:
+        json.dump(out, json_file, indent=4, sort_keys=True)
