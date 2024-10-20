@@ -6,6 +6,7 @@ from pathlib import Path
 import torch
 from torchvision import transforms
 import matplotlib.pyplot as plt
+import wandb
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
 from models import CycleGAN  # pylint: disable=all
@@ -17,10 +18,10 @@ class TestCycleGAN(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.use_cuda = True
-        cls.run_wnadb = False
+        cls.run_wnadb = True
         cls.print_memory = True
 
-        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_2'
+        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_4'
         cls.out_folder.mkdir(parents=True, exist_ok=True)
 
         cls.hyperparameters = {
@@ -54,7 +55,7 @@ class TestCycleGAN(unittest.TestCase):
             "beta1" : 0.5,  #0.5
             "beta2" : 0.999, #0.999
 
-            "amp" : False, #False
+            "amp" : True, #False
 
             "channels" : 3, #3
             "checkpoint_interval" : 2,
@@ -131,12 +132,11 @@ class TestCycleGAN(unittest.TestCase):
         print(f"Number of test samples: {n_test}")
 
         if cls.run_wnadb:
-            # from wandb_utils import init_wandb, log_hyperparameters
-            # init_wandb()
-            # log_hyperparameters(self.hyperparameters)
+            wandb.init(
+                project="cyclegan",
+                name="Test_Other",
+                config=cls.hyperparameters)
 
-            import wandb
-            wandb.init(project="cyclegan", config=cls.hyperparameters)
 
     def test_shapes(self):
         """Test data shapes."""
@@ -211,18 +211,10 @@ class TestCycleGAN(unittest.TestCase):
                 filename=self.out_folder / 'train_losses.txt')
 
             if epoch % self.hyperparameters["checkpoint_interval"] == 0:
-                self.cycle_gan.save_model(self.out_folder / f'cycle_gan_epoch_{epoch}.pth')
-
-            if self.run_wnadb:
-                wandb.log({
-                    'G_loss/train': loss_G,
-                    'D_A_loss/train': loss_D_A,
-                    'D_B_loss/train': loss_D_B,
-                    'G_loss_ad/train': loss_G_ad,
-                    'G_loss_cycle/train': loss_G_cycle,
-                    'G_loss_id/train': loss_G_id,
-                    'G_loss_plp/train': loss_G_plp,
-                })
+                save_path = self.out_folder / f'cycle_gan_epoch_{epoch}.pth'
+                self.cycle_gan.save_model(save_path)
+                if self.run_wnadb:
+                    wandb.save(str(save_path))
 
             real_A = next(iter(self.test_A))
             real_B = next(iter(self.test_B))
@@ -240,12 +232,27 @@ class TestCycleGAN(unittest.TestCase):
             utils.show_img(imgs_A, title=f'Epoch {epoch} - A Images',
                         figsize = (20, 16), change_scale=True, nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
-            plt.savefig(self.out_folder / f'imgs_{epoch}_A.png')
+            sample_A_path = self.out_folder / f'imgs_{epoch}_A.png'
+            plt.savefig(sample_A_path)
 
             utils.show_img(imgs_B, title=f'Epoch {epoch} - B Images',
                         figsize = (20, 16), change_scale=True, nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
-            plt.savefig(self.out_folder / f'imgs_{epoch}_B.png')
+            sample_B_path = self.out_folder / f'imgs_{epoch}_B.png'
+            plt.savefig(sample_B_path)
+
+            if self.run_wnadb:
+                wandb.log({
+                    'G_loss/Total/train': loss_G,
+                    'G_loss/Adv/train': loss_G_ad,
+                    'G_loss/Cycle/train': loss_G_cycle,
+                    'G_loss/ID/train': loss_G_id,
+                    'G_loss/PLP/train': loss_G_plp,
+                    'D_loss/Disc_A/train': loss_D_A,
+                    'D_loss/Disc_B/train': loss_D_B,
+                    "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
+                    "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
+                })
 
     def test_reading_model(self):
         """Test reading pth files."""
