@@ -20,7 +20,7 @@ class TestCycleGAN(unittest.TestCase):
         cls.run_wnadb = False
         cls.print_memory = True
 
-        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_skip'
+        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_1'
         cls.out_folder.mkdir(parents=True, exist_ok=True)
 
         cls.hyperparameters = {
@@ -56,7 +56,13 @@ class TestCycleGAN(unittest.TestCase):
 
             "channels" : 3, #3
             "checkpoint_interval" : 2,
+
+            "n_samples" : 2, #None
         }
+
+        commit_hash, commit_msg = utils.get_current_commit()
+        cls.hyperparameters['commit_hash'] = commit_hash
+        cls.hyperparameters['commit_msg'] = commit_msg
 
         cls.use_cuda = cls.hyperparameters["device"] == torch.device("cuda")
         print(f'Using device: "{cls.hyperparameters["device"]}"')
@@ -170,6 +176,8 @@ class TestCycleGAN(unittest.TestCase):
         print("Testing running few epochs")
 
         utils.remove_all_files(self.out_folder)
+        utils.save_dict_as_json(self.hyperparameters, self.out_folder / 'hyperparameters.json')
+
         train_losses_G, train_losses_D_A, train_losses_D_B = [], [], []
         train_losses_G_ad, train_losses_G_cycle, train_losses_G_id, train_losses_G_plp = [], [], [], []
 
@@ -180,7 +188,7 @@ class TestCycleGAN(unittest.TestCase):
                 train_A=self.train_A,
                 train_B=self.train_B,
                 device=self.hyperparameters["device"],
-                n_samples=None,
+                n_samples=self.hyperparameters["n_samples"],
                 plp_step=self.hyperparameters["plp_step"],
             )
 
