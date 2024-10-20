@@ -239,32 +239,36 @@ class CycleGAN(BaseModel):
         """
         self.train()
 
-        self.optimizer_G.zero_grad()
-        self.optimizer_D_A.zero_grad()
-        self.optimizer_D_B.zero_grad()
-
         if self.amp:
             with torch.autocast(device_type="cuda"):
                 loss = self.compute_loss(real_A, real_B)
 
+            self.optimizer_G.zero_grad()
             self.scaler.scale(loss.loss_G).backward()
-            self.scaler.scale(loss.loss_D_A).backward()
-            self.scaler.scale(loss.loss_D_B).backward()
-
             self.scaler.step(self.optimizer_G)
+
+            self.optimizer_D_A.zero_grad()
+            self.scaler.scale(loss.loss_D_A).backward()
             self.scaler.step(self.optimizer_D_A)
+
+            self.optimizer_D_B.zero_grad()
+            self.scaler.scale(loss.loss_D_B).backward()
             self.scaler.step(self.optimizer_D_B)
 
             self.scaler.update()
         else:
             loss = self.compute_loss(real_A, real_B)
 
+            self.optimizer_G.zero_grad()
             loss.loss_G.backward()
-            loss.loss_D_A.backward()
-            loss.loss_D_B.backward()
-
             self.optimizer_G.step()
+
+            self.optimizer_D_A.zero_grad()
+            loss.loss_D_A.backward()
             self.optimizer_D_A.step()
+
+            self.optimizer_D_B.zero_grad()
+            loss.loss_D_B.backward()
             self.optimizer_D_B.step()
 
         return loss

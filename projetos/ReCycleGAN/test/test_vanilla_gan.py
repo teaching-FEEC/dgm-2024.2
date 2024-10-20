@@ -20,7 +20,7 @@ class TestCycleGAN(unittest.TestCase):
         cls.run_wnadb = False
         cls.print_memory = True
 
-        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_1'
+        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_2'
         cls.out_folder.mkdir(parents=True, exist_ok=True)
 
         cls.hyperparameters = {
