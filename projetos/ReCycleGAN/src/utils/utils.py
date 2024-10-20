@@ -515,9 +515,5 @@ def save_dict_as_json(data, file_path):
     for k,v in data.items():
         out[k] = str(v)
 
-    # out_file = open(file_path, "w")
-    # json.dump(out, out_file, indent = 6)
-    # out_file.close()
-
     with open(file_path, 'w', encoding='utf-8') as json_file:
         json.dump(out, json_file, indent=4, sort_keys=True)
