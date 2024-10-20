@@ -54,6 +54,8 @@ class TestCycleGAN(unittest.TestCase):
             "beta1" : 0.5,  #0.5
             "beta2" : 0.999, #0.999
 
+            "amp" : False, #False
+
             "channels" : 3, #3
             "checkpoint_interval" : 2,
         }
@@ -85,6 +87,7 @@ class TestCycleGAN(unittest.TestCase):
             lr=cls.hyperparameters["lr"],
             beta1=cls.hyperparameters["beta1"],
             beta2=cls.hyperparameters["beta2"],
+            amp=cls.hyperparameters["amp"],
         )
 
 
@@ -180,7 +183,7 @@ class TestCycleGAN(unittest.TestCase):
                 train_A=self.train_A,
                 train_B=self.train_B,
                 device=self.hyperparameters["device"],
-                n_samples=None,
+                n_samples=2,
                 plp_step=self.hyperparameters["plp_step"],
             )
 
