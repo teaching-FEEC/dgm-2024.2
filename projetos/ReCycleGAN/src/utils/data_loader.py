@@ -32,7 +32,7 @@ class ImageDataset(Dataset):
         return image
 
 def get_img_dataloader(csv_file, img_dir=None, transformation=None, file_name_col='file_name',
-                       batch_size=32, shuffle=True, num_workers=4):
+                       batch_size=32, shuffle=True, num_workers=1):
     """Get image DataLoader.
 
     Parameters:
@@ -56,6 +56,9 @@ def get_img_dataloader(csv_file, img_dir=None, transformation=None, file_name_co
     shuffle: bool
         Shuffle the data.
         (Default: True)
+    num_workers: int
+        Number of workers.
+        (Default: 1)
     """
     if img_dir is None:
         stem = Path(csv_file).stem
