@@ -4,10 +4,10 @@ import gc
 import torch
 from torch import nn
 
-from src.utils import Loss
 from .basemodel import BaseModel
 from .networks import Generator, Discriminator, CycleGANLoss
 from .networks import get_norm_layer, ReplayBuffer, PathLengthPenalty
+from .losses import Loss
 
 class CycleGAN(BaseModel):
     """
