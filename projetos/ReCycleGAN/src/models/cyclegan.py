@@ -191,9 +191,13 @@ class CycleGAN(BaseModel):
             return loss_A, loss_B
 
         def _get_plp_loss(real_A, real_B, fake_A, fake_B):
-            if self.plp_A.is_plp_step() and self.plp_loss_weight > 0:
+            ok_A = self.plp_A.is_plp_step()
+            ok_B = self.plp_B.is_plp_step()
+            if self.plp_loss_weight > 0 and ok_A and ok_B:
                 loss_A = self.plp_A(real_A, fake_B)
                 loss_B = self.plp_B(real_B, fake_A)
+                real_A = real_A.detach()
+                real_B = real_B.detach()
             else:
                 loss_A = torch.tensor(0.0, device=self.device)
                 loss_B = torch.tensor(0.0, device=self.device)
@@ -208,11 +212,10 @@ class CycleGAN(BaseModel):
                 real_B.requires_grad_()
 
         fake_B, fake_A = self.forward(real_A, real_B)
+        loss_plp_A, loss_plp_B = _get_plp_loss(real_A, real_B, fake_A, fake_B)
         loss_adv_AtoB, loss_adv_BtoA = _get_adv_loss(fake_A, fake_B)
         loss_cycle_A, loss_cycle_B = _get_cycle_loss(real_A, real_B, fake_A, fake_B)
         loss_id_A, loss_id_B = _get_id_loss(real_A, real_B)
-        loss_plp_A, loss_plp_B = _get_plp_loss(real_A, real_B, fake_A, fake_B)
-
 
         loss_G_ad = loss_adv_AtoB + loss_adv_BtoA
         loss_G_cycle = loss_cycle_A + loss_cycle_B
