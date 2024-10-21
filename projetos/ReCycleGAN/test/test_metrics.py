@@ -11,27 +11,23 @@ from metrics import FID, LPIPS  # pylint: disable=all
 from utils.data_loader import get_img_dataloader  # pylint: disable=all
 from utils.utils import get_gpu_memory_usage  # pylint: disable=all
 
-class TestFID(unittest.TestCase):
-    def setUp(self):
-        # Use cuda
-        self.cuda = True
-        # Load image paths from CSV files
-        self.n = 2048
-        # Print memory usage
+class TestMetrics(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        self.use_cuda = True
+        self.batch_size = 2048
         self.print_memory = True
-        # Run FID tests
-        self.run_fid = True
 
         folder = Path(__file__).resolve().parent.parent / 'data' / 'external' / 'nexet'
-        train_A_csv = folder / 'input_A_train.csv'
-        test_A_csv = folder / 'input_A_test.csv'
-        train_B_csv = folder / 'input_B_train.csv'
-        test_B_csv = folder / 'input_B_test.csv'
+        train_A_csv = folder / 'input_A_train_filtered.csv'
+        test_A_csv = folder / 'input_A_test_filtered.csv'
+        train_B_csv = folder / 'input_B_train_filtered.csv'
+        test_B_csv = folder / 'input_B_test_filtered.csv'
 
-        train_A = get_img_dataloader(csv_file=train_A_csv, batch_size=self.n)
-        test_A = get_img_dataloader(csv_file=test_A_csv, batch_size=self.n)
-        train_B = get_img_dataloader(csv_file=train_B_csv, batch_size=self.n)
-        test_B = get_img_dataloader(csv_file=test_B_csv, batch_size=self.n)
+        train_A = get_img_dataloader(csv_file=train_A_csv, batch_size=self.batch_size)
+        test_A = get_img_dataloader(csv_file=test_A_csv, batch_size=self.batch_size)
+        train_B = get_img_dataloader(csv_file=train_B_csv, batch_size=self.batch_size)
+        test_B = get_img_dataloader(csv_file=test_B_csv, batch_size=self.batch_size)
 
         self.train_A_imgs = next(iter(train_A))
         self.test_A_imgs = next(iter(test_A))
@@ -39,29 +35,35 @@ class TestFID(unittest.TestCase):
         self.test_B_imgs = next(iter(test_B))
 
         test_A_turbo = get_img_dataloader(
-            csv_file=self.test_A_csv,
-            img_dir=Path(self.test_A_csv).parent / Path(self.test_A_csv).stem.replace('_test', '_turbo').replace('in', 'out'),
-            batch_size=self.n)
+            csv_file=test_A_csv,
+            img_dir=Path(test_A_csv).parent / Path(test_A_csv).stem.replace('_test_filtered', '_turbo').replace('in', 'out'),
+            batch_size=self.batch_size)
         test_B_turbo = get_img_dataloader(
-            csv_file=self.test_B_csv,
-            img_dir=Path(self.test_B_csv).parent / Path(self.test_B_csv).stem.replace('_test', '_turbo').replace('in', 'out'),
-            batch_size=self.n)
+            csv_file=test_B_csv,
+            img_dir=Path(test_B_csv).parent / Path(test_B_csv).stem.replace('_test_filtered', '_turbo').replace('in', 'out'),
+            batch_size=self.batch_size)
 
         self.test_A_turbo_imgs = next(iter(test_A_turbo))
         self.test_B_turbo_imgs = next(iter(test_B_turbo))
+
+        self.use_cuda = self.use_cuda and torch.cuda.is_available()
+
+        if self.use_cuda:
+            print("Using CUDA")
+            torch.backends.cudnn.benchmark = True
+            torch.backends.cudnn.enabled = True
+            torch.backends.cudnn.deterministic = False
+            torch.backends.cudnn.allow_tf32 = True
+            torch.cuda.empty_cache()
 
     def test_fid(self):
         print("===============")
         print("FID calculation")
         print("===============")
-        if not self.run_fid:
-            print("Skipping FID tests.")
-            return
-
         if self.print_memory:
             print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
-        fid = FID(dims=2048, cuda=self.cuda, batch_size=128)
+        fid = FID(dims=2048, cuda=self.use_cuda, batch_size=128)
         if self.print_memory:
             print(get_gpu_memory_usage("After model load", short_msg=True))
 
@@ -114,7 +116,7 @@ class TestFID(unittest.TestCase):
         if self.print_memory:
             print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
-        lpips = LPIPS(cuda=self.cuda, batch_size=256)
+        lpips = LPIPS(cuda=self.use_cuda, batch_size=128)
         if self.print_memory:
             print(get_gpu_memory_usage("After model load", short_msg=True))
 
@@ -170,4 +172,9 @@ class TestFID(unittest.TestCase):
         self.assertLess(lpips_same_B.mean(), lpips_different.mean(), "LPIPS loss for images of the same B class should be lower than for images of different classes.")
 
 if __name__ == '__main__':
-    unittest.main()
+    suite = unittest.TestSuite()
+    suite.addTest(TestMetrics('test_fid'))
+    suite.addTest(TestMetrics('test_lpips'))
+
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
