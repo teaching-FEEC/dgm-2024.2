@@ -284,14 +284,10 @@ class TestCycleGAN(unittest.TestCase):
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
 if __name__ == '__main__':
-    # Create a test suite with the desired order
     suite = unittest.TestSuite()
     # suite.addTest(TestCycleGAN('test_shapes'))
     suite.addTest(TestCycleGAN('test_few_epochs'))
     # suite.addTest(TestCycleGAN('test_reading_model'))
 
-    # Run the test suite
     runner = unittest.TextTestRunner()
     runner.run(suite)
-
-    # unittest.main()
