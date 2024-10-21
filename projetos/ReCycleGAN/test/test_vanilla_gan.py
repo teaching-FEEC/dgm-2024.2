@@ -1,3 +1,4 @@
+# pylint: disable=C0103,C0411,C0413
 """Test running vanilla GAN."""
 
 import unittest
@@ -8,13 +9,14 @@ from torchvision import transforms
 import matplotlib.pyplot as plt
 import wandb
 
-sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
-from models import CycleGAN  # pylint: disable=all
-from metrics import FID, LPIPS  # pylint: disable=all
-from utils.data_loader import get_img_dataloader  # pylint: disable=all
-from utils import utils, run # pylint: disable=all
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from src.models import CycleGAN
+from src.utils.data_loader import get_img_dataloader
+from src.utils import utils, run, ImageTools
+
 
 class TestCycleGAN(unittest.TestCase):
+    """Test CycleGAN model training and inference."""
     @classmethod
     def setUpClass(cls):
         cls.use_cuda = True
@@ -49,7 +51,6 @@ class TestCycleGAN(unittest.TestCase):
             "plp_beta":0.99, #0.99
 
             "num_epochs" : 100,
-            "device" : torch.device("cuda" if (torch.cuda.is_available() and cls.use_cuda) else "cpu"),
 
             "lr" : 0.0002, #0.0002
             "beta1" : 0.5,  #0.5
@@ -60,13 +61,15 @@ class TestCycleGAN(unittest.TestCase):
             "channels" : 3, #3
             "checkpoint_interval" : 2,
 
-            "n_samples" : None, #None
+            "n_samples" : 2, #None
         }
 
         commit_hash, commit_msg = utils.get_current_commit()
         cls.hyperparameters['commit_hash'] = commit_hash
         cls.hyperparameters['commit_msg'] = commit_msg
 
+        device = torch.device("cuda" if (torch.cuda.is_available() and cls.use_cuda) else "cpu")
+        cls.hyperparameters['device'] = device
         cls.use_cuda = cls.hyperparameters["device"] == torch.device("cuda")
         print(f'Using device: "{cls.hyperparameters["device"]}"')
 
@@ -105,8 +108,10 @@ class TestCycleGAN(unittest.TestCase):
         test_B_csv = folder / 'input_B_test_filtered.csv'
 
         transformation = transforms.Compose([
-            transforms.Resize(int(cls.hyperparameters["img_height"] * 1.12), transforms.InterpolationMode.BICUBIC),
-            transforms.RandomCrop((cls.hyperparameters["img_height"], cls.hyperparameters["img_width"])),
+            transforms.Resize(int(cls.hyperparameters["img_height"] * 1.12),
+                              transforms.InterpolationMode.BICUBIC),
+            transforms.RandomCrop((cls.hyperparameters["img_height"],
+                                   cls.hyperparameters["img_width"])),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
@@ -116,10 +121,18 @@ class TestCycleGAN(unittest.TestCase):
             print(utils.get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
         batch_size = cls.hyperparameters["batch_size"]
-        cls.train_A = get_img_dataloader(csv_file=train_A_csv, batch_size=batch_size, transformation=transformation)
-        cls.test_A = get_img_dataloader(csv_file=test_A_csv, batch_size=batch_size, transformation=transformation)
-        cls.train_B = get_img_dataloader(csv_file=train_B_csv, batch_size=batch_size, transformation=transformation)
-        cls.test_B = get_img_dataloader(csv_file=test_B_csv, batch_size=batch_size, transformation=transformation)
+        cls.train_A = get_img_dataloader(csv_file=train_A_csv,
+                                         batch_size=batch_size,
+                                         transformation=transformation)
+        cls.test_A = get_img_dataloader(csv_file=test_A_csv,
+                                        batch_size=batch_size,
+                                        transformation=transformation)
+        cls.train_B = get_img_dataloader(csv_file=train_B_csv,
+                                         batch_size=batch_size,
+                                         transformation=transformation)
+        cls.test_B = get_img_dataloader(csv_file=test_B_csv,
+                                        batch_size=batch_size,
+                                        transformation=transformation)
 
         n_train = min(len(cls.train_A.dataset), len(cls.train_B.dataset))
         cls.train_A.dataset.set_len(n_train)
@@ -156,13 +169,13 @@ class TestCycleGAN(unittest.TestCase):
             real_A = real_A.cuda()
             real_B = real_B.cuda()
         if self.print_memory:
-            print(utils.get_gpu_memory_usage("Memory usage after loading images", short_msg=True))
+            print(utils.get_gpu_memory_usage("After loading images", short_msg=True))
 
         self.cycle_gan.eval()
         fake_B, fake_A = self.cycle_gan.forward(real_A, real_B)
 
         if self.print_memory:
-            print(utils.get_gpu_memory_usage("Memory usage after model forward call", short_msg=True))
+            print(utils.get_gpu_memory_usage("After model forward call", short_msg=True))
 
         self.assertEqual(real_A.shape, fake_B.shape, 'real_A.shape != fake_B.shape')
         self.assertEqual(real_B.shape, fake_A.shape, 'real_B.shape != fake_A.shape')
@@ -181,11 +194,9 @@ class TestCycleGAN(unittest.TestCase):
         utils.remove_all_files(self.out_folder)
         utils.save_dict_as_json(self.hyperparameters, self.out_folder / 'hyperparameters.json')
 
-        train_losses_G, train_losses_D_A, train_losses_D_B = [], [], []
-        train_losses_G_ad, train_losses_G_cycle, train_losses_G_id, train_losses_G_plp = [], [], [], []
-
+        train_losses = run.LossLists()
         for epoch in range(10):
-            loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp = run.train_one_epoch(
+            losses_ = run.train_one_epoch(
                 epoch=epoch,
                 model=self.cycle_gan,
                 train_A=self.train_A,
@@ -195,20 +206,9 @@ class TestCycleGAN(unittest.TestCase):
                 plp_step=self.hyperparameters["plp_step"],
             )
 
-            train_losses_G.append(loss_G)
-            train_losses_D_A.append(loss_D_A)
-            train_losses_D_B.append(loss_D_B)
-            train_losses_G_ad.append(loss_G_ad)
-            train_losses_G_cycle.append(loss_G_cycle)
-            train_losses_G_id.append(loss_G_id)
-            train_losses_G_plp.append(loss_G_plp)
+            train_losses.append(losses_)
 
-            # Save the average losses to a file
-            run.save_losses(
-                train_losses_G, train_losses_D_A, train_losses_D_B,
-                train_losses_G_ad, train_losses_G_cycle,
-                train_losses_G_id, train_losses_G_plp,
-                filename=self.out_folder / 'train_losses.txt')
+            run.save_losses(train_losses, filename=self.out_folder / 'train_losses.txt')
 
             if epoch % self.hyperparameters["checkpoint_interval"] == 0:
                 save_path = self.out_folder / f'cycle_gan_epoch_{epoch}.pth'
@@ -229,13 +229,13 @@ class TestCycleGAN(unittest.TestCase):
             imgs_A.to('cpu')
             imgs_B.to('cpu')
 
-            utils.show_img(imgs_A, title=f'Epoch {epoch} - A Images',
+            ImageTools.show_img(imgs_A, title=f'Epoch {epoch} - A Images',
                         figsize = (20, 16), nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
             sample_A_path = self.out_folder / f'imgs_{epoch}_A.png'
             plt.savefig(sample_A_path)
 
-            utils.show_img(imgs_B, title=f'Epoch {epoch} - B Images',
+            ImageTools.show_img(imgs_B, title=f'Epoch {epoch} - B Images',
                         figsize = (20, 16), nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
             sample_B_path = self.out_folder / f'imgs_{epoch}_B.png'
@@ -243,13 +243,13 @@ class TestCycleGAN(unittest.TestCase):
 
             if self.run_wnadb:
                 wandb.log({
-                    'G_loss/Total/train': loss_G,
-                    'G_loss/Adv/train': loss_G_ad,
-                    'G_loss/Cycle/train': loss_G_cycle,
-                    'G_loss/ID/train': loss_G_id,
-                    'G_loss/PLP/train': loss_G_plp,
-                    'D_loss/Disc_A/train': loss_D_A,
-                    'D_loss/Disc_B/train': loss_D_B,
+                    'G_loss/Total/train': losses_.loss_G,
+                    'G_loss/Adv/train': losses_.loss_G_ad,
+                    'G_loss/Cycle/train': losses_.loss_G_cycle,
+                    'G_loss/ID/train': losses_.loss_G_id,
+                    'G_loss/PLP/train': losses_.loss_G_plp,
+                    'D_loss/Disc_A/train': losses_.loss_D_A,
+                    'D_loss/Disc_B/train': losses_.loss_D_B,
                     "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
                     "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
                 })
@@ -258,7 +258,7 @@ class TestCycleGAN(unittest.TestCase):
         """Test reading pth files."""
         print("Testing reading model")
 
-        n = self.hyperparameters["checkpoint_interval"]
+        n = 0 #self.hyperparameters["checkpoint_interval"]
         self.cycle_gan.load_model(self.out_folder / f'cycle_gan_epoch_{n}.pth')
 
         real_A = next(iter(self.test_A))
@@ -271,13 +271,13 @@ class TestCycleGAN(unittest.TestCase):
 
         imgs_A, imgs_B = self.cycle_gan.generate_samples(real_A, real_B, n_images=n_images)
 
-        utils.show_img(imgs_A, title='A Images', figsize = (20, 16), nrow=n_images,
+        ImageTools.show_img(imgs_A, title='A Images', figsize = (20, 16), nrow=n_images,
                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'A_imgs.png'
         plt.savefig(test_file)
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
-        utils.show_img(imgs_B, title='B Images', figsize = (20, 16), nrow=n_images,
+        ImageTools.show_img(imgs_B, title='B Images', figsize = (20, 16), nrow=n_images,
                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'B_imgs.png'
         plt.savefig(test_file)

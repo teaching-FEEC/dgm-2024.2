@@ -1,23 +1,13 @@
 # pylint: disable=invalid-name
 """Module with CycleGAN class."""
 import gc
-from dataclasses import dataclass
 import torch
 from torch import nn
+
+from src.utils import Loss
 from .basemodel import BaseModel
 from .networks import Generator, Discriminator, CycleGANLoss
 from .networks import get_norm_layer, ReplayBuffer, PathLengthPenalty
-
-@dataclass
-class Loss:
-    """Dataclass for CycleGAN losses."""
-    loss_G: torch.Tensor
-    loss_D_A: torch.Tensor
-    loss_D_B: torch.Tensor
-    loss_G_ad: torch.Tensor
-    loss_G_cycle: torch.Tensor
-    loss_G_id: torch.Tensor
-    loss_G_plp: torch.Tensor
 
 class CycleGAN(BaseModel):
     """
@@ -166,6 +156,7 @@ class CycleGAN(BaseModel):
         fake_A = self.gen_BtoA(real_B)
 
         return fake_B, fake_A
+
 
     def compute_loss(self, real_A, real_B): # pylint: disable=arguments-differ
         """

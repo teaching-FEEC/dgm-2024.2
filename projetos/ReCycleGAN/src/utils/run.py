@@ -1,14 +1,119 @@
+# pylint: disable=C0103
 """Functions to control training and testing CycleGAN models."""
 import time
 import gc
-import numpy as np
+from dataclasses import dataclass
+import pandas as pd
 import torch
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 from .utils import get_gpu_memory_usage
 
+@dataclass
+class Loss:
+    """Dataclass for CycleGAN losses as torch.Tensor."""
+    loss_G: torch.Tensor
+    loss_D_A: torch.Tensor
+    loss_D_B: torch.Tensor
+    loss_G_ad: torch.Tensor
+    loss_G_cycle: torch.Tensor
+    loss_G_id: torch.Tensor
+    loss_G_plp: torch.Tensor
 
-def save_losses(loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp, filename='losses.txt'):
+class LossValues:
+    """Class for CycleGAN losses as float.
+
+    Args:
+    - n_A (int): Number of samples in domain A.
+    - n_B (int): Number of samples in domain B.
+    - plp_step (int): Steps between Path Length Penalty calculations.
+    """
+    def __init__(self, n_A, n_B, plp_step):
+        self.loss_G = 0
+        self.loss_D_A = 0
+        self.loss_D_B = 0
+        self.loss_G_ad = 0
+        self.loss_G_cycle = 0
+        self.loss_G_id = 0
+        self.loss_G_plp = 0
+
+        self.n_a = n_A
+        self.n_b = n_B
+        self.plp_step = plp_step
+
+    def add(self, loss: Loss):
+        """Adds the losses to the respective values."""
+        self.loss_G += loss.loss_G.item()
+        self.loss_D_A += loss.loss_D_A.item()
+        self.loss_D_B += loss.loss_D_B.item()
+        self.loss_G_ad += loss.loss_G_ad.item()
+        self.loss_G_cycle += loss.loss_G_cycle.item()
+        self.loss_G_id += loss.loss_G_id.item()
+        self.loss_G_plp += loss.loss_G_plp.item()
+
+    def normalize(self):
+        """Normalizes the losses by the number of samples."""
+        self.loss_G /= (self.n_a + self.n_b)/2
+        self.loss_D_A /= self.n_a
+        self.loss_D_B /= self.n_b
+        self.loss_G_ad /= (self.n_a + self.n_b)/2
+        self.loss_G_cycle /= (self.n_a + self.n_b)/2
+        self.loss_G_id /= (self.n_a + self.n_b)/2
+        self.loss_G_plp /= (self.n_a + self.n_b)/2 * self.plp_step
+
+    def __str__(self):
+        out = []
+        out.append(f'G_loss={self.loss_G:.4g}')
+        out.append(f'D_A_loss={self.loss_D_A:.4g}')
+        out.append(f'D_B_loss={self.loss_D_B:.4g}')
+        out.append(f'G_ad={self.loss_G_ad:.4g}')
+        out.append(f'G_cycle={self.loss_G_cycle:.4g}')
+        out.append(f'G_id={self.loss_G_id:.4g}')
+        out.append(f'G_plp={self.loss_G_plp:.4g}')
+        return ', '.join(out)
+
+class LossLists:
+    """Class for CycleGAN losses lists."""
+    def __init__(self):
+        self.loss_G = []
+        self.loss_D_A = []
+        self.loss_D_B = []
+        self.loss_G_ad = []
+        self.loss_G_cycle = []
+        self.loss_G_id = []
+        self.loss_G_plp = []
+
+    def append(self, loss: Loss):
+        """Appends the losses to the respective lists."""
+        self.loss_G.append(loss.loss_G)
+        self.loss_D_A.append(loss.loss_D_A)
+        self.loss_D_B.append(loss.loss_D_B)
+        self.loss_G_ad.append(loss.loss_G_ad)
+        self.loss_G_cycle.append(loss.loss_G_cycle)
+        self.loss_G_id.append(loss.loss_G_id)
+        self.loss_G_plp.append(loss.loss_G_plp)
+
+    def names(self):
+        """Returns the names of the losses."""
+        return ['G_loss', 'D_A_loss', 'D_B_loss', 'G_ad', 'G_cycle', 'G_id', 'G_plp']
+
+    def to_dict(self):
+        """Returns the losses as a dictionary."""
+        return {
+            'G_loss': self.loss_G,
+            'D_A_loss': self.loss_D_A,
+            'D_B_loss': self.loss_D_B,
+            'G_ad': self.loss_G_ad,
+            'G_cycle': self.loss_G_cycle,
+            'G_id': self.loss_G_id,
+            'G_plp': self.loss_G_plp
+        }
+
+    def to_dataframe(self):
+        """Returns the losses as a pandas DataFrame."""
+        return pd.DataFrame(self.to_dict())
+
+
+def save_losses(loss: LossLists, filename='losses.txt'):
     """
     Saves the generator and discriminator losses to a text file.
 
@@ -16,15 +121,13 @@ def save_losses(loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, 
     (A and B) over the training epochs.
 
     Args:
-    - loss_G (list): List of generator losses over the training epochs.
-    - loss_D_A (list): List of discriminator A losses over the training epochs.
-    - loss_D_B (list): List of discriminator B losses over the training epochs.
+    - loss (LossLists): An instance of LossLists containing lists of losses.
     - filename (str): The file path where the losses will be saved. Defaults to 'losses.txt'.
     """
-    np.savetxt(
-        filename,
-        np.column_stack((loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp)),
-        header='Generator total loss, Discriminator A loss, Discriminator B loss')
+    df = loss.to_dataframe()
+    df = df.rename_axis('Epoch')
+    df.to_csv(filename, index=True)
+
 
 def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_step=0):
     """
@@ -57,7 +160,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
-    loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp = 0, 0, 0, 0, 0, 0, 0
+    losses_ = LossValues(len(train_A.dataset), len(train_B.dataset), plp_step)
     for batch_A, batch_B in progress_bar:
         progress_bar.set_description(f'Epoch {epoch:03d}')
 
@@ -68,15 +171,9 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
         real_A = batch_A.to(device)
         real_B = batch_B.to(device)
 
-        # Perform one optimization step
         loss = model.optimize(real_A, real_B)
-        loss_G += loss.loss_G.item()
-        loss_D_A += loss.loss_D_A.item()
-        loss_D_B += loss.loss_D_B.item()
-        loss_G_ad += loss.loss_G_ad.item()
-        loss_G_cycle += loss.loss_G_cycle.item()
-        loss_G_id += loss.loss_G_id.item()
-        loss_G_plp += loss.loss_G_plp.item()
+
+        losses_.add(loss)
 
         progress_bar.set_postfix({
             'G_loss': f'{loss.loss_G.item():.4f}',
@@ -89,47 +186,6 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
         gc.collect()
 
     progress_bar.close()
-
-    loss_G /= (len(train_A) + len(train_B)) / 2
-    loss_D_A /= len(train_A)
-    loss_D_B /= len(train_B)
-    loss_G_ad /= (len(train_A) + len(train_B)) / 2
-    loss_G_cycle /= (len(train_A) + len(train_B)) / 2
-    loss_G_id /= (len(train_A) + len(train_B)) / 2
-    loss_G_plp /= (len(train_A) + len(train_B)) / 2 * plp_step
-
-    msg = f'Epoch {epoch:03d}: G_loss={loss_G:.4g}, '
-    msg += f'D_A_loss={loss_D_A:.4g}, D_B_loss={loss_D_B:.4g}, '
-    msg += f'G_ad={loss_G_ad:.4g}, G_cycle={loss_G_cycle:.4g}, '
-    msg += f'G_id={loss_G_id:.4g}, G_plp={loss_G_plp:.4g}, '
-    msg += f'Time={time.time() - time_start:.2f} s'
-    print(msg)
-    return loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp
-
-def plot_losses(train_losses, val_losses):
-    """
-    Plots the training and validation losses over the epochs.
-
-    Args:
-    - train_losses (list): List of training losses (e.g., generator losses) over the epochs.
-    - val_losses (list): List of validation losses over the epochs.
-
-    Displays:
-    - A line plot showing the progression of training and validation losses.
-    - Training and validation losses are plotted against the number of epochs.
-    """
-    plt.plot(
-        range(1, len(train_losses) + 1),
-        train_losses,
-        label='Training Loss',
-        linewidth=2, alpha=0.7)
-    plt.plot(
-        range(1, len(val_losses) + 1),
-        val_losses,
-        label='Validation Loss',
-        linewidth=2, alpha=0.7)
-    plt.title('CycleGAN Training Losses')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.show()
+    losses_.normalize()
+    print(f'Epoch {epoch:03d}: {str(losses_)}, Time={time.time() - time_start:.2f} s')
+    return losses_
