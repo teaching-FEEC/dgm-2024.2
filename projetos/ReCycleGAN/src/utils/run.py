@@ -23,8 +23,8 @@ class LossValues:
     """Class for CycleGAN losses as float.
 
     Args:
-    - n_A (int): Number of samples in domain A.
-    - n_B (int): Number of samples in domain B.
+    - n_A (int): Number of batches in domain A.
+    - n_B (int): Number of batches in domain B.
     - plp_step (int): Steps between Path Length Penalty calculations.
     """
     def __init__(self, n_A, n_B, plp_step):
@@ -160,7 +160,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
-    losses_ = LossValues(len(train_A.dataset), len(train_B.dataset), plp_step)
+    losses_ = LossValues(len(train_A), len(train_B), plp_step)
     for batch_A, batch_B in progress_bar:
         progress_bar.set_description(f'Epoch {epoch:03d}')
 
