@@ -86,7 +86,7 @@ class TestImageDataLoader(unittest.TestCase):
             img_dir=Path(self.test_A_csv).parent / Path(self.test_A_csv).stem.replace('_test_filtered', '_turbo').replace('in', 'out'))
         imgs_B = next(iter(turbo_B))
 
-        show_img(torch.vstack([imgs_A[:4], imgs_B[:4]]), title='', figsize = (10, 6), show=False)
+        show_img(torch.vstack([imgs_A[:4], imgs_B[:4]]), title='', figsize = (10, 6))
         test_file = self.out_folder / 'turbo_imgs.png'
         plt.savefig(test_file)
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
@@ -108,7 +108,7 @@ class TestImageDataLoader(unittest.TestCase):
         self.assertLess(torch.min(imgs_A), 0.0, 'Image values can be less than 0.')
         self.assertLessEqual(torch.max(imgs_A), 1.0, 'Image values should be less than or equal to 1.')
 
-        show_img(imgs_A, title='Train A images ±1 scale', figsize = (10, 6), change_scale=True)
+        show_img(imgs_A, title='Train A images ±1 scale', figsize = (10, 6))
         plt.savefig(self.out_folder / 'test_dataloader_A_new_scale.png')
 
     def test_image_folder_to_tensor(self):
@@ -122,7 +122,7 @@ class TestImageDataLoader(unittest.TestCase):
         shp = imgs_B.shape
         self.assertEqual(shp[0], 4, 'Batch size should be 4.')
 
-        show_img(torch.vstack([imgs_A, imgs_B]), title='', figsize = (10, 6), show=False)
+        show_img(torch.vstack([imgs_A, imgs_B]), title='', figsize = (10, 6))
         plt.savefig(self.out_folder / 'haze_imgs.png')
 
 

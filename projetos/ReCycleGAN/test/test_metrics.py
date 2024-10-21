@@ -9,7 +9,7 @@ import torch
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
 from metrics import FID, LPIPS  # pylint: disable=all
 from utils.data_loader import get_img_dataloader  # pylint: disable=all
-from utils.utils import print_gpu_memory_usage  # pylint: disable=all
+from utils.utils import get_gpu_memory_usage  # pylint: disable=all
 
 class TestFID(unittest.TestCase):
     def setUp(self):
@@ -59,11 +59,11 @@ class TestFID(unittest.TestCase):
             return
 
         if self.print_memory:
-            print_gpu_memory_usage("Initital memory usage", short_msg=True)
+            print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
         fid = FID(dims=2048, cuda=self.cuda, batch_size=128)
         if self.print_memory:
-            print_gpu_memory_usage("After model load", short_msg=True)
+            print(get_gpu_memory_usage("After model load", short_msg=True))
 
         start_time = time.time()
         fid_equal = fid.get(self.train_A_imgs, self.train_A_imgs)
@@ -96,10 +96,10 @@ class TestFID(unittest.TestCase):
         print(f"FID score of CycleGAN-turbo B transformed images: {fid_turbo_A:0.3g} ({elapsed_time/fid._last_num_imgs*1000:.3f} s/1000 images)")
 
         if self.print_memory:
-            print_gpu_memory_usage("After FID calculation", short_msg=True)
+            print(get_gpu_memory_usage("After FID calculation", short_msg=True))
         torch.cuda.empty_cache()
         if self.print_memory:
-            print_gpu_memory_usage("After emptying cache", short_msg=True)
+            print(get_gpu_memory_usage("After emptying cache", short_msg=True))
 
 
         self.assertLess(fid_equal, 1E-3, "FID for same images should be zero.")
@@ -112,11 +112,11 @@ class TestFID(unittest.TestCase):
         print("LPIPS calculation")
         print("=================")
         if self.print_memory:
-            print_gpu_memory_usage("Initital memory usage", short_msg=True)
+            print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
         lpips = LPIPS(cuda=self.cuda, batch_size=256)
         if self.print_memory:
-            print_gpu_memory_usage("After model load", short_msg=True)
+            print(get_gpu_memory_usage("After model load", short_msg=True))
 
 
         start_time = time.time()
@@ -160,10 +160,10 @@ class TestFID(unittest.TestCase):
         print(f"LPIPS loss of CycleGAN-turbo B transformed images: {lpips_turbo_B.mean():0.3g} ± {lpips_turbo_B.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
 
         if self.print_memory:
-            print_gpu_memory_usage("After LPIPS calculation", short_msg=True)
+            print(get_gpu_memory_usage("After LPIPS calculation", short_msg=True))
         torch.cuda.empty_cache()
         if self.print_memory:
-            print_gpu_memory_usage("After emptying cache", short_msg=True)
+            print(get_gpu_memory_usage("After emptying cache", short_msg=True))
 
         self.assertLess(lpips_equal.mean(), 1E-3, "LPIPS loss for same images should be zero.")
         self.assertLess(lpips_same_A.mean(), lpips_different.mean(), "LPIPS loss for images of the same A class should be lower than for images of different classes.")

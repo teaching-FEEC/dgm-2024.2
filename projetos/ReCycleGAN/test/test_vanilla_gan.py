@@ -12,16 +12,16 @@ sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
 from models import CycleGAN  # pylint: disable=all
 from metrics import FID, LPIPS  # pylint: disable=all
 from utils.data_loader import get_img_dataloader  # pylint: disable=all
-from utils import utils # pylint: disable=all
+from utils import utils, run # pylint: disable=all
 
 class TestCycleGAN(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.use_cuda = True
-        cls.run_wnadb = True
+        cls.run_wnadb = False
         cls.print_memory = True
 
-        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_4'
+        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_5'
         cls.out_folder.mkdir(parents=True, exist_ok=True)
 
         cls.hyperparameters = {
@@ -113,7 +113,7 @@ class TestCycleGAN(unittest.TestCase):
         ])
 
         if cls.print_memory:
-            utils.print_gpu_memory_usage("Initital memory usage", short_msg=True)
+            print(utils.get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
         batch_size = cls.hyperparameters["batch_size"]
         cls.train_A = get_img_dataloader(csv_file=train_A_csv, batch_size=batch_size, transformation=transformation)
@@ -147,7 +147,7 @@ class TestCycleGAN(unittest.TestCase):
         print(f'  Discriminator B:  {utils.count_parameters(self.cycle_gan.dis_B):,}')
 
         if self.print_memory:
-            utils.print_gpu_memory_usage("Memory usage before loading images", short_msg=True)
+            print(utils.get_gpu_memory_usage("Memory usage before loading images", short_msg=True))
 
         real_A = next(iter(self.train_A))
         real_B = next(iter(self.train_B))
@@ -156,13 +156,13 @@ class TestCycleGAN(unittest.TestCase):
             real_A = real_A.cuda()
             real_B = real_B.cuda()
         if self.print_memory:
-            utils.print_gpu_memory_usage("Memory usage after loading images", short_msg=True)
+            print(utils.get_gpu_memory_usage("Memory usage after loading images", short_msg=True))
 
         self.cycle_gan.eval()
         fake_B, fake_A = self.cycle_gan.forward(real_A, real_B)
 
         if self.print_memory:
-            utils.print_gpu_memory_usage("Memory usage after model forward call", short_msg=True)
+            print(utils.get_gpu_memory_usage("Memory usage after model forward call", short_msg=True))
 
         self.assertEqual(real_A.shape, fake_B.shape, 'real_A.shape != fake_B.shape')
         self.assertEqual(real_B.shape, fake_A.shape, 'real_B.shape != fake_A.shape')
@@ -185,7 +185,7 @@ class TestCycleGAN(unittest.TestCase):
         train_losses_G_ad, train_losses_G_cycle, train_losses_G_id, train_losses_G_plp = [], [], [], []
 
         for epoch in range(10):
-            loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp = utils.train_one_epoch(
+            loss_G, loss_D_A, loss_D_B, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp = run.train_one_epoch(
                 epoch=epoch,
                 model=self.cycle_gan,
                 train_A=self.train_A,
@@ -204,7 +204,7 @@ class TestCycleGAN(unittest.TestCase):
             train_losses_G_plp.append(loss_G_plp)
 
             # Save the average losses to a file
-            utils.save_losses(
+            run.save_losses(
                 train_losses_G, train_losses_D_A, train_losses_D_B,
                 train_losses_G_ad, train_losses_G_cycle,
                 train_losses_G_id, train_losses_G_plp,
@@ -230,13 +230,13 @@ class TestCycleGAN(unittest.TestCase):
             imgs_B.to('cpu')
 
             utils.show_img(imgs_A, title=f'Epoch {epoch} - A Images',
-                        figsize = (20, 16), change_scale=True, nrow=n_images,
+                        figsize = (20, 16), nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
             sample_A_path = self.out_folder / f'imgs_{epoch}_A.png'
             plt.savefig(sample_A_path)
 
             utils.show_img(imgs_B, title=f'Epoch {epoch} - B Images',
-                        figsize = (20, 16), change_scale=True, nrow=n_images,
+                        figsize = (20, 16), nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
             sample_B_path = self.out_folder / f'imgs_{epoch}_B.png'
             plt.savefig(sample_B_path)
@@ -271,15 +271,13 @@ class TestCycleGAN(unittest.TestCase):
 
         imgs_A, imgs_B = self.cycle_gan.generate_samples(real_A, real_B, n_images=n_images)
 
-        utils.show_img(imgs_A, title='A Images',
-                       figsize = (20, 16), change_scale=True, nrow=n_images,
+        utils.show_img(imgs_A, title='A Images', figsize = (20, 16), nrow=n_images,
                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'A_imgs.png'
         plt.savefig(test_file)
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
-        utils.show_img(imgs_B, title='B Images',
-                       figsize = (20, 16), change_scale=True, nrow=n_images,
+        utils.show_img(imgs_B, title='B Images', figsize = (20, 16), nrow=n_images,
                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'B_imgs.png'
         plt.savefig(test_file)
