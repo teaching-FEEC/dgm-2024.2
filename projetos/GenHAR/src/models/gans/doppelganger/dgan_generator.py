@@ -26,6 +26,14 @@ class DCGANGenerator:
         # Configura o modelo DGAN
         self.model = DGAN(
             DGANConfig(
+                attribute_noise_dim=2,
+                feature_noise_dim=2,
+                attribute_num_units=10,
+                feature_num_layers=2,
+                feature_num_units=24,
+                use_attribute_discriminator=False,
+                discriminator_learning_rate=3e-4,
+                generator_learning_rate=3e-4,
                 max_sequence_len=self.seq_length,
                 sample_len=self.config["parameters"]["sample_len"],
                 batch_size=self.config["parameters"]["batch_size"],
