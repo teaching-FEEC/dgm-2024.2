@@ -61,6 +61,7 @@ class TestImageDataLoader(unittest.TestCase):
         show_img(imgs_A, title='Train A images', figsize = (10, 6))
         test_file = self.out_folder / 'test_dataloader_A.png'
         plt.savefig(test_file)
+        plt.close()
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
         train_B = get_img_dataloader(self.train_B_csv)
@@ -69,11 +70,13 @@ class TestImageDataLoader(unittest.TestCase):
         show_img(imgs_B, title='Train B images', figsize = (10, 6))
         test_file = self.out_folder / 'test_dataloader_B.png'
         plt.savefig(test_file)
+        plt.close()
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
         show_img(torch.vstack([imgs_A[:4], imgs_B[:4]]), title='', figsize = (10, 6))
         test_file = self.out_folder / 'nexet_imgs.png'
         plt.savefig(test_file)
+        plt.close()
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
 
@@ -89,6 +92,7 @@ class TestImageDataLoader(unittest.TestCase):
         show_img(torch.vstack([imgs_A[:4], imgs_B[:4]]), title='', figsize = (10, 6))
         test_file = self.out_folder / 'turbo_imgs.png'
         plt.savefig(test_file)
+        plt.close()
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
     def test_dataloader_new_range(self):
@@ -110,6 +114,7 @@ class TestImageDataLoader(unittest.TestCase):
 
         show_img(imgs_A, title='Train A images ±1 scale', figsize = (10, 6))
         plt.savefig(self.out_folder / 'test_dataloader_A_new_scale.png')
+        plt.close()
 
     def test_image_folder_to_tensor(self):
         """Test image_folder_to_tensor function."""
@@ -124,6 +129,7 @@ class TestImageDataLoader(unittest.TestCase):
 
         show_img(torch.vstack([imgs_A, imgs_B]), title='', figsize = (10, 6))
         plt.savefig(self.out_folder / 'haze_imgs.png')
+        plt.close()
 
 
 if __name__ == '__main__':

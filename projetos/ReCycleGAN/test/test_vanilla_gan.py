@@ -235,12 +235,14 @@ class TestCycleGAN(unittest.TestCase):
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
             sample_A_path = self.out_folder / f'imgs_{epoch}_A.png'
             plt.savefig(sample_A_path)
+            plt.close()
 
             ImageTools.show_img(imgs_B, title=f'Epoch {epoch} - B Images',
                         figsize = (20, 16), nrow=n_images,
                         labels=['Real', 'Fake', 'Recovered', 'Identity'])
             sample_B_path = self.out_folder / f'imgs_{epoch}_B.png'
             plt.savefig(sample_B_path)
+            plt.close()
 
             if self.run_wnadb:
                 wandb.log({
@@ -276,12 +278,14 @@ class TestCycleGAN(unittest.TestCase):
                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'A_imgs.png'
         plt.savefig(test_file)
+        plt.close()
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
         ImageTools.show_img(imgs_B, title='B Images', figsize = (20, 16), nrow=n_images,
                        labels=['Real', 'Fake', 'Recovered', 'Identity'])
         test_file = self.out_folder / 'B_imgs.png'
         plt.savefig(test_file)
+        plt.close()
         self.assertTrue(test_file.exists(), f"File {test_file.name} does not exist")
 
 if __name__ == '__main__':

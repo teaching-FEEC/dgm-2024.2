@@ -20,6 +20,7 @@ df_count = ImageTools.img_size_count(img_folder)
 ImageTools.img_size_count_plot(df_count)
 out_folder.mkdir(parents=True, exist_ok=True)
 plt.savefig(out_folder / 'img_size_count.png')
+plt.close()
 
 folders = {
         'input_A': {'lighting':['Day'], 'city':['NYC']},

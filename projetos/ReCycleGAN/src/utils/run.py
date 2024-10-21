@@ -135,6 +135,9 @@ def init_cyclegan_train(params):
         amp=params["amp"],
     )
 
+    # if params['restart_path'] is not None:
+    #     model, data_loaders = init_cyclegan_train(parameters, restart=True)
+
     train_A_csv = params['data_folder'] / f'input_A_train{params["csv_type"]}.csv'
     test_A_csv = params['data_folder'] / f'input_A_test{params["csv_type"]}.csv'
     train_B_csv = params['data_folder'] / f'input_B_train{params["csv_type"]}.csv'
@@ -243,12 +246,15 @@ def save_samples(model, params, test_A, test_B, epoch):
                     labels=['Real', 'Fake', 'Recovered', 'Identity'])
     sample_A_path = params['out_folder'] / f'imgs_{epoch}_A.png'
     plt.savefig(sample_A_path)
+    plt.close()
 
     ImageTools.show_img(imgs_B, title=f'Epoch {epoch} - B Images',
                     figsize = (20, 16), nrow=n_images,
                     labels=['Real', 'Fake', 'Recovered', 'Identity'])
     sample_B_path = params['out_folder'] / f'imgs_{epoch}_B.png'
     plt.savefig(sample_B_path)
+    plt.close()
+
     return sample_A_path,sample_B_path
 
 def save_checkpoint(model, params, epoch):
