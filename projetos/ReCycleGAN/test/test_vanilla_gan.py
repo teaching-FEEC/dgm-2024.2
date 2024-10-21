@@ -1,4 +1,4 @@
-# pylint: disable=C0103,C0411,C0413
+# pylint: disable=C0103,C0411,C0413,E0401
 """Test running vanilla GAN."""
 
 import unittest
@@ -23,7 +23,7 @@ class TestCycleGAN(unittest.TestCase):
         cls.run_wnadb = False
         cls.print_memory = True
 
-        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_5'
+        cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_6'
         cls.out_folder.mkdir(parents=True, exist_ok=True)
 
         cls.hyperparameters = {
@@ -61,7 +61,7 @@ class TestCycleGAN(unittest.TestCase):
             "channels" : 3, #3
             "checkpoint_interval" : 2,
 
-            "n_samples" : 2, #None
+            "n_samples" : 10, #None
         }
 
         commit_hash, commit_msg = utils.get_current_commit()
@@ -85,6 +85,7 @@ class TestCycleGAN(unittest.TestCase):
             n_features=cls.hyperparameters["n_features"],
             n_residual_blocks=cls.hyperparameters["n_residual_blocks"],
             n_downsampling=cls.hyperparameters["n_downsampling"],
+            norm_type=cls.hyperparameters["norm_type"],
             add_skip=cls.hyperparameters["add_skip"],
             use_replay_buffer=cls.hyperparameters["use_replay_buffer"],
             replay_buffer_size=cls.hyperparameters["replay_buffer_size"],
