@@ -1,4 +1,4 @@
-# pylint: disable=C0413
+# pylint: disable=C0413,E0401
 """Trains and Tests CycleGAN"""
 import sys
 from pathlib import Path
@@ -15,6 +15,8 @@ if __name__ == '__main__':
 
     base_folder = Path(__file__).resolve().parent.parent.parent
     params = {
+        'restart_path': base_folder / 'no_sync/test_model_7/cycle_gan_epoch_4.pth', #None
+
         'data_folder': base_folder / 'data/external/nexet',
         'csv_type': '_filtered',
         'out_folder': base_folder / 'no_sync/test_model_7',
@@ -23,11 +25,11 @@ if __name__ == '__main__':
         'wandb_name': 'Test_Other',
         'print_memory': True,
 
-        "num_epochs" : 100,
+        "num_epochs" : 10,
         "checkpoint_interval" : 2,
-        "n_samples" : 10, #None
+        "n_samples" : 3, #None => For testing only!!!
 
-        'batch_size' : 16,
+        'batch_size' : 32,
         'img_height': 256,
         'img_width': 256,
 
@@ -35,16 +37,19 @@ if __name__ == '__main__':
         'n_features': 32, #64
         'n_residual_blocks': 2, #9
         'n_downsampling': 2, #2
-        'norm_type': 'instance', #'instance'
+        'norm_type': 'instance', #'instance' ('batch', 'instance' or 'none')
         'add_skip': True, #False
+
         'use_replay_buffer': True, #False
         'replay_buffer_size': 50, #50
+
         'vanilla_loss': False, #True
         'cycle_loss_weight': 10, #10
         'id_loss_weight': 5, #5
         'plp_loss_weight': 1, #5
         'plp_step': 16, #0
         'plp_beta': 0.99, #0.99
+
         'lr' : 0.0002, #0.0002
         'beta1' : 0.5,  #0.5
         'beta2' : 0.999, #0.999

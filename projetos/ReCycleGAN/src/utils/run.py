@@ -3,6 +3,7 @@
 import time
 import gc
 import matplotlib.pyplot as plt
+from pathlib import Path
 import torch
 from torchvision import transforms
 from tqdm import tqdm
@@ -95,6 +96,88 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
 def init_cyclegan_train(params):
     """Initialize CycleGAN training"""
 
+    def _init_cuda(params):
+        params['use_cuda'] = torch.cuda.is_available() and params['use_cuda']
+        params['device'] = torch.device("cuda" if params['use_cuda'] else "cpu")
+        print(f'Using device: "{params["device"]}"')
+
+        if params['use_cuda']:
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
+        else:
+            params['print_memory'] = False
+        return params
+
+    def _init_new_cycle_gan(params):
+        return CycleGAN(
+            input_nc=params["channels"],
+            output_nc=params["channels"],
+            device=params["device"],
+            n_features=params["n_features"],
+            n_residual_blocks=params["n_residual_blocks"],
+            n_downsampling=params["n_downsampling"],
+            norm_type=params["norm_type"],
+            add_skip=params["add_skip"],
+            use_replay_buffer=params["use_replay_buffer"],
+            replay_buffer_size=params["replay_buffer_size"],
+            vanilla_loss=params["vanilla_loss"],
+            cycle_loss_weight=params["cycle_loss_weight"],
+            id_loss_weight=params["id_loss_weight"],
+            plp_loss_weight=params["plp_loss_weight"],
+            plp_step=params["plp_step"],
+            plp_beta=params["plp_beta"],
+            lr=params["lr"],
+            beta1=params["beta1"],
+            beta2=params["beta2"],
+            amp=params["amp"],
+        )
+
+    def _get_transformation(params):
+        return transforms.Compose([
+            transforms.Resize(int(params["img_height"] * 1.12),
+                                transforms.InterpolationMode.BICUBIC),
+            transforms.RandomCrop((params["img_height"],
+                                    params["img_width"])),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+        ])
+
+    def _init_dataloaders(params, transformation):
+        train_A_csv = params['data_folder'] / f'input_A_train{params["csv_type"]}.csv'
+        test_A_csv = params['data_folder'] / f'input_A_test{params["csv_type"]}.csv'
+        train_B_csv = params['data_folder'] / f'input_B_train{params["csv_type"]}.csv'
+        test_B_csv = params['data_folder'] / f'input_B_test{params["csv_type"]}.csv'
+
+        batch_size = params["batch_size"]
+        train_A = get_img_dataloader(csv_file=train_A_csv,
+                                    batch_size=batch_size,
+                                    transformation=transformation)
+        test_A = get_img_dataloader(csv_file=test_A_csv,
+                                    batch_size=batch_size,
+                                    transformation=transformation)
+        train_B = get_img_dataloader(csv_file=train_B_csv,
+                                    batch_size=batch_size,
+                                    transformation=transformation)
+        test_B = get_img_dataloader(csv_file=test_B_csv,
+                                    batch_size=batch_size,
+                                    transformation=transformation)
+
+        n_train = min(len(train_A.dataset), len(train_B.dataset))
+        train_A.dataset.set_len(n_train)
+        train_B.dataset.set_len(n_train)
+        print(f"Number of training samples: {n_train}")
+
+        n_test = min(len(test_A.dataset), len(test_B.dataset))
+        test_A.dataset.set_len(n_test)
+        test_B.dataset.set_len(n_test)
+        print(f"Number of test samples: {n_test}")
+
+        return train_A, test_A, train_B, test_B
+
+
+    params = _init_cuda(params)
+
     params['out_folder'].mkdir(parents=True, exist_ok=True)
     print(f"Output folder: {params['out_folder']}")
 
@@ -102,83 +185,23 @@ def init_cyclegan_train(params):
     params['commit_hash'] = commit_hash
     params['commit_msg'] = commit_msg
 
-    device = torch.device("cuda" if (torch.cuda.is_available() and params['use_cuda']) else "cpu")
-    params['device'] = device
-    params['use_cuda'] = params["device"] == torch.device("cuda")
-    print(f'Using device: "{params["device"]}"')
-
-    if params['use_cuda']:
-        torch.backends.cuda.matmul.allow_tf32 = True
-        torch.backends.cudnn.allow_tf32 = True
+    model = _init_new_cycle_gan(params)
+    if params['restart_path'] is not None:
+        params['restart_epoch'] = model.load_model(params['restart_path'])
+        print(f"Restarting from {Path(params['restart_path']).name} at epoch {params['restart_epoch']}")
     else:
-        params['print_memory'] = False
-
-    cycle_gan = CycleGAN(input_nc=params["channels"],
-        output_nc=params["channels"],
-        device=params["device"],
-        n_features=params["n_features"],
-        n_residual_blocks=params["n_residual_blocks"],
-        n_downsampling=params["n_downsampling"],
-        norm_type=params["norm_type"],
-        add_skip=params["add_skip"],
-        use_replay_buffer=params["use_replay_buffer"],
-        replay_buffer_size=params["replay_buffer_size"],
-        vanilla_loss=params["vanilla_loss"],
-        cycle_loss_weight=params["cycle_loss_weight"],
-        id_loss_weight=params["id_loss_weight"],
-        plp_loss_weight=params["plp_loss_weight"],
-        plp_step=params["plp_step"],
-        plp_beta=params["plp_beta"],
-        lr=params["lr"],
-        beta1=params["beta1"],
-        beta2=params["beta2"],
-        amp=params["amp"],
-    )
-
-    # if params['restart_path'] is not None:
-    #     model, data_loaders = init_cyclegan_train(parameters, restart=True)
-
-    train_A_csv = params['data_folder'] / f'input_A_train{params["csv_type"]}.csv'
-    test_A_csv = params['data_folder'] / f'input_A_test{params["csv_type"]}.csv'
-    train_B_csv = params['data_folder'] / f'input_B_train{params["csv_type"]}.csv'
-    test_B_csv = params['data_folder'] / f'input_B_test{params["csv_type"]}.csv'
-
-    transformation = transforms.Compose([
-        transforms.Resize(int(params["img_height"] * 1.12),
-                            transforms.InterpolationMode.BICUBIC),
-        transforms.RandomCrop((params["img_height"],
-                                params["img_width"])),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-    ])
+        params['restart_epoch'] = -1
 
     if params['print_memory']:
         print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
-    batch_size = params["batch_size"]
-    train_A = get_img_dataloader(csv_file=train_A_csv,
-                                        batch_size=batch_size,
-                                        transformation=transformation)
-    test_A = get_img_dataloader(csv_file=test_A_csv,
-                                    batch_size=batch_size,
-                                    transformation=transformation)
-    train_B = get_img_dataloader(csv_file=train_B_csv,
-                                        batch_size=batch_size,
-                                        transformation=transformation)
-    test_B = get_img_dataloader(csv_file=test_B_csv,
-                                    batch_size=batch_size,
-                                    transformation=transformation)
+    transformation = _get_transformation(params)
+    train_A, test_A, train_B, test_B = _init_dataloaders(params, transformation)
 
-    n_train = min(len(train_A.dataset), len(train_B.dataset))
-    train_A.dataset.set_len(n_train)
-    train_B.dataset.set_len(n_train)
-    print(f"Number of training samples: {n_train}")
+    return model, (train_A, test_A, train_B, test_B)
 
-    n_test = min(len(test_A.dataset), len(test_B.dataset))
-    test_A.dataset.set_len(n_test)
-    test_B.dataset.set_len(n_test)
-    print(f"Number of test samples: {n_test}")
+def train_cyclegan(model, data_loaders, params):
+    """Wrapper function to train the CycleGAN model."""
 
     if params['run_wnadb']:
         wandb.init(
@@ -186,17 +209,18 @@ def init_cyclegan_train(params):
             name=params['wandb_name'],
             config=params)
 
-    return cycle_gan, (train_A, test_A, train_B, test_B)
+        wandb.watch(model.G_A)
+        wandb.watch(model.G_B)
+        wandb.watch(model.D_A)
+        wandb.watch(model.D_B)
 
-def train_cyclegan(model, data_loaders, params):
-    """Wrapper function to train the CycleGAN model."""
-
-    remove_all_files(params['out_folder'])
+    if params['restart_path'] is None:
+        remove_all_files(params['out_folder'])
     save_dict_as_json(params, params['out_folder'] / 'hyperparameters.json')
 
     train_A, test_A, train_B, test_B = data_loaders
     train_losses = LossLists()
-    for epoch in range(params['num_epochs']):
+    for epoch in range(params['restart_epoch']+1, params['num_epochs']):
         losses_ = train_one_epoch(
             epoch=epoch,
             model=model,
@@ -224,6 +248,10 @@ def train_cyclegan(model, data_loaders, params):
                 "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
                 "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
             })
+
+    if (params['num_epochs']-1) % params['checkpoint_interval'] != 0:
+        save_checkpoint(model, params, epoch, force=True)
+
     return model
 
 def save_samples(model, params, test_A, test_B, epoch):
@@ -257,10 +285,10 @@ def save_samples(model, params, test_A, test_B, epoch):
 
     return sample_A_path,sample_B_path
 
-def save_checkpoint(model, params, epoch):
+def save_checkpoint(model, params, epoch, force=False):
     """Saves a checkpoint of the CycleGAN model."""
-    if epoch % params['checkpoint_interval'] == 0:
+    if (epoch % params['checkpoint_interval'] == 0) or force:
         save_path = params['out_folder'] / f'cycle_gan_epoch_{epoch}.pth'
-        model.save_model(save_path)
+        model.save_model(save_path, epoch)
         if params['run_wnadb']:
             wandb.save(str(save_path))
