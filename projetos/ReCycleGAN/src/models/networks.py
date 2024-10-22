@@ -5,6 +5,8 @@ import functools
 import torch
 from torch import nn
 import torch.nn.functional as F
+from peft import LoraConfig
+from peft.utils import get_peft_model_state_dict
 
 class Identity(nn.Module):
     """Identity layer."""
@@ -81,6 +83,8 @@ class Generator(nn.Module):
                  n_features=64,
                  n_downsampling=2,
                  add_skip=False,
+                 add_lora=False,
+                 lora_rank=4,
                  norm_layer=nn.InstanceNorm2d):
         super().__init__()
 
@@ -92,27 +96,52 @@ class Generator(nn.Module):
         )
 
         self.encoder = nn.ModuleList()
+        if add_lora:
+            self.lora_modules_encoder = []
+        
         for i in range(n_downsampling):
             n_feat = n_features * 2 ** i
+            conv_layer = nn.Conv2d(n_feat, 2 * n_feat, 3, stride=2, padding=1)
             self.encoder.append(nn.Sequential(
-                nn.Conv2d(n_feat, 2 * n_feat, 3, stride=2, padding=1),
+                conv_layer,
                 norm_layer(2 * n_feat),
             ))
+
+            if add_lora:
+                lora_conf = LoraConfig(r=lora_rank, target_modules=[conv_layer], lora_alpha=lora_rank)
+                self.lora_modules_encoder.append(lora_conf)
 
         n_feat = n_features * 2 ** n_downsampling
         self.residual_blocks = nn.Sequential(
             *[ResidualBlock(n_feat, norm_layer) for _ in range(n_residual_blocks)]
         )
 
+        if add_lora:
+            self.lora_modules_residual = []
+            for block in self.residual_blocks:
+                for module in block.conv_block:
+                    if isinstance(module, nn.Conv2d):
+                        lora_conf = LoraConfig(r=lora_rank, target_modules=[module], lora_alpha=lora_rank)
+                        self.lora_modules_residual.append(lora_conf)
+
         self.decoder = nn.ModuleList()
+        if add_lora:
+            self.lora_modules_decoder = []
+
         for i in range(n_downsampling):
             n_feat = n_features * 2 ** (n_downsampling - i)
+            conv_layer = nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
+                                   stride=2, padding=1, output_padding=1)
+            
             self.decoder.append(nn.Sequential(
-                nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
-                                   stride=2, padding=1, output_padding=1),
+                conv_layer,
                 norm_layer(n_feat // 2),
                 nn.ReLU(inplace=True),
             ))
+
+            if add_lora:
+                lora_conf = LoraConfig(r=lora_rank, target_modules=[conv_layer], lora_alpha=lora_rank)
+                self.lora_modules_decoder.append(lora_conf)
 
         self.final_layers = nn.Sequential(
             nn.ReflectionPad2d(3),
