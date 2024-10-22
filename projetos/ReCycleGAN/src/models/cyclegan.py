@@ -32,6 +32,8 @@ class CycleGAN(BaseModel):
     - lr: Learning rate. Default is 0.0002.
     - beta1: Beta1 for Adam optimizer. Default is 0.5.
     - beta2: Beta2 for Adam optimizer. Default is 0.999.
+    - step_size: Step size for learning rate scheduler. Default is 20.
+    - gamma: Gamma for learning rate scheduler. Default is 0.5.
     - amp: If True, use automatic mixed precision. Default is False.
     - device: 'cuda' or 'cpu'. Default is 'cpu'.
     """
@@ -46,7 +48,9 @@ class CycleGAN(BaseModel):
                  plp_step=0,
                  plp_beta=0.99,
                  amp=False,
-                 lr=0.0002, beta1=0.5, beta2=0.999, device='cpu'):
+                 lr=0.0002, beta1=0.5, beta2=0.999,
+                 step_size=20, gamma=0.5,
+                 device='cpu'):
         super().__init__(device)
 
         torch.cuda.empty_cache()
@@ -79,6 +83,10 @@ class CycleGAN(BaseModel):
         )
         self.optimizer_D_A = self.setup_optimizers(self.dis_A.parameters(), lr, beta1, beta2)
         self.optimizer_D_B = self.setup_optimizers(self.dis_B.parameters(), lr, beta1, beta2)
+
+        self.scheduler_G = self.setup_schedulers(self.optimizer_G, step_size, gamma)
+        self.scheduler_D_A = self.setup_schedulers(self.optimizer_D_A, step_size, gamma)
+        self.scheduler_D_B = self.setup_schedulers(self.optimizer_D_B, step_size, gamma)
 
         self.device = device
         self.cycle_loss_weight = cycle_loss_weight
@@ -288,6 +296,14 @@ class CycleGAN(BaseModel):
             self.optimizer_D_B.step()
 
         return loss
+
+    def update_lr(self):
+        """
+        Perform one step in the learning rate scheduler.
+        """
+        self.scheduler_G.step()
+        self.scheduler_D_A.step()
+        self.scheduler_D_B.step()
 
 
     def save_model(self, path='cycle_gan_model.pth', epoch=0):

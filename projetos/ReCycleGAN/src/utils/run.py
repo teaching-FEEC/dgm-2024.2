@@ -90,6 +90,8 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
 
     progress_bar.close()
     losses_.normalize()
+    model.update_lr()
+
     print(f'Epoch {epoch:03d}: {str(losses_)}, Time={time.time() - time_start:.2f} s')
     return losses_
 
@@ -130,6 +132,8 @@ def init_cyclegan_train(params):
             lr=params["lr"],
             beta1=params["beta1"],
             beta2=params["beta2"],
+            step_size=params["step_size"],
+            gamma=params["gamma"],
             amp=params["amp"],
         )
 
@@ -302,4 +306,4 @@ def save_checkpoint(model, params, epoch, force=False):
         save_path = params['out_folder'] / f'cycle_gan_epoch_{epoch}.pth'
         model.save_model(save_path, epoch)
         if params['run_wnadb']:
-            wandb.save(str(save_path))
+            wandb.save(str(save_path), base_path=params['out_folder'])
