@@ -7,7 +7,9 @@ import os
 import glob
 import json
 import yaml
-import csv 
+import csv
+import torch
+
 
 class MinMaxNormalize():
     '''
@@ -135,7 +137,7 @@ def plt_save_example_synth_img(input_img_ref, input_mask_ref, gen_img_ref, disc_
     plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
 
 
-def plt_save_example_synth_during_test(input_img_ref,  gen_img_ref, save_dir, img_idx): 
+def plt_save_example_synth_during_test(input_img_ref,  gen_img_ref, save_dir, img_idx):
     fig, ax = plt.subplots(1, 2, figsize=(12, 4))
     ax.flat[0].imshow(input_img_ref, cmap='gray')
     ax.flat[1].imshow(gen_img_ref, cmap='gray')
@@ -164,6 +166,7 @@ def save_quantitative_results(fid, ssim_complete, luminance_complete, contrast_c
     with open(save_path, "w") as outfile:
         outfile.write(json.dumps(dict_qnttive_metrics, indent=4))
 
+
 def read_yaml(file: str) -> yaml.loader.FullLoader:
     # credits: Gabriel Dias (g172441@dac.unicamp.br), Mateus Oliveira (m203656@dac.unicamp.br)
     # from Github repo: https://github.com/MICLab-Unicamp/Spectro-ViT
@@ -172,15 +175,16 @@ def read_yaml(file: str) -> yaml.loader.FullLoader:
 
     return configurations
 
-def check_for_zero_loss(value,eps=1e-10):
+
+def check_for_zero_loss(value, eps=1e-10):
     if value == 0:
         return value+eps
     else:
         return value
-    
 
-def plot_training_evolution(path,mean_loss_train_gen_list,mean_loss_validation_gen_list,
-                            mean_loss_train_disc_list,mean_loss_validation_disc_list):
+
+def plot_training_evolution(path, mean_loss_train_gen_list, mean_loss_validation_gen_list,
+                            mean_loss_train_disc_list, mean_loss_validation_disc_list):
     fig, ax = plt.subplots(1, 2, figsize=(14, 4))
     ax[0].plot(mean_loss_train_gen_list, label='Train')
     ax[0].plot(mean_loss_validation_gen_list, label='Validation')
@@ -194,8 +198,9 @@ def plot_training_evolution(path,mean_loss_train_gen_list,mean_loss_validation_g
     ax[1].set_xlabel('Epochs')
     plt.savefig(path+'losses_evolution.png')
 
+
 def retrieve_metrics_from_csv(path_file):
-    with open(path_file, mode ='r') as file:
+    with open(path_file, mode='r') as file:
         csvFile = csv.reader(file)
         dict_metrics = {}
         names = []
@@ -208,3 +213,16 @@ def retrieve_metrics_from_csv(path_file):
                 for idx_in_line, element in enumerate(line):
                     dict_metrics[names[idx_in_line]].append(float(element))
     return dict_metrics
+
+
+def add_noise(batch, intensity=1, lung_area: bool = False):
+    transform = MinMaxNormalize()
+    batch = batch.detach().to(torch.float32)
+    # Generating noise in range [0,1] with same shape as the input batch
+    noise = transform(torch.rand_like(batch))
+    # Adding the option to only change the lung area
+    # This is done by multiplying the noise tensor with the batch tensor
+    if lung_area is True:
+        return transform(((noise*batch)*intensity) + batch)
+    # Else, the entire mask is changed
+    return transform((noise*intensity) + batch)
