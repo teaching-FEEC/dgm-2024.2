@@ -290,7 +290,7 @@ class CycleGAN(BaseModel):
         return loss
 
 
-    def save_model(self, path='cycle_gan_model.pth'):
+    def save_model(self, path='cycle_gan_model.pth', epoch=0):
         """
         Save the current model state.
 
@@ -305,6 +305,7 @@ class CycleGAN(BaseModel):
             'optimizer_G': self.optimizer_G.state_dict(),
             'optimizer_D_A': self.optimizer_D_A.state_dict(),
             'optimizer_D_B': self.optimizer_D_B.state_dict(),
+            'epoch': epoch,
         }, path)
 
 
@@ -316,6 +317,7 @@ class CycleGAN(BaseModel):
         - path: Path to the saved model.
         """
         checkpoint = torch.load(path, weights_only=True)
+
         self.gen_AtoB.load_state_dict(checkpoint['gen_AtoB'])
         self.gen_BtoA.load_state_dict(checkpoint['gen_BtoA'])
         self.dis_A.load_state_dict(checkpoint['dis_A'])
@@ -323,6 +325,8 @@ class CycleGAN(BaseModel):
         self.optimizer_G.load_state_dict(checkpoint['optimizer_G'])
         self.optimizer_D_A.load_state_dict(checkpoint['optimizer_D_A'])
         self.optimizer_D_B.load_state_dict(checkpoint['optimizer_D_B'])
+
+        return checkpoint['epoch']
 
 
     def generate_samples(self, real_A, real_B, n_images=4):

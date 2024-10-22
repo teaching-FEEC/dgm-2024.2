@@ -31,7 +31,7 @@ class BaseModel(ABC):
         """
 
     @abstractmethod
-    def save_model(self, path):
+    def save_model(self, path, epoch):
         """
         Save the current model state.
         """
