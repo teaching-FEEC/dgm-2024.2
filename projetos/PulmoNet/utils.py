@@ -177,3 +177,33 @@ def check_for_zero_loss(value,eps=1e-10):
     else:
         return value
     
+
+def plot_training_evolution(path,mean_loss_train_gen_list,mean_loss_validation_gen_list,
+                            mean_loss_train_disc_list,mean_loss_validation_disc_list):
+    fig, ax = plt.subplots(1, 2, figsize=(14, 4))
+    ax[0].plot(mean_loss_train_gen_list, label='Train')
+    ax[0].plot(mean_loss_validation_gen_list, label='Validation')
+    ax[1].plot(mean_loss_train_disc_list, label='Train')
+    ax[1].plot(mean_loss_validation_disc_list, label='Validation')
+    ax[0].legend(loc='upper right')
+    ax[1].legend(loc='upper right')
+    ax[0].set_title('Generator')
+    ax[1].set_title('Discriminator')
+    ax[0].set_xlabel('Epochs')
+    ax[1].set_xlabel('Epochs')
+    plt.savefig(path+'losses_evolution.png')
+
+def retrieve_metrics_from_csv(path_file):
+    with open(path_file, mode ='r') as file:
+        csvFile = csv.reader(file)
+        dict_metrics = {}
+        names = []
+        for idx, line in enumerate(csvFile):
+            if idx == 0:
+                for element in line:
+                    dict_metrics[element] = []
+                    names.append(element)
+            else:
+                for idx_in_line, element in enumerate(line):
+                    dict_metrics[names[idx_in_line]].append(float(element))
+    return dict_metrics

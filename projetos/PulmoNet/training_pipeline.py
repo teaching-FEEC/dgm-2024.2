@@ -16,7 +16,7 @@ from save_models_and_training import SaveBestModel, safe_save, SaveTrainingLosse
 from lr_scheduler_and_optim import LRScheduler,get_optimizer
 from losses import get_criterion
 from main import run_train_epoch, run_validation_epoch, valid_on_the_fly
-from utils import clean_directory, read_yaml
+from utils import clean_directory, read_yaml, plot_training_evolution, retrieve_metrics_from_csv
 
 config_path = input("Enter path for config.yaml: ")
 
@@ -73,6 +73,7 @@ if use_lr_scheduler is True:
     gen_scheduler = LRScheduler(gen_opt,scheduler_type,**config['lr_scheduler'].get('info',{}))
     disc_scheduler =  LRScheduler(disc_opt,scheduler_type,**config['lr_scheduler'].get('info',{}))
 else:
+    scheduler_type = None
     gen_scheduler = None
     disc_scheduler = None
     epoch_to_switch_to_lr_scheduler = None
@@ -109,7 +110,7 @@ if use_wandb is True:
             "regularization_level": regularization_level,
             "optimizer": optimizer_type,
             "initial_lr": initial_lr,
-            "scheduler": gen_scheduler,
+            "scheduler": scheduler_type,
             "epoch_to_switch_to_lr_scheduler": epoch_to_switch_to_lr_scheduler
         }
     )
@@ -210,7 +211,7 @@ for epoch in range(n_epochs):
                    use_wandb=use_wandb)
 
     ###------------------------------------------learning rate update----------------------------------
-    if epoch >= epoch_to_switch_to_lr_scheduler:
+    if (use_lr_scheduler is True) and (epoch >= epoch_to_switch_to_lr_scheduler):
         gen_scheduler.step()
         disc_scheduler.step()
         print("Current learning rate: gen: ", gen_scheduler.get_last_lr()[0], " disc: ", disc_scheduler.get_last_lr()[0])
@@ -222,15 +223,17 @@ delete_safe_save(dir_save_models=dir_save_models, name_model=name_model)
 if use_wandb is True:
     wandb.finish()
 
-fig, ax = plt.subplots(1, 2, figsize=(14, 4))
-ax[0].plot(mean_loss_train_gen_list, label='Train')
-ax[0].plot(mean_loss_validation_gen_list, label='Validation')
-ax[1].plot(mean_loss_train_disc_list, label='Train')
-ax[1].plot(mean_loss_validation_disc_list, label='Validation')
-ax[0].legend(loc='upper right')
-ax[1].legend(loc='upper right')
-ax[0].set_title('Generator')
-ax[1].set_title('Discriminator')
-ax[0].set_xlabel('Epochs')
-ax[1].set_xlabel('Epochs')
-plt.savefig(dir_save_results+'losses_evolution.png')
+if new_model is True:
+    plot_training_evolution(path=dir_save_results,
+                            mean_loss_train_gen_list=mean_loss_train_gen_list,
+                            mean_loss_validation_gen_list=mean_loss_validation_gen_list,
+                            mean_loss_train_disc_list=mean_loss_train_disc_list,
+                            mean_loss_validation_disc_list=mean_loss_validation_disc_list)
+else:
+    if os.path.isfile(dir_save_results+'losses.csv'):
+        losses = retrieve_metrics_from_csv(path_file=dir_save_results+'losses.csv')
+        plot_training_evolution(path=dir_save_results,
+                            mean_loss_train_gen_list=losses['LossGenTrain'],
+                            mean_loss_validation_gen_list=losses['LossGenVal'],
+                            mean_loss_train_disc_list=losses['LossDiscTrain'],
+                            mean_loss_validation_disc_list=losses['LossDiscVal'])
