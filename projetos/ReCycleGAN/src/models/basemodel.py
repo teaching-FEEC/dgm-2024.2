@@ -1,6 +1,7 @@
 """Module with BaseModel class."""
 from abc import ABC, abstractmethod
 from torch import optim
+from torch.optim.lr_scheduler import StepLR
 
 class BaseModel(ABC):
     """Generic class for models."""
@@ -31,7 +32,7 @@ class BaseModel(ABC):
         """
 
     @abstractmethod
-    def save_model(self, path):
+    def save_model(self, path, epoch):
         """
         Save the current model state.
         """
@@ -49,3 +50,9 @@ class BaseModel(ABC):
         Setup optimizers for the model with default learning rate and betas.
         """
         return optim.Adam(model_params, lr=lr, betas=(beta1, beta2))
+
+    def setup_schedulers(self, optimizer, step_size=20, gamma=0.5):
+        """
+        Setup schedulers for the optimizer with default step size and gamma.
+        """
+        return StepLR(optimizer, step_size=step_size, gamma=gamma)
