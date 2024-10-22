@@ -9,7 +9,8 @@ from torchvision import transforms
 from tqdm import tqdm
 import wandb
 
-from src.utils import get_gpu_memory_usage, get_current_commit, remove_all_files, save_dict_as_json
+from src.utils import get_gpu_memory_usage, get_current_commit, remove_all_files
+from src.utils import save_dict_as_json, load_json_to_dict
 from src.utils.data_loader import get_img_dataloader
 from src.utils.data_transform import ImageTools
 from src.models.cyclegan import CycleGAN
@@ -176,6 +177,15 @@ def init_cyclegan_train(params):
         return train_A, test_A, train_B, test_B
 
 
+    if params['parameters_path'] is not None:
+        params_ = load_json_to_dict(params['parameters_path'])
+        for k,v in params_.items():
+            if k not in params:
+                params[k] = v
+
+    params['out_folder'] = Path(params['out_folder'])
+    params['data_folder'] = Path(params['data_folder'])
+
     params = _init_cuda(params)
 
     params['out_folder'].mkdir(parents=True, exist_ok=True)
@@ -200,6 +210,7 @@ def init_cyclegan_train(params):
 
     return model, (train_A, test_A, train_B, test_B)
 
+
 def train_cyclegan(model, data_loaders, params):
     """Wrapper function to train the CycleGAN model."""
 
@@ -209,10 +220,10 @@ def train_cyclegan(model, data_loaders, params):
             name=params['wandb_name'],
             config=params)
 
-        wandb.watch(model.G_A)
-        wandb.watch(model.G_B)
-        wandb.watch(model.D_A)
-        wandb.watch(model.D_B)
+        wandb.watch(model.gen_AtoB, log_freq=100)
+        wandb.watch(model.gen_BtoA, log_freq=100)
+        wandb.watch(model.dis_A, log_freq=100)
+        wandb.watch(model.dis_B, log_freq=100)
 
     if params['restart_path'] is None:
         remove_all_files(params['out_folder'])

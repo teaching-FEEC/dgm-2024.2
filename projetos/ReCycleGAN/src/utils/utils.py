@@ -147,3 +147,38 @@ def save_dict_as_json(data, file_path):
 
     with open(file_path, 'w', encoding='utf-8') as json_file:
         json.dump(out, json_file, indent=4, sort_keys=True)
+
+def load_json_to_dict(file_path):
+    """
+    Load a JSON file into a dictionary.
+
+    Tries to convert strings to None, bool, int or float.
+
+    Parameters:
+    ------------
+    file_path: str
+        The path to the JSON file.
+
+    Returns:
+    ------------
+    dict
+        The dictionary containing the JSON data.
+    """
+    with open(file_path, 'r', encoding='utf-8') as json_file:
+        data = json.load(json_file)
+    for k,v in data.items():
+        if v == 'None':
+            data[k] = None
+        elif v == 'True':
+            data[k] = True
+        elif v == 'False':
+            data[k] = False
+        else:
+            try:
+                data[k] = int(v)
+            except ValueError:
+                try:
+                    data[k] = float(v)
+                except ValueError:
+                    pass
+    return data
