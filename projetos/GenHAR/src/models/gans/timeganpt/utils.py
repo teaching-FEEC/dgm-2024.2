@@ -51,10 +51,15 @@ def MinMaxScaler(data):
   Returns:
     - norm_data: normalized data
   """
-  numerator = data - np.min(data, 0)
-  denominator = np.max(data, 0) - np.min(data, 0)
+  min = np.min(data, 0)
+  max = np.max(data, 0)
+  numerator = data - min
+  denominator = max - min
   norm_data = numerator / (denominator + 1e-7)
-  return norm_data
+  return norm_data, min, max
+
+def MinMaxUnscaler(data, scaler):
+  return data * (scaler['max'] - scaler['min'] + 1e-7) + scaler['min']
 
 def random_generator (batch_size, z_dim, T_mb, max_seq_len):
   """Random vector generation. (Generates a latent vector that is used in the Generator.)
@@ -71,7 +76,7 @@ def random_generator (batch_size, z_dim, T_mb, max_seq_len):
   Z_mb = list()
   for i in range(batch_size):
     temp = np.zeros([max_seq_len, z_dim])
-    temp_Z = np.random.uniform(0., 10, [T_mb[i], z_dim])
+    temp_Z = np.random.uniform(0., 1, [T_mb[i], z_dim])
     temp[:T_mb[i],:] = temp_Z
     Z_mb.append(temp_Z)
   return Z_mb
