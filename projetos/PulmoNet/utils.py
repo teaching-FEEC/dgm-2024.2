@@ -7,6 +7,7 @@ import os
 import glob
 import json
 import yaml
+import csv 
 
 class MinMaxNormalize():
     '''
