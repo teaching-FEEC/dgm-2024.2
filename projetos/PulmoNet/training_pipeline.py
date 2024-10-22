@@ -148,8 +148,49 @@ if new_model is True:
         writer.writeheader()
 else:
     print('Loading old model to keep training...')
-    gen.load_state_dict(torch.load(str(config['model'].get('path_to_saved_model_gen',dir_save_models+f"{name_model}_gen_savesafe.pt")), weights_only=True))
-    disc.load_state_dict(torch.load(str(config['model'].get('path_to_saved_model_disc',dir_save_models+f"{name_model}_disc_savesafe.pt")), weights_only=True))
+    if 'path_to_saved_model_gen' in config['model']:
+        if config['model']['path_to_saved_model_gen'] != "":
+            gen.load_state_dict(torch.load(str(config['model']['path_to_saved_model_gen']), weights_only=True))
+        else:
+            gen.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_savesafe.pt", weights_only=True))
+    else:
+        gen.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_savesafe.pt", weights_only=True))
+    if 'path_to_saved_model_disc' in config['model']:
+        if config['model']['path_to_saved_model_disc'] != "":
+            disc.load_state_dict(torch.load(str(config['model']['path_to_saved_model_disc']), weights_only=True))
+        else:
+            disc.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_savesafe.pt", weights_only=True))
+    else:
+       disc.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_savesafe.pt", weights_only=True))
+    if 'path_to_saved_gen_optimizer' in config['optimizer']:
+        if config['optimizer']['path_to_saved_optimizer'] != "":
+            gen_opt.load_state_dict(torch.load(str(config['optimizer']['path_to_saved_gen_optimizer'],weights_only=True)))
+        else:
+            gen_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_optimizer_savesafe.pt",weights_only=True))
+    else:
+        gen_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_optimizer_savesafe.pt",weights_only=True))
+    if 'path_to_saved_disc_optimizer' in config['optimizer']:
+        if config['optimizer']['path_to_saved_optimizer'] != "":
+            disc_opt.load_state_dict(torch.load(str(config['optimizer']['path_to_saved_disc_optimizer'],weights_only=True)))
+        else:
+            disc_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_optimizer_savesafe.pt",weights_only=True))
+    else:
+        disc_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_optimizer_savesafe.pt",weights_only=True))
+    if use_lr_scheduler is True:
+        if 'path_to_saved_gen_scheduler' in config['lr_scheduler']:
+            if config['lr_scheduler']['path_to_saved_gen_scheduler'] != "":
+                gen_scheduler.load_state_dict(torch.load(str(config['lr_scheduler']['path_to_saved_gen_scheduler'],weights_only=True)))
+            else:
+                gen_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_scheduler_state_savesafe.pt",weights_only=True))
+        else:
+            gen_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_scheduler_state_savesafe.pt",weights_only=True))
+        if 'path_to_saved_disc_scheduler' in config['lr_scheduler']:
+            if config['lr_scheduler']['path_to_saved_disc_scheduler'] != "":
+                disc_scheduler.load_state_dict(torch.load(str(config['lr_scheduler']['path_to_saved_disc_scheduler'],weights_only=True)))
+            else:
+                disc_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_scheduler_state_savesafe.pt",weights_only=True))
+        else:
+            disc_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_scheduler_state_savesafe.pt",weights_only=True))
 
 
 ####----------------------Training Loop-----------------------------------
@@ -194,8 +235,11 @@ for epoch in range(n_epochs):
                     gen=gen, 
                     disc=disc, 
                     epoch=epoch, 
+                    gen_optimizer=gen_opt,
+                    disc_optimizer=disc_opt,
                     current_lr=current_lr,
-                    lr_scheduler=gen_scheduler)
+                    gen_scheduler=gen_scheduler,
+                    disc_scheduler=disc_scheduler)
     if (epoch % step_to_safe_save_models == 0) or (epoch == n_epochs-1):
         save_training_losses(mean_loss_train_gen_list=mean_loss_train_gen_list, 
                  mean_loss_train_disc_list=mean_loss_train_disc_list,

@@ -23,21 +23,29 @@ class SaveTrainingLosses:
 
 
 def safe_save(dir_save_models, name_model,
-              gen, disc, epoch, current_lr,
-              lr_scheduler=None):
+              gen, disc, epoch, gen_optimizer, disc_optimizer, current_lr,
+              gen_scheduler=None,disc_scheduler=None):
     torch.save(gen.state_dict(),
                f"{dir_save_models}{name_model}_gen_savesafe.pt")
     torch.save(disc.state_dict(),
                f"{dir_save_models}{name_model}_disc_savesafe.pt")
-    if lr_scheduler is not None:
-        torch.save(lr_scheduler.state_dict(),
-                f"{dir_save_models}{name_model}_scheduler_state_savesafe.pt")
+    torch.save(gen_optimizer.state_dict(),
+               f"{dir_save_models}{name_model}_gen_optimizer_savesafe.pt")
+    torch.save(disc_optimizer.state_dict(),
+               f"{dir_save_models}{name_model}_disc_optimizer_savesafe.pt")
+    if gen_scheduler is not None:
+        torch.save(gen_scheduler.state_dict(),
+                f"{dir_save_models}{name_model}_gen_scheduler_state_savesafe.pt")
+    if disc_scheduler is not None:
+        torch.save(disc_scheduler.state_dict(),
+                f"{dir_save_models}{name_model}_disc_scheduler_state_savesafe.pt")
     training_state = {
-        'epoch': epoch,
+        'epoch': epoch+1,
         'learning_rate': current_lr
     }
     with open(f"{dir_save_models}{name_model}_training_state_savesafe", "w") as outfile:
         outfile.write(json.dumps(training_state, indent=4))
+
 
 def delete_safe_save(dir_save_models, name_model):
     if os.path.isfile(f"{dir_save_models}{name_model}_gen_trained.pt") and os.path.isfile(f"{dir_save_models}{name_model}_disc_trained.pt"):
@@ -45,8 +53,14 @@ def delete_safe_save(dir_save_models, name_model):
             os.remove(f"{dir_save_models}{name_model}_gen_savesafe.pt")
         if os.path.isfile(f"{dir_save_models}{name_model}_disc_savesafe.pt"):
             os.remove(f"{dir_save_models}{name_model}_disc_savesafe.pt")
-        if os.path.isfile(f"{dir_save_models}{name_model}_scheduler_state_savesafe.pt"):
-            os.remove(f"{dir_save_models}{name_model}_scheduler_state_savesafe.pt")
+        if os.path.isfile(f"{dir_save_models}{name_model}_gen_optimizer_savesafe.pt"):
+            os.remove(f"{dir_save_models}{name_model}_gen_optimizer_savesafe.pt")
+        if os.path.isfile(f"{dir_save_models}{name_model}_disc_optimizer_savesafe.pt"):
+            os.remove(f"{dir_save_models}{name_model}_disc_optimizer_savesafe.pt")
+        if os.path.isfile(f"{dir_save_models}{name_model}_gen_scheduler_state_savesafe.pt"):
+            os.remove(f"{dir_save_models}{name_model}_gen_scheduler_state_savesafe.pt")
+        if os.path.isfile(f"{dir_save_models}{name_model}_disc_scheduler_state_savesafe.pt"):
+            os.remove(f"{dir_save_models}{name_model}_disc_scheduler_state_savesafe.pt")
         if os.path.isfile(f"{dir_save_models}{name_model}_training_state_savesafe"):
             os.remove(f"{dir_save_models}{name_model}_training_state_savesafe")
 
@@ -67,7 +81,7 @@ class SaveBestModel:
             torch.save(gen.state_dict(), f"{self.dir_save_model}{name_model}_gen_best.pt")
             torch.save(disc.state_dict(), f"{self.dir_save_model}{name_model}_disc_best.pt")
             training_state = {
-                'epoch': epoch,
+                'epoch': epoch+1,
                 'best_score': self.best_score
             }
             with open(f"{self.dir_save_model}{name_model}_best_info", "w") as outfile:
