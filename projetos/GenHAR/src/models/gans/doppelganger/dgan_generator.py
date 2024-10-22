@@ -6,8 +6,6 @@ import os
 import torch
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"  # ou ":16:8"
 
-import numpy as np
-import torch
 
 class DCGANGenerator:
     def __init__(self, config):
@@ -44,8 +42,6 @@ class DCGANGenerator:
                 apply_example_scaling=False,
                 sample_len=self.config["parameters"]["sample_len"],
                 batch_size=self.config["parameters"]["batch_size"],
-                generator_learning_rate=1e-4,
-                discriminator_learning_rate=1e-4,
                 epochs=self.config["parameters"]["epochs"],
             )
         )
@@ -61,7 +57,7 @@ class DCGANGenerator:
             raise RuntimeError("The model has not been trained yet.")
 
         # Definir semente diferente para a geração
-        torch.manual_seed(np.random.randint(0, 10000))
+        #torch.manual_seed(np.random.randint(0, 10000))
 
         # Gera dados sintéticos
         synthetic_attributes, synthetic_features = self.model.generate_numpy(n_samples)
