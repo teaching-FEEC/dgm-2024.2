@@ -2,6 +2,8 @@ model:
   name_model: "model_reg10_center_thr_25k"
   dir_save_results: "./model_reg10_center_thr_25k/"
   new_model: True
+  path_to_saved_model_gen: ""
+  path_to_saved_model_disc: ""
 
 data:
   processed_data_folder: "/mnt/shared/ctdata_thr25"
@@ -33,6 +35,8 @@ optimizer:
   lr: 0.0002
   info:
     betas: [0.5, 0.999]
+  path_to_saved_gen_optimizer: ""
+  path_to_saved_disc_optimizer: ""
 
 lr_scheduler:
   activate: True
@@ -42,6 +46,8 @@ lr_scheduler:
     start_factor: 1.0
     end_factor: 0.0
     total_iters: 5
+  path_to_saved_gen_scheduler: ""
+  path_to_saved_disc_scheduler: ""
 
 save_models_and_results:
   step_to_safe_save_models: 3
