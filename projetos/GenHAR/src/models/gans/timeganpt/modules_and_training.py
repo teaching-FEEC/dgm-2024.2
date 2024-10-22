@@ -227,7 +227,7 @@ def TimeGAN(data, parameters):
             # T_mb=extract_time(data)[0], max_seq_len=extract_time(data)[1])
 
             # Generator Training
-            ## Train Generator
+            # Train Generator
             z = torch.tensor(random_data)
             z = z.float()
 
@@ -254,7 +254,7 @@ def TimeGAN(data, parameters):
 
             Generator.zero_grad()
             Supervisor.zero_grad()
-            #Discriminator.zero_grad()
+            # Discriminator.zero_grad()
             Recovery.zero_grad()
 
             # line 267 of original implementation:
@@ -273,7 +273,7 @@ def TimeGAN(data, parameters):
             )
             G_loss_V2 = torch.mean(torch.abs((torch.mean(x_hat, [0]) - (torch.mean(X, [0])))))
             G_loss_V = G_loss_V1 + G_loss_V2
-            G_loss = 100*torch.sqrt(G_loss_S) + G_loss_U + G_loss_Ue + 100*G_loss_V
+            G_loss = 100 * torch.sqrt(G_loss_S) + G_loss_U + G_loss_Ue + 100 * G_loss_V
 
             # doing a backward step for each loss should result in gradients accumulating
             # so we should be able to optimize them jointly
@@ -281,10 +281,10 @@ def TimeGAN(data, parameters):
 
             generator_optimizer.step()
             supervisor_optimizer.step()
-            #discriminator_optimizer.step()
+            # discriminator_optimizer.step()
             # Train Embedder
-            ## line 270: we only optimize E_loss_T0
-            ## E_loss_T0 = just mse of x and x_tilde
+            # line 270: we only optimize E_loss_T0
+            # E_loss_T0 = just mse of x and x_tilde
             # but it calls E_solver which optimizes E_loss, which is a sum of
             # E_loss0 and 0.1* G_loss_S
             MSE_loss = nn.MSELoss()
@@ -315,9 +315,13 @@ def TimeGAN(data, parameters):
             recovery_optimizer.step()
             supervisor_optimizer.step()
         # train Discriminator
-        #for batch_index, X in enumerate(loader):
-        random_data = random_generator(batch_size=batch_size, z_dim=dim,
-         T_mb=extract_time(data)[0], max_seq_len=extract_time(data)[1])
+        # for batch_index, X in enumerate(loader):
+        random_data = random_generator(
+            batch_size=batch_size,
+            z_dim=dim,
+            T_mb=extract_time(data)[0],
+            max_seq_len=extract_time(data)[1],
+        )
 
         z = torch.tensor(random_data)
         z = z.float()
@@ -369,61 +373,61 @@ def TimeGAN(data, parameters):
             D_loss.backward()
             discriminator_optimizer.step()
 
-        #H, _ = Embedder(X.float())
-        #H = torch.reshape(H, (batch_size, seq_len, hidden_dim))
+        # H, _ = Embedder(X.float())
+        # H = torch.reshape(H, (batch_size, seq_len, hidden_dim))
 
-        #X_tilde, _ = Recovery(H)
-        #X_tilde = torch.reshape(X_tilde, (batch_size, seq_len, dim))
+        # X_tilde, _ = Recovery(H)
+        # X_tilde = torch.reshape(X_tilde, (batch_size, seq_len, dim))
 
-        #z = torch.tensor(random_data)
-        #z = z.float()
+        # z = torch.tensor(random_data)
+        # z = z.float()
 
-        #e_hat, _ = Generator(z)
-        #e_hat = torch.reshape(e_hat, (batch_size, seq_len, hidden_dim))
+        # e_hat, _ = Generator(z)
+        # e_hat = torch.reshape(e_hat, (batch_size, seq_len, hidden_dim))
 
-        #H_hat, _ = Supervisor(e_hat)
-        #H_hat = torch.reshape(H_hat, (batch_size, seq_len, hidden_dim))
+        # H_hat, _ = Supervisor(e_hat)
+        # H_hat = torch.reshape(H_hat, (batch_size, seq_len, hidden_dim))
 
-        #Y_fake = Discriminator(H_hat)
-        #Y_fake = torch.reshape(Y_fake, (batch_size, seq_len, 1))
+        # Y_fake = Discriminator(H_hat)
+        # Y_fake = torch.reshape(Y_fake, (batch_size, seq_len, 1))
 
-        #x_hat, _ = Recovery(H_hat)
-        #x_hat = torch.reshape(x_hat, (batch_size, seq_len, dim))
+        # x_hat, _ = Recovery(H_hat)
+        # x_hat = torch.reshape(x_hat, (batch_size, seq_len, dim))
 
-        #H, _ = Embedder(X.float())
-        #H = torch.reshape(H, (batch_size, seq_len, hidden_dim))
+        # H, _ = Embedder(X.float())
+        # H = torch.reshape(H, (batch_size, seq_len, hidden_dim))
 
-        #H_hat_supervise, _ = Supervisor(H)
-        #H_hat_supervise = torch.reshape(H_hat_supervise, (batch_size, seq_len, hidden_dim))
+        # H_hat_supervise, _ = Supervisor(H)
+        # H_hat_supervise = torch.reshape(H_hat_supervise, (batch_size, seq_len, hidden_dim))
 
-        #G_loss_S = MSE_loss(H[:, 1:, :], H_hat_supervise[:, :-1, :])
-        #binary_cross_entropy_loss = nn.BCEWithLogitsLoss()
-        ## logits first then targets
-        #G_loss_U = binary_cross_entropy_loss(Y_fake, torch.ones_like(Y_fake))
+        # G_loss_S = MSE_loss(H[:, 1:, :], H_hat_supervise[:, :-1, :])
+        # binary_cross_entropy_loss = nn.BCEWithLogitsLoss()
+        # logits first then targets
+        # G_loss_U = binary_cross_entropy_loss(Y_fake, torch.ones_like(Y_fake))
 
-        #G_loss_V1 = torch.mean(
+        # G_loss_V1 = torch.mean(
         #    torch.abs(
         #        (torch.std(x_hat, [0], unbiased=False)) + 1e-6 - (torch.std(X, [0]) + 1e-6)
         #    )
-        #)
-        #G_loss_V2 = torch.mean(torch.abs((torch.mean(x_hat, [0]) - (torch.mean(X, [0])))))
-        #G_loss_V = G_loss_V1 + G_loss_V2
+        # )
+        # G_loss_V2 = torch.mean(torch.abs((torch.mean(x_hat, [0]) - (torch.mean(X, [0])))))
+        # G_loss_V = G_loss_V1 + G_loss_V2
 
-        #E_loss_T0 = MSE_loss(X, X_tilde)
-        #E_loss0 = 10 * torch.sqrt(MSE_loss(X, X_tilde))
-        #E_loss = E_loss0 + 0.1 * G_loss_S
+        # E_loss_T0 = MSE_loss(X, X_tilde)
+        # E_loss0 = 10 * torch.sqrt(MSE_loss(X, X_tilde))
+        # E_loss = E_loss0 + 0.1 * G_loss_S
 
-        ## doing a backward step for each loss should result in gradients accumulating
-        ## so we should be able to optimize them jointly
-        #G_loss_S.backward(retain_graph=True)  #
-        #G_loss_U.backward(retain_graph=True)
-        #G_loss_V.backward(retain_graph=True)  #
-        #E_loss.backward()
+        # doing a backward step for each loss should result in gradients accumulating
+        # so we should be able to optimize them jointly
+        # G_loss_S.backward(retain_graph=True)  #
+        # G_loss_U.backward(retain_graph=True)
+        # G_loss_V.backward(retain_graph=True)  #
+        # E_loss.backward()
 
-        #generator_optimizer.step()
-        #supervisor_optimizer.step()
-        #embedder_optimizer.step()
-        #recovery_optimizer.step()
+        # generator_optimizer.step()
+        # supervisor_optimizer.step()
+        # embedder_optimizer.step()
+        # recovery_optimizer.step()
 
         print(
             "step: "
@@ -438,20 +442,20 @@ def TimeGAN(data, parameters):
             + str(np.sqrt(E_loss0.detach().numpy()))
         )
 
-        #random_test = random_generator(1, dim, extract_time(data)[0], extract_time(data)[1])
-        #test_sample = Generator(
+        # random_test = random_generator(1, dim, extract_time(data)[0], extract_time(data)[1])
+        # test_sample = Generator(
         #    torch.tensor(
         #        random_generator(1, dim, extract_time(data)[0], extract_time(data)[1])
         #    ).float()
-        #)[0]
-        #test_sample = torch.reshape(test_sample, (1, seq_len, hidden_dim))
-        #test_recovery = Recovery(test_sample)
-        #test_recovery = torch.reshape(test_recovery[0], (1, seq_len, dim))
-        #fig, ax = plt.subplots()
-        #ax1 = plt.plot(test_recovery[0].detach().numpy())
-        #plt.show()
+        # )[0]
+        # test_sample = torch.reshape(test_sample, (1, seq_len, hidden_dim))
+        # test_recovery = Recovery(test_sample)
+        # test_recovery = torch.reshape(test_recovery[0], (1, seq_len, dim))
+        # fig, ax = plt.subplots()
+        # ax1 = plt.plot(test_recovery[0].detach().numpy())
+        # plt.show()
 
-        if (itt+1) % 100:
+        if (itt + 1) % 100:
             checkpoints[0] = [
                 Generator.state_dict(),
                 Discriminator.state_dict(),
