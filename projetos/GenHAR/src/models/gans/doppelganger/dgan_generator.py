@@ -4,6 +4,7 @@ from gretel_synthetics.timeseries_dgan.dgan import DGAN
 from gretel_synthetics.timeseries_dgan.config import DGANConfig, OutputType
 import os
 import torch
+
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"  # ou ":16:8"
 
 
@@ -47,7 +48,7 @@ class DCGANGenerator:
         )
 
         # Treina o modelo
-        history=self.model.train_numpy(
+        history = self.model.train_numpy(
             attributes=attributes, features=train_data, attribute_types=[OutputType.DISCRETE]
         )
         print("DGAN model training complete.")
@@ -57,7 +58,7 @@ class DCGANGenerator:
             raise RuntimeError("The model has not been trained yet.")
 
         # Definir semente diferente para a geração
-        #torch.manual_seed(np.random.randint(0, 10000))
+        # torch.manual_seed(np.random.randint(0, 10000))
 
         # Gera dados sintéticos
         synthetic_attributes, synthetic_features = self.model.generate_numpy(n_samples)
@@ -66,9 +67,7 @@ class DCGANGenerator:
         )
 
         # Criar DataFrame similar ao original X_train
-        synthetic_df = pd.DataFrame(
-            synthetic_features_flat, columns=self.columns_names
-        )
+        synthetic_df = pd.DataFrame(synthetic_features_flat, columns=self.columns_names)
 
         # Adiciona os atributos (rótulos) como uma coluna separada
         synthetic_df["label"] = synthetic_attributes.flatten()
