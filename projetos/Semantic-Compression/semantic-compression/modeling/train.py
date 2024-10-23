@@ -10,7 +10,7 @@ import numpy as np
 
 
 def pre_train(model, x_train, x_val, batch_size, epochs, model_fname):
-    callback = EarlyStopping(patience=5)
+    callback = EarlyStopping(patience=5, start_from_epoch=5)
     model.fit(x=x_train, y=x_train, validation_data=(x_val, x_val), batch_size=batch_size, epochs=epochs, callbacks=[callback])
     model.save(f'../models/ae_{model_fname}.keras')
     return model
