@@ -4,12 +4,14 @@ from gan import GCGAN, AutoEncoder
 import tensorflow as tf
 from keras.utils import image_dataset_from_directory
 from keras.saving import load_model
+from keras.callbacks import EarlyStopping
 from keras import optimizers, losses
 import numpy as np
 
 
 def pre_train(model, x_train, x_val, batch_size, epochs, model_fname):
-    model.fit(x=x_train, y=x_train, validation_data=(x_val, x_val), batch_size=batch_size, epochs=epochs)
+    callback = keras.callbacks.EarlyStopping(patience=5)
+    model.fit(x=x_train, y=x_train, validation_data=(x_val, x_val), batch_size=batch_size, epochs=epochs, callbacks=[callback])
     model.save(f'../models/ae_{model_fname}.keras')
     return model
 
@@ -40,7 +42,7 @@ def fine_tune(model, dataloader_train, dataloader_val, epochs, save_every, model
         gan_losses_val.append(gan_val / len(dataloader_val))
         l2_losses_val.append(l2_val / len(dataloader_val))
 
-        pbar.set_description(f'train=({train_gans[-1]:.2f}, {train_l2s[-1]:.2f}); val=({val_gans[-1]:.2f}, {val_l2s[-1]:.2f})')
+        pbar.set_description(f'train=({gan_losses_train[-1]:.2f}, {l2_losses_train[-1]:.2f}); val=({gan_losses_val[-1]:.2f}, {l2_losses_val[-1]:.2f})')
 
         if epoch % save_every == 0:
             model.save(f'../models/{model_fname}_{epoch}.keras')
