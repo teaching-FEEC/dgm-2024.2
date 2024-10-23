@@ -1,12 +1,19 @@
 import argparse
 from tqdm.auto import tqdm
-from gan import GCGAN
+from gan import GCGAN, AutoEncoder
+import tensorflow as tf
 from keras.utils import image_dataset_from_directory
 from keras import optimizers, losses
 import numpy as np
 
 
-def train(model, dataloader_train, dataloader_val, epochs, save_every, model_fname):
+def pre_train(model, x_train, x_val, batch_size, epochs, model_fname):
+    model.fit(x=x_train, y=x_train, validation_data=(x_val, x_val), batch_size=batch_size, epochs=epochs)
+    model.save(f'../models/ae_{model_fname}.keras')
+    return model
+
+
+def fine_tune(model, dataloader_train, dataloader_val, epochs, save_every, model_fname):
     gan_losses_train = []
     l2_losses_train = []
     gan_losses_val = []
@@ -26,7 +33,7 @@ def train(model, dataloader_train, dataloader_val, epochs, save_every, model_fna
     return gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val
 
 
-def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs, save_every):
+def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs_pt, epochs_ft, save_every):
     model_fname = f"{H:04d}{W:04d}{filters:03d}{n_blocks:02d}{channels:01d}{int(momentum*100):02d}{batch_size:03d}{int(ae_lr*1e5):05d}{int(gan_lr*1e5):05d}"
 
     train_set = image_dataset_from_directory(
@@ -35,6 +42,21 @@ def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batc
     val_set = image_dataset_from_directory(
         path_val, labels=None, batch_size=batch_size, image_size=(H, W), shuffle=True
     )
+
+    x_train = []
+    for batch in train_set:
+        x_train.append(batch)
+        x_train = tf.concat(x_train, axis=0)
+
+    x_val = []
+    for batch in val_set:
+        x_val.append(batch)
+        x_val = tf.concat(x_val, axis=0)
+
+    ae = AutoEncoder(filters, n_blocks, channels, n_convs=4, sigma=1000., levels=5, l_min=-2, l_max=2, momentum=momentum)
+    ae.compile(optimizer='adam', loss='mean_squared_error')
+    ae = pre_train(ae, x_train/255., x_val/255., batch_size, epochs_pt, model_fname)
+    
     
     gan = GCGAN(
         filters, n_blocks, channels, n_convs=4, sigma=1000, levels=5, l_min=-2, l_max=2, lambda_d=10, momentum=momentum,
@@ -43,8 +65,9 @@ def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batc
         optimizer_1=optimizers.Adam(learning_rate=ae_lr),
         optimizer_2=optimizers.Adam(learning_rate=gan_lr),
     )
+    gan.autoencoder.load(f'../models/ae_{model_fname}.keras')
 
-    gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val = train(gan, train_set, val_set, epochs, save_every, model_fname)
+    gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val = fine_tune(gan, train_set, val_set, epochs_ft, save_every, model_fname)
     np.savetxt(f"../models/{model_fname}_losses.txt", np.array([gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val]))
 
 if __name__ == '__main__':

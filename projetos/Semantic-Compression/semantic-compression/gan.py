@@ -58,7 +58,7 @@ class Encoder(models.Model):
                 self.filters // 2**self.n_convs,
                 kernel_size=7, strides=1, padding='same'
             ),
-            layers.BatchNormalization(monentum=momentum),
+            layers.BatchNormalization(momentum=momentum),
             layers.ReLU()
         ])
         self.downsample = models.Sequential()
@@ -162,6 +162,32 @@ class AutoEncoder(models.Model):
         w_hat = self.quantizer(w)
         x_hat = self.decoder(w_hat, training=training)
         return x_hat
+
+    def get_config(self):
+        config = super().get_config()
+        config.update(
+            {
+                "filters": self.filters,
+                "n_blocks": self.n_blocks,
+                "channels": self.channels,
+                "n_convs": self.n_convs,
+                "sigma": self.sigma,
+                "levels": self.levels,
+                "l_min": self.l_min,
+                "l_max": self.l_max,
+                "momentum": self.momentum
+            }
+        )
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(
+            config['filters'], config['n_blocks'], config['channels'], config['n_convs'],
+            sigma=config['sigma'], levels=config['levels'],
+            l_min=config['l_min'], l_max=config['l_max'],
+            momentum=config['momentum']
+        )
 
 
 class Discriminator(models.Model):
