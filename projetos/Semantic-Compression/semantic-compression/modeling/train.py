@@ -16,7 +16,7 @@ def pre_train(model, x_train, x_val, batch_size, epochs, model_fname):
     return model
 
 
-def fine_tune(model, dataloader_train, dataloader_val, epochs, save_every, model_fname):
+def fine_tune(model, dataloader_train, dataloader_val, epochs, discriminate_every, save_every, model_fname):
     gan_losses_train = []
     l2_losses_train = []
     gan_losses_val = []
@@ -27,7 +27,7 @@ def fine_tune(model, dataloader_train, dataloader_val, epochs, save_every, model
         gan_train = 0.
         l2_train = 0.
         for batch in dataloader_train:
-            b_gan, b_l2 = model.train_step(batch, discriminating=True)
+            b_gan, b_l2 = model.train_step(batch, discriminating=(epoch % discriminate_every == 0))
             gan_train += b_gan
             l2_train += b_l2
         gan_losses_train.append(gan_train / len(dataloader_train))
@@ -51,7 +51,7 @@ def fine_tune(model, dataloader_train, dataloader_val, epochs, save_every, model
     return model, gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val
 
 
-def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs_pt, epochs_ft, save_every):
+def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs_pt, epochs_ft, discriminate_every, save_every):
     model_fname = f"{H:04d}{W:04d}{filters:03d}{n_blocks:02d}{channels:01d}{int(momentum*100):02d}{batch_size:03d}{int(ae_lr*1e5):05d}{int(gan_lr*1e5):05d}"
 
     train_set = image_dataset_from_directory(
@@ -72,7 +72,7 @@ def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batc
         x_val = tf.concat(x_val, axis=0)
 
     ae = AutoEncoder(filters, n_blocks, channels, n_convs=4, sigma=1000., levels=5, l_min=-2, l_max=2, momentum=momentum)
-    ae.compile(optimizer='adam', loss='mean_squared_error')
+    ae.compile(optimizer=optimizers.Adam(ae_lr), loss='mean_squared_error')
     ae = pre_train(ae, x_train/255., x_val/255., batch_size, epochs_pt, model_fname)
     
     
@@ -85,7 +85,7 @@ def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batc
     )
     gan.autoencoder = load_model(f'../models/ae_{model_fname}.keras')
 
-    gan, gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val = fine_tune(gan, train_set, val_set, epochs_ft, save_every, model_fname)
+    gan, gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val = fine_tune(gan, train_set, val_set, epochs_ft, discriminate_every, save_every, model_fname)
     np.savetxt(f"../models/{model_fname}_losses.txt", np.array([gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val]))
     return gan
 

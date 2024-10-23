@@ -281,12 +281,11 @@ class GCGAN(models.Model):
         with tf.GradientTape() as tape:
             x0, x_hat, y, y_hat = self(x, training=True)
             gan_loss, l2_loss = self.loss_fn(x0, x_hat, y, y_hat)
+            loss = self.lambda_d * l2_loss - gan_loss
             if discriminating:
-                loss = self.lambda_d * l2_loss - gan_loss
                 train_vars = self.trainable_variables
                 opt = self.opt2
             else:
-                loss = l2_loss
                 train_vars = self.autoencoder.trainable_variables
                 opt = self.opt1
             grads = tape.gradient(loss, train_vars)
