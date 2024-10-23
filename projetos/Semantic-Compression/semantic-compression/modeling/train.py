@@ -3,6 +3,7 @@ from tqdm.auto import tqdm
 from gan import GCGAN, AutoEncoder
 import tensorflow as tf
 from keras.utils import image_dataset_from_directory
+from keras.saving import load_model
 from keras import optimizers, losses
 import numpy as np
 
@@ -20,17 +21,32 @@ def fine_tune(model, dataloader_train, dataloader_val, epochs, save_every, model
     l2_losses_val = []
     pbar = tqdm(range(1, epochs+1))
     for epoch in pbar:
-        gan_train, l2_train = model.train_step(dataloader_train)
-        gan_val, l2_val = model.test_step(dataloader_val)
-        gan_losses_train.append(gan_train)
-        l2_losses_train.append(l2_train)
-        gan_losses_val.append(gan_val)
-        l2_losses_val.append(l2_val)
+
+        gan_train = 0.
+        l2_train = 0.
+        for batch in dataloader_train:
+            b_gan, b_l2 = model.train_step(batch, discriminating=True)
+            gan_train += b_gan
+            l2_train += b_l2
+        gan_losses_train.append(gan_train / len(dataloader_train))
+        l2_losses_train.append(l2_train / len(dataloader_train))
+
+        gan_val = 0.
+        l2_val = 0.
+        for batch in dataloader_val:
+            b_gan, b_l2 = model.test_step(batch)
+            gan_val += b_gan
+            l2_val += b_l2
+        gan_losses_val.append(gan_val / len(dataloader_val))
+        l2_losses_val.append(l2_val / len(dataloader_val))
+
+        pbar.set_description(f'train=({train_gans[-1]:.2f}, {train_l2s[-1]:.2f}); val=({val_gans[-1]:.2f}, {val_l2s[-1]:.2f})')
+
         if epoch % save_every == 0:
             model.save(f'../models/{model_fname}_{epoch}.keras')
             model.save_weights(f'../models/{model_fname}_{epoch}.weights.h5')
-        pbar.set_description(f'train: ({tdl:.2f}; {tgl:.2f}); val: ({vdl:.2f}; {vgl:.2f})')
-    return gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val
+        
+    return model, gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val
 
 
 def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs_pt, epochs_ft, save_every):
@@ -65,10 +81,11 @@ def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batc
         optimizer_1=optimizers.Adam(learning_rate=ae_lr),
         optimizer_2=optimizers.Adam(learning_rate=gan_lr),
     )
-    gan.autoencoder.load(f'../models/ae_{model_fname}.keras')
+    gan.autoencoder = load_model(f'../models/ae_{model_fname}.keras')
 
-    gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val = fine_tune(gan, train_set, val_set, epochs_ft, save_every, model_fname)
+    gan, gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val = fine_tune(gan, train_set, val_set, epochs_ft, save_every, model_fname)
     np.savetxt(f"../models/{model_fname}_losses.txt", np.array([gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val]))
+    return gan
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Treinamento de Generative Compression GAN")
