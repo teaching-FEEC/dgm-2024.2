@@ -1,33 +1,33 @@
 import argparse
 from tqdm.auto import tqdm
-from gan import GenerativeCompressionGAN
+from gan import GCGAN
 from keras.utils import image_dataset_from_directory
 from keras import optimizers, losses
 import numpy as np
 
 
-def train(gan, dataloader_train, dataloader_val, epochs, save_every, model_fname):
-    d_losses_train = []
-    g_losses_train = []
-    d_losses_val = []
-    g_losses_val = []
+def train(model, dataloader_train, dataloader_val, epochs, save_every, model_fname):
+    gan_losses_train = []
+    l2_losses_train = []
+    gan_losses_val = []
+    l2_losses_val = []
     pbar = tqdm(range(1, epochs+1))
     for epoch in pbar:
-        tdl, tgl = gan.train_step(dataloader_train)
-        vdl, vgl = gan.evaluate(dataloader_val)
-        d_losses_train.append(tdl)
-        g_losses_train.append(tgl)
-        d_losses_val.append(vdl)
-        g_losses_val.append(vgl)
+        gan_train, l2_train = model.train_step(dataloader_train)
+        gan_val, l2_val = model.test_step(dataloader_val)
+        gan_losses_train.append(gan_train)
+        l2_losses_train.append(l2_train)
+        gan_losses_val.append(gan_val)
+        l2_losses_val.append(l2_val)
         if epoch % save_every == 0:
-            gan.save(f'../models/{model_fname}_{epoch}.keras')
-            gan.save_weights(f'../models/{model_fname}_{epoch}.weights.h5')
+            model.save(f'../models/{model_fname}_{epoch}.keras')
+            model.save_weights(f'../models/{model_fname}_{epoch}.weights.h5')
         pbar.set_description(f'train: ({tdl:.2f}; {tgl:.2f}); val: ({vdl:.2f}; {vgl:.2f})')
-    return d_losses_train, g_losses_train, d_losses_val, g_losses_val
+    return gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val
 
 
-def main(path_train, path_val, H, W, width, depth, batch_size, d_lr, g_lr, epochs, save_every):
-    model_fname = f"{H:04d}{W:04d}{width:03d}{depth:02d}{batch_size:03d}{int(d_lr*1e5):05d}{int(g_lr*1e5):05d}"
+def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs, save_every):
+    model_fname = f"{H:04d}{W:04d}{filters:03d}{n_blocks:02d}{channels:01d}{int(momentum*100):02d}{batch_size:03d}{int(ae_lr*1e5):05d}{int(gan_lr*1e5):05d}"
 
     train_set = image_dataset_from_directory(
         path_train, labels=None, batch_size=batch_size, image_size=(H, W), shuffle=True
@@ -36,22 +36,16 @@ def main(path_train, path_val, H, W, width, depth, batch_size, d_lr, g_lr, epoch
         path_val, labels=None, batch_size=batch_size, image_size=(H, W), shuffle=True
     )
     
-    gan = GenerativeCompressionGAN(
-        e_filters=width, e_blocks=depth,
-        g_filters=width, g_blocks=depth,
-        d_filters=width,
-        L=5, c_min=-2, c_max=2,
-        lambda_d=10
+    gan = GCGAN(
+        filters, n_blocks, channels, n_convs=4, sigma=1000, levels=5, l_min=-2, l_max=2, lambda_d=10, momentum=momentum,
     )
     gan.compile(
-        d_optimizer=optimizers.Adam(learning_rate=d_lr),
-        g_optimizer=optimizers.Adam(learning_rate=g_lr),
-        gan_loss_fn=losses.MeanSquaredError(),
-        distortion_loss_fn=losses.MeanSquaredError()
+        optimizer_1=optimizers.Adam(learning_rate=ae_lr),
+        optimizer_2=optimizers.Adam(learning_rate=gan_lr),
     )
 
-    d_losses_train, g_losses_train, d_losses_val, g_losses_val = train(gan, train_set, val_set, epochs, save_every, model_fname)
-    np.savetxt(f"../models/{model_fname}_losses.txt", np.array([d_losses_train, g_losses_train, d_losses_val, g_losses_val]))
+    gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val = train(gan, train_set, val_set, epochs, save_every, model_fname)
+    np.savetxt(f"../models/{model_fname}_losses.txt", np.array([gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val]))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Treinamento de Generative Compression GAN")

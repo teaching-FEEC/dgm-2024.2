@@ -5,18 +5,18 @@ from keras import layers, models
 
 
 class Block(layers.Layer):
-    def __init__(self, filters, kernel_size):
+    def __init__(self, filters, kernel_size, momentum=0.99):
         super().__init__()
         self.filters = filters
         self.kernel_size = kernel_size
         self.h1 = models.Sequential([
             layers.Conv2D(self.filters, kernel_size=self.kernel_size, strides=1, padding='same'),
-            layers.BatchNormalization(),
+            layers.BatchNormalization(momentum=momentum),
             layers.ReLU()
         ])
         self.h2 = models.Sequential([
             layers.Conv2D(self.filters, kernel_size=self.kernel_size, strides=1, padding='same'),
-            layers.BatchNormalization(),
+            layers.BatchNormalization(momentum=momentum),
         ])
 
     def call(self, x, training=False):
@@ -28,11 +28,11 @@ class Block(layers.Layer):
 
 
 class ResidualBlock(layers.Layer):
-    def __init__(self, filters, kernel_size):
+    def __init__(self, filters, kernel_size, momentum=0.99):
         super().__init__()
         self.filters = filters
         self.kernel_size = kernel_size
-        self.blocks = [Block(self.filters, self.kernel_size) for _ in range(3)]
+        self.blocks = [Block(self.filters, self.kernel_size, momentum=momentum) for _ in range(3)]
 
     def call(self, x, training=False):
         x_0 = x
@@ -48,7 +48,7 @@ class Encoder(models.Model):
     downsample: k5s2 [filters / 2**(n_convs-i)], i=1,2,...,n_convs
     output: k3s1 [channels]
     """
-    def __init__(self, channels, filters, n_convs=4):
+    def __init__(self, channels, filters, n_convs=4, momentum=0.99):
         super().__init__()
         self.channels = channels
         self.filters = filters
@@ -58,7 +58,7 @@ class Encoder(models.Model):
                 self.filters // 2**self.n_convs,
                 kernel_size=7, strides=1, padding='same'
             ),
-            layers.BatchNormalization(),
+            layers.BatchNormalization(monentum=momentum),
             layers.ReLU()
         ])
         self.downsample = models.Sequential()
@@ -69,11 +69,11 @@ class Encoder(models.Model):
                     kernel_size=5, strides=2, padding='same'
                 )
             )
-            self.downsample.add(layers.BatchNormalization())
+            self.downsample.add(layers.BatchNormalization(momentum=momentum))
             self.downsample.add(layers.ReLU())
         self.h_out = models.Sequential([
             layers.Conv2D(self.channels, kernel_size=3, strides=1, padding='same'),
-            layers.BatchNormalization()
+            layers.BatchNormalization(momentum=momentum)
         ])
 
     def call(self, inputs, training=False):
@@ -84,12 +84,12 @@ class Encoder(models.Model):
 
 
 class Quantizer(layers.Layer):
-    def __init__(self, sigma, levels, c_min, c_max):
+    def __init__(self, sigma, levels, l_min, l_max):
         super().__init__()
         self.sigma = sigma
         self.levels = levels
-        self.c_min = c_min
-        self.c_max = c_max
+        self.l_min = l_min
+        self.l_max = l_max
 
     def call(self, z):
         # convert z -> (B, C, H, W)
@@ -116,14 +116,14 @@ class Generator(models.Model):
     upsample: k5s2 [filters / 2**i], i=1,2,...,n_convs
     output: k7s1 [3]
     """
-    def __init__(self, n_blocks, filters, n_convs=4):
+    def __init__(self, n_blocks, filters, n_convs=4, momentum=0.99):
         super().__init__()
         self.filters = filters
         self.n_blocks = n_blocks
-        self.res_blocks = [ResidualBlock(self.filters, kernel_size=3) for _ in range(self.n_blocks)]
+        self.res_blocks = [ResidualBlock(self.filters, kernel_size=3, momentum=momentum) for _ in range(self.n_blocks)]
         self.h_in = models.Sequential([
             layers.Conv2DTranspose(self.filters, kernel_size=3, strides=1, padding='same'),
-            layers.BatchNormalization(),
+            layers.BatchNormalization(momentum=momentum),
             layers.ReLU()
         ])
         self.upsample = models.Sequential()
@@ -134,11 +134,11 @@ class Generator(models.Model):
                     kernel_size=5, strides=2, padding='same'
                 )
             )
-            self.upsample.add(layers.BatchNormalization())
+            self.upsample.add(layers.BatchNormalization(momentum=momentum))
             self.upsample.add(layers.ReLU())
         self.h_out = models.Sequential([
             layers.Conv2DTranspose(3, kernel_size=7, strides=1, padding='same'),
-            layers.BatchNormalization(),
+            layers.BatchNormalization(momentum=momentum),
         ])
 
     def call(self, inputs, training=False):
@@ -151,11 +151,11 @@ class Generator(models.Model):
 
 
 class AutoEncoder(models.Model):
-    def __init__(self, filters, n_blocks, channels, n_convs, sigma, levels, c_min, c_max):
+    def __init__(self, filters, n_blocks, channels, n_convs, sigma, levels, l_min, l_max, momentum=0.99):
         super().__init__()
-        self.encoder = Encoder(channels, filters, n_convs)
-        self.decoder = Generator(n_blocks, filters, n_convs)
-        self.quantizer = Quantizer(sigma, levels, c_min, c_max)
+        self.encoder = Encoder(channels, filters, n_convs, momentum=momentum)
+        self.decoder = Generator(n_blocks, filters, n_convs, momentum=momentum)
+        self.quantizer = Quantizer(sigma, levels, l_min, l_max)
 
     def call(self, x, training=False):
         w = self.encoder(x, training=training)
@@ -169,7 +169,7 @@ class Discriminator(models.Model):
     downsample: k4s2 [filters / 2**(n_convs-i)], i=1,2,...,n_convs
     output: k4s1 [1] + dense(sigmoid)
     """
-    def __init__(self, filters, n_convs=4):
+    def __init__(self, filters, n_convs=4, momentum=0.99):
         super().__init__()
         self.filters = filters
         self.n_convs = n_convs
@@ -181,7 +181,7 @@ class Discriminator(models.Model):
                     kernel_size=4, strides=2, padding='same'
                 )
             )
-            self.net.add(layers.BatchNormalization())
+            self.net.add(layers.BatchNormalization(momentum=momentum))
             self.net.add(layers.LeakyReLU(0.2))
         self.h_out = models.Sequential([
             layers.Conv2D(1, kernel_size=4, strides=1, padding='same'),
@@ -210,8 +210,8 @@ class NegativeGradientLayer(layers.Layer):
         return identity_with_neg_grad(inputs)
 
 
-class GenerativeCompressionGAN(models.Model):
-    def __init__(self, filters, n_blocks, channels, n_convs, *, sigma=1000, levels=5, c_min=-2, c_max=2, lambda_d=10, **kwargs):
+class GCGAN(models.Model):
+    def __init__(self, filters, n_blocks, channels, n_convs, *, sigma=1000, levels=5, l_min=-2, l_max=2, lambda_d=10, momentum=0.99, **kwargs):
         super().__init__(**kwargs)
         self.filters = filters
         self.n_blocks = n_blocks
@@ -219,11 +219,12 @@ class GenerativeCompressionGAN(models.Model):
         self.n_convs = n_convs
         self.sigma = sigma
         self.levels = levels
-        self.c_min = c_min
-        self.c_max = c_max
+        self.l_min = l_min
+        self.l_max = l_max
         self.lambda_d = lambda_d
+        self.momentum = momentum
         self.preprocess = layers.Rescaling(1./255.)
-        self.autoencoder = AutoEncoder(filters, n_blocks, channels, n_convs, sigma, levels, c_min, c_max)
+        self.autoencoder = AutoEncoder(filters, n_blocks, channels, n_convs, sigma, levels, l_min, l_max, momentum)
         self.reverse_layer = NegativeGradientLayer()
         self.discriminator = Discriminator(filters, n_convs)
         self.loss_fn = least_squares_gan_loss
@@ -271,9 +272,10 @@ class GenerativeCompressionGAN(models.Model):
                 "n_convs": self.n_convs,
                 "sigma": self.sigma,
                 "levels": self.levels,
-                "c_min": self.c_min,
-                "c_max": self.c_max,
+                "l_min": self.l_min,
+                "l_max": self.l_max,
                 "lambda_d": self.lambda_d,
+                "momentum": self.momentum
             }
         )
         return config
@@ -283,8 +285,8 @@ class GenerativeCompressionGAN(models.Model):
         return cls(
             config['filters'], config['n_blocks'], config['channels'], config['n_convs'],
             sigma=config['sigma'], levels=config['levels'],
-            c_min=config['c_min'], c_max=config['c_max'],
-            lambda_d=config['lambda_d']
+            l_min=config['l_min'], l_max=config['l_max'],
+            lambda_d=config['lambda_d'], momentum=config['momentum']
         )
 
 
@@ -292,3 +294,4 @@ def least_squares_gan_loss(x, x_hat, y, y_hat):
     gan_loss = tf.reduce_mean(y**2) + tf.reduce_mean((y_hat - 1)**2)
     l2_loss =  tf.reduce_mean((x - x_hat)**2)
     return gan_loss, l2_loss
+
