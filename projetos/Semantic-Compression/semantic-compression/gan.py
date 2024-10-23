@@ -153,6 +153,15 @@ class Generator(models.Model):
 class AutoEncoder(models.Model):
     def __init__(self, filters, n_blocks, channels, n_convs, sigma, levels, l_min, l_max, momentum=0.99):
         super().__init__()
+        self.filters = filters
+        self.n_blocks = n_blocks
+        self.channels = channels
+        self.n_convs = n_convs
+        self.sigma = sigma
+        self.levels = levels
+        self.l_min = l_min
+        self.l_max = l_max
+        self.momentum = momentum
         self.encoder = Encoder(channels, filters, n_convs, momentum=momentum)
         self.decoder = Generator(n_blocks, filters, n_convs, momentum=momentum)
         self.quantizer = Quantizer(sigma, levels, l_min, l_max)
