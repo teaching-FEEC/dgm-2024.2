@@ -399,7 +399,8 @@ class DiffusionGenerator:
         self.model = None
 
     def train(self, X_train, y_train):
-        if self.config['is_conditional']:
+        self.scaler = {}
+        if self.config["is_conditional"]:
             self.train_conditional(X_train, y_train)
         else:
             self.train_separated(X_train, y_train)
@@ -411,7 +412,6 @@ class DiffusionGenerator:
         self.columns_names = x_df.columns
 
         self.model = {}
-        self.scaler = {}
         x_data = split_axis_reshape(x_df)
         class_data_dict = dict_class_samples(x_data, y_train.copy())
         for class_label in class_data_dict.keys():
@@ -435,32 +435,49 @@ class DiffusionGenerator:
             self.scaler[class_label] = scaler
 
     def train_conditional(self, X_train, y_train):
-        params = self.config['parameters']
+        params = self.config["parameters"]
         x_df = X_train.copy()
         self.columns_names = x_df.columns
         self.classes = np.unique(y_train.values)
 
-        transfom_data = split_axis_reshape(x_df)
-        transform_data = transfom_data.transpose(0, 2, 1).reshape(-1, 6)
-        self.scaler = StandardScaler()
-        self.scaler.fit(transform_data)
-        transform_data = self.scaler.transform(transform_data)
-        train_data = transform_data.reshape(transfom_data.shape[0], 60, 6).transpose(0, 2, 1)
-        train_data = torch.from_numpy(train_data)
+        X_data = []
+        Y_data = []
+        split_data = split_axis_reshape(x_df)
+        class_data_dict = dict_class_samples(split_data, y_train.copy())
+        for class_label in class_data_dict.keys():
+            train_data = class_data_dict[class_label]
+            assert train_data.shape[-2:] == (6, 60)
+
+            transform_data = train_data.transpose(0, 2, 1).reshape(-1, 6)
+            scaler = StandardScaler()
+            scaler.fit(transform_data)
+            transform_data = scaler.transform(transform_data)
+            transform_data = transform_data.reshape(train_data.shape[0], 60, 6).transpose(0, 2, 1)
+            X_data.append(transform_data)
+            Y_data.append(np.ones((train_data.shape[0], 1)) * class_label)
+            self.scaler[class_label] = scaler
+
+        X_data = np.concatenate(X_data, axis=0)
+        Y_data = np.concatenate(Y_data, axis=0)
+        X_data = torch.from_numpy(X_data)
+        Y_data = torch.from_numpy(Y_data).int()
         model = UNet(
             in_channel=params["in_channel"],
             out_channel=params["out_channel"],
             seq_length=60,
             conditional=True,
         ).to(device)
-        y_train_data = torch.from_numpy(y_train.values).reshape(-1,1)
-        self.model = self.train_model(model, train_data, y_train_data)
+
+        assert X_data.shape[0] == Y_data.shape[0]
+        assert X_data.shape[-2:] == (6, 60)
+        assert Y_data.shape[1] == 1
+        self.model = self.train_model(model, X_data, Y_data)
 
     def generate(self, n_samples):
         if self.model is None:
             raise RuntimeError("The model has not yet been trained")
 
-        if self.config['is_conditional']:
+        if self.config["is_conditional"]:
             return self.gen_conditional(n_samples)
         else:
             return self.gen_separated(n_samples)
@@ -475,13 +492,17 @@ class DiffusionGenerator:
             loss_type="l2",
             schedule_opt={"schedule": "cosine", "n_timestep": 1000, "cosine_s": 8e-3},
         )
-        for class_label in self.classes:
+        for class_label in self.scaler.keys():
             cond_batch = torch.ones(samples_per_class, 1) * class_label
             cond_batch = cond_batch.to(device).int()
-            synthetic_samples = diffusion.sample(batch_size=samples_per_class, cond=cond_batch).detach().cpu()
+            synthetic_samples = (
+                diffusion.sample(batch_size=samples_per_class, cond=cond_batch).detach().cpu()
+            )
             synthetic_samples = synthetic_samples.transpose(2, 1).reshape(-1, 6)
-            synthetic_samples = self.scaler.inverse_transform(synthetic_samples)
-            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(0, 2, 1)
+            synthetic_samples = self.scaler[class_label].inverse_transform(synthetic_samples)
+            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(
+                0, 2, 1
+            )
             synthetic_samples = synthetic_samples.reshape(samples_per_class, -1)
             class_df = pd.DataFrame(synthetic_samples, columns=self.columns_names)
             class_df["label"] = [class_label] * samples_per_class
@@ -503,7 +524,9 @@ class DiffusionGenerator:
             synthetic_samples = diffusion.sample(batch_size=samples_per_class).detach().cpu()
             synthetic_samples = synthetic_samples.transpose(2, 1).reshape(-1, 6)
             synthetic_samples = self.scaler[class_label].inverse_transform(synthetic_samples)
-            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(0, 2, 1)
+            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(
+                0, 2, 1
+            )
             synthetic_samples = synthetic_samples.reshape(samples_per_class, -1)
             class_df = pd.DataFrame(synthetic_samples, columns=self.columns_names)
             class_df["label"] = [class_label] * samples_per_class
