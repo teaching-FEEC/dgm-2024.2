@@ -9,7 +9,7 @@ from lr_scheduler import LRScheduler
 from main_functions import run_train_epoch, run_validation_epoch, valid_on_the_fly
 from utils import read_yaml, plot_training_evolution, retrieve_metrics_from_csv, prepare_environment_for_new_model, resume_training
 
-config_path = input("Enter path for config.yaml: ")
+config_path = input("Enter path for YAML file with training description: ")
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 #device = 'cpu'

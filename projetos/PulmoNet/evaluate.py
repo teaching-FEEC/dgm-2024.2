@@ -1,52 +1,34 @@
 import torch
-from torch.utils.data import Dataset, DataLoader
-import random
-random.seed(5)
-import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader
 import numpy as np
 import os
 
-from datasets import lungCTData
-from model import Generator
-from metrics import my_fid_pipeline, my_ssim_pipeline
-from utils import plt_save_example_synth_during_test, save_quantitative_results
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+from constants import *
+from metrics import my_fid_pipeline, my_ssim_pipeline
+from utils import read_yaml, plt_save_example_synth_during_test, save_quantitative_results
+
 
 # Definição da função para avaliação dos resultados
-def evaluate(model_gen_name, 
-             processed_data_folder,
-             start_point_test_data = 20000,
-             end_point_test_data = 21000,
+def evaluate(gen, 
+             trained_gen_dir,
+             device,
+             dataset_test,
+             data_loader_test,
              batch_size = 10,
              bQualitativa=True, 
              bFID=True, 
              bSSIM=True):
 
-    # Definição dos caminhos para localização do modelo e onde dados serão armazenados
-    trained_gen_dir = './' + model_gen_name + '/'
-    trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_trained.pt'
     dir_to_save_gen_imgs = trained_gen_dir+'generated_imgs/'
     path_to_save_metrics = trained_gen_dir+'quantitative_metrics.json'
     os.makedirs(dir_to_save_gen_imgs, exist_ok=True)
 
-    # Obtenção dos dados de teste
-    dataset_test = lungCTData(processed_data_folder=processed_data_folder,
-                            mode='test',
-                            start=start_point_test_data,
-                            end=end_point_test_data)
-
-    # Define gerador
-    gen = Generator()
-    gen.load_state_dict(torch.load(trained_gen_path, weights_only=True))
-    gen.to(device)
     gen.eval()
-    data_loader_test = DataLoader(dataset_test,
-                                batch_size=batch_size,
-                                shuffle=False)
 
     # Gera dados sintéticos para análise qualitativa (visual e subjetiva)
     if (bQualitativa is True):
+        print('Generating examples for qualitative analysis...')
         counter = 0
         with torch.no_grad():
             for batch in data_loader_test:
@@ -66,12 +48,14 @@ def evaluate(model_gen_name,
 
     # Calcula FID
     if (bFID is True):
+        print('Calculating FID...')
         fid_value = my_fid_pipeline(dataset_test, data_loader_test, device, gen, batch_size)
     else:
         fid_value = np.nan
 
     # Calcula SSIM entre dados reais e sintéticos
     if (bSSIM is True):
+        print('Calculating SSIM...')
         # Imagem completa
         ssim_complete, luminance_complete, contraste_complete, struct_similarity_complete = my_ssim_pipeline(dataset_test, 
                                                                                                             data_loader_test, 
@@ -105,3 +89,77 @@ def evaluate(model_gen_name,
                             contrast_center=contraste_center,
                             struct_sim_center=struct_similarity_center,
                             save_path=path_to_save_metrics)
+    print("Evaluation done!")
+    
+config_path = input("Enter path for YAML file with evaluation description: ")
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+config = read_yaml(file=config_path)
+
+##--------------------Definitions--------------------
+#Generator model
+model_gen_name = str(config['model']['name_model'])
+use_best_version = bool(config['model']['use_best_version'])
+
+#data
+processed_data_folder = str(config['data'].get('processed_data_folder',
+                                               '/mnt/shared/ctdata_thr25'))
+dataset_type = str(config['data'].get('dataset',
+                                    'lungCTData'))
+start_point_test_data = int(config['data']['start_point_test_data'])
+end_point_test_data = int(config['data']['end_point_test_data'])
+batch_size = int(config['data']['batch_size'])
+transformations = config['data'].get('transformations',None)
+if transformations is not None:
+    transform = FACTORY_DICT["transforms"][transformations["transform"]]
+    transform_kwargs = transformations.get('info',{})
+else:
+    transform = None
+    transform_kwargs = {}
+
+#evaluation def
+bQualitativa = bool(config['evaluation']['bQualitativa'])
+bFID = bool(config['evaluation']['bFID'])
+bSSIM = bool(config['evaluation']['bSSIM'])
+
+
+##--------------------Preparing Objects for Evaluation--------------------
+
+# Definição dos caminhos para localização do modelo e onde dados serão armazenados
+trained_gen_dir = './' + model_gen_name + '/'
+if use_best_version is True:
+    trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_best.pt'
+else:
+    trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_trained.pt'
+
+# Define gerador
+gen = FACTORY_DICT["model_gen"]["Generator"]()
+gen.load_state_dict(torch.load(trained_gen_path, weights_only=True))
+gen.to(device)
+
+
+# Obtenção dos dados de teste
+dataset_test = FACTORY_DICT['dataset'][dataset_type](processed_data_folder=processed_data_folder,
+                                                                start=start_point_test_data,
+                                                                end=end_point_test_data,
+                                                                transform=transform,
+                                                                **transform_kwargs)
+
+data_loader_test = DataLoader(dataset_test,
+                            batch_size=batch_size,
+                            shuffle=False)
+
+###--------------------------Call for Evaluation--------------------------
+evaluate(gen=gen, 
+        trained_gen_dir=trained_gen_dir,
+        device=device,
+        dataset_test=dataset_test,
+        data_loader_test=data_loader_test,
+        batch_size=batch_size,
+        bQualitativa=bQualitativa, 
+        bFID=bFID, 
+        bSSIM=bSSIM)
+
+
+
+
+
