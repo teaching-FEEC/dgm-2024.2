@@ -61,7 +61,7 @@ class TestCycleGAN(unittest.TestCase):
             "channels" : 3, #3
             "checkpoint_interval" : 2,
 
-            "n_samples" : 10, #None
+            "n_samples" : 2, #None
         }
 
         commit_hash, commit_msg = utils.get_current_commit()
@@ -195,7 +195,7 @@ class TestCycleGAN(unittest.TestCase):
         utils.remove_all_files(self.out_folder)
         utils.save_dict_as_json(self.hyperparameters, self.out_folder / 'hyperparameters.json')
 
-        train_losses = run.LossLists()
+        losses_list = run.LossLists()
         for epoch in range(10):
             losses_ = run.train_one_epoch(
                 epoch=epoch,
@@ -206,10 +206,21 @@ class TestCycleGAN(unittest.TestCase):
                 n_samples=self.hyperparameters["n_samples"],
                 plp_step=self.hyperparameters["plp_step"],
             )
+            losses_test_ = run.evaluate(
+                epoch=epoch,
+                model=self.cycle_gan,
+                test_A=self.test_A,
+                test_B=self.test_B,
+                device=self.hyperparameters["device"],
+                n_samples=self.hyperparameters["n_samples"],
+                plp_step=self.hyperparameters["plp_step"],
+                amp=self.hyperparameters["amp"],
+            )
 
-            train_losses.append(losses_)
+            losses_list.append(losses_)
+            losses_list.append(losses_test_, test=True)
 
-            run.save_losses(train_losses, filename=self.out_folder / 'train_losses.txt')
+            run.save_losses(losses_list, filename=self.out_folder / 'losses.txt')
 
             if epoch % self.hyperparameters["checkpoint_interval"] == 0:
                 save_path = self.out_folder / f'cycle_gan_epoch_{epoch}.pth'
@@ -253,6 +264,15 @@ class TestCycleGAN(unittest.TestCase):
                     'G_loss/PLP/train': losses_.loss_G_plp,
                     'D_loss/Disc_A/train': losses_.loss_D_A,
                     'D_loss/Disc_B/train': losses_.loss_D_B,
+
+                    'G_loss/Total/test': losses_test_.loss_G,
+                    'G_loss/Adv/test': losses_test_.loss_G_ad,
+                    'G_loss/Cycle/test': losses_test_.loss_G_cycle,
+                    'G_loss/ID/test': losses_test_.loss_G_id,
+                    'G_loss/PLP/test': losses_test_.loss_G_plp,
+                    'D_loss/Disc_A/test': losses_test_.loss_D_A,
+                    'D_loss/Disc_B/test': losses_test_.loss_D_B,
+
                     "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
                     "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
                 })

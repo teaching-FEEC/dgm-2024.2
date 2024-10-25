@@ -170,7 +170,7 @@ class CycleGAN(BaseModel):
         return fake_B, fake_A
 
 
-    def compute_loss(self, real_A, real_B): # pylint: disable=arguments-differ
+    def compute_loss(self, real_A, real_B, training=True, amp=False): # pylint: disable=arguments-differ
         """
         Computes the total loss for generators and discriminators
         using CycleGANLoss for adversarial loss.
@@ -199,8 +199,12 @@ class CycleGAN(BaseModel):
             return loss_A, loss_B
 
         def _get_plp_loss(real_A, real_B, fake_A, fake_B):
-            ok_A = self.plp_A.is_plp_step()
-            ok_B = self.plp_B.is_plp_step()
+            if training:
+                ok_A = self.plp_A.is_plp_step()
+                ok_B = self.plp_B.is_plp_step()
+            else:
+                ok_A = False
+                ok_B = False
             if self.plp_loss_weight > 0 and ok_A and ok_B:
                 loss_A = self.plp_A(real_A, fake_B)
                 loss_B = self.plp_B(real_B, fake_A)
@@ -211,40 +215,52 @@ class CycleGAN(BaseModel):
                 loss_B = torch.tensor(0.0, device=self.device)
             return loss_A, loss_B
 
+        def _compute_generator_losses(real_A, real_B):
+            if self.plp_loss_weight > 0 and training:
+                ok_A = self.plp_A.is_plp_step(step_count=True)
+                ok_B = self.plp_B.is_plp_step(step_count=True)
+                if ok_A and ok_B:
+                    real_A.requires_grad_()
+                    real_B.requires_grad_()
 
-        if self.plp_loss_weight > 0:
-            ok_A = self.plp_A.is_plp_step(step_count=True)
-            ok_B = self.plp_B.is_plp_step(step_count=True)
-            if ok_A and ok_B:
-                real_A.requires_grad_()
-                real_B.requires_grad_()
+            fake_B, fake_A = self.forward(real_A, real_B)
+            loss_plp_A, loss_plp_B = _get_plp_loss(real_A, real_B, fake_A, fake_B)
+            loss_adv_AtoB, loss_adv_BtoA = _get_adv_loss(fake_A, fake_B)
+            loss_cycle_A, loss_cycle_B = _get_cycle_loss(real_A, real_B, fake_A, fake_B)
+            loss_id_A, loss_id_B = _get_id_loss(real_A, real_B)
 
-        fake_B, fake_A = self.forward(real_A, real_B)
-        loss_plp_A, loss_plp_B = _get_plp_loss(real_A, real_B, fake_A, fake_B)
-        loss_adv_AtoB, loss_adv_BtoA = _get_adv_loss(fake_A, fake_B)
-        loss_cycle_A, loss_cycle_B = _get_cycle_loss(real_A, real_B, fake_A, fake_B)
-        loss_id_A, loss_id_B = _get_id_loss(real_A, real_B)
+            loss_G_ad = loss_adv_AtoB + loss_adv_BtoA
+            loss_G_cycle = loss_cycle_A + loss_cycle_B
+            loss_G_id = loss_id_A + loss_id_B
+            loss_G_plp = loss_plp_A + loss_plp_B
 
-        loss_G_ad = loss_adv_AtoB + loss_adv_BtoA
-        loss_G_cycle = loss_cycle_A + loss_cycle_B
-        loss_G_id = loss_id_A + loss_id_B
-        loss_G_plp = loss_plp_A + loss_plp_B
+            loss_G = loss_G_ad
+            loss_G += self.cycle_loss_weight * loss_G_cycle
+            loss_G += self.id_loss_weight * loss_G_id
+            loss_G += self.plp_loss_weight * loss_G_plp
 
-        loss_G = loss_G_ad
-        loss_G += self.cycle_loss_weight * loss_G_cycle
-        loss_G += self.id_loss_weight * loss_G_id
-        loss_G += self.plp_loss_weight * loss_G_plp
+            return loss_G, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp, fake_A, fake_B
 
+        def _compute_discriminators_losses(real_A, real_B, fake_A, fake_B):
+            loss_real_A = self.adversarial_loss(self.dis_A(real_A), target_is_real=True)
+            fake_A_ = self.buffer_fake_A(fake_A.detach())
+            loss_fake_A = self.adversarial_loss(self.dis_A(fake_A_), target_is_real=False)
+            loss_D_A = (loss_real_A + loss_fake_A) * 0.5
 
-        loss_real_A = self.adversarial_loss(self.dis_A(real_A), target_is_real=True)
-        fake_A_ = self.buffer_fake_A(fake_A.detach())
-        loss_fake_A = self.adversarial_loss(self.dis_A(fake_A_), target_is_real=False)
-        loss_D_A = (loss_real_A + loss_fake_A) * 0.5
+            loss_real_B = self.adversarial_loss(self.dis_B(real_B), target_is_real=True)
+            fake_B_ = self.buffer_fake_B(fake_B.detach())
+            loss_fake_B = self.adversarial_loss(self.dis_B(fake_B_), target_is_real=False)
+            loss_D_B = (loss_real_B + loss_fake_B) * 0.5
 
-        loss_real_B = self.adversarial_loss(self.dis_B(real_B), target_is_real=True)
-        fake_B_ = self.buffer_fake_B(fake_B.detach())
-        loss_fake_B = self.adversarial_loss(self.dis_B(fake_B_), target_is_real=False)
-        loss_D_B = (loss_real_B + loss_fake_B) * 0.5
+            return loss_D_A, loss_D_B
+
+        if amp:
+            with torch.autocast(device_type=str(self.device)):
+                loss_G, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp, fake_A, fake_B = _compute_generator_losses(real_A, real_B)
+                loss_D_A, loss_D_B = _compute_discriminators_losses(real_A, real_B, fake_A, fake_B)
+        else:
+            loss_G, loss_G_ad, loss_G_cycle, loss_G_id, loss_G_plp, fake_A, fake_B = _compute_generator_losses(real_A, real_B)
+            loss_D_A, loss_D_B = _compute_discriminators_losses(real_A, real_B, fake_A, fake_B)
 
         return Loss(
             loss_G=loss_G,
@@ -264,7 +280,7 @@ class CycleGAN(BaseModel):
         self.train()
 
         if self.amp:
-            with torch.autocast(device_type="cuda"):
+            with torch.autocast(device_type=str(self.device)):
                 loss = self.compute_loss(real_A, real_B)
 
             self.optimizer_G.zero_grad()

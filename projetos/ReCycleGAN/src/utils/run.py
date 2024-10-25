@@ -60,6 +60,7 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     and discriminator losses.
     """
     time_start = time.time()
+    model.train()
     progress_bar = tqdm(zip(train_A, train_B), desc=f'Epoch {epoch:03d}',
                         leave=False, disable=False)
 
@@ -93,6 +94,66 @@ def train_one_epoch(epoch, model, train_A, train_B, device, n_samples=None, plp_
     model.update_lr()
 
     print(f'Epoch {epoch:03d}: {str(losses_)}, Time={time.time() - time_start:.2f} s')
+    return losses_
+
+
+def evaluate(epoch, model, test_A, test_B, device, n_samples=None, plp_step=0, amp=False):
+    """
+    Evaluates the CycleGAN model and returns the generator and discriminator losses.
+
+    Args:
+    - epoch (int): The current epoch number.
+    - model (CycleGAN): The CycleGAN model instance.
+    - test_A (DataLoader): DataLoader for domain A testing images.
+    - test_B (DataLoader): DataLoader for domain B testing images.
+    - device (torch.device): The device on which the model and data are
+    loaded (e.g., 'cuda' or 'cpu').
+    - n_samples (int): Number of samples to train on per batch.
+    If None, train on all samples. Default is None.
+    - plp_step: Steps between Path Length Penalty calculations. Used to adjust
+    PLP loss value. Default is 0.
+    - amp (bool): Whether to use Automatic Mixed Precision (AMP) for training. Default is False.
+
+    Returns:
+    - loss_G (float): The total loss of the generator.
+    - loss_D_A (float): The total loss of discriminator A.
+    - loss_D_B (float): The total loss of discriminator B.
+    """
+    time_start = time.time()
+    model.eval()
+    progress_bar = tqdm(zip(test_A, test_B), desc=f'Epoch {epoch:03d}',
+                        leave=False, disable=False)
+
+    losses_ = LossValues(len(test_A), len(test_B), plp_step)
+    for batch_A, batch_B in progress_bar:
+        progress_bar.set_description(f'Epoch {epoch:03d}')
+
+        if n_samples is not None:
+            batch_A = batch_A[:n_samples]
+            batch_B = batch_B[:n_samples]
+
+        real_A = batch_A.to(device)
+        real_B = batch_B.to(device)
+
+        with torch.no_grad():
+            loss = model.compute_loss(real_A, real_B, training=False, amp=amp)
+
+        losses_.add(loss)
+
+        progress_bar.set_postfix({
+            'G_loss': f'{loss.loss_G.item():.4f}',
+            'D_A_loss': f'{loss.loss_D_A.item():.4f}',
+            'D_B_loss': f'{loss.loss_D_B.item():.4f}',
+            'GPU': f'{get_gpu_memory_usage("",True)}',
+        })
+
+        torch.cuda.empty_cache()
+        gc.collect()
+
+    progress_bar.close()
+    losses_.normalize()
+
+    print(f'Test:     {str(losses_)}, Time={time.time() - time_start:.2f} s')
     return losses_
 
 
@@ -234,7 +295,8 @@ def train_cyclegan(model, data_loaders, params):
     save_dict_as_json(params, params['out_folder'] / 'hyperparameters.json')
 
     train_A, test_A, train_B, test_B = data_loaders
-    train_losses = LossLists()
+    losses_list = LossLists()
+
     for epoch in range(params['restart_epoch']+1, params['num_epochs']):
         losses_ = train_one_epoch(
             epoch=epoch,
@@ -246,8 +308,21 @@ def train_cyclegan(model, data_loaders, params):
             plp_step=params['plp_step'],
         )
 
-        train_losses.append(losses_)
-        save_losses(train_losses, filename=params['out_folder'] / 'train_losses.txt')
+        losses_test_ = evaluate(
+            epoch=epoch,
+            model=model,
+            test_A=test_A,
+            test_B=test_B,
+            device=params['device'],
+            n_samples=params['n_samples'],
+            plp_step=params['plp_step'],
+            amp=params['amp'],
+        )
+
+        losses_list.append(losses_)
+        losses_list.append(losses_test_, test=True)
+
+        save_losses(losses_list, filename=params['out_folder'] / 'losses.txt')
         save_checkpoint(model, params, epoch)
         sample_A_path, sample_B_path = save_samples(model, params, test_A, test_B, epoch)
 
@@ -260,6 +335,15 @@ def train_cyclegan(model, data_loaders, params):
                 'G_loss/PLP/train': losses_.loss_G_plp,
                 'D_loss/Disc_A/train': losses_.loss_D_A,
                 'D_loss/Disc_B/train': losses_.loss_D_B,
+
+                'G_loss/Total/test': losses_test_.loss_G,
+                'G_loss/Adv/test': losses_test_.loss_G_ad,
+                'G_loss/Cycle/test': losses_test_.loss_G_cycle,
+                'G_loss/ID/test': losses_test_.loss_G_id,
+                'G_loss/PLP/test': losses_test_.loss_G_plp,
+                'D_loss/Disc_A/test': losses_test_.loss_D_A,
+                'D_loss/Disc_B/test': losses_test_.loss_D_B,
+
                 "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
                 "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
             })

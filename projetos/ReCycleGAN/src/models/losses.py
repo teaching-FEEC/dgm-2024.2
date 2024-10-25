@@ -58,13 +58,13 @@ class LossValues:
 
     def __str__(self):
         out = []
-        out.append(f'G_loss={self.loss_G:.4g}')
-        out.append(f'D_A_loss={self.loss_D_A:.4g}')
-        out.append(f'D_B_loss={self.loss_D_B:.4g}')
-        out.append(f'G_ad={self.loss_G_ad:.4g}')
-        out.append(f'G_cycle={self.loss_G_cycle:.4g}')
-        out.append(f'G_id={self.loss_G_id:.4g}')
-        out.append(f'G_plp={self.loss_G_plp:.4g}')
+        out.append(f'G_loss={self.loss_G:6.4g}')
+        out.append(f'D_A_loss={self.loss_D_A:6.4g}')
+        out.append(f'D_B_loss={self.loss_D_B:6.4g}')
+        out.append(f'G_ad={self.loss_G_ad:6.4g}')
+        out.append(f'G_cycle={self.loss_G_cycle:6.4g}')
+        out.append(f'G_id={self.loss_G_id:6.4g}')
+        out.append(f'G_plp={self.loss_G_plp:6.4g}')
         return ', '.join(out)
 
 class LossLists:
@@ -78,19 +78,32 @@ class LossLists:
         self.loss_G_id = []
         self.loss_G_plp = []
 
-    def append(self, loss: Loss):
-        """Appends the losses to the respective lists."""
-        self.loss_G.append(loss.loss_G)
-        self.loss_D_A.append(loss.loss_D_A)
-        self.loss_D_B.append(loss.loss_D_B)
-        self.loss_G_ad.append(loss.loss_G_ad)
-        self.loss_G_cycle.append(loss.loss_G_cycle)
-        self.loss_G_id.append(loss.loss_G_id)
-        self.loss_G_plp.append(loss.loss_G_plp)
+        self.loss_G_test = []
+        self.loss_D_A_test = []
+        self.loss_D_B_test = []
+        self.loss_G_ad_test = []
+        self.loss_G_cycle_test = []
+        self.loss_G_id_test = []
+        self.loss_G_plp_test = []
 
-    def names(self):
-        """Returns the names of the losses."""
-        return ['G_loss', 'D_A_loss', 'D_B_loss', 'G_ad', 'G_cycle', 'G_id', 'G_plp']
+    def append(self, loss: Loss, test=False):
+        """Appends the losses to the respective lists."""
+        if test:
+            self.loss_G_test.append(loss.loss_G)
+            self.loss_D_A_test.append(loss.loss_D_A)
+            self.loss_D_B_test.append(loss.loss_D_B)
+            self.loss_G_ad_test.append(loss.loss_G_ad)
+            self.loss_G_cycle_test.append(loss.loss_G_cycle)
+            self.loss_G_id_test.append(loss.loss_G_id)
+            self.loss_G_plp_test.append(loss.loss_G_plp)
+        else:
+            self.loss_G.append(loss.loss_G)
+            self.loss_D_A.append(loss.loss_D_A)
+            self.loss_D_B.append(loss.loss_D_B)
+            self.loss_G_ad.append(loss.loss_G_ad)
+            self.loss_G_cycle.append(loss.loss_G_cycle)
+            self.loss_G_id.append(loss.loss_G_id)
+            self.loss_G_plp.append(loss.loss_G_plp)
 
     def to_dict(self):
         """Returns the losses as a dictionary."""
@@ -101,7 +114,15 @@ class LossLists:
             'G_ad': self.loss_G_ad,
             'G_cycle': self.loss_G_cycle,
             'G_id': self.loss_G_id,
-            'G_plp': self.loss_G_plp
+            'G_plp': self.loss_G_plp,
+
+            'G_loss_test': self.loss_G_test,
+            'D_A_loss_test': self.loss_D_A_test,
+            'D_B_loss_test': self.loss_D_B_test,
+            'G_ad_test': self.loss_G_ad_test,
+            'G_cycle_test': self.loss_G_cycle_test,
+            'G_id_test': self.loss_G_id_test,
+            'G_plp_test': self.loss_G_plp_test,
         }
 
     def to_dataframe(self):
