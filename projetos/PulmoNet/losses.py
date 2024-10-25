@@ -3,15 +3,6 @@ import torch.nn as nn
 from utils import check_for_zero_loss
 
 
-def get_criterion(criterion_type, **kwargs):
-    if criterion_type == 'BCELoss':
-        return nn.BCELoss(**kwargs)
-    elif criterion_type == 'BCEWithLogitsLoss':
-        return nn.BCEWithLogitsLoss(**kwargs)
-    else:
-        raise ValueError(f"Invalid criterion_type: {criterion_type}, check losses.py and add the desired criterion.")
-
-
 def get_regularization(regularizer_type, input_mask, input_img, gen_img):
     if regularizer_type == 'MAE':
         return check_for_zero_loss(torch.sum(torch.abs((input_img-gen_img)), dim=(1, 2)).mean())

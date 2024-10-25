@@ -1,53 +1,59 @@
 import torch
-from torch.utils.data import Dataset, DataLoader
-from tqdm import trange
-import random
-random.seed(5)
-import matplotlib.pyplot as plt
-import numpy as np
+from torch.utils.data import DataLoader
 import wandb
 import os
-import csv
 
-
-from datasets import lungCTData
-from model import Generator, Discriminator
-from save_models_and_training import SaveBestModel, safe_save, SaveTrainingLosses, save_trained_models, delete_safe_save
-from lr_scheduler_and_optim import LRScheduler,get_optimizer
-from losses import get_criterion
-from main import run_train_epoch, run_validation_epoch, valid_on_the_fly
-from utils import clean_directory, read_yaml, plot_training_evolution, retrieve_metrics_from_csv
+from constants import *
+from save_models_and_training import safe_save, save_trained_models, delete_safe_save
+from lr_scheduler import LRScheduler
+from main_functions import run_train_epoch, run_validation_epoch, valid_on_the_fly
+from utils import read_yaml, plot_training_evolution, retrieve_metrics_from_csv, prepare_environment_for_new_model, resume_training
 
 config_path = input("Enter path for config.yaml: ")
 
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = 'cpu'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+#device = 'cpu'
 config = read_yaml(file=config_path)
 
 ####----------------------Definition-----------------------------------
 #names and directories
 name_model = str(config['model']['name_model'])
-dir_save_results = str(config['model'].get('dir_save_results', f'./{name_model}/'))
+dir_save_results = str(config['model'].get('dir_save_results',
+                                            f'./{name_model}/'))
 dir_save_models = dir_save_results+'models/'
 dir_save_example = dir_save_results+'examples/'
 new_model = bool(config['model'].get('new_model', True))
 
+#models
+gen = FACTORY_DICT["model_gen"]["Generator"]().to(device)
+disc = FACTORY_DICT["model_disc"]["Discriminator"]().to(device)
+
 #data
-processed_data_folder = str(config['data'].get('processed_data_folder','/mnt/shared/ctdata_thr25'))
+processed_data_folder = str(config['data'].get('processed_data_folder',
+                                               '/mnt/shared/ctdata_thr25'))
+dataset_type = str(config['data'].get('dataset',
+                                    'lungCTData'))
 start_point_train_data = int(config['data']['start_point_train_data'])
 end_point_train_data = int(config['data']['end_point_train_data'])
 start_point_validation_data = int(config['data']['start_point_validation_data'])
 end_point_validation_data = int(config['data']['end_point_validation_data'])
 
-#training
+#training hyperparameters
 batch_size_train = int(config['training']['batch_size_train'])
 batch_size_validation = int(config['training']['batch_size_validation'])
 n_epochs = int(config['training']['n_epochs'])
 steps_to_complete_bfr_upd_disc = int(config['training'].get('steps_to_complete_bfr_upd_disc',1))
 steps_to_complete_bfr_upd_gen = int(config['training'].get('steps_to_complete_bfr_upd_gen',1))
+transformations = config['training'].get('transformations',None)
+if transformations is not None:
+    transform = FACTORY_DICT["transforms"][transformations["transform"]]
+    transform_kwargs = transformations.get('info',{})
+else:
+    transform = None
+    transform_kwargs = {}
 
 #loss
-criterion = get_criterion(config['loss']['criterion']['name'],**config['loss']['criterion'].get('info',{}))
+criterion = FACTORY_DICT["criterion"][config['loss']['criterion']['name']](**config['loss']['criterion'].get('info',{}))
 if 'regularizer' in config['loss']:
     regularization_type = config['loss']['regularizer']['type']
     regularization_level = config['loss']['regularizer']['regularization']
@@ -55,15 +61,15 @@ else:
     regularization_type = None
     regularization_level = None
 
-#models
-gen = Generator().to(device)
-disc = Discriminator().to(device)
-
 #optimizer
 optimizer_type = config['optimizer']['type']
 initial_lr = config['optimizer']['lr']
-gen_opt = get_optimizer(gen, optimizer_type, initial_lr, **config['optimizer'].get('info',{}))
-disc_opt = get_optimizer(disc, optimizer_type, initial_lr, **config['optimizer'].get('info',{}))
+gen_opt = FACTORY_DICT['optimizer'][optimizer_type](gen.parameters(),
+                                                    lr=initial_lr,
+                                                    **config['optimizer'].get('info',{}))
+disc_opt = FACTORY_DICT['optimizer'][optimizer_type](disc.parameters(),
+                                                    lr=initial_lr,
+                                                    **config['optimizer'].get('info',{}))
 
 #lr scheduler
 use_lr_scheduler = bool(config['lr_scheduler']['activate'])
@@ -80,14 +86,13 @@ else:
 
 #saves
 step_to_safe_save_models = int(config['save_models_and_results']['step_to_safe_save_models'])
-save_training_losses = SaveTrainingLosses(dir_save_results=dir_save_results)
+save_training_losses = FACTORY_DICT["savelosses"]["SaveTrainingLosses"](dir_save_results=dir_save_results)
 save_best_model = bool(config['save_models_and_results']['save_best_model'])
 if save_best_model is True:
-    best_model = SaveBestModel(dir_save_model=dir_save_models)
+    best_model = FACTORY_DICT["savebest"]["SaveBestModel"](dir_save_model=dir_save_models)
 
 #wandb
 use_wandb = bool(config['wandb']['activate'])
-
 
 if use_wandb is True:
     wandb.init(
@@ -96,6 +101,7 @@ if use_wandb is True:
         # track hyperparameters and run metadata
         config={
             "datafolder": processed_data_folder,
+            "dataset": dataset_type,
             "idx_initial_train_data": start_point_train_data,
             "idx_final_train_data": end_point_train_data,
             "idx_initial_val_data": start_point_validation_data,
@@ -105,6 +111,7 @@ if use_wandb is True:
             "epochs": n_epochs,
             "steps_to_complete_bfr_upd_disc": steps_to_complete_bfr_upd_disc,
             "steps_to_complete_bfr_upd_gen": steps_to_complete_bfr_upd_gen,
+            "transform": transform,
             "criterion": config['loss']['criterion']['name'],
             "regularization_type": regularization_type,
             "regularization_level": regularization_level,
@@ -116,12 +123,19 @@ if use_wandb is True:
     )
 
 ####----------------------Preparing objects-----------------------------------
-dataset_train = lungCTData(processed_data_folder=processed_data_folder,
-                           start=start_point_train_data,
-                           end=end_point_train_data)
-dataset_validation = lungCTData(processed_data_folder=processed_data_folder,
-                                start=start_point_validation_data,
-                                end=end_point_validation_data)
+
+dataset_train = FACTORY_DICT["dataset"][dataset_type](
+                            processed_data_folder=processed_data_folder,
+                            start=start_point_train_data,
+                            end=end_point_train_data,
+                            transform=transform,
+                            **transform_kwargs)
+dataset_validation = FACTORY_DICT["dataset"][dataset_type](
+                            processed_data_folder=processed_data_folder,
+                            start=start_point_validation_data,
+                            end=end_point_validation_data,
+                            transform=transform,
+                            **transform_kwargs)
 
 data_loader_train = DataLoader(dataset_train,
                                batch_size=batch_size_train,
@@ -136,62 +150,24 @@ mean_loss_validation_gen_list = []
 mean_loss_train_disc_list = []
 mean_loss_validation_disc_list = []
 
-os.makedirs(dir_save_results, exist_ok=True)
+prepare_environment_for_new_model(new_model=new_model, 
+                                  dir_save_results=dir_save_results,
+                                  dir_save_models=dir_save_models,
+                                  dir_save_example=dir_save_example)
 if new_model is True:
-    clean_directory(dir_save_results)
-os.makedirs(dir_save_models, exist_ok=True)
-os.makedirs(dir_save_example, exist_ok=True)
-if new_model is True:
-    with open(dir_save_results+'losses.csv', 'w', newline='') as csvfile:
-        fieldnames = ['LossGenTrain', 'LossDiscTrain', 'LossGenVal', 'LossDiscVal']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
+    save_training_losses.initialize_losses_file()
 else:
-    print('Loading old model to keep training...')
-    if 'path_to_saved_model_gen' in config['model']:
-        if config['model']['path_to_saved_model_gen'] != "":
-            gen.load_state_dict(torch.load(str(config['model']['path_to_saved_model_gen']), weights_only=True))
-        else:
-            gen.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_savesafe.pt", weights_only=True))
-    else:
-        gen.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_savesafe.pt", weights_only=True))
-    if 'path_to_saved_model_disc' in config['model']:
-        if config['model']['path_to_saved_model_disc'] != "":
-            disc.load_state_dict(torch.load(str(config['model']['path_to_saved_model_disc']), weights_only=True))
-        else:
-            disc.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_savesafe.pt", weights_only=True))
-    else:
-       disc.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_savesafe.pt", weights_only=True))
-    if 'path_to_saved_gen_optimizer' in config['optimizer']:
-        if config['optimizer']['path_to_saved_optimizer'] != "":
-            gen_opt.load_state_dict(torch.load(str(config['optimizer']['path_to_saved_gen_optimizer'],weights_only=True)))
-        else:
-            gen_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_optimizer_savesafe.pt",weights_only=True))
-    else:
-        gen_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_optimizer_savesafe.pt",weights_only=True))
-    if 'path_to_saved_disc_optimizer' in config['optimizer']:
-        if config['optimizer']['path_to_saved_optimizer'] != "":
-            disc_opt.load_state_dict(torch.load(str(config['optimizer']['path_to_saved_disc_optimizer'],weights_only=True)))
-        else:
-            disc_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_optimizer_savesafe.pt",weights_only=True))
-    else:
-        disc_opt.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_optimizer_savesafe.pt",weights_only=True))
-    if use_lr_scheduler is True:
-        if 'path_to_saved_gen_scheduler' in config['lr_scheduler']:
-            if config['lr_scheduler']['path_to_saved_gen_scheduler'] != "":
-                gen_scheduler.load_state_dict(torch.load(str(config['lr_scheduler']['path_to_saved_gen_scheduler'],weights_only=True)))
-            else:
-                gen_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_scheduler_state_savesafe.pt",weights_only=True))
-        else:
-            gen_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_gen_scheduler_state_savesafe.pt",weights_only=True))
-        if 'path_to_saved_disc_scheduler' in config['lr_scheduler']:
-            if config['lr_scheduler']['path_to_saved_disc_scheduler'] != "":
-                disc_scheduler.load_state_dict(torch.load(str(config['lr_scheduler']['path_to_saved_disc_scheduler'],weights_only=True)))
-            else:
-                disc_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_scheduler_state_savesafe.pt",weights_only=True))
-        else:
-            disc_scheduler.load_state_dict(torch.load(dir_save_models+f"{name_model}_disc_scheduler_state_savesafe.pt",weights_only=True))
-
+    epoch_resumed_from = resume_training(dir_save_models=dir_save_models, 
+                                        name_model=name_model, 
+                                        gen=gen, 
+                                        disc=disc, 
+                                        gen_opt=gen_opt, 
+                                        disc_opt=disc_opt, 
+                                        config=config, 
+                                        use_lr_scheduler=use_lr_scheduler, 
+                                        gen_scheduler=gen_scheduler, 
+                                        disc_scheduler=disc_scheduler)
+    
 
 ####----------------------Training Loop-----------------------------------
 for epoch in range(n_epochs):
@@ -225,7 +201,11 @@ for epoch in range(n_epochs):
     mean_loss_validation_gen_list.append(loss_validation_gen)
     mean_loss_validation_disc_list.append(loss_validation_disc)
 
-    valid_on_the_fly(gen=gen, disc=disc, data_loader=data_loader_validation, epoch=epoch, save_dir=dir_save_example,device=device)
+    if (new_model is True) or (epoch_resumed_from is None):
+        epoch_to_appear_for_ref = epoch
+    else:
+        epoch_to_appear_for_ref = epoch+epoch_resumed_from
+    valid_on_the_fly(gen=gen, disc=disc, data_loader=data_loader_validation, epoch=epoch_to_appear_for_ref, save_dir=dir_save_example,device=device)
 
     ###------------------------------------------savings----------------------------------
     if epoch % step_to_safe_save_models == 0:

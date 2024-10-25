@@ -65,7 +65,8 @@ class lungCTData(Dataset):
                  mode: Optional[str] = None,
                  start: Optional[int] = None,
                  end: Optional[int] = None,
-                 transform: Optional[Callable] = None):
+                 transform: Optional[Callable] = None,
+                 **kwargs):
         super().__init__()
         if start is not None and end is not None:
             if mode is not None:
@@ -135,7 +136,7 @@ class lungCTData(Dataset):
                 self.labels = sorted(glob(os.path.join(processed_data_folder,
                                                     "lungsTr",
                                                     "*.npz")))
-        self.transform = transform
+        self.transform = transform(**kwargs) if transform is not None else None
         assert len(self.cts) == len(self.labels)
 
     def __len__(self):
@@ -162,7 +163,7 @@ class lungCTData(Dataset):
 
         # Se uma função de transformada foi passada para o dataset, aplicá-la
         if self.transform is not None:
-            ct = self.transform(ct)
+            lung = self.transform(lung)
         # Retornar a imagem e metadados
         return ct, lung
 

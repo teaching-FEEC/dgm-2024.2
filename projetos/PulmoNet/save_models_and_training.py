@@ -8,6 +8,13 @@ class SaveTrainingLosses:
     def __init__(self, dir_save_results, save_count_idx=0):
         self.save_count_idx = save_count_idx
         self.dir_save_results = dir_save_results
+
+    def initialize_losses_file(self):
+        with open(self.dir_save_results+'losses.csv', 'w', newline='') as csvfile:
+            fieldnames = ['LossGenTrain', 'LossDiscTrain', 'LossGenVal', 'LossDiscVal']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+
     def __call__(self, mean_loss_train_gen_list, 
                  mean_loss_train_disc_list,
                  mean_loss_validation_gen_list,

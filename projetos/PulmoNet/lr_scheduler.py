@@ -43,11 +43,3 @@ class LRScheduler:
     def get_last_lr(self):
         return self.scheduler.get_last_lr()
 
-
-def get_optimizer(model, optimizer_type, learning_rate, **kwargs):
-    if optimizer_type == 'Adam':
-        return torch.optim.Adam(model.parameters(),lr=learning_rate, **kwargs)
-    elif optimizer_type == 'SGD':
-        return torch.optim.SGD(model.parameters(),lr=learning_rate, **kwargs)
-    else:
-        raise ValueError(f"Invalid optimizer_type: {optimizer_type}, check lr_scheduler_and_optim.py and add the desired criterion.")

@@ -1,12 +1,13 @@
 model:
   name_model: "model_reg10_center_thr_25k"
   dir_save_results: "./model_reg10_center_thr_25k/"
-  new_model: True
+  new_model: False
   path_to_saved_model_gen: ""
   path_to_saved_model_disc: ""
 
 data:
   processed_data_folder: "/mnt/shared/ctdata_thr25"
+  dataset: "lungCTData"
   start_point_train_data: 0
   end_point_train_data: 100
   start_point_validation_data: 100
@@ -18,6 +19,11 @@ training:
   n_epochs: 5
   steps_to_complete_bfr_upd_disc: 1
   steps_to_complete_bfr_upd_gen: 1
+  transformations: 
+    transform: "AddUniformNoise"
+    info:
+      lung_area: False
+      intensity: 1
 
 loss: 
   criterion: 

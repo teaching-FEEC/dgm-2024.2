@@ -198,6 +198,13 @@ def plot_training_evolution(path, mean_loss_train_gen_list, mean_loss_validation
     ax[1].set_xlabel('Epochs')
     plt.savefig(path+'losses_evolution.png')
 
+def prepare_environment_for_new_model(new_model, dir_save_results,dir_save_models,dir_save_example):
+    os.makedirs(dir_save_results, exist_ok=True)
+    if new_model is True:
+        clean_directory(dir_save_results)
+    os.makedirs(dir_save_models, exist_ok=True)
+    os.makedirs(dir_save_example, exist_ok=True)
+    
 
 def retrieve_metrics_from_csv(path_file):
     with open(path_file, mode='r') as file:
@@ -215,14 +222,91 @@ def retrieve_metrics_from_csv(path_file):
     return dict_metrics
 
 
-def add_noise(batch, intensity=1, lung_area: bool = False):
+def reload_saved_object(path_to_object, object_dict, object_instance, usual_directory, usual_name_ref, object_name):
+    if path_to_object in object_dict:
+        if object_dict[path_to_object] != "":
+            object_instance.load_state_dict(torch.load(str(object_dict[path_to_object]), weights_only=True))
+        else:
+            object_instance.load_state_dict(torch.load(usual_directory+f"{usual_name_ref}_"+f"{object_name}_savesafe.pt", weights_only=True))
+    else:
+        object_instance.load_state_dict(torch.load(usual_directory+f"{usual_name_ref}_"+f"{object_name}_savesafe.pt", weights_only=True))
+
+
+def resume_training(dir_save_models, name_model, gen, disc, gen_opt, disc_opt, config, use_lr_scheduler, gen_scheduler=None, disc_scheduler=None):
+    print('Loading old model to keep training...')
+    
+    if os.path.isfile(dir_save_models+f"{name_model}_training_state_savesafe"):
+        with open(dir_save_models+f"{name_model}_training_state_savesafe", 'r') as file:
+            training_state = json.load(file)
+        last_epoch = training_state['epoch']
+    else:
+        last_epoch = None
+
+    reload_saved_object(path_to_object='path_to_saved_model_gen', 
+                        object_dict=config['model'], 
+                        object_instance=gen, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='gen')
+    
+    reload_saved_object(path_to_object='path_to_saved_model_disc', 
+                        object_dict=config['model'], 
+                        object_instance=disc, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='disc')
+    
+    reload_saved_object(path_to_object='path_to_saved_gen_optimizer', 
+                        object_dict=config['optimizer'], 
+                        object_instance=gen_opt, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='gen_optimizer')
+    
+    reload_saved_object(path_to_object='path_to_saved_disc_optimizer', 
+                        object_dict=config['optimizer'], 
+                        object_instance=disc_opt, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='disc_optimizer')
+    
+    if use_lr_scheduler is True:
+        reload_saved_object(path_to_object='path_to_saved_gen_scheduler', 
+                            object_dict=config['lr_scheduler'], 
+                            object_instance=gen_scheduler, 
+                            usual_directory=dir_save_models, 
+                            usual_name_ref=name_model, 
+                            object_name='gen_scheduler_state')
+        
+        reload_saved_object(path_to_object='path_to_saved_disc_scheduler', 
+                            object_dict=config['lr_scheduler'], 
+                            object_instance=disc_scheduler, 
+                            usual_directory=dir_save_models, 
+                            usual_name_ref=name_model, 
+                            object_name='disc_scheduler_state')
+    return last_epoch
+
+def add_uniform_noise(tensor, intensity=1, lung_area: bool = False):
     transform = MinMaxNormalize()
-    batch = batch.detach().to(torch.float32)
-    # Generating noise in range [0,1] with same shape as the input batch
-    noise = transform(torch.rand_like(batch))
+    tensor = tensor.detach().to(torch.float32)
+    # Generating noise in range [0,1] with same shape as the input tensor
+    noise = transform(torch.rand_like(tensor))
+    # Adding the option to only change the lung area
+    # This is done by multiplying the noise tensor with the tensor tensor
+    if lung_area is True:
+        return transform(((noise*tensor)*intensity) + tensor)
+    # Else, the entire mask is changed
+    return transform((noise*intensity) + tensor)
+
+
+def add_gaussian_noise(tensor, mean, std, intensity=1, lung_area: bool = False):
+    transform = MinMaxNormalize()
+    tensor = tensor.detach().to(torch.float32)
+    # Generating Gaussian noise with defined mean and std
+    noise = transform(torch.rand_like(tensor))*std + mean
     # Adding the option to only change the lung area
     # This is done by multiplying the noise tensor with the batch tensor
     if lung_area is True:
-        return transform(((noise*batch)*intensity) + batch)
+        return transform(((noise*tensor)*intensity) + tensor)
     # Else, the entire mask is changed
-    return transform((noise*intensity) + batch)
+    return transform((noise*intensity) + tensor)
