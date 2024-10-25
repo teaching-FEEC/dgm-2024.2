@@ -153,7 +153,7 @@ def evaluate(epoch, model, test_A, test_B, device, n_samples=None, plp_step=0, a
     progress_bar.close()
     losses_.normalize()
 
-    print(f'Test:     {str(losses_)}, Time={time.time() - time_start:.2f} s')
+    print(f'     Test: {str(losses_)}, Time={time.time() - time_start:.2f} s')
     return losses_
 
 

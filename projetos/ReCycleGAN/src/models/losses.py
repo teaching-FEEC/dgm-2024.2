@@ -58,13 +58,13 @@ class LossValues:
 
     def __str__(self):
         out = []
-        out.append(f'G_loss={self.loss_G:6.4g}')
-        out.append(f'D_A_loss={self.loss_D_A:6.4g}')
-        out.append(f'D_B_loss={self.loss_D_B:6.4g}')
-        out.append(f'G_ad={self.loss_G_ad:6.4g}')
-        out.append(f'G_cycle={self.loss_G_cycle:6.4g}')
-        out.append(f'G_id={self.loss_G_id:6.4g}')
-        out.append(f'G_plp={self.loss_G_plp:6.4g}')
+        out.append(f'G_loss={self.loss_G:9.4g}')
+        out.append(f'D_A_loss={self.loss_D_A:9.4g}')
+        out.append(f'D_B_loss={self.loss_D_B:9.4g}')
+        out.append(f'G_ad={self.loss_G_ad:9.4g}')
+        out.append(f'G_cycle={self.loss_G_cycle:9.4g}')
+        out.append(f'G_id={self.loss_G_id:9.4g}')
+        out.append(f'G_plp={self.loss_G_plp:9.4g}')
         return ', '.join(out)
 
 class LossLists:
