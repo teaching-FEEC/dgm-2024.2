@@ -20,7 +20,7 @@ class TestCycleGAN(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.use_cuda = True
-        cls.run_wnadb = False
+        cls.run_wandb = True
         cls.print_memory = True
 
         cls.out_folder = Path(__file__).resolve().parent.parent / 'no_sync/test_model_6'
@@ -145,7 +145,7 @@ class TestCycleGAN(unittest.TestCase):
         cls.test_B.dataset.set_len(n_test)
         print(f"Number of test samples: {n_test}")
 
-        if cls.run_wnadb:
+        if cls.run_wandb:
             wandb.init(
                 project="cyclegan",
                 name="Test_Other",
@@ -196,7 +196,7 @@ class TestCycleGAN(unittest.TestCase):
         utils.save_dict_as_json(self.hyperparameters, self.out_folder / 'hyperparameters.json')
 
         losses_list = run.LossLists()
-        for epoch in range(10):
+        for epoch in range(4):
             losses_ = run.train_one_epoch(
                 epoch=epoch,
                 model=self.cycle_gan,
@@ -225,8 +225,8 @@ class TestCycleGAN(unittest.TestCase):
             if epoch % self.hyperparameters["checkpoint_interval"] == 0:
                 save_path = self.out_folder / f'cycle_gan_epoch_{epoch}.pth'
                 self.cycle_gan.save_model(save_path)
-                if self.run_wnadb:
-                    wandb.save(str(save_path))
+                if self.run_wandb:
+                    wandb.save(str(save_path), base_path=str(save_path.parent))
 
             real_A = next(iter(self.test_A))
             real_B = next(iter(self.test_B))
@@ -255,7 +255,7 @@ class TestCycleGAN(unittest.TestCase):
             plt.savefig(sample_B_path)
             plt.close()
 
-            if self.run_wnadb:
+            if self.run_wandb:
                 wandb.log({
                     'G_loss/Total/train': losses_.loss_G,
                     'G_loss/Adv/train': losses_.loss_G_ad,
