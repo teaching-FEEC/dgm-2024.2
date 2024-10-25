@@ -1,0 +1,21 @@
+model:
+  name_model: "model_reg_center_thr_25k"
+  use_best_version: False
+
+data:
+  processed_data_folder: "/mnt/shared/ctdata_thr25"
+  dataset: "lungCTData"
+  start_point_test_data: 20000
+  end_point_test_data: 21000
+  batch_size: 10
+  transformations: 
+    transform: "AddUniformNoise"
+    info:
+      lung_area: False
+      intensity: 1
+
+evaluation:
+  bQualitativa: True
+  bFID: True
+  bSSIM: True
+  
