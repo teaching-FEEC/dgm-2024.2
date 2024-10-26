@@ -28,9 +28,10 @@ def psnr_metric(batch_pred, batch_true):
     :param batch_true: Tensor de referência com forma (32, 3, 256, 256).
     :return: PSNR médio para o batch.
     """
-    mse = F.mse_loss(batch_pred, batch_true, reduction='none').mean(dim=[1, 2, 3])
-    psnr = 20 * torch.log10(1.0) - 10 * torch.log10(mse)
-    return psnr.mean().item()
+    mse = F.mse_loss(batch_pred, batch_true, reduction='mean')
+    # Converta o mse para um tensor antes de aplicar torch.log10
+    psnr = 20 * torch.log10(torch.tensor(1.0)) - 10 * torch.log10(mse)
+    return psnr.item()
 
 # Função para SSIM
 def ssim_metric(batch_pred, batch_true):
