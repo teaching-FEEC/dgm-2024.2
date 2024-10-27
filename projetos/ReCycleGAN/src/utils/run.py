@@ -8,13 +8,14 @@ import torch
 from torchvision import transforms
 from tqdm import tqdm
 import wandb
-
-from src.utils import get_gpu_memory_usage, get_current_commit, remove_all_files
-from src.utils import save_dict_as_json, load_json_to_dict
-from src.utils.data_loader import get_img_dataloader
-from src.utils.data_transform import ImageTools
-from src.models.cyclegan import CycleGAN
-from src.models.losses import LossValues, LossLists
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
+from utils import get_gpu_memory_usage, get_current_commit, remove_all_files
+from utils import save_dict_as_json, load_json_to_dict
+from utils.data_loader import get_img_dataloader
+from utils.data_transform import ImageTools
+from models.cyclegan import CycleGAN
+from models.losses import LossValues, LossLists
 
 def save_losses(loss: LossLists, filename='losses.txt'):
     """
