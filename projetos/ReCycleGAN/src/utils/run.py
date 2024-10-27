@@ -280,10 +280,11 @@ def init_cyclegan_train(params):
 def train_cyclegan(model, data_loaders, params):
     """Wrapper function to train the CycleGAN model."""
 
-    if params['run_wnadb']:
+    if params['run_wandb']:
         wandb.init(
             project="cyclegan",
-            name=params['wandb_name'],
+            name=params['experiment_name'],
+            notes=params['experiment_description'],
             config=params)
 
         wandb.watch(model.gen_AtoB, log_freq=100)
@@ -327,7 +328,7 @@ def train_cyclegan(model, data_loaders, params):
         save_checkpoint(model, params, epoch)
         sample_A_path, sample_B_path = save_samples(model, params, test_A, test_B, epoch)
 
-        if params['run_wnadb']:
+        if params['run_wandb']:
             wandb.log({
                 'G_loss/Total/train': losses_.loss_G,
                 'G_loss/Adv/train': losses_.loss_G_ad,
@@ -390,5 +391,5 @@ def save_checkpoint(model, params, epoch, force=False):
     if (epoch % params['checkpoint_interval'] == 0) or force:
         save_path = params['out_folder'] / f'cycle_gan_epoch_{epoch}.pth'
         model.save_model(save_path, epoch)
-        if params['run_wnadb']:
+        if params['run_wandb']:
             wandb.save(str(save_path), base_path=params['out_folder'])

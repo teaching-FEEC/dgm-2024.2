@@ -108,7 +108,7 @@ class Generator(nn.Module):
     - add_skip: If True, add skip connections. Default is False.
     - add_lora: If True, add LoRA adapters. Default is False.
     - lora_rank: define LoRA rank.
-    - add_attention: If True, add self-attention layer to the generator. Default is False.
+    - add_attention: If gen, add self-attention layer to the generator. If disc, to the discriminator.
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
     def __init__(self,
@@ -120,7 +120,7 @@ class Generator(nn.Module):
                  add_skip=False,
                  add_lora=False,
                  lora_rank=4,
-                 add_attention=False,
+                 add_attention=None,
                  norm_layer=nn.InstanceNorm2d):
         super().__init__()
 
@@ -169,7 +169,7 @@ class Generator(nn.Module):
             conv_layer = nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
                                    stride=2, padding=1, output_padding=1)
             
-            if add_attention:
+            if add_attention == 'gen':
                 self.decoder.append(nn.Sequential(
                     conv_layer,
                     norm_layer(n_feat // 2),
@@ -233,11 +233,11 @@ class Discriminator(nn.Module):
                  input_nc, 
                  n_features=64, 
                  norm_layer=nn.InstanceNorm2d,
-                 add_attention=False,
+                 add_attention=None,
                  ):
         super().__init__()
 
-        if add_attention:
+        if add_attention == 'disc':
             self.model = nn.Sequential(
                 nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
                 nn.LeakyReLU(0.2, inplace=True),
