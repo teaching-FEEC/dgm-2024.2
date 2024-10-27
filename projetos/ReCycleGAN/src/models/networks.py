@@ -112,7 +112,8 @@ class Generator(nn.Module):
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
     def __init__(self,
-                 input_nc, output_nc,
+                 input_nc, 
+                 output_nc,
                  n_residual_blocks=9,
                  n_features=64,
                  n_downsampling=2,
@@ -232,7 +233,7 @@ class Discriminator(nn.Module):
                  input_nc, 
                  n_features=64, 
                  norm_layer=nn.InstanceNorm2d,
-                 add_attention=False
+                 add_attention=False,
                  ):
         super().__init__()
 
