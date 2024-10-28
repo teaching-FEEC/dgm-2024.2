@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from src.utils.run import init_cyclegan_train, train_cyclegan
-from src.scripts.test_cases import TEST_CASES
+from src.utils.test_cases import TEST_CASES
 
 def train(parameters):
     """Trains the CycleGAN model."""

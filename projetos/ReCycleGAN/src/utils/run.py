@@ -16,6 +16,8 @@ from utils.data_loader import get_img_dataloader
 from utils.data_transform import ImageTools
 from models.cyclegan import CycleGAN
 from models.losses import LossValues, LossLists
+from metrics.fid import FID
+from metrics.lpips import LPIPS
 
 def save_losses(loss: LossLists, filename='losses.txt'):
     """
@@ -274,10 +276,13 @@ def init_cyclegan_train(params):
     transformation = _get_transformation(params)
     train_A, test_A, train_B, test_B = _init_dataloaders(params, transformation)
 
-    return model, (train_A, test_A, train_B, test_B)
+    fid = FID(dims=2048, cuda=params['use_cuda'], batch_size=128)
+    lpips = LPIPS(cuda=params['use_cuda'], batch_size=128)
+
+    return model, (train_A, test_A, train_B, test_B), (fid, lpips)
 
 
-def train_cyclegan(model, data_loaders, params):
+def train_cyclegan(model, data_loaders, params, metrics):
     """Wrapper function to train the CycleGAN model."""
 
     if params['run_wandb']:
@@ -321,6 +326,25 @@ def train_cyclegan(model, data_loaders, params):
             amp=params['amp'],
         )
 
+        # Calculate FID and LPIPS metrics
+        fid, lpips = metrics
+
+        with torch.no_grad():
+            real_A = next(iter(test_A)).to(params['device'])
+            real_B = next(iter(test_B)).to(params['device'])
+            fake_A, fake_B = model.generate_samples(real_A, real_B)
+
+            # Calculate FID and LPIPS for A → B
+            fid_score_AtoB = fid.get(real_B, fake_B)
+            lpips_score_AtoB = lpips.get(real_B, fake_B)
+
+            # Calculate FID and LPIPS for B → A
+            fid_score_BtoA = fid.get(real_A, fake_A)
+            lpips_score_BtoA = lpips.get(real_A, fake_A)
+
+        print(f'Epoch {epoch:03d} - FID A→B: {fid_score_AtoB:0.4f}, LPIPS A→B: {lpips_score_AtoB.mean():0.4f}')
+        print(f'Epoch {epoch:03d} - FID B→A: {fid_score_BtoA:0.4f}, LPIPS B→A: {lpips_score_BtoA.mean():0.4f}')
+
         losses_list.append(losses_)
         losses_list.append(losses_test_, test=True)
 
@@ -345,6 +369,9 @@ def train_cyclegan(model, data_loaders, params):
                 'G_loss/PLP/test': losses_test_.loss_G_plp,
                 'D_loss/Disc_A/test': losses_test_.loss_D_A,
                 'D_loss/Disc_B/test': losses_test_.loss_D_B,
+
+                'FID': fid_score,
+                'LPIPS': lpips_score.mean(),
 
                 "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
                 "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
