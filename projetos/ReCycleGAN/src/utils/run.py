@@ -8,13 +8,16 @@ import torch
 from torchvision import transforms
 from tqdm import tqdm
 import wandb
-
-from src.utils import get_gpu_memory_usage, get_current_commit, remove_all_files
-from src.utils import save_dict_as_json, load_json_to_dict
-from src.utils.data_loader import get_img_dataloader
-from src.utils.data_transform import ImageTools
-from src.models.cyclegan import CycleGAN
-from src.models.losses import LossValues, LossLists
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
+from utils import get_gpu_memory_usage, get_current_commit, remove_all_files
+from utils import save_dict_as_json, load_json_to_dict
+from utils.data_loader import get_img_dataloader
+from utils.data_transform import ImageTools
+from models.cyclegan import CycleGAN
+from models.losses import LossValues, LossLists
+from metrics.fid import FID
+from metrics.lpips import LPIPS
 
 def save_losses(loss: LossLists, filename='losses.txt'):
     """
@@ -273,16 +276,20 @@ def init_cyclegan_train(params):
     transformation = _get_transformation(params)
     train_A, test_A, train_B, test_B = _init_dataloaders(params, transformation)
 
-    return model, (train_A, test_A, train_B, test_B)
+    fid = FID(dims=2048, cuda=params['use_cuda'], batch_size=128)
+    lpips = LPIPS(cuda=params['use_cuda'], batch_size=128)
+
+    return model, (train_A, test_A, train_B, test_B), (fid, lpips)
 
 
-def train_cyclegan(model, data_loaders, params):
+def train_cyclegan(model, data_loaders, params, metrics):
     """Wrapper function to train the CycleGAN model."""
 
-    if params['run_wnadb']:
+    if params['run_wandb']:
         wandb.init(
             project="cyclegan",
-            name=params['wandb_name'],
+            name=params['experiment_name'],
+            notes=params['experiment_description'],
             config=params)
 
         wandb.watch(model.gen_AtoB, log_freq=100)
@@ -319,6 +326,25 @@ def train_cyclegan(model, data_loaders, params):
             amp=params['amp'],
         )
 
+        # Calculate FID and LPIPS metrics
+        fid, lpips = metrics
+
+        with torch.no_grad():
+            real_A = next(iter(test_A)).to(params['device'])
+            real_B = next(iter(test_B)).to(params['device'])
+            fake_A, fake_B = model.generate_samples(real_A, real_B)
+
+            # Calculate FID and LPIPS for A → B
+            fid_score_AtoB = fid.get(real_B, fake_B)
+            lpips_score_AtoB = lpips.get(real_B, fake_B)
+
+            # Calculate FID and LPIPS for B → A
+            fid_score_BtoA = fid.get(real_A, fake_A)
+            lpips_score_BtoA = lpips.get(real_A, fake_A)
+
+        print(f'Epoch {epoch:03d} - FID A→B: {fid_score_AtoB:0.4f}, LPIPS A→B: {lpips_score_AtoB.mean():0.4f}')
+        print(f'Epoch {epoch:03d} - FID B→A: {fid_score_BtoA:0.4f}, LPIPS B→A: {lpips_score_BtoA.mean():0.4f}')
+
         losses_list.append(losses_)
         losses_list.append(losses_test_, test=True)
 
@@ -326,7 +352,7 @@ def train_cyclegan(model, data_loaders, params):
         save_checkpoint(model, params, epoch)
         sample_A_path, sample_B_path = save_samples(model, params, test_A, test_B, epoch)
 
-        if params['run_wnadb']:
+        if params['run_wandb']:
             wandb.log({
                 'G_loss/Total/train': losses_.loss_G,
                 'G_loss/Adv/train': losses_.loss_G_ad,
@@ -343,6 +369,11 @@ def train_cyclegan(model, data_loaders, params):
                 'G_loss/PLP/test': losses_test_.loss_G_plp,
                 'D_loss/Disc_A/test': losses_test_.loss_D_A,
                 'D_loss/Disc_B/test': losses_test_.loss_D_B,
+
+                'FID_AtoB': fid_score_AtoB,
+                'LPIPS_AtoB': lpips_score_AtoB.mean(),
+                'FID_BtoA': fid_score_BtoA,
+                'LPIPS_BtoA': lpips_score_BtoA.mean(),
 
                 "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
                 "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
@@ -389,5 +420,5 @@ def save_checkpoint(model, params, epoch, force=False):
     if (epoch % params['checkpoint_interval'] == 0) or force:
         save_path = params['out_folder'] / f'cycle_gan_epoch_{epoch}.pth'
         model.save_model(save_path, epoch)
-        if params['run_wnadb']:
+        if params['run_wandb']:
             wandb.save(str(save_path), base_path=params['out_folder'])

@@ -7,7 +7,8 @@ from pathlib import Path
 import torch
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
-from metrics import FID, LPIPS  # pylint: disable=all
+from metrics.fid import FID
+from metrics.lpips import LPIPS  # pylint: disable=all
 from utils.data_loader import get_img_dataloader  # pylint: disable=all
 from utils.utils import get_gpu_memory_usage  # pylint: disable=all
 
@@ -25,9 +26,9 @@ class TestMetrics(unittest.TestCase):
         test_B_csv = folder / 'input_B_test_filtered.csv'
 
         train_A = get_img_dataloader(csv_file=train_A_csv, batch_size=self.batch_size)
-        test_A = get_img_dataloader(csv_file=test_A_csv, batch_size=self.batch_size)
+        test_A  = get_img_dataloader(csv_file=test_A_csv, batch_size=self.batch_size)
         train_B = get_img_dataloader(csv_file=train_B_csv, batch_size=self.batch_size)
-        test_B = get_img_dataloader(csv_file=test_B_csv, batch_size=self.batch_size)
+        test_B  = get_img_dataloader(csv_file=test_B_csv, batch_size=self.batch_size)
 
         self.train_A_imgs = next(iter(train_A))
         self.test_A_imgs = next(iter(test_A))
