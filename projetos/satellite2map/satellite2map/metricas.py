@@ -8,7 +8,7 @@ Funções de avaliação de imagens RGB comresolução 256x256,  transferidas em
 """
 
 # Função para MSE
-def mse_metric(batch_pred, batch_true):
+def MSE(batch_pred, batch_true):
     """
     Calcula o MSE para um batch de imagens.
 
@@ -20,7 +20,7 @@ def mse_metric(batch_pred, batch_true):
     return mse.item()
 
 # Função para PSNR
-def psnr_metric(batch_pred, batch_true):
+def PSNR(batch_pred, batch_true):
     """
     Calcula o PSNR para um batch de imagens.
 
@@ -34,7 +34,7 @@ def psnr_metric(batch_pred, batch_true):
     return psnr.item()
 
 # Função para SSIM
-def ssim_metric(batch_pred, batch_true):
+def SSIM(batch_pred, batch_true):
     """
     Calcula o SSIM para um batch de imagens.
 
@@ -47,11 +47,32 @@ def ssim_metric(batch_pred, batch_true):
 
     for i in range(batch_size):
         # Converte as imagens para numpy para calcular o SSIM com skimage.
-        pred_img = batch_pred[i].permute(1, 2, 0).cpu().numpy()
-        true_img = batch_true[i].permute(1, 2, 0).cpu().numpy()
+        pred_img = batch_pred[i].detach().cpu().permute(1, 2, 0).numpy()
+        true_img = batch_true[i].detach().cpu().permute(1, 2, 0).numpy()
 
         # Calcula o SSIM por canal e tira a média.
         ssim_value = ssim(pred_img, true_img, multichannel=True, data_range=pred_img.max() - pred_img.min())
         ssim_values.append(ssim_value)
 
     return np.mean(ssim_values)
+
+def PA(batch_pred, batch_true, delta=5/256):
+    """
+    Calcula a acurácia de pixel para um batch de imagens.
+
+    :param batch_pred: Tensor de previsão com forma (32, 3, 256, 256).
+    :param batch_true: Tensor de referência com forma (32, 3, 256, 256).
+    :param delta: Limiar de diferença para considerar um pixel correto.
+    :return: Acurácia de pixel para o batch.
+    """
+
+    # calculating the difference between the prediction and the ground truth
+    diff = torch.abs(batch_pred - batch_true)
+
+    # checking if the difference is less than delta
+    correct_pixels = (diff < delta).sum()
+
+    # if the difference is less than delta, the pixel is correct
+    pixel_accuracy = correct_pixels.item() / (batch_pred.size(2) * batch_pred.size(3) * batch_pred.size(0))
+
+    return pixel_accuracy
