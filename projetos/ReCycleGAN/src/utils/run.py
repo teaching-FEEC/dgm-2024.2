@@ -370,8 +370,10 @@ def train_cyclegan(model, data_loaders, params, metrics):
                 'D_loss/Disc_A/test': losses_test_.loss_D_A,
                 'D_loss/Disc_B/test': losses_test_.loss_D_B,
 
-                'FID': fid_score,
-                'LPIPS': lpips_score.mean(),
+                'FID_AtoB': fid_score_AtoB,
+                'LPIPS_AtoB': lpips_score_AtoB.mean(),
+                'FID_BtoA': fid_score_BtoA,
+                'LPIPS_BtoA': lpips_score_BtoA.mean(),
 
                 "Samples/Imgs_A": wandb.Image(str(sample_A_path)),
                 "Samples/Imgs_B": wandb.Image(str(sample_B_path)),
