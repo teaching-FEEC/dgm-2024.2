@@ -108,7 +108,7 @@ As caixas de seleção indicam os os elementos, entre os inicialmente propostos,
 
 A avaliação foi realizada apenas para uma tarefa. Foi utilizada a base de dados **Nexet** para realizar transferência de estilo (_style transfer_) entre imagens tiradas de câmeras de carro durante o dia e durante a noite. A segunda tarefa proposta era de fazer remoção de ruído (_image restoration_) das imagens das bases de dados **O-Haze**, **I-Haze** e **D_Hazy**. A segunda tarefa foi abandonada por limitação de _hardware_.
 
-Foram avaliadas duas das métricas de qualidade de imagem inicialmente propostas: [FID](https://github.com/mseitzer/pytorch-fid) e [LPIPS](https://github.com/richzhang/PerceptualSimilarity/). Optou-se por focar nestas duas por aparentemente serem mais comum na literatura e terem implementações em PyTorch disponibilizadas pelos seus autores: [pytorch-fid](https://pypi.org/project/pytorch-fid/) e [lpips](https://pypi.org/project/lpips/).
+Foram avaliadas duas das métricas de qualidade de imagem inicialmente propostas: [FID](https://github.com/mseitzer/pytorch-fid) e [LPIPS](https://github.com/richzhang/PerceptualSimilarity/). Optou-se por focar nestas duas por aparentemente serem mais presentes na literatura e terem implementações em PyTorch disponibilizadas pelos seus autores: [pytorch-fid](https://pypi.org/project/pytorch-fid/) e [lpips](https://pypi.org/project/lpips/).
 
 
 ### Bases de Dados e Evolução
@@ -132,7 +132,7 @@ Faça uma descrição sobre o que concluiu sobre esta base. Sugere-se que respon
 * Utilize tabelas e/ou gráficos que descrevam os aspectos principais da base que são relevantes para o projeto.
 -->
 
-A ReCycleGAN foi construída para acessar as bases de dados com um mesmo tipo de estrutura. As imagens são ajustadas para um aspecto 1:1 (corte centralizado) e é feita mudança de escala para 256x256 (LANCZOS). As imagens são separadas em duas pastas: **input_A** e **input_B**, correspondendo às duas classes utilizadas no treinamento (dia e noite ou _blur_ e _sharp_ nos exemplos utilizados). Para teste são separadas 20% das imagens de cada grupo. Para cada pasta existem dois arquivos CSV com a lista do nomes dos arquivos para treinamento e para teste.
+A ReCycleGAN foi construída para acessar as bases de dados com um mesmo tipo de estrutura. As imagens são ajustadas para um aspecto 1:1 (corte centralizado) e é feita mudança de escala para 256x256. As imagens são separadas em duas pastas: **input_A** e **input_B**, correspondendo às duas classes utilizadas no treinamento (dia e noite, por exemplo). Para teste foram separadas 20% das imagens de cada grupo. Para cada pasta existem dois arquivos CSV com a lista do nomes dos arquivos para treinamento e para teste.
 
 ```
     data
@@ -151,6 +151,8 @@ A ReCycleGAN foi construída para acessar as bases de dados com um mesmo tipo de
     │   └── input_B_train.csv
 ```
 
+#### Nexet 2017
+
 A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1280x720. Todas as imagens tem dados de condição de luz (dia, noite, ocaso) e local (Nova York, São Francisco, Tel Aviv, Resto do mundo). Também existem dados anotados da posição (_box_) dos veículos que aparecem em cada imagem. Para o treinamento e teste das redes propostas foram utilizadas apenas as imagens 1280x720 de Nova York, nas condições de luz **dia** (4885 imagens) e **noite** (4406 imagens).
 
 <div>
@@ -163,7 +165,72 @@ A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1
   <strong>Exemplos de imagens da base Nexet 2017 (dia acima e noite abaixo).</strong>
 </p>
 
-As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** ainda não foram trabalhadas. **O-Haze** e **I-Haze** tem poucas imagens, e todas de alta resolução (2833×4657). Será feito um processo de aumento de dados (_data augmentation_) nestas imagens, gerando diversas imagens 256x256 a partir das imagens originais. **D-Hazy** tem um número maior de imagens, e mapas de profundidade para cada imagem. Serão feitas imagens embaçadas com diferentes níveis de efeitos de embaçamento a partir das imagens originais e os respectivos mapas de profundidade.
+Algumas das imagens da base de dados parecem ter tido problemas na sua captura. Em diversas imagens o conteúdo da mesma se encontrava em um dos cantos da imagem. Para tratar estas imagens é feita uma busca pela linhas e colunas da imagem buscando _informação_. Uma linha ou coluna é considerada _sem informação_ quando a imagem equivalente em escala de cinza não tinha nenhum pixel com valor maior que 10 (em uma escala até 255). A imagem original é então cortada na região _com informação_ antes de escalar e cortar as imagens para 256x256.
+
+<div>
+<p align="center">
+<img src='docs/assets/nexet/bad_image01.jpg' align="center" alt="Imagem ruim" width=250px>
+<img src='docs/assets/nexet/bad_image02.jpg' align="center" alt="Imagem ruim" width=250px>
+</p>
+</div>
+
+<p align="center">
+  <strong>Exemplos de imagens com problemas.</strong>
+</p>
+
+Observou-se que algumas imagens da base de dados Nexet apresentavam características que poderiam comprometer a qualidade do treinamento. Foi feito um trabalho _semi_-manual de filtragem destas imagens. Muitas das análises foram feitas com base nas _distâncias_ entre as imagens de cada grupo. Estas distâncias foram calculadas a partir da saída da penúltima camada de uma rede classificadora de imagens pré-treinada ResNet18 [[13]](https://doi.org/10.1109/CVPR.2016.90), disponibilizada diretamente no [PyTorch](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet18.html). Esta extração de características foi realizada com as imagens já escaladas e recortadas para o formato de treinamento.
+
+**Imagens muito parecidas**
+  * Foram listados os pares de imagens que apresentavam menores distâncias entre si.
+  * Foi definido por inspeção visual, para a classe **dia**, que os 93 pares mais próximos eram de imagens muito semelhantes. Para cada par uma das imagens é excluída da base de dados.
+  * Para a classe **noite** esta abordagem não se mostrou muito eficiente. Imagens com pequena distância entre si não eram consideradas parecidas em uma inspeção visual. Para esta classe nenhuma imagem foi retirada.
+
+<div>
+<p align="center">
+<img src='docs/assets/nexet/close_pair_day_01.png' align="center" alt="Imagens próximas" width=350px>
+<img src='docs/assets/nexet/close_pair_day_02.png' align="center" alt="Imagens próximas" width=350px>
+</p>
+</div>
+
+<p align="center">
+  <strong>Exemplos de imagens muito parecidas na classe dia.</strong>
+</p>
+
+<div>
+<p align="center">
+<img src='docs/assets/nexet/close_pair_night_01.png' align="center" alt="Imagens próximas" width=350px>
+<img src='docs/assets/nexet/close_pair_night_02.png' align="center" alt="Imagens próximas" width=350px>
+</p>
+</div>
+
+<p align="center">
+  <strong>Exemplos de imagens muito parecidas na classe noite.</strong>
+</p>
+
+
+**Imagens _Difíceis_**
+  * Para _facilitar_ o treinamento da rede, foram excluídas imagens com características consideradas _difíceis_ ou que não ajudam no treinamento: chuva _forte_, túneis, desfoque, objetos bloqueando a visão.
+  * Para esta análise as imagens de cada classe foram agrupadas em 20 classes, com **k-Means**. Para cada classe foram sorteadas 36 imagens e foi feita uma análise visual de cada grupo.
+  * A partir da análise visual, os grupos que foram considerados _problemáticos_ são novamente divididos com k-means. A análise visual dos subgrupos é que define que conjuntos de imagens são excluídos do treinamento.
+
+
+<div>
+<p align="center">
+<img src="docs/assets/nexet/bad_cluster_day.jpg" align="center" alt="Imagens difíceis" width=350px>
+<img src="docs/assets/nexet/bad_cluster_night.jpg" align="center" alt="Imagens difíceis" width=350px>
+</p>
+</div>
+
+<p align="center">
+  <strong>Exemplos de grupos de imagens consideradas difíceis para o treinamento.</strong>
+</p>
+
+
+[Notebook](src/notebooks/Filter_DayNight.ipynb)
+
+#### O-Haze, I-Haze e D-Hazy
+
+As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** não foram trabalhadas neste projeto. **O-Haze** e **I-Haze** tem poucas imagens, e todas de alta resolução (2833×4657). Pode ser feito um processo de aumento de dados (_data augmentation_) nestas imagens, gerando diversas imagens 256x256 a partir das imagens originais. **D-Hazy** tem um número maior de imagens, e mapas de profundidade para cada imagem. Podem ser geradas imagens embaçadas com diferentes níveis de efeitos de embaçamento a partir das imagens originais e os respectivos mapas de profundidade.
 
 <div>
 <p align="center">
@@ -299,3 +366,7 @@ Heusel, Martin, et al. Advances in neural information processing systems 30 (201
 [12] The unreasonable effectiveness of deep features as a perceptual metric.<br>
 Zhang, Richard, et al. Proceedings of the IEEE conference on computer vision and pattern recognition. 2018.<br>
 [[Paper]](https://arxiv.org/abs/1801.03924) [[Github]](https://github.com/richzhang/PerceptualSimilarity) [[Site]](https://richzhang.github.io/PerceptualSimilarity/)
+
+[13] Deep Residual Learning for Image Recognition.<br>
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun. IEEE Conference on Computer Vision and Pattern Recognition (CVPR) 2016.<br>
+[[Paper]](https://doi.org/10.1109/CVPR.2016.90)
