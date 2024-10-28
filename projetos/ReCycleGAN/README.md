@@ -15,9 +15,13 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 [[PDF]](./docs/assets/IntroProjeto.pdf)
 [[Video]](https://youtu.be/LJuTz5Pec7E)
 
-**Entrega 2 (resultados parciais)**:
+**Entrega 2 - Resultados parciais)**:
 [[Slides]](https://docs.google.com/presentation/d/1Zrgix-RCc3Nq7yz7x72-TK-EyCpEOA_QkDlRHAJ2kGk/edit?usp=sharing)
 [[PDF]](./docs/assets/E2.pdf)
+
+**Entrega 3 - Resultados finais**:
+[[Slides]](fake.link)
+[[PDF]](./docs/assets/E3.pdf)
 
 
 ## Resumo (Abstract)
@@ -29,7 +33,9 @@ A `CycleGAN` teve significativo impacto ao propor uma arquitetura que trabalha c
 
 Este projeto revisitará a proposta original da CycleGAN, avaliando o impacto de diferentes propostas feitas posteriormente. Busca-se uma arquitetura com melhor desempenho que a CycleGAN original, e treinável com uma estrutura de _hardware_ mais acessível.
 
-Até o momento o código original da CycleGAN foi reorganizado para funcionar com uma versão mais atual do PyTorch. Também foi montada a primeira base de dados de teste e métricas de avaliação de qualidade de imagens geradas (FID e LPIPS).
+A tarefa abordada neste projeto foi a traduzir imagens feitas a partir de câmeras instaladas em painéis de carros (_dashboard cameras_) de dia para noite e de noite para dia. Foram utilizadas as imagens do _dataset_ **Nexet** para a cidade de Nova York.
+
+Diferentes modificações foram testadas na estrutura original da CycleGAN, e a que teve maior impacto foi a introdução de _skip connections_ entre o codificador e o decodificador das redes generativas. Foi feita a comparação desta nova rede com modelos propostos de código aberto. As métricas de FID e LPIPS mostram que
 
 ## Descrição do Problema/Motivação
 <!--
@@ -80,20 +86,22 @@ Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpr
 Serão avaliadas diferentes variações da CyleGAN a partir da sua versão na _vanilla_. Diferentes elementos serão alterados e/ou adicionados:
 
 * Novos elementos na arquitetura da rede:
-  * Skip connections [[9]](https://arxiv.org/abs/2403.12036)
-  * Camadas de atenção
-  * Adaptadores LoRA
+  * [x] Skip connections [[9]](https://arxiv.org/abs/2403.12036) ✓
+  * [x] Camadas de atenção
+  * [ ] Adaptadores LoRA
 * Funções de perda adicionais:
-  * Perdas baseadas em redes pré-treinadas [[7]](https://arxiv.org/abs/2105.14576)
-  * Suavização do Gerador [[10]](https://arxiv.org/abs/1912.04958)
+  * [ ] Perdas baseadas em redes pré-treinadas [[7]](https://arxiv.org/abs/2105.14576)
+  * [x] Suavização do Gerador [[10]](https://arxiv.org/abs/1912.04958)
 * Novas métricas de avaliação:
-  * FID [[11]](https://arxiv.org/abs/1706.08500)
-  * PSNR
-  * SSIM
-  * LPIPS [[12]](https://arxiv.org/abs/1801.03924)
+  * [x] FID [[11]](https://arxiv.org/abs/1706.08500)
+  * [ ] PSNR
+  * [ ] SSIM
+  * [x] LPIPS [[12]](https://arxiv.org/abs/1801.03924)
 * Comparativo com outras redes:
-  * Redes de difusão: CycleGAN-turbo [[9]](https://arxiv.org/abs/2403.12036)
-  * Percepção de usuários
+  * [x] Redes de difusão:
+    * CycleGAN _original_ [[1]](https://arxiv.org/abs/1703.10593)
+    * CycleGAN-turbo [[9]](https://arxiv.org/abs/2403.12036)
+  * [ ] Percepção de usuários
 
 A avaliação será realizada para duas tarefas. É utilizada a base de dados **Nexet** para realizar transferência de estilo (_style transfer_) entre imagens tiradas de câmeras de carro durante o dia e durante a noite. A segunda tareda é de fazer remoção de ruído (_image restoration_) das imagens das bases de dados **O-Haze**, **I-Haze** e **D_Hazy**.
 
