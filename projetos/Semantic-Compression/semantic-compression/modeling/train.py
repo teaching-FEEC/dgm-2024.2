@@ -10,45 +10,62 @@ import numpy as np
 
 
 def pre_train(model, x_train, x_val, batch_size, epochs, model_fname):
-    callback = EarlyStopping(patience=5, start_from_epoch=5)
-    model.fit(x=x_train, y=x_train, validation_data=(x_val, x_val), batch_size=batch_size, epochs=epochs, callbacks=[callback])
-    model.save(f'../models/ae_{model_fname}.keras')
+    #callback = EarlyStopping(patience=5, start_from_epoch=5)
+    model.fit(x=x_train, y=x_train, validation_data=(x_val, x_val), batch_size=batch_size, epochs=epochs)
+    model.save_weights(f'../models/ae_{model_fname}.weights.h5')
     return model
 
 
 def fine_tune(model, dataloader_train, dataloader_val, epochs, discriminate_every, save_every, model_fname):
     gan_losses_train = []
     l2_losses_train = []
+    d_losses_train = []
     gan_losses_val = []
     l2_losses_val = []
+    d_losses_val = []
     pbar = tqdm(range(1, epochs+1))
     for epoch in pbar:
 
         gan_train = 0.
         l2_train = 0.
+        d_train = 0.
+        i = 0
+        r_batch = 3
+
+        if epoch % discriminate_every ==0:
+            r_batch = 1
+        else:
+            r_batch = 3
+
         for batch in dataloader_train:
-            b_gan, b_l2 = model.train_step(batch, discriminating=(epoch % discriminate_every == 0))
+            i+=1
+            b_gan, b_l2, b_d = model.train_step(batch, discriminating=(i % r_batch == 0))
             gan_train += b_gan
             l2_train += b_l2
+            d_train += b_d
         gan_losses_train.append(gan_train / len(dataloader_train))
         l2_losses_train.append(l2_train / len(dataloader_train))
+        d_losses_train.append(d_train / len(dataloader_train))
 
         gan_val = 0.
         l2_val = 0.
+        d_val = 0.
         for batch in dataloader_val:
-            b_gan, b_l2 = model.test_step(batch)
+            b_gan, b_l2, b_d = model.test_step(batch)
             gan_val += b_gan
             l2_val += b_l2
+            d_val += b_d
         gan_losses_val.append(gan_val / len(dataloader_val))
         l2_losses_val.append(l2_val / len(dataloader_val))
+        d_losses_val.append(d_val / len(dataloader_val))
 
-        pbar.set_description(f'train=({gan_losses_train[-1]:.2f}, {l2_losses_train[-1]:.2f}); val=({gan_losses_val[-1]:.2f}, {l2_losses_val[-1]:.2f})')
+        pbar.set_description(f'train=({gan_losses_train[-1]:.2f}, {d_losses_train[-1]:.2f}, {l2_losses_train[-1]:.2f}); val=({gan_losses_val[-1]:.2f}, {d_losses_val[-1]:.2f}, {l2_losses_val[-1]:.2f})')
 
         if epoch % save_every == 0:
             model.save(f'../models/{model_fname}_{epoch}.keras')
             model.save_weights(f'../models/{model_fname}_{epoch}.weights.h5')
         
-    return model, gan_losses_train, l2_losses_train, gan_losses_val, l2_losses_val
+    return model, gan_losses_train, l2_losses_train, d_losses_train, gan_losses_val, l2_losses_val, d_losses_val
 
 
 def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs_pt, epochs_ft, discriminate_every, save_every):
