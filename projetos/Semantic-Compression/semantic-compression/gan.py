@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from keras import layers, models
+import tensorflow_addons as tfa
 # from utils import normalize_input, denormalize_output
 
 
@@ -11,12 +12,12 @@ class Block(layers.Layer):
         self.kernel_size = kernel_size
         self.h1 = models.Sequential([
             layers.Conv2D(self.filters, kernel_size=self.kernel_size, strides=1, padding='same'),
-            layers.BatchNormalization(momentum=momentum),
+            tfa.layers.InstanceNormalization(),
             layers.ReLU()
         ])
         self.h2 = models.Sequential([
             layers.Conv2D(self.filters, kernel_size=self.kernel_size, strides=1, padding='same'),
-            layers.BatchNormalization(momentum=momentum),
+            tfa.layers.InstanceNormalization(),
         ])
 
     def call(self, x, training=False):
@@ -58,7 +59,7 @@ class Encoder(models.Model):
                 self.filters // 2**self.n_convs,
                 kernel_size=7, strides=1, padding='same'
             ),
-            layers.BatchNormalization(momentum=momentum),
+            tfa.layers.InstanceNormalization(),
             layers.ReLU()
         ])
         self.downsample = models.Sequential()
@@ -69,11 +70,11 @@ class Encoder(models.Model):
                     kernel_size=5, strides=2, padding='same'
                 )
             )
-            self.downsample.add(layers.BatchNormalization(momentum=momentum))
+            self.downsample.add(tfa.layers.InstanceNormalization())
             self.downsample.add(layers.ReLU())
         self.h_out = models.Sequential([
             layers.Conv2D(self.channels, kernel_size=3, strides=1, padding='same'),
-            layers.BatchNormalization(momentum=momentum)
+            tfa.layers.InstanceNormalization()
         ])
 
     def call(self, inputs, training=False):
@@ -123,7 +124,7 @@ class Generator(models.Model):
         self.res_blocks = [ResidualBlock(self.filters, kernel_size=3, momentum=momentum) for _ in range(self.n_blocks)]
         self.h_in = models.Sequential([
             layers.Conv2DTranspose(self.filters, kernel_size=3, strides=1, padding='same'),
-            layers.BatchNormalization(momentum=momentum),
+            tfa.layers.InstanceNormalization(),
             layers.ReLU()
         ])
         self.upsample = models.Sequential()
@@ -134,11 +135,12 @@ class Generator(models.Model):
                     kernel_size=5, strides=2, padding='same'
                 )
             )
-            self.upsample.add(layers.BatchNormalization(momentum=momentum))
+            self.upsample.add(tfa.layers.InstanceNormalization())
             self.upsample.add(layers.ReLU())
         self.h_out = models.Sequential([
             layers.Conv2DTranspose(3, kernel_size=7, strides=1, padding='same'),
-            layers.BatchNormalization(momentum=momentum),
+            #tfa.layers.InstanceNormalization(),
+            layers.Activation('sigmoid')
         ])
 
     def call(self, inputs, training=False):
@@ -216,12 +218,13 @@ class Discriminator(models.Model):
                     kernel_size=4, strides=2, padding='same'
                 )
             )
-            self.net.add(layers.BatchNormalization(momentum=momentum))
+            if i >= 1:
+                self.net.add(tfa.layers.InstanceNormalization())
             self.net.add(layers.LeakyReLU(0.2))
+            self.net.add(layers.Dropout(0.3))
         self.h_out = models.Sequential([
             layers.Conv2D(1, kernel_size=4, strides=1, padding='same'),
-            layers.Flatten(),
-            layers.Dense(1, activation='sigmoid')
+            layers.Activation('sigmoid')
         ])
 
     def call(self, inputs, training=False):
