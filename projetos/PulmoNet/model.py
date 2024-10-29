@@ -72,8 +72,9 @@ class Discriminator(nn.Module):
         self.conv3 = block_discriminator(in_dim=128, out_dim=256)
         self.conv4 = nn.Sequential(nn.Conv2d(in_channels=256, out_channels=512, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
                                    nn.LeakyReLU(negative_slope=0.2, inplace=True))
-        self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
-                                   nn.Sigmoid())
+        #self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
+        #                           nn.Sigmoid())
+        self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True))
 
     def forward(self, x):
         x = self.conv1(x)

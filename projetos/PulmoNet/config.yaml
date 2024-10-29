@@ -1,22 +1,19 @@
 model:
-  name_model: "model_reg10_center_thr_25k"
-  dir_save_results: "./model_reg10_center_thr_25k/"
-  new_model: False
+  name_model: "model_article_complete"
+  dir_save_results: "./model_article_complete/"
+  new_model: True
   path_to_saved_model_gen: ""
   path_to_saved_model_disc: ""
 
 data:
-  processed_data_folder: "/mnt/shared/ctdata_thr25"
+  processed_data_folder: "/mnt/shared/divided_data/"
   dataset: "lungCTData"
-  start_point_train_data: 0
-  end_point_train_data: 100
-  start_point_validation_data: 100
-  end_point_validation_data: 105
+
 
 training:
   batch_size_train: 20
   batch_size_validation: 8
-  n_epochs: 5
+  n_epochs: 200
   steps_to_complete_bfr_upd_disc: 1
   steps_to_complete_bfr_upd_gen: 1
   transformations: 
@@ -27,14 +24,12 @@ training:
 
 loss: 
   criterion: 
-    name: "BCELoss"
+    name: "BCEWithLogitsLoss"
   regularizer:
     type:
-      - "MAE_mask"
-      - "MAE_outside_mask"
+      - "MAE"
     regularization:
-      - 6.6666
-      - 3.3333
+      - 10
   
 optimizer:
   type: "Adam"
@@ -56,8 +51,8 @@ lr_scheduler:
   path_to_saved_disc_scheduler: ""
 
 save_models_and_results:
-  step_to_safe_save_models: 3
+  step_to_safe_save_models: 10
   save_best_model: True
 
 wandb:
-  activate: False
+  activate: True

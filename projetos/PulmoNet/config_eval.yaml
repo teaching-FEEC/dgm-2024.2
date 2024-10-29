@@ -1,6 +1,6 @@
 model:
-  name_model: "model_reg_center_thr_25k"
-  use_best_version: False
+  name_model: "model_reg10_center_thr_25k_UnifNoiseAllImg"
+  use_best_version: True
 
 data:
   processed_data_folder: "/mnt/shared/ctdata_thr25"

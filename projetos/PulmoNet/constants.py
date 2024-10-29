@@ -21,6 +21,7 @@ FACTORY_DICT = {
     },
     "criterion": {
         "BCELoss": torch.nn.BCELoss,
+        "BCEWithLogitsLoss": torch.nn.BCEWithLogitsLoss,
     },
     "transforms": {
         "AddGaussianNoise": AddGaussianNoise,

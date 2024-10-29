@@ -33,10 +33,10 @@ processed_data_folder = str(config['data'].get('processed_data_folder',
                                                '/mnt/shared/ctdata_thr25'))
 dataset_type = str(config['data'].get('dataset',
                                     'lungCTData'))
-start_point_train_data = int(config['data']['start_point_train_data'])
-end_point_train_data = int(config['data']['end_point_train_data'])
-start_point_validation_data = int(config['data']['start_point_validation_data'])
-end_point_validation_data = int(config['data']['end_point_validation_data'])
+start_point_train_data = config['data'].get('start_point_train_data',None)
+end_point_train_data = config['data'].get('end_point_train_data',None)
+start_point_validation_data = config['data'].get('start_point_validation_data',None)
+end_point_validation_data = config['data'].get('end_point_validation_data',None)
 
 #training hyperparameters
 batch_size_train = int(config['training']['batch_size_train'])
@@ -126,12 +126,14 @@ if use_wandb is True:
 
 dataset_train = FACTORY_DICT["dataset"][dataset_type](
                             processed_data_folder=processed_data_folder,
+                            mode='gan_train',
                             start=start_point_train_data,
                             end=end_point_train_data,
                             transform=transform,
                             **transform_kwargs)
 dataset_validation = FACTORY_DICT["dataset"][dataset_type](
                             processed_data_folder=processed_data_folder,
+                            mode='gan_val',
                             start=start_point_validation_data,
                             end=end_point_validation_data,
                             transform=transform,
