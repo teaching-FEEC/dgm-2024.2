@@ -34,5 +34,5 @@ class CycleConsistencyLoss(nn.Module):
         self.cc_loss = nn.L1Loss()
         self.alpha = alpha
         
-    def forward(self, x, x_pred, y, y_pred):
-        return self.alpha * (self.cc_loss(x, x_pred) + self.cc_loss(y, y_pred))
+    def forward(self, x, x_pred):
+        return self.alpha * self.cc_loss(x, x_pred)
