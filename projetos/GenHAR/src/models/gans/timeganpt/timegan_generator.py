@@ -112,6 +112,7 @@ class TimeGANGenerator:
             self.Discriminator[class_label] = Discriminator
             self.checkpoints[class_label] = checkpoints
             self.data[class_label] = data
+        self.model = [self.Generator, self.Embedder, self.Supervisor, self.Recovery, self.Discriminator]
 
     def train_tsgm(self, X_train, y_train):
 
@@ -147,6 +148,7 @@ class TimeGANGenerator:
 
     def generate_pt_impl(self, num_samples_per_class):
         synthetic_df = pd.DataFrame()
+        self.Generator, self.Embedder, self.Supervisor, self.Recovery, self.Discriminator = self.model
 
         # Loop para gerar dados sintéticos por classe
         for class_label in self.Generator.keys():
