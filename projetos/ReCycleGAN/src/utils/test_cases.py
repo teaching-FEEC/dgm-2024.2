@@ -39,7 +39,7 @@ BASE = {
     'vanilla_loss': True,
     'cycle_loss_weight': 10,
     'id_loss_weight': 5,
-    'plp_loss_weight': 1,
+    'plp_loss_weight': 0,
     'plp_step': 16,
     'plp_beta': 0.99,
 
@@ -47,7 +47,7 @@ BASE = {
     'beta1': 0.5,
     'beta2': 0.999,
 
-    'step_size': 10,
+    'step_size': 1000,
     'gamma': 0.5,
     'amp': True
 }
