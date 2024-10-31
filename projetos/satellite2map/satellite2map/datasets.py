@@ -16,7 +16,7 @@ class Maps(Dataset):
             # _ = download_and_extract(root, self.url)
             pass
         self.root=root
-        self.files=sorted(glob.glob(f"{root}/maps/{mode}/*.jpg"))
+        self.files=sorted(glob.glob(f"{root}/{mode}/*.jpg"))
         self.transform=transform
         self.download=download
         self.mode=mode

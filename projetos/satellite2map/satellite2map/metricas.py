@@ -51,11 +51,11 @@ def SSIM(batch_pred, batch_true):
         true_img = batch_true[i].detach().cpu().permute(1, 2, 0).numpy()
 
         # Calcula o SSIM por canal e tira a média.
-        ssim_value = ssim(pred_img, true_img, multichannel=True, data_range=pred_img.max() - pred_img.min())
+        ssim_value = ssim(pred_img, true_img, multichannel=True, channel_axis=2, data_range=pred_img.max() - pred_img.min())
         ssim_values.append(ssim_value)
 
     return np.mean(ssim_values)
-
+\
 def PA(batch_pred, batch_true, delta=5/256):
     """
     Calcula a acurácia de pixel para um batch de imagens.
