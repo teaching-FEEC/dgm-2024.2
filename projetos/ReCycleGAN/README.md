@@ -165,7 +165,7 @@ A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1
   <strong>Exemplos de imagens da base Nexet 2017 (dia acima e noite abaixo).</strong>
 </p>
 
-Algumas das imagens da base de dados parecem ter tido problemas na sua captura. Em diversas imagens o conteúdo da mesma se encontrava em um dos cantos da imagem. Para tratar estas imagens é feita uma busca pela linhas e colunas da imagem buscando _informação_. Uma linha ou coluna é considerada _sem informação_ quando a imagem equivalente em escala de cinza não tinha nenhum pixel com valor maior que 10 (em uma escala até 255). A imagem original é então cortada na região _com informação_ antes de escalar e cortar as imagens para 256x256.
+Algumas das imagens da base de dados parecem ter tido problemas na sua captura. Em diversas imagens o conteúdo da mesma se encontrava em um dos cantos da imagem. Para tratar estas imagens é feita uma busca pela linhas e colunas da imagem buscando _informação_. Uma linha ou coluna é considerada _sem informação_ quando a imagem equivalente em escala de cinza não tinha nenhum pixel com valor maior que 10 (em uma escala até 255). A imagem original é então cortada na região _com informação_ antes de escalar e cortar as imagens para 256x256. Imagens recortadas com menos de 256 pixeis de altura ou largura foram ignoradas (imagem à esquerda abaixo).
 
 <div>
 <p align="center">
@@ -193,7 +193,7 @@ Observou-se que algumas imagens da base de dados Nexet apresentavam característ
 </div>
 
 <p align="center">
-  <strong>Exemplos de imagens muito parecidas na classe dia.</strong>
+  <strong>Exemplos de pares de imagens muito parecidas na classe dia.</strong>
 </p>
 
 <div>
@@ -204,7 +204,7 @@ Observou-se que algumas imagens da base de dados Nexet apresentavam característ
 </div>
 
 <p align="center">
-  <strong>Exemplos de imagens muito parecidas na classe noite.</strong>
+  <strong>Exemplos de pares de imagens muito parecidas na classe noite.</strong>
 </p>
 
 
@@ -230,7 +230,7 @@ Observou-se que algumas imagens da base de dados Nexet apresentavam característ
 
 #### O-Haze, I-Haze e D-Hazy
 
-As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** não foram trabalhadas neste projeto. **O-Haze** e **I-Haze** tem poucas imagens, e todas de alta resolução (2833×4657). Pode ser feito um processo de aumento de dados (_data augmentation_) nestas imagens, gerando diversas imagens 256x256 a partir das imagens originais. **D-Hazy** tem um número maior de imagens, e mapas de profundidade para cada imagem. Podem ser geradas imagens embaçadas com diferentes níveis de efeitos de embaçamento a partir das imagens originais e os respectivos mapas de profundidade.
+As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** não foram trabalhadas neste projeto. **O-Haze** e **I-Haze** tem poucas imagens, e todas de alta resolução (2833×4657). Pode ser feito um processo de aumento de dados (_data augmentation_) nestas imagens, gerando diversas imagens 256x256 a partir das imagens originais. **D-Hazy** tem um número maior de imagens, e mapas de profundidade para cada imagem. Podem ser geradas imagens embaçadas com diferentes níveis de efeitos de embaçamento a partir das imagens originais e respectivos mapas de profundidade.
 
 <div>
 <p align="center">
@@ -264,6 +264,29 @@ Para monitorar e registrar os logs e resultados dos treinamentos e avaliações 
   <strong>Workflow de trabalho.</strong>
 </p>
 
+#### Arquitetura da Rede
+
+A CycleGAN consiste de duas redes geradoras (`gen_AtoB` e `gen_BtoA`) e duas redes discriminadoras (`dis_A` e `dis_B`). As redes geradores tem a mesma estrutura, assim como as redes discriminadoras.
+
+Cada rede geradora tem 3 seções: Encoder, Transformer e Decoder.
+
+* No **Encoder** cada imagem de entrada passa em uma série de filtros convolucionais que comprimem a imagem e aumentam o número de canais. Uma imagem de entrada (256, 256, 3) gera uma representação (64, 64, 256).
+* No **Transformer** são utilizados 9 blocos residuais, que não alteram o formato da representação.
+* No **Decoder** são aplicados dois filtros deconvolucionais que restauram a imagem para o formato original.
+
+
+<!-- Then the output of encoder after activation function is applied is passed into the transformer. The transformer contains 6 or 9 residual blocks based on the size of input.
+
+The output of transformer is then passed into the decoder which uses 2 -deconvolution block of fraction strides to increase the size of representation to original size.
+
+### Architecture
+
+The architecture of generator is:
+
+`c7s1-64, d128, d256, R256, R256, R256,
+R256, R256, R256, u128, u64, c7s1-3
+
+where c7s1-k denote a 7×7 Convolution-InstanceNorm-ReLU layer with k filters and stride 1. dk denotes a 3 × 3 Convolution-InstanceNorm-ReLU layer with k filters and stride 2. Rk denotes a residual block that contains two 3 × 3 convolution layers with the same number of filters on both layer. uk denotes a 3 × 3 fractional-strides-Convolution-InstanceNorm-ReLU layer with k filters and stride 1/2 (i.e deconvolution operation). -->
 
 ## Experimentos, Resultados e Discussão dos Resultados
 <!--
