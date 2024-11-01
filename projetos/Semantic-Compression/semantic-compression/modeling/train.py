@@ -67,7 +67,7 @@ def fine_tune(model, dataloader_train, dataloader_val, epochs, discriminate_ever
         d_losses_val.append(d_val / len(dataloader_val))
         losses_val.append(loss_val / len(dataloader_val))
 
-        pbar.set_description(f'train=({gan_losses_train[-1]:.2f}, {d_losses_train[-1]:.2f}, {l2_losses_train[-1]:.2f}); val=({gan_losses_val[-1]:.2f}, {d_losses_val[-1]:.2f}, {l2_losses_val[-1]:.2f})')
+        pbar.set_description(f'train=({losses_train[-1]:.2f}, {d_losses_train[-1]:.2f}, {l2_losses_train[-1]:.2f}); val=({losses_val[-1]:.2f}, {d_losses_val[-1]:.2f}, {l2_losses_val[-1]:.2f})')
 
         if epoch % save_every == 0:
             model.save(f'../models/{model_fname}_{epoch}.keras')
