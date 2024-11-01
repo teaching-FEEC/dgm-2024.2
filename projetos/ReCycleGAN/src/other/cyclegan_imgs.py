@@ -51,33 +51,6 @@ def copy_images(df, src_dir, dst_dir, src_name_modifier=''):
         else:
             print(f"File not found: {src_path.name}")
 
-
-def compare_images(image1, image2, threshold=1e-5):
-    """
-    Compare two images to check if they are the same.
-
-    Parameters:
-    ------------
-    image1: PIL.Image
-        First image.
-    image2: PIL.Image
-        Second image.
-    threshold: float
-        The maximum allowed absolute difference between the images.
-
-    Returns:
-    ------------
-    bool
-        True if the images are the same, False otherwise.
-    """
-    if image1.size != image2.size:
-        image2 = image2.resize(image1.size)
-    np_image1 = np.array(image1)
-    np_image2 = np.array(image2)
-
-    max_abs_diff = np.max(np.abs(np_image1 - np_image2))
-    return max_abs_diff <= threshold
-
 def search_and_copy_b_images(df, src_dir, base_img_dir, dst_dir, threshold=1e-5):
     """
     Search similar images in the source directory and copy them to the destination directory.
@@ -97,7 +70,7 @@ def search_and_copy_b_images(df, src_dir, base_img_dir, dst_dir, threshold=1e-5)
     all_images = []
     print("Loading images...")
     for file_path in tqdm(src_dir.rglob('*_real_B.png')):
-        img = Image.open(file_path).convert('RGB')
+        img = np.array(Image.open(file_path).convert('RGB'))
         all_images.append((file_path,img))
 
     print("Comparing images...")
@@ -105,18 +78,18 @@ def search_and_copy_b_images(df, src_dir, base_img_dir, dst_dir, threshold=1e-5)
     for _, row in tqdm(df.iterrows()):
         src_path = Path(base_img_dir) / row['file_name']
         src_image = Image.open(src_path).convert('RGB')
+        src_image = np.array(src_image)
 
         i = len(used)
         for file_path, img in all_images:
             if file_path in used:
                 continue
-            if file_path.is_file():
-                if compare_images(src_image, img, threshold=threshold):
-                    new_name = file_path.stem.replace('_real_B','_fake_A') + file_path.suffix
-                    file_path = file_path.with_name(new_name)
-                    shutil.copy(file_path, dst_dir / src_path.name)
-                    used.append(file_path)
-                    break
+            if np.max(np.abs(src_image - img) < threshold):
+                new_name = file_path.stem.replace('_real_B','_fake_A') + file_path.suffix
+                file_path = file_path.with_name(new_name)
+                shutil.copy(file_path, dst_dir / src_path.name)
+                used.append(file_path)
+                break
         if i == len(used):
             print(f"Similar image not found for: {src_path.name}")
 
@@ -142,14 +115,14 @@ if __name__ == '__main__':
     base_out_folder = Path(__file__).parent.parent.parent / 'data/external/nexet'
 
     print("Processing A images")
-    # for df_name in ['input_A_train.csv', 'input_A_test.csv']:
-    #     print(f"  file {df_name}")
-    #     df_imgs = pd.read_csv(base_out_folder / df_name)
-    #     copy_images(
-    #         df=df_imgs,
-    #         src_dir=base_src_folder,
-    #         dst_dir=base_out_folder / 'output_A_cyclegan',
-    #         src_name_modifier='_fake_B')
+    for df_name in ['input_A_train.csv', 'input_A_test.csv']:
+        print(f"  file {df_name}")
+        df_imgs = pd.read_csv(base_out_folder / df_name)
+        copy_images(
+            df=df_imgs,
+            src_dir=base_src_folder,
+            dst_dir=base_out_folder / 'output_A_cyclegan',
+            src_name_modifier='_fake_B')
 
     # Images B
     print("Processing B images")
