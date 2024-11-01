@@ -47,7 +47,8 @@ def copy_images(df, src_dir, dst_dir, src_name_modifier=''):
         src_path = src_path.with_suffix('.png')
         dst_path = Path(dst_dir) / row['file_name']
         if src_path.is_file():
-            shutil.copy(src_path, dst_path)
+            with Image.open(src_path) as img:
+                img.save(dst_path)
         else:
             print(f"File not found: {src_path.name}")
 
@@ -85,10 +86,11 @@ def search_and_copy_b_images(df, src_dir, base_img_dir, dst_dir, threshold=1e-5)
             if file_path in used:
                 continue
             if np.max(np.abs(src_image - img) < threshold):
+                used.append(file_path)
                 new_name = file_path.stem.replace('_real_B','_fake_A') + file_path.suffix
                 file_path = file_path.with_name(new_name)
-                shutil.copy(file_path, dst_dir / src_path.name)
-                used.append(file_path)
+                with Image.open(file_path) as img:
+                    img.save(dst_dir / src_path.name)
                 break
         if i == len(used):
             print(f"Similar image not found for: {src_path.name}")
@@ -115,14 +117,13 @@ if __name__ == '__main__':
     base_out_folder = Path(__file__).parent.parent.parent / 'data/external/nexet'
 
     print("Processing A images")
-    for df_name in ['input_A_train.csv', 'input_A_test.csv']:
-        print(f"  file {df_name}")
-        df_imgs = pd.read_csv(base_out_folder / df_name)
-        copy_images(
-            df=df_imgs,
-            src_dir=base_src_folder,
-            dst_dir=base_out_folder / 'output_A_cyclegan',
-            src_name_modifier='_fake_B')
+    df_imgs_A_train = pd.read_csv(base_out_folder / 'input_A_train.csv')
+    df_imgs_A_test = pd.read_csv(base_out_folder / 'input_A_test.csv')
+    copy_images(
+        df=pd.concat([df_imgs_A_train, df_imgs_A_test]),
+        src_dir=base_src_folder,
+        dst_dir=base_out_folder / 'output_A_cyclegan',
+        src_name_modifier='_fake_B')
 
     # Images B
     print("Processing B images")
