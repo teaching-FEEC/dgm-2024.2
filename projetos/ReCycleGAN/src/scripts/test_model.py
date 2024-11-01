@@ -9,11 +9,7 @@ from PIL import Image
 from torchvision import transforms
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-# from metrics import FID, LPIPS
-# from utils.data_loader import get_img_dataloader
 from src.utils import remove_all_files, load_json_to_dict
-# from utils import show_img, image_folder_to_tensor
-# from src.utils.run import init_cyclegan_train
 from src.models.cyclegan import CycleGAN
 
 def init_new_cycle_gan(params):
@@ -27,6 +23,9 @@ def init_new_cycle_gan(params):
         n_downsampling=params["n_downsampling"],
         norm_type=params["norm_type"],
         add_skip=params["add_skip"],
+        add_attention=params["add_attention"],
+        add_lora=params["add_lora"],
+        lora_rank=params["lora_rank"],
         use_replay_buffer=params["use_replay_buffer"],
         replay_buffer_size=params["replay_buffer_size"],
         vanilla_loss=params["vanilla_loss"],
@@ -55,52 +54,59 @@ def translate_image(model, input_image_path, output_dir):
     output_path = Path(output_dir) / Path(input_image_path).name
     output_pil.save(output_path)
 
+
+def translate_images(params):
+    """Translate images using a CycleGAN model."""
+    if 'params_path' in params:
+        params_ = load_json_to_dict(params['params_path'])
+        for k,v in params_.items():
+            if k not in params:
+                params[k] = v
+
+    cyclegan = init_new_cycle_gan(params)
+    params['restart_epoch'] = cyclegan.load_model(params['restart_path'])
+    print(f"Restarting from {Path(params['restart_path']).name}")
+    print(f"  Epoch: {params['restart_epoch']}")
+
+    data_folder = params["data_folder"]
+
+    output_dir_  = data_folder / f"output_A_{params['output_name']}"
+    output_dir_.mkdir(parents=True, exist_ok=True)
+    remove_all_files(output_dir_)
+    df = pd.read_csv(data_folder / f"input_A_train{params['csv_type']}.csv")
+    for file_name in tqdm(df['file_name']):
+        input_image_ = data_folder / "input_A" / file_name
+        translate_image(cyclegan.gen_AtoB, input_image_, output_dir_)
+    df = pd.read_csv(data_folder / f"input_A_test{params['csv_type']}.csv")
+    for file_name in tqdm(df['file_name']):
+        input_image_ = data_folder / "input_A" / file_name
+        translate_image(cyclegan.gen_AtoB, input_image_, output_dir_)
+
+    output_dir_  = data_folder / f"output_B_{params['output_name']}"
+    output_dir_.mkdir(parents=True, exist_ok=True)
+    remove_all_files(output_dir_)
+    df = pd.read_csv(data_folder / f"input_B_train{params['csv_type']}.csv")
+    for file_name in tqdm(df['file_name']):
+        input_image_ = data_folder / "input_B" / file_name
+        translate_image(cyclegan.gen_BtoA, input_image_, output_dir_)
+    df = pd.read_csv(data_folder / f"input_B_test{params['csv_type']}.csv")
+    for file_name in tqdm(df['file_name']):
+        input_image_ = data_folder / "input_B" / file_name
+        translate_image(cyclegan.gen_BtoA, input_image_, output_dir_)
+
+
 if __name__ == '__main__':
     base_folder = Path(__file__).resolve().parent.parent.parent
     parameters = {
         'restart_path': base_folder / 'no_sync/test_model_7/cycle_gan_epoch_14.pth',
-        'parameters_path': base_folder / 'no_sync/test_model_7/hyperparameters.json',
+        'params_path': base_folder / 'no_sync/test_model_7/hyperparams.json',
 
         'data_folder': base_folder / 'data/external/nexet',
-        'output_name': 'recycle',
+        'output_name': 'recycle2',
         'csv_type': '_filtered',
 
         'use_cuda': True,
         'batch_size' : 64,
     }
 
-    params_ = load_json_to_dict(parameters['parameters_path'])
-    for k,v in params_.items():
-        if k not in parameters:
-            parameters[k] = v
-
-    model = init_new_cycle_gan(parameters)
-    parameters['restart_epoch'] = model.load_model(parameters['restart_path'])
-    print(f"Restarting from {Path(parameters['restart_path']).name}")
-    print(f"  Epoch: {parameters['restart_epoch']}")
-
-    data_folder = parameters["data_folder"]
-
-    output_dir_  = data_folder / "output_A_recycle"
-    output_dir_.mkdir(parents=True, exist_ok=True)
-    remove_all_files(output_dir_)
-    df = pd.read_csv(data_folder / "input_A_train.csv")
-    for file_name in tqdm(df['file_name']):
-        input_image_ = data_folder / "input_A" / file_name
-        translate_image(model.gen_AtoB, input_image_, output_dir_)
-    df = pd.read_csv(data_folder / "input_A_test.csv")
-    for file_name in tqdm(df['file_name']):
-        input_image_ = data_folder / "input_A" / file_name
-        translate_image(model.gen_AtoB, input_image_, output_dir_)
-
-    output_dir_  = data_folder / "output_B_recycle"
-    output_dir_.mkdir(parents=True, exist_ok=True)
-    remove_all_files(output_dir_)
-    df = pd.read_csv(data_folder / "input_B_train.csv")
-    for file_name in tqdm(df['file_name']):
-        input_image_ = data_folder / "input_B" / file_name
-        translate_image(model.gen_BtoA, input_image_, output_dir_)
-    df = pd.read_csv(data_folder / "input_B_test.csv")
-    for file_name in tqdm(df['file_name']):
-        input_image_ = data_folder / "input_B" / file_name
-        translate_image(model.gen_BtoA, input_image_, output_dir_)
+    translate_images(parameters)
