@@ -3,12 +3,25 @@
 
 A new Python virtual environment is recommended to run this script.
 The path to img2img-turbo source code must be adjusted as needed.
+
+nexet images must be placed in the following directories:
+    /pytorch-CycleGAN-and-pix2pix/datasets/nexet/testA
+    /pytorch-CycleGAN-and-pix2pix/datasets/nexet/testB
+    /pytorch-CycleGAN-and-pix2pix/datasets/nexet/trainA
+    /pytorch-CycleGAN-and-pix2pix/datasets/nexet/trainB
+
+After training the model, copy all train images into the respective test directories.
+This will generate the translated images in the following directory:
+    /pytorch-CycleGAN-and-pix2pix/results/day2night/test_latest/images
+
+The A images keep the same file name, and only renaming is needed.
+The B images are renamed to some A image, and so there is the need to search for
+similar images in the source directory and copy them to the destination directory.
 """
 
 import os
 import subprocess
 from pathlib import Path
-import shutil
 import pandas as pd
 from tqdm import tqdm
 from PIL import Image
@@ -75,24 +88,22 @@ def search_and_copy_b_images(df, src_dir, base_img_dir, dst_dir, threshold=1e-5)
         all_images.append((file_path,img))
 
     print("Comparing images...")
-    used = []
     for _, row in tqdm(df.iterrows()):
         src_path = Path(base_img_dir) / row['file_name']
         src_image = Image.open(src_path).convert('RGB')
         src_image = np.array(src_image)
 
-        i = len(used)
-        for file_path, img in all_images:
-            if file_path in used:
-                continue
-            if np.max(np.abs(src_image - img) < threshold):
-                used.append(file_path)
+        ok = False
+        for k, (file_path, img) in enumerate(all_images):
+            if np.max(np.abs(src_image - img)) < threshold:
                 new_name = file_path.stem.replace('_real_B','_fake_A') + file_path.suffix
                 file_path = file_path.with_name(new_name)
                 with Image.open(file_path) as img:
                     img.save(dst_dir / src_path.name)
+                all_images.pop(k)
+                ok = True
                 break
-        if i == len(used):
+        if not ok:
             print(f"Similar image not found for: {src_path.name}")
 
 if __name__ == '__main__':
@@ -106,11 +117,11 @@ if __name__ == '__main__':
     # install_requirements(cyclegan_path / 'requirements.txt')
 
     # train model
-    # train_command = '!python train.py --dataroot ./datasets/nexet --name day2night --model cycle_gan --display_id -1'
+    # train_command = 'python train.py --dataroot ./datasets/nexet --name day2night --model cycle_gan --display_id -1'
     # run(train_command)
 
     # generate test images
-    # test_command = '!python test.py --dataroot datasets/nexet/ --name day2night --model cycle_gan --num_test 999999'
+    # test_command = 'python test.py --dataroot datasets/nexet/ --name day2night --model cycle_gan --num_test 999999'
     # run(test_command)
 
     base_src_folder = cyclegan_path / 'results/day2night/test_latest/images'
@@ -125,7 +136,6 @@ if __name__ == '__main__':
         dst_dir=base_out_folder / 'output_A_cyclegan',
         src_name_modifier='_fake_B')
 
-    # Images B
     print("Processing B images")
     df_imgs_B_train = pd.read_csv(base_out_folder / 'input_B_train.csv')
     df_imgs_B_test = pd.read_csv(base_out_folder / 'input_B_test.csv')
