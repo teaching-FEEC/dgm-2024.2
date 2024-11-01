@@ -1,9 +1,7 @@
 
-# `Projeto Satellite2Map: 
-Modelos de Traudção de Imagens de Satélite para Mapas (supervisionados e não supervisionados)`
+# `Projeto Satellite2Map: Modelos de Traudção de Imagens de Satélite para Mapas (supervisionados e não supervisionados)`
 
-# `Satellite2Map Project:
-Satellite Image Translation Models for Maps (supervised and unsupervised)`
+# `Satellite2Map Project: Satellite Image Translation Models for Maps (supervised and unsupervised)`
 
 ## Apresentação
 
@@ -20,7 +18,10 @@ Link para os [slides](https://docs.google.com/presentation/d/1wfFYGmEwGVK_7xQVmF
 
 ## Resumo (Abstract)
 
-Com a finalidade de estudar os principais métodos da área de *image-to-image translation* (I2IT), a ideia desse projeto é abordar o problema da extração de mapas a partir de imagens de  satélite utilizando redes adversárias generativas (GANs). Duas abordagens muito conceituadas na área serão utilizadas: Pix2pix e CycleGAN. O modelo Pix2pix foi implementado e treinado com a base de dados de seu próprio artigo. Os resultados foram imagens coerentes porém distorcidas e com perdas de alguns elementos relevantes para esse tipo de dado, como consistência de ruas e preservação de rotas.
+Com a finalidade de estudar os principais métodos da área de *image-to-image translation* (I2IT), o objetivo deste projeto é explorar o problema da extração de mapas a partir de imagens de  satélite utilizando duas abordagens diferentes: uma supervisionada (Pix2Pix) e outra não supervisionada (CycleGAN).
+O modelo Pix2pix foi implementado e treinado com a base de dados de seu próprio artigo. Os resultados foram imagens coerentes porém distorcidas e com perdas de alguns elementos relevantes para esse tipo de dado, como consistência de ruas e preservação de rotas. Como limitação, destaca-se necessidade de um conjunto de dados com pares de imagens correspondentes, o que pode ser difícil de obter para algumas tarefas.
+Já o modelo CycleGAN utilizou os mesmos datasets do Pix2Pix, contudocomo por exemplo Monet2Photo
+
 
  ## Descrição do Problema/Motivação
 
