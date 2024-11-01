@@ -23,41 +23,49 @@ def fine_tune(model, dataloader_train, dataloader_val, epochs, discriminate_ever
     gan_losses_val = []
     l2_losses_val = []
     d_losses_val = []
+    losses_train = []
+    losses_val = []
     pbar = tqdm(range(1, epochs+1))
     for epoch in pbar:
 
         gan_train = 0.
         l2_train = 0.
         d_train = 0.
+        loss_train = 0.
         i = 0
         r_batch = 3
 
-        if epoch % discriminate_every ==0:
-            r_batch = 1
-        else:
-            r_batch = 3
+        # if epoch % discriminate_every ==0:
+        #     r_batch = 1
+        # else:
+        #     r_batch = 3
 
         for batch in dataloader_train:
             i+=1
-            b_gan, b_l2, b_d = model.train_step(batch, discriminating=(i % r_batch == 0))
+            b_gan, b_l2, b_d, b_loss = model.train_step(batch, discriminating=(i % discriminate_every == 0))
             gan_train += b_gan
             l2_train += b_l2
             d_train += b_d
+            loss_train += b_loss
         gan_losses_train.append(gan_train / len(dataloader_train))
         l2_losses_train.append(l2_train / len(dataloader_train))
         d_losses_train.append(d_train / len(dataloader_train))
+        losses_train.append(loss_train / len(dataloader_train))
 
         gan_val = 0.
         l2_val = 0.
         d_val = 0.
+        loss_val = 0.
         for batch in dataloader_val:
-            b_gan, b_l2, b_d = model.test_step(batch)
+            b_gan, b_l2, b_d, b_loss = model.test_step(batch)
             gan_val += b_gan
             l2_val += b_l2
             d_val += b_d
+            loss_val += b_loss
         gan_losses_val.append(gan_val / len(dataloader_val))
         l2_losses_val.append(l2_val / len(dataloader_val))
         d_losses_val.append(d_val / len(dataloader_val))
+        losses_val.append(loss_val / len(dataloader_val))
 
         pbar.set_description(f'train=({gan_losses_train[-1]:.2f}, {d_losses_train[-1]:.2f}, {l2_losses_train[-1]:.2f}); val=({gan_losses_val[-1]:.2f}, {d_losses_val[-1]:.2f}, {l2_losses_val[-1]:.2f})')
 
@@ -65,7 +73,7 @@ def fine_tune(model, dataloader_train, dataloader_val, epochs, discriminate_ever
             model.save(f'../models/{model_fname}_{epoch}.keras')
             model.save_weights(f'../models/{model_fname}_{epoch}.weights.h5')
         
-    return model, gan_losses_train, l2_losses_train, d_losses_train, gan_losses_val, l2_losses_val, d_losses_val
+    return model, gan_losses_train, l2_losses_train, d_losses_train, losses_train, gan_losses_val, l2_losses_val, d_losses_val, losses_val
 
 
 def main(path_train, path_val, H, W, filters, n_blocks, channels, momentum, batch_size, ae_lr, gan_lr, epochs_pt, epochs_ft, discriminate_every, save_every):
