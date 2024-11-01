@@ -1,9 +1,9 @@
+"""Base Parameters Dictionary (used across all test cases)"""
 from pathlib import Path
 
 NEXET = '/content/nexet'
 OUT_FOLDER = '/content/out'
 
-# Base Parameters Dictionary (used across all test cases)
 BASE = {
     'restart_path': None,
     'parameters_path': None,
