@@ -1,6 +1,9 @@
 
-# `Projeto Satellite2Map: Modelos de Traudção de Imagens de Satélite para Mapas (supervisionados e não supervisionados)`
-# `<Project Title in in English>`
+# `Projeto Satellite2Map: 
+Modelos de Traudção de Imagens de Satélite para Mapas (supervisionados e não supervisionados)`
+
+# `Satellite2Map Project:
+Satellite Image Translation Models for Maps (supervised and unsupervised)`
 
 ## Apresentação
 
