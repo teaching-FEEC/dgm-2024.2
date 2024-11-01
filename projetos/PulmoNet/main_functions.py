@@ -135,7 +135,7 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir,device):
            
 
             gen_img = gen(input_mask)
-            ans_gen = disc(gen_img)
+            ans_gen = disc(input_mask,gen_img)
             break
 
         plt_save_example_synth_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 

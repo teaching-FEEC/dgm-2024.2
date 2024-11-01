@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 
 
@@ -59,29 +60,34 @@ class Generator(nn.Module):
         return self.gen
 
 
-def block_discriminator(in_dim, out_dim):
-    return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, kernel_size=4, stride=2, padding=1, dilation=1, bias=True),
-                         nn.LeakyReLU(negative_slope=0.2, inplace=True))
+def block_discriminator(in_dim, out_dim,stride_size,use_batchnorm):
+    if use_batchnorm is True:
+        return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, kernel_size=4, stride=stride_size, padding=1, dilation=1, bias=True),
+                            nn.BatchNorm2d(num_features=out_dim),
+                            nn.LeakyReLU(negative_slope=0.2, inplace=True))
+    else:
+        return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, kernel_size=4, stride=stride_size, padding=1, dilation=1, bias=True),
+                            nn.LeakyReLU(negative_slope=0.2, inplace=True))
 
 
 class Discriminator(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = block_discriminator(in_dim=1, out_dim=64)
-        self.conv2 = block_discriminator(in_dim=64, out_dim=128)
-        self.conv3 = block_discriminator(in_dim=128, out_dim=256)
-        self.conv4 = nn.Sequential(nn.Conv2d(in_channels=256, out_channels=512, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
-                                   nn.LeakyReLU(negative_slope=0.2, inplace=True))
+        self.conv1 = block_discriminator(in_dim=2, out_dim=64,stride_size=2,use_batchnorm=False)
+        self.conv2 = block_discriminator(in_dim=64, out_dim=128,stride_size=2,use_batchnorm=True)
+        self.conv3 = block_discriminator(in_dim=128, out_dim=256,stride_size=2,use_batchnorm=True)
+        self.conv4 = block_discriminator(in_dim=256, out_dim=512,stride_size=1,use_batchnorm=True)
         #self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
         #                           nn.Sigmoid())
         self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True))
 
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.conv2(x)
-        x = self.conv3(x)
-        x = self.conv4(x)
-        out = self.conv5(x)
+    def forward(self, x, y):
+        xy_concat = torch.cat([y, x], dim=1)
+        xy_concat = self.conv1(xy_concat)
+        xy_concat = self.conv2(xy_concat)
+        xy_concat = self.conv3(xy_concat)
+        xy_concat = self.conv4(xy_concat)
+        out = self.conv5(xy_concat)
         return out
 
     def get_disc(self):

@@ -1,6 +1,6 @@
 model:
-  name_model: "model_article_complete"
-  dir_save_results: "./model_article_complete/"
+  name_model: "model_article_cGAN"
+  dir_save_results: "./model_article_cGAN/"
   new_model: True
   path_to_saved_model_gen: ""
   path_to_saved_model_disc: ""
@@ -8,12 +8,16 @@ model:
 data:
   processed_data_folder: "/mnt/shared/divided_data/"
   dataset: "lungCTData"
+  start_point_train_data: 0
+  end_point_train_data: 15000
+  start_point_validation_data: 0
+  end_point_validation_data: 1000
 
 
 training:
-  batch_size_train: 20
+  batch_size_train: 15
   batch_size_validation: 8
-  n_epochs: 200
+  n_epochs: 6
   steps_to_complete_bfr_upd_disc: 1
   steps_to_complete_bfr_upd_gen: 1
   transformations: 
@@ -51,8 +55,8 @@ lr_scheduler:
   path_to_saved_disc_scheduler: ""
 
 save_models_and_results:
-  step_to_safe_save_models: 10
+  step_to_safe_save_models: 4
   save_best_model: True
 
 wandb:
-  activate: True
+  activate: False
