@@ -97,23 +97,23 @@ class FID():
         sigma = np.cov(act, rowvar=False)
         return mu, sigma
 
-    def get(self, images_real, images_fake):
-        """Calculate FID between real and fake images."""
-        self._last_num_imgs = len(images_real) + len(images_fake)
+    def get(self, images1, images2):
+        """Calculate FID between images."""
+        self._last_num_imgs = len(images1) + len(images2)
 
         self._init_model()
-        m1, s1 = self._compute_statistics_of_imgs(images_real)
-        m2, s2 = self._compute_statistics_of_imgs(images_fake)
+        m1, s1 = self._compute_statistics_of_imgs(images1)
+        m2, s2 = self._compute_statistics_of_imgs(images2)
         return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
 
-    def get_from_paths(self, path_images_real, path_images_fake):
-        """Calculate FID between real and fake images."""
+    def get_from_paths(self, path_images1, path_images2):
+        """Calculate FID between image folders."""
         if self.cuda:
             device = torch.device('cuda')
         else:
             device = torch.device('cpu')
         return fid_score.calculate_fid_given_paths(
-            [path_images_real, path_images_fake],
+            [path_images1, path_images2],
             batch_size=self.batch_size,
             device=device,
             dims=self.dims,
