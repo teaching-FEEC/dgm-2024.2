@@ -176,13 +176,6 @@ def read_yaml(file: str) -> yaml.loader.FullLoader:
     return configurations
 
 
-def check_for_zero_loss(value, eps=1e-10):
-    if value == 0:
-        return value+eps
-    else:
-        return value
-
-
 def plot_training_evolution(path, mean_loss_train_gen_list, mean_loss_validation_gen_list,
                             mean_loss_train_disc_list, mean_loss_validation_disc_list):
     fig, ax = plt.subplots(1, 2, figsize=(14, 4))
@@ -310,3 +303,8 @@ def add_gaussian_noise(tensor, mean, std, intensity=1, lung_area: bool = False):
         return transform(((noise*tensor)*intensity) + tensor)
     # Else, the entire mask is changed
     return transform((noise*intensity) + tensor)
+
+def set_requires_grad(model,set_require_grad):
+    for param in model.parameters():
+        param.requires_grad = set_require_grad
+

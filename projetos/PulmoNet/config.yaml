@@ -9,15 +9,15 @@ data:
   processed_data_folder: "/mnt/shared/divided_data/"
   dataset: "lungCTData"
   start_point_train_data: 0
-  end_point_train_data: 15000
+  end_point_train_data: 10000
   start_point_validation_data: 0
-  end_point_validation_data: 1000
+  end_point_validation_data: 800
 
 
 training:
   batch_size_train: 15
   batch_size_validation: 8
-  n_epochs: 6
+  n_epochs: 50
   steps_to_complete_bfr_upd_disc: 1
   steps_to_complete_bfr_upd_gen: 1
   transformations: 
@@ -59,4 +59,4 @@ save_models_and_results:
   save_best_model: True
 
 wandb:
-  activate: False
+  activate: True

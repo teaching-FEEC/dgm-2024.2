@@ -6,6 +6,7 @@ import os
 from constants import *
 from save_models_and_training import safe_save, save_trained_models, delete_safe_save
 from lr_scheduler import LRScheduler
+from losses import Regularizer
 from main_functions import run_train_epoch, run_validation_epoch, valid_on_the_fly
 from utils import read_yaml, plot_training_evolution, retrieve_metrics_from_csv, prepare_environment_for_new_model, resume_training
 
@@ -56,9 +57,11 @@ else:
 criterion = FACTORY_DICT["criterion"][config['loss']['criterion']['name']](**config['loss']['criterion'].get('info',{}))
 if 'regularizer' in config['loss']:
     regularization_type = config['loss']['regularizer']['type']
+    regularizer = Regularizer(regularization_type)
     regularization_level = config['loss']['regularizer']['regularization']
 else:
     regularization_type = None
+    regularizer = None
     regularization_level = None
 
 #optimizer
@@ -186,7 +189,7 @@ for epoch in range(n_epochs):
                                                       steps_to_complete_bfr_upd_gen=steps_to_complete_bfr_upd_gen,
                                                       device=device,
                                                       use_wandb=use_wandb,
-                                                      regularization_type=regularization_type,
+                                                      regularizer=regularizer,
                                                       regularization_level=regularization_level)
     mean_loss_train_gen_list.append(loss_train_gen)
     mean_loss_train_disc_list.append(loss_train_disc)
@@ -198,7 +201,7 @@ for epoch in range(n_epochs):
                                                                      epoch=epoch,
                                                                      device=device,
                                                                      use_wandb=use_wandb,
-                                                                     regularization_type=regularization_type,
+                                                                     regularizer=regularizer,
                                                                      regularization_level=regularization_level)
     mean_loss_validation_gen_list.append(loss_validation_gen)
     mean_loss_validation_disc_list.append(loss_validation_disc)

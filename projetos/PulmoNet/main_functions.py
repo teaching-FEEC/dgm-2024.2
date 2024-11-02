@@ -3,7 +3,7 @@ from tqdm import trange
 import torch
 import gc
 from losses import get_gen_loss, get_disc_loss
-from utils import plt_save_example_synth_img
+from utils import plt_save_example_synth_img, set_requires_grad
 import wandb
 
 def run_train_epoch(gen, 
@@ -16,7 +16,7 @@ def run_train_epoch(gen,
                     steps_to_complete_bfr_upd_disc, 
                     steps_to_complete_bfr_upd_gen, device,
                     use_wandb, 
-                    regularization_type=None,
+                    regularizer=None,
                     regularization_level=None):
 
     mean_loss_gen = 0
@@ -39,10 +39,10 @@ def run_train_epoch(gen,
             input_mask = input_mask_batch.to(device)
             
             if counter_steps_before_upd_disc == 0:
+                set_requires_grad(model=disc,set_require_grad=True)
                 disc_opt.zero_grad()
                 disc_loss = get_disc_loss(gen=gen,disc=disc,criterion=criterion,
-                                          input_mask=input_mask,input_img=input_img,
-                                          device=device)
+                                          input_mask=input_mask,input_img=input_img)
                 disc_loss.backward(retain_graph=True)
                 disc_opt.step()
                 mean_loss_disc = mean_loss_disc + disc_loss.item() 
@@ -52,10 +52,11 @@ def run_train_epoch(gen,
                     counter_steps_before_upd_gen = 0
             
             if counter_steps_before_upd_gen == 0:
+                set_requires_grad(model=disc,set_require_grad=False)
                 gen_opt.zero_grad()
                 gen_loss = get_gen_loss(gen=gen,disc=disc,criterion=criterion,input_mask=input_mask,
-                                        input_img=input_img,device=device,regularization_type=regularization_type,
-                                        regularization_level=regularization_level)
+                                        input_img=input_img,regularizer=regularizer,
+                                        regularization_level=regularization_level,device=device)
                 gen_loss.backward(retain_graph=True)
                 gen_opt.step()
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
@@ -82,7 +83,7 @@ def run_validation_epoch(gen,
                          epoch, 
                          device, 
                          use_wandb, 
-                         regularization_type=None,
+                         regularizer=None,
                          regularization_level=None):
 
     mean_loss_gen = 0
@@ -100,12 +101,11 @@ def run_validation_epoch(gen,
                 input_img = input_img_batch.to(device)
                 input_mask = input_mask_batch.to(device)
                 disc_loss = get_disc_loss(gen=gen,disc=disc,criterion=criterion,
-                                          input_mask=input_mask,input_img=input_img,
-                                          device=device)
+                                          input_mask=input_mask,input_img=input_img)
                 mean_loss_disc = mean_loss_disc + disc_loss.item() 
                 gen_loss = get_gen_loss(gen=gen,disc=disc,criterion=criterion,input_mask=input_mask,
-                                        input_img=input_img,device=device,regularization_type=regularization_type,
-                                        regularization_level=regularization_level)
+                                        input_img=input_img,regularizer=regularizer,
+                                        regularization_level=regularization_level,device=device)
                 mean_loss_gen = mean_loss_gen + gen_loss.item() 
 
                 progress_bar.set_postfix(
