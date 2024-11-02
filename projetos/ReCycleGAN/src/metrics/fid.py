@@ -31,9 +31,9 @@ class FID():
         (Default: True).
     batch_size : int
         Batch size to use.
-        (Default: 128).
+        (Default: 32).
     """
-    def __init__(self, dims=2048, cuda=False, init_model=True, batch_size=128):
+    def __init__(self, dims=2048, cuda=False, init_model=True, batch_size=32):
         self.cuda = cuda
         self.dims = dims
         self.batch_size = batch_size
