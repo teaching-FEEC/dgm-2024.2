@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,invalid-name
 """Module with network constructors and loss functions."""
 import math
 import random
@@ -6,7 +7,6 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from peft import LoraConfig
-from peft.utils import get_peft_model_state_dict
 
 class Identity(nn.Module):
     """Identity layer."""
@@ -30,7 +30,7 @@ def get_norm_layer(norm_type='instance'):
     elif norm_type == 'instance':
         norm_layer = functools.partial(nn.InstanceNorm2d, affine=False, track_running_stats=False)
     elif norm_type == 'none':
-        def norm_layer(x):
+        def norm_layer(x): #pylint: disable=unused-argument
             return Identity()
     else:
         raise NotImplementedError(f'normalization layer {norm_type} is not valid.')
@@ -63,7 +63,7 @@ class ResidualBlock(nn.Module):
     def forward(self, x):
         """Forward pass through the residual block."""
         return x + self.conv_block(x)
-    
+
 class SelfAttention(nn.Module):
     """ Self attention Layer
     Implementation inspired on "A New CycleGAN-Based Style Transfer Method"
@@ -81,6 +81,7 @@ class SelfAttention(nn.Module):
         self.softmax    = nn.Softmax(dim=-1)
 
     def forward(self, x):
+        """Forward pass through the self-attention layer."""
         m_batchsize, C, width, height = x.size()
         attention_query = self.query_conv(x).view(m_batchsize, -1, width * height).permute(0, 2, 1)  # B X CX(N) # Q
         attention_key   = self.key_conv(x).view(m_batchsize, -1, width * height)  # B X C x (*W*H)  # K
@@ -112,7 +113,7 @@ class Generator(nn.Module):
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
     def __init__(self,
-                 input_nc, 
+                 input_nc,
                  output_nc,
                  n_residual_blocks=9,
                  n_features=64,
@@ -134,7 +135,7 @@ class Generator(nn.Module):
         self.encoder = nn.ModuleList()
         if add_lora:
             self.lora_modules_encoder = []
-        
+
         for i in range(n_downsampling):
             n_feat = n_features * 2 ** i
             conv_layer = nn.Conv2d(n_feat, 2 * n_feat, 3, stride=2, padding=1)
@@ -168,7 +169,7 @@ class Generator(nn.Module):
             n_feat = n_features * 2 ** (n_downsampling - i)
             conv_layer = nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
                                    stride=2, padding=1, output_padding=1)
-            
+
             if add_attention == 'gen':
                 self.decoder.append(nn.Sequential(
                     conv_layer,
@@ -187,7 +188,7 @@ class Generator(nn.Module):
                 lora_conf = LoraConfig(r=lora_rank, target_modules=[conv_layer], lora_alpha=lora_rank)
                 self.lora_modules_decoder.append(lora_conf)
 
-            
+
 
 
         self.final_layers = nn.Sequential(
@@ -227,11 +228,11 @@ class Discriminator(nn.Module):
     - input_nc: Number of input channels.
     - n_features: Number of features. Default is 64.
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
-    - add_attention: If True, add self-attention layer to the discriminator. Default is False. 
+    - add_attention: If True, add self-attention layer to the discriminator. Default is False.
     """
-    def __init__(self, 
-                 input_nc, 
-                 n_features=64, 
+    def __init__(self,
+                 input_nc,
+                 n_features=64,
                  norm_layer=nn.InstanceNorm2d,
                  add_attention=None,
                  ):
