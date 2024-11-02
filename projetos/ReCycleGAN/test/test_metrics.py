@@ -11,7 +11,7 @@ from tqdm import tqdm
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
 from metrics.fid import FID
 from metrics.lpips import LPIPS
-from utils.data_loader import get_img_dataloader
+from utils.data_loader import get_img_dataloader, copy_dataloader
 from utils.utils import get_gpu_memory_usage
 
 class TestMetrics(unittest.TestCase):
@@ -87,6 +87,7 @@ class TestMetrics(unittest.TestCase):
 
         self.assertAlmostEqual(fid_dataloaders, fid_imgs, 3, "Values shoud be very close.")
 
+
     def test_fid(self):
         """Test FID calculation."""
         print("===============")
@@ -122,12 +123,12 @@ class TestMetrics(unittest.TestCase):
         start_time = time.time()
         fid_turbo_B = fid.get(self.test_A, self.train_B_turbo)
         elapsed_time = time.time() - start_time
-        print(f"FID score of CycleGAN-turbo A transformed images: {fid_turbo_B:0.3g} ({elapsed_time/fid.get_last_num_imgs()*1000:.3f} s/1000 images)")
+        print(f"FID score of A images and CycleGAN-turbo transformed images: {fid_turbo_B:0.3g} ({elapsed_time/fid.get_last_num_imgs()*1000:.3f} s/1000 images)")
 
         start_time = time.time()
         fid_turbo_A = fid.get(self.test_B, self.train_A_turbo)
         elapsed_time = time.time() - start_time
-        print(f"FID score of CycleGAN-turbo B transformed images: {fid_turbo_A:0.3g} ({elapsed_time/fid.get_last_num_imgs()*1000:.3f} s/1000 images)")
+        print(f"FID score of B images and CycleGAN-turbo transformed images: {fid_turbo_A:0.3g} ({elapsed_time/fid.get_last_num_imgs()*1000:.3f} s/1000 images)")
 
         if self.print_memory:
             print(get_gpu_memory_usage("After FID calculation", short_msg=True))
@@ -141,74 +142,95 @@ class TestMetrics(unittest.TestCase):
         self.assertLess(fid_same_B, fid_different, "FID for images of the same class B should be lower than for images of different classes.")
 
 
-    # def test_lpips(self):
-    #     """Test LPIPS calculation."""
-    #     print("=================")
-    #     print("LPIPS calculation")
-    #     print("=================")
-    #     if self.print_memory:
-    #         print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
+    def test_lpips(self):
+        """Test LPIPS calculation."""
+        print("=================")
+        print("LPIPS calculation")
+        print("=================")
+        if self.print_memory:
+            print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
-    #     lpips = LPIPS(cuda=self.use_cuda, batch_size=128)
-    #     if self.print_memory:
-    #         print(get_gpu_memory_usage("After model load", short_msg=True))
+        lpips = LPIPS(cuda=self.use_cuda, batch_size=128)
+        if self.print_memory:
+            print(get_gpu_memory_usage("After model load", short_msg=True))
+
+        start_time = time.time()
+        lpips_train_a = lpips.get(self.train_A, self.train_A)
+        elapsed_time = time.time() - start_time
+        print(f"LPIPS loss of train A images: {lpips_train_a.mean():0.3g} ± {lpips_train_a.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
+
+        start_time = time.time()
+        lpips_train_a_pairs = lpips.get(self.train_A, self.train_A, all_pairs=True)
+        elapsed_time = time.time() - start_time
+        print(f"LPIPS loss of train A images with more pairs: {lpips_train_a_pairs.mean():0.3g} ± {lpips_train_a_pairs.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
 
 
-    #     start_time = time.time()
-    #     lpips_equal = lpips.get(self.train_A_imgs, self.train_A_imgs)
-    #     elapsed_time = time.time() - start_time
-    #     print(f"LPIPS loss of the same images: {lpips_equal.mean():0.3g} ± {lpips_equal.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
+        start_time = time.time()
+        lpips_test_a = lpips.get(self.test_A, self.test_A)
+        elapsed_time = time.time() - start_time
+        print(f"LPIPS loss of test A images: {lpips_test_a.mean():0.3g} ± {lpips_test_a.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
 
-    #     start_time = time.time()
-    #     lpips_equal_pairs = lpips.get(self.train_A_imgs, self.train_A_imgs, all_pairs=True)
-    #     elapsed_time = time.time() - start_time
-    #     print(f"LPIPS loss of the same group of images by pairs: {lpips_equal_pairs.mean():0.3g} ± {lpips_equal_pairs.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
+        start_time = time.time()
+        lpips_test_a_pairs = lpips.get(self.test_A, self.test_A, all_pairs=True)
+        elapsed_time = time.time() - start_time
+        print(f"LPIPS loss of test A images with more pairs: {lpips_test_a_pairs.mean():0.3g} ± {lpips_test_a_pairs.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
 
-    #     n = min([len(self.train_A_imgs), len(self.test_A_imgs)])
-    #     start_time = time.time()
-    #     lpips_same_A = lpips.get(self.train_A_imgs[:n], self.test_A_imgs[:n])
-    #     elapsed_time = time.time() - start_time
-    #     print(f"LPIPS loss of only A images: {lpips_same_A.mean():0.3g} ± {lpips_same_A.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
 
-    #     n = min([len(self.train_B_imgs), len(self.test_B_imgs)])
-    #     start_time = time.time()
-    #     lpips_same_B = lpips.get(self.train_B_imgs[:n], self.test_B_imgs[:n])
-    #     elapsed_time = time.time() - start_time
-    #     print(f"LPIPS loss of only B images: {lpips_same_B.mean():0.3g} ± {lpips_same_B.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
+        def _make_a_test(data1, data2, all_pairs=False):
+            n = min(len(data1.dataset), len(data2.dataset))
+            data1_ = copy_dataloader(data1)
+            data2_ = copy_dataloader(data2)
+            data1_.dataset.set_len(n)
+            data2_.dataset.set_len(n)
+            start_time = time.time()
+            lpips_value = lpips.get(data1_, data2_, all_pairs=all_pairs)
+            elapsed_time = time.time() - start_time
+            return lpips_value, elapsed_time
 
-    #     n = min([len(self.train_A_imgs), len(self.train_B_imgs)])
-    #     start_time = time.time()
-    #     lpips_different = lpips.get(self.train_A_imgs[:n], self.train_B_imgs[:n])
-    #     elapsed_time = time.time() - start_time
-    #     print(f"LPIPS loss of A x B images: {lpips_different.mean():0.3g} ± {lpips_different.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
+        lpips_same_a, elapsed_time = _make_a_test(self.train_A, self.test_A, all_pairs=False)
+        print(f"LPIPS loss of train and test A images: {lpips_same_a.mean():0.3g} ± {lpips_same_a.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
 
-    #     n = min([len(self.test_A_imgs), len(self.train_B_turbo_imgs)])
-    #     start_time = time.time()
-    #     lpips_turbo_A = lpips.get(self.test_A_imgs[:n], self.train_B_turbo_imgs[:n])
-    #     elapsed_time = time.time() - start_time
-    #     print(f"LPIPS loss of CycleGAN-turbo A transformed images: {lpips_turbo_A.mean():0.3g} ± {lpips_turbo_A.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
+        lpips_same_b, elapsed_time = _make_a_test(self.train_B, self.test_B, all_pairs=False)
+        print(f"LPIPS loss of train and test B images: {lpips_same_b.mean():0.3g} ± {lpips_same_b.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
 
-    #     n = min([len(self.test_B_imgs), len(self.train_A_turbo_imgs)])
-    #     start_time = time.time()
-    #     lpips_turbo_B = lpips.get(self.test_B_imgs[:n], self.train_A_turbo_imgs[:n])
-    #     elapsed_time = time.time() - start_time
-    #     print(f"LPIPS loss of CycleGAN-turbo B transformed images: {lpips_turbo_B.mean():0.3g} ± {lpips_turbo_B.std():0.3g} ({elapsed_time/lpips._last_num_pairs*1000:.3f} s/1000 image pairs)")
+        lpips_different, elapsed_time = _make_a_test(self.train_A, self.train_B, all_pairs=False)
+        print(f"LPIPS loss of train A and B images: {lpips_different.mean():0.3g} ± {lpips_different.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
 
-    #     if self.print_memory:
-    #         print(get_gpu_memory_usage("After LPIPS calculation", short_msg=True))
-    #     torch.cuda.empty_cache()
-    #     if self.print_memory:
-    #         print(get_gpu_memory_usage("After emptying cache", short_msg=True))
+        lpips_turbo_a, elapsed_time = _make_a_test(self.train_A, self.train_B_turbo, all_pairs=False)
+        print(f"LPIPS loss of train A and CycleGAN-turbo images: {lpips_turbo_a.mean():0.3g} ± {lpips_turbo_a.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
 
-    #     self.assertLess(lpips_equal.mean(), 1E-3, "LPIPS loss for same images should be zero.")
-    #     self.assertLess(lpips_same_A.mean(), lpips_different.mean(), "LPIPS loss for images of the same A class should be lower than for images of different classes.")
-    #     self.assertLess(lpips_same_B.mean(), lpips_different.mean(), "LPIPS loss for images of the same B class should be lower than for images of different classes.")
+        lpips_turbo_b, elapsed_time = _make_a_test(self.train_B, self.train_A_turbo, all_pairs=False)
+        print(f"LPIPS loss of train B and CycleGAN-turbo images: {lpips_turbo_b.mean():0.3g} ± {lpips_turbo_b.std():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 image pairs)")
+
+        if self.print_memory:
+            print(get_gpu_memory_usage("After LPIPS calculation", short_msg=True))
+        torch.cuda.empty_cache()
+        if self.print_memory:
+            print(get_gpu_memory_usage("After emptying cache", short_msg=True))
+
+        self.assertAlmostEqual(
+            float(lpips_train_a_pairs.mean()),
+            float(lpips_train_a.mean()),
+            3,
+            "Train A: LPIPS loss with additional pairs should get approximately same result."
+        )
+        self.assertAlmostEqual(
+            float(lpips_test_a_pairs.mean()),
+            float(lpips_test_a.mean()),
+            2,
+            "Test A: LPIPS loss with additional pairs should get approximately same result."
+        )
+        self.assertLess(lpips_same_a.mean(), lpips_different.mean(), "LPIPS loss for images of the same A class should be lower than for images of different classes.")
+        self.assertLess(lpips_same_b.mean(), lpips_different.mean(), "LPIPS loss for images of the same B class should be lower than for images of different classes.")
+
+        self.assertLess(lpips_same_a.mean(), lpips_turbo_a.mean(), "LPIPS loss for images of the same A class should be lower than for images generated by CycleGAN turbo.")
+        self.assertLess(lpips_same_b.mean(), lpips_turbo_a.mean(), "LPIPS loss for images of the same B class should be lower than for images generated by CycleGAN turbo.")
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     suite.addTest(TestMetrics('test_fid_dataloader'))
     suite.addTest(TestMetrics('test_fid'))
-    # suite.addTest(TestMetrics('test_lpips'))
+    suite.addTest(TestMetrics('test_lpips'))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)

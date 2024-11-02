@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 """LPIPS wrapper.
 
 Source: https://github.com/richzhang/PerceptualSimilarity/"""
@@ -37,12 +38,12 @@ class LPIPS():
         (Default: True).
     batch_size : int
         Batch size to use.
-        (Default: 128).
+        (Default: 32).
     max_pairs : int
         Maximum number of pairs to use.
         (Default: 10000).
     """
-    def __init__(self, net='alex', cuda=False, rescale=True, no_grad=True, batch_size=128, max_pairs=10000):
+    def __init__(self, net='alex', cuda=False, rescale=True, no_grad=True, batch_size=32, max_pairs=10000):
         self.cuda = cuda
         self.rescale = rescale
         self.no_grad = no_grad
@@ -58,6 +59,38 @@ class LPIPS():
         if cuda:
             self.model.cuda()
 
+    def get_last_num_pairs(self):
+        """Return the number of pairs used in the last call to get."""
+        return self._last_num_pairs
+
+    def _lpips_dataloader(self, img1, img2, normalize, use_all_pairs):
+        if use_all_pairs:
+            n_max = self.max_pairs
+        else:
+            n_max = len(img1.dataset)
+
+        n = 0
+        pred_arr = torch.empty(0)
+        while True:
+            for batch1,batch2 in tqdm(zip(img1,img2)):
+
+                if self.cuda:
+                    batch1 = batch1.cuda()
+                    batch2 = batch2.cuda()
+
+                if self.no_grad:
+                    with torch.no_grad():
+                        lpips_values = self.model.forward(batch1, batch2, normalize=normalize)
+                else:
+                    lpips_values = self.model.forward(batch1, batch2, normalize=normalize)
+
+                pred_arr = torch.cat((pred_arr, lpips_values.cpu()))
+                n += len(batch1)
+                if n >= n_max:
+                    self._last_num_pairs = n
+                    return pred_arr
+
+
     def _lpips(self, img0, img1, normalize, use_all_pairs):
         if use_all_pairs:
             all_pairs = self._get_all_pairs(img0, img1)
@@ -65,7 +98,7 @@ class LPIPS():
             all_pairs = np.array([(i, i) for i in range(len(img0))])
         self._last_num_pairs = len(all_pairs)
 
-        pred_arr = None
+        pred_arr = torch.empty(0)
         start_idx = 0
         for _ in tqdm(range(math.ceil(len(all_pairs) / self.batch_size))):
             i0 = all_pairs[start_idx:start_idx + self.batch_size, 0]
@@ -84,10 +117,7 @@ class LPIPS():
             else:
                 lpips_values = self.model.forward(img0_, img1_, normalize=normalize)
 
-            if pred_arr is None:
-                pred_arr = lpips_values
-            else:
-                pred_arr = torch.cat((pred_arr, lpips_values))
+            pred_arr = torch.cat((pred_arr, lpips_values))
             start_idx += self.batch_size
         return pred_arr
 
@@ -98,11 +128,32 @@ class LPIPS():
         random.shuffle(all_pairs)
         return np.array(all_pairs[:min(len(all_pairs), self.max_pairs)])
 
-    def get(self, images_real,images_fake, all_pairs=False):
-        """Calculate LPIPS between real and fake images."""
+    def get(self, images1,images2, all_pairs=False):
+        """Calculate LPIPS between pairs of images."""
+
+        if isinstance(images2, torch.utils.data.DataLoader) != isinstance(images1, torch.utils.data.DataLoader):
+            msg = 'Both images must be either DataLoader or list.'
+            raise ValueError(msg)
+
         if not all_pairs:
-            if len(images_real) != len(images_fake):
-                msg = 'Number of real and fake images must be the same.'
+            if isinstance(images1, torch.utils.data.DataLoader):
+                n_imgs1 = np.sum([len(batch) for batch in images1])
+                batch_size1 = images1.batch_size
+                n_imgs2 = np.sum([len(batch) for batch in images2])
+                batch_size2 = images2.batch_size
+            else:
+                n_imgs1 = len(images1)
+                batch_size1 = self.batch_size
+                n_imgs2 = len(images2)
+                batch_size2 = self.batch_size
+
+            if n_imgs1 != n_imgs2:
+                msg = 'Number of images per group must be the same.'
+                raise ValueError(msg)
+            if batch_size1 != batch_size2:
+                msg = 'Batch sizes must be the same.'
                 raise ValueError(msg)
 
-        return self._lpips(images_real, images_fake, normalize=self.rescale, use_all_pairs=all_pairs)
+        if isinstance(images1, torch.utils.data.DataLoader):
+            return self._lpips_dataloader(images1, images2, normalize=self.rescale, use_all_pairs=all_pairs)
+        return self._lpips(images1, images2, normalize=self.rescale, use_all_pairs=all_pairs)
