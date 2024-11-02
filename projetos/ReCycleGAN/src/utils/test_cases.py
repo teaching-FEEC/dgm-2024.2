@@ -57,48 +57,56 @@ TEST_CASES = {
     "1": BASE | {
         'amp': False,
         'experiment_name': "TEST_CASE_1",
-        'experiment_description': "Basic CycleGAN with vanilla setup"
+        'experiment_description': "Basic CycleGAN with vanilla setup",
+        'short_description': "1. 5 ResBlocks"
     },
 
     "2": BASE | {
         'experiment_name': "TEST_CASE_2",
-        'experiment_description': "Vanilla CycleGAN with AMP enabled"
+        'experiment_description': "Vanilla CycleGAN with AMP enabled",
+        'short_description': "2. AMP"
     },
 
     "3": BASE | {
         'add_skip': True,
         'experiment_name': "TEST_CASE_3'",
-        'experiment_description': "CycleGAN with skip connections"
+        'experiment_description': "CycleGAN with skip connections",
+        'short_description': "3. Skip"
     },
 
     "4": BASE | {
         'vanilla_loss': False,
         'experiment_name': "'TEST_CASE_4",
-        'experiment_description': "CycleGAN without MSEloss"
+        'experiment_description': "CycleGAN with MSEloss",
+        'short_description': "4. NoSkip+MSEloss"
     },
 
     "5": BASE | {
         'add_skip': True,
         'vanilla_loss': False,
         'experiment_name': "TEST_CASE_5",
-        'experiment_description': "CycleGAN with skip connections and MSEloss"
+        'experiment_description': "CycleGAN with skip connections and MSEloss",
+        'short_description': "5. Skip+MSEloss"
     },
 
     "6": BASE | {
         'add_attention': 'gen',
         'experiment_name': "TEST_CASE_6",
-        'experiment_description': "CycleGAN with self-attention in generator"
+        'experiment_description': "CycleGAN with self-attention in generator",
+        'short_description': "6. Self-Attention (gen)"
     },
 
     "7": BASE | {
         'add_attention': 'disc',
         'experiment_name': "TEST_CASE_7",
-        'experiment_description': "CycleGAN with self-attention in discriminator"
+        'experiment_description': "CycleGAN with self-attention in discriminator",
+        'short_description': "7. Self-Attention (disc)"
     },
 
     "8": BASE | {
         'plp_loss_weight': 5,
         'experiment_name': "TEST_CASE_8",
-        'experiment_description': "CycleGAN with perceptual loss weight set to 5"
+        'experiment_description': "CycleGAN with perceptual loss weight set to 5",
+        'short_description': "8. PLP weight=5"
     }
 }
