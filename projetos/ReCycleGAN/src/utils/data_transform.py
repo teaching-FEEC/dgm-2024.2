@@ -1,3 +1,4 @@
+# pylint: disable=import-error
 """Module with class to build image dataset with transformations."""
 
 from pathlib import Path
@@ -45,15 +46,20 @@ class ImageTools():
 
         csv_file = Path(csv_file)
 
-        df = pd.DataFrame({'file_name': img_train})
+        df_train = pd.DataFrame({'file_name': img_train})
         new_name = csv_file.stem + '_train' + csv_file.suffix
         csv_file_train = csv_file.with_name(new_name)
-        df.to_csv(csv_file_train, index=False)
+        df_train.to_csv(csv_file_train, index=False)
 
-        df = pd.DataFrame({'file_name': img_test})
+        df_test = pd.DataFrame({'file_name': img_test})
         new_name = csv_file.stem + '_test' + csv_file.suffix
         csv_file_test = csv_file.with_name(new_name)
-        df.to_csv(csv_file_test, index=False)
+        df_test.to_csv(csv_file_test, index=False)
+
+        df_all = pd.concat([df_train, df_test], axis=0)
+        new_name = csv_file.stem + '_all' + csv_file.suffix
+        csv_file_test = csv_file.with_name(new_name)
+        df_all.to_csv(csv_file_test, index=False)
 
 
     @staticmethod
