@@ -87,6 +87,51 @@ class TestMetrics(unittest.TestCase):
 
         self.assertAlmostEqual(fid_dataloaders, fid_imgs, 3, "Values shoud be very close.")
 
+    def test_lpips_dataloader(self):
+        """Test LPIPS calculation using dataloaders and images."""
+        print("=========================")
+        print("LPIPS calculation options")
+        print("=========================")
+
+        if self.print_memory:
+            print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
+
+        lpips = LPIPS(cuda=self.use_cuda, batch_size=16)
+        if self.print_memory:
+            print(get_gpu_memory_usage("After model load", short_msg=True))
+
+        print("LPIPS with data loaders")
+        n = min(len(self.train_A.dataset), len(self.train_B_turbo.dataset))
+        data1_ = copy_dataloader(self.train_A)
+        data2_ = copy_dataloader(self.train_B_turbo)
+        data1_.dataset.set_len(n)
+        data2_.dataset.set_len(n)
+
+        start_time = time.time()
+        lpips_dataloaders = lpips.get(data1_, data2_)
+        elapsed_time = time.time() - start_time
+        print(f"LPIPS with dataloaders: {lpips_dataloaders.mean():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 images)")
+
+        print("Reading all images")
+        train_A_imgs = torch.empty(0)
+        for batch in tqdm(self.train_A):
+            train_A_imgs = torch.concat([train_A_imgs, batch])
+        train_B_turbo_imgs = torch.empty(0)
+        for batch in tqdm(self.train_B_turbo):
+            train_B_turbo_imgs = torch.concat([train_B_turbo_imgs, batch])
+
+        print("LPIPS with images")
+        start_time = time.time()
+        lpips_imgs = lpips.get(train_A_imgs[:n], train_B_turbo_imgs[:n])
+        elapsed_time = time.time() - start_time
+        print(f"LPIPS with images: {lpips_imgs.mean():0.3g} ({elapsed_time/lpips.get_last_num_pairs()*1000:.3f} s/1000 images)")
+
+        self.assertAlmostEqual(
+            float(lpips_dataloaders.mean()),
+            float(lpips_imgs.mean()),
+            2,
+            "Values shoud be close."
+        )
 
     def test_fid(self):
         """Test FID calculation."""
@@ -96,7 +141,7 @@ class TestMetrics(unittest.TestCase):
         if self.print_memory:
             print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
-        fid = FID(dims=2048, cuda=self.use_cuda, batch_size=16)
+        fid = FID(dims=2048, cuda=self.use_cuda)
         if self.print_memory:
             print(get_gpu_memory_usage("After model load", short_msg=True))
 
@@ -150,7 +195,7 @@ class TestMetrics(unittest.TestCase):
         if self.print_memory:
             print(get_gpu_memory_usage("Initital memory usage", short_msg=True))
 
-        lpips = LPIPS(cuda=self.use_cuda, batch_size=128)
+        lpips = LPIPS(cuda=self.use_cuda)
         if self.print_memory:
             print(get_gpu_memory_usage("After model load", short_msg=True))
 
@@ -211,7 +256,7 @@ class TestMetrics(unittest.TestCase):
         self.assertAlmostEqual(
             float(lpips_train_a_pairs.mean()),
             float(lpips_train_a.mean()),
-            3,
+            2,
             "Train A: LPIPS loss with additional pairs should get approximately same result."
         )
         self.assertAlmostEqual(
@@ -229,6 +274,7 @@ class TestMetrics(unittest.TestCase):
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     suite.addTest(TestMetrics('test_fid_dataloader'))
+    suite.addTest(TestMetrics('test_lpips_dataloader'))
     suite.addTest(TestMetrics('test_fid'))
     suite.addTest(TestMetrics('test_lpips'))
 

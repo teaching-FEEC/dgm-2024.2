@@ -117,7 +117,7 @@ class LPIPS():
             else:
                 lpips_values = self.model.forward(img0_, img1_, normalize=normalize)
 
-            pred_arr = torch.cat((pred_arr, lpips_values))
+            pred_arr = torch.cat((pred_arr, lpips_values.cpu()))
             start_idx += self.batch_size
         return pred_arr
 
