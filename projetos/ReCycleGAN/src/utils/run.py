@@ -2,21 +2,20 @@
 """Functions to control training and testing CycleGAN models."""
 import time
 import gc
-import sys
 import matplotlib.pyplot as plt
 from pathlib import Path
 import torch
 from torchvision import transforms
 from tqdm import tqdm
 import wandb
-sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
-from utils.utils import get_gpu_memory_usage, get_current_commit, remove_all_files, save_dict_as_json, load_json_to_dict
-from utils.data_loader import get_img_dataloader
-from utils.data_transform import ImageTools
-from models.cyclegan import CycleGAN
-from models.losses import LossValues, LossLists
-from metrics.fid import FID
-from metrics.lpips import LPIPS
+
+from .utils import get_gpu_memory_usage, get_current_commit, remove_all_files, save_dict_as_json, load_json_to_dict
+from .data_loader import get_img_dataloader
+from .data_transform import ImageTools
+from ..models.cyclegan import CycleGAN
+from ..models.losses import LossValues, LossLists
+from ..metrics.fid import FID
+from ..metrics.lpips import LPIPS
 
 def save_losses(loss: LossLists, filename='losses.txt'):
     """
