@@ -91,7 +91,8 @@ class FID():
 
         return pred_arr
 
-    def _compute_statistics_of_imgs(self, imgs):
+    def compute_statistics_of_imgs(self, imgs):
+        """Compute image features statistics."""
         act = self._get_activations(imgs)
         mu = np.mean(act, axis=0)
         sigma = np.cov(act, rowvar=False)
@@ -102,8 +103,13 @@ class FID():
         self._last_num_imgs = len(images1) + len(images2)
 
         self._init_model()
-        m1, s1 = self._compute_statistics_of_imgs(images1)
-        m2, s2 = self._compute_statistics_of_imgs(images2)
+        m1, s1 = self.compute_statistics_of_imgs(images1)
+        m2, s2 = self.compute_statistics_of_imgs(images2)
+        return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
+
+    @staticmethod
+    def calculate_frechet_distance(m1,s1,m2,s2):
+        """Calculate FID."""
         return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
 
     def get_from_paths(self, path_images1, path_images2):
