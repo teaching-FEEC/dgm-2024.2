@@ -58,13 +58,13 @@ TEST_CASES = {
         'amp': False,
         'experiment_name': "TEST_CASE_1",
         'experiment_description': "Basic CycleGAN with vanilla setup",
-        'short_description': "1:ResBl=5"
+        'short_description': "1:ResBl=5+Feat=32"
     },
 
     "2": BASE | {
         'experiment_name': "TEST_CASE_2",
         'experiment_description': "Vanilla CycleGAN with AMP enabled",
-        'short_description': "2:AMP"
+        'short_description': "2:1+AMP"
     },
 
     "3": BASE | {
