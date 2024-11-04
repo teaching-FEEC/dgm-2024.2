@@ -188,7 +188,7 @@ class Generator(nn.Module):
                     conv_layer,
                     norm_layer(n_feat // 2),
                     nn.ReLU(inplace=True),
-                    SelfAttention(input_channel=64)
+                    SelfAttention(in_channels=64)
                 ))
             else:
                 self.decoder.append(nn.Sequential(
