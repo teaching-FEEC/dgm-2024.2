@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,invalid-name
 """Module with network constructors and loss functions."""
 import math
 import random
@@ -6,7 +7,6 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from peft import LoraConfig
-from peft.utils import get_peft_model_state_dict
 
 class Identity(nn.Module):
     """Identity layer."""
@@ -30,7 +30,7 @@ def get_norm_layer(norm_type='instance'):
     elif norm_type == 'instance':
         norm_layer = functools.partial(nn.InstanceNorm2d, affine=False, track_running_stats=False)
     elif norm_type == 'none':
-        def norm_layer(x):
+        def norm_layer(x): #pylint: disable=unused-argument
             return Identity()
     else:
         raise NotImplementedError(f'normalization layer {norm_type} is not valid.')
@@ -64,6 +64,38 @@ class ResidualBlock(nn.Module):
         """Forward pass through the residual block."""
         return x + self.conv_block(x)
 
+class SelfAttention(nn.Module):
+    """ Self attention Layer
+    Implementation inspired on "A New CycleGAN-Based Style Transfer Method"
+    Link: https://ieeexplore.ieee.org/document/10361163
+    """
+
+    def __init__(self, input_channel):
+        super(SelfAttention, self).__init__()
+        self.chanel_in = input_channel
+
+        self.query_conv = nn.Conv2d(input_channel, input_channel // 8, 1)
+        self.key_conv   = nn.Conv2d(input_channel, input_channel // 8, 1)
+        self.value_conv = nn.Conv2d(input_channel, input_channel, 1)
+        self.gamma      = nn.Parameter(torch.zeros(1))
+        self.softmax    = nn.Softmax(dim=-1)
+
+    def forward(self, x):
+        """Forward pass through the self-attention layer."""
+        m_batchsize, C, width, height = x.size()
+        attention_query = self.query_conv(x).view(m_batchsize, -1, width * height).permute(0, 2, 1)  # B X CX(N) # Q
+        attention_key   = self.key_conv(x).view(m_batchsize, -1, width * height)  # B X C x (*W*H)  # K
+        energy          = torch.bmm(attention_query, attention_key)  # transpose check
+        attention       = self.softmax(energy)  # BX (N) X (N)
+        attention_value = self.value_conv(x).view(m_batchsize, -1, width * height)  # B X C X N
+
+        out = torch.bmm(attention_value, attention.permute(0, 2, 1))
+        out = out.view(m_batchsize, C, width, height)
+
+        out = self.gamma * out + x
+
+        return out
+
 class Generator(nn.Module):
     """
     Generator network.
@@ -75,16 +107,21 @@ class Generator(nn.Module):
     - n_features: Number of features. Default is 64.
     - n_downsampling: Number of downsampling layers. Default is 2.
     - add_skip: If True, add skip connections. Default is False.
+    - add_lora: If True, add LoRA adapters. Default is False.
+    - lora_rank: define LoRA rank.
+    - add_attention: If gen, add self-attention layer to the generator. If disc, to the discriminator.
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
     def __init__(self,
-                 input_nc, output_nc,
+                 input_nc,
+                 output_nc,
                  n_residual_blocks=9,
                  n_features=64,
                  n_downsampling=2,
                  add_skip=False,
                  add_lora=False,
                  lora_rank=4,
+                 add_attention=None,
                  norm_layer=nn.InstanceNorm2d):
         super().__init__()
 
@@ -98,7 +135,7 @@ class Generator(nn.Module):
         self.encoder = nn.ModuleList()
         if add_lora:
             self.lora_modules_encoder = []
-        
+
         for i in range(n_downsampling):
             n_feat = n_features * 2 ** i
             conv_layer = nn.Conv2d(n_feat, 2 * n_feat, 3, stride=2, padding=1)
@@ -132,16 +169,27 @@ class Generator(nn.Module):
             n_feat = n_features * 2 ** (n_downsampling - i)
             conv_layer = nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
                                    stride=2, padding=1, output_padding=1)
-            
-            self.decoder.append(nn.Sequential(
-                conv_layer,
-                norm_layer(n_feat // 2),
-                nn.ReLU(inplace=True),
-            ))
+
+            if add_attention == 'gen':
+                self.decoder.append(nn.Sequential(
+                    conv_layer,
+                    norm_layer(n_feat // 2),
+                    nn.ReLU(inplace=True),
+                    SelfAttention(128)
+                ))
+            else:
+                self.decoder.append(nn.Sequential(
+                    conv_layer,
+                    norm_layer(n_feat // 2),
+                    nn.ReLU(inplace=True),
+                ))
 
             if add_lora:
                 lora_conf = LoraConfig(r=lora_rank, target_modules=[conv_layer], lora_alpha=lora_rank)
                 self.lora_modules_decoder.append(lora_conf)
+
+
+
 
         self.final_layers = nn.Sequential(
             nn.ReflectionPad2d(3),
@@ -180,20 +228,38 @@ class Discriminator(nn.Module):
     - input_nc: Number of input channels.
     - n_features: Number of features. Default is 64.
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
+    - add_attention: If True, add self-attention layer to the discriminator. Default is False.
     """
-    def __init__(self, input_nc, n_features=64, norm_layer=nn.InstanceNorm2d):
+    def __init__(self,
+                 input_nc,
+                 n_features=64,
+                 norm_layer=nn.InstanceNorm2d,
+                 add_attention=None,
+                 ):
         super().__init__()
 
-        self.model = nn.Sequential(
-            nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
-            nn.LeakyReLU(0.2, inplace=True),
+        if add_attention == 'disc':
+            self.model = nn.Sequential(
+                nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
+                nn.LeakyReLU(0.2, inplace=True),
 
-            self.discriminator_block(n_features, 2 * n_features, norm_layer),
-            self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
-            self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
+                self.discriminator_block(n_features, 2 * n_features, norm_layer),
+                self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
+                self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
+                SelfAttention(512),
+                nn.Conv2d(8 * n_features, 1, 4, padding=1)
+            )
+        else:
+            self.model = nn.Sequential(
+                nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
+                nn.LeakyReLU(0.2, inplace=True),
 
-            nn.Conv2d(8 * n_features, 1, 4, padding=1)
-        )
+                self.discriminator_block(n_features, 2 * n_features, norm_layer),
+                self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
+                self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
+
+                nn.Conv2d(8 * n_features, 1, 4, padding=1)
+            )
 
     def discriminator_block(self, input_dim, output_dim, norm_layer):
         """

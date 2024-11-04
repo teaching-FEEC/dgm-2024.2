@@ -41,6 +41,8 @@ class CycleGAN(BaseModel):
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
                  norm_type='instance',
                  add_skip=False,
+                 add_attention=False,
+                 add_lora=False, lora_rank=4,
                  use_replay_buffer=False,
                  replay_buffer_size=50,
                  vanilla_loss=True,
@@ -65,12 +67,23 @@ class CycleGAN(BaseModel):
             'n_features': n_features,
             'n_downsampling': n_downsampling,
             'add_skip': add_skip,
-            'norm_layer': norm_layer,
+            'add_lora': add_lora,
+            'lora_rank': lora_rank,
+            'add_attention': add_attention,
+            'norm_layer': norm_layer 
         }
+
+        disc_params = {
+            'input_nc': input_nc,
+            'n_features': n_features, 
+            'norm_layer': nn.InstanceNorm2d,
+            'add_attention': False
+        }
+
         self.gen_AtoB = Generator(**gen_params).to(self.device)
         self.gen_BtoA = Generator(**gen_params).to(self.device)
-        self.dis_A = Discriminator(input_nc, n_features, norm_layer).to(self.device)
-        self.dis_B = Discriminator(input_nc, n_features, norm_layer).to(self.device)
+        self.dis_A = Discriminator(**disc_params).to(self.device)
+        self.dis_B = Discriminator(**disc_params).to(self.device)
 
         # Define losses
         self.adversarial_loss = CycleGANLoss(vanilla_loss=vanilla_loss).to(self.device)

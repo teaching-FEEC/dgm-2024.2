@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import shutil
+import zipfile
 import pandas as pd
 from tqdm import tqdm
 
@@ -15,6 +16,17 @@ def copy_images(df, src_dir, dst_dir):
             shutil.copy(src_path, dst_path)
         else:
             print(f"File not found: {src_path.name}")
+
+def zip_directory(directory_path, zip_path):
+    """Zip a directory into a ZIP file."""
+    directory_path = Path(directory_path)
+    zip_path = Path(zip_path)
+
+    with zipfile.ZipFile(zip_path, 'w') as zipf:
+        for file_path in directory_path.rglob('*'):
+            if file_path.is_file():
+                zipf.write(file_path, file_path.relative_to(directory_path.parent))
+
 
 if __name__ == '__main__':
     base_src_folder = Path(__file__).parent.parent.parent / 'data/external/nexet'
@@ -33,7 +45,7 @@ if __name__ == '__main__':
         df_imgs = pd.read_csv(base_src_folder / df_name)
         copy_images(df_imgs, base_src_folder / src, base_out_folder / out)
 
-    shutil.make_archive(base_out_folder, 'zip', base_out_folder)
+    zip_directory(base_out_folder, base_out_folder.with_suffix('.zip'))
     shutil.rmtree(base_out_folder)
 
 
@@ -42,4 +54,4 @@ if __name__ == '__main__':
 
 # import zipfile
 # with zipfile.ZipFile('/content/nexet.zip', 'r') as zip_ref:
-#     zip_ref.extractall('/content/pytorch-CycleGAN-and-pix2pix/datasets/nexet')
+#     zip_ref.extractall('/content/pytorch-CycleGAN-and-pix2pix/datasets/')

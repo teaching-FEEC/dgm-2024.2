@@ -31,9 +31,9 @@ class FID():
         (Default: True).
     batch_size : int
         Batch size to use.
-        (Default: 128).
+        (Default: 32).
     """
-    def __init__(self, dims=2048, cuda=False, init_model=True, batch_size=128):
+    def __init__(self, dims=2048, cuda=False, init_model=True, batch_size=32):
         self.cuda = cuda
         self.dims = dims
         self.batch_size = batch_size
@@ -42,6 +42,10 @@ class FID():
         self.model = None
         if init_model:
             self._init_model()
+
+    def get_last_num_imgs(self):
+        """Return the number of images used in the last calculation."""
+        return self._last_num_imgs
 
     def _init_model(self):
         if self.model is None:
@@ -52,12 +56,15 @@ class FID():
             self.model.eval()
 
     def _get_activations(self, imgs):
-        pred_arr = np.empty((len(imgs), self.dims))
 
-        start_idx = 0
+        as_dataloader = isinstance(imgs, torch.utils.data.DataLoader)
+        if as_dataloader:
+            n_imgs = np.sum([len(batch) for batch in imgs])
+        else:
+            n_imgs = len(imgs)
+        pred_arr = np.empty((n_imgs, self.dims))
 
-        for _ in tqdm(range(math.ceil(len(imgs) / self.batch_size))):
-            batch = imgs[start_idx:start_idx + self.batch_size]
+        def _get_values(batch, start_idx):
             if self.cuda:
                 batch = batch.cuda()
             with torch.no_grad():
@@ -69,34 +76,50 @@ class FID():
                 pred = adaptive_avg_pool2d(pred, output_size=(1, 1))
 
             pred = pred.squeeze(3).squeeze(2).cpu().numpy()
-            pred_arr[start_idx:start_idx + pred.shape[0]] = pred
-            start_idx = start_idx + pred.shape[0]
+            pred_arr[start_idx:start_idx + len(batch)] = pred
+
+        start_idx = 0
+        if as_dataloader:
+            for batch in tqdm(imgs):
+                _get_values(batch, start_idx)
+                start_idx = start_idx + len(batch)
+        else:
+            for _ in tqdm(range(math.ceil(len(imgs) / self.batch_size))):
+                batch = imgs[start_idx:start_idx + self.batch_size]
+                _get_values(batch, start_idx)
+                start_idx = start_idx + len(batch)
 
         return pred_arr
 
-    def _compute_statistics_of_imgs(self, imgs):
+    def compute_statistics_of_imgs(self, imgs):
+        """Compute image features statistics."""
         act = self._get_activations(imgs)
         mu = np.mean(act, axis=0)
         sigma = np.cov(act, rowvar=False)
         return mu, sigma
 
-    def get(self, images_real, images_fake):
-        """Calculate FID between real and fake images."""
-        self._last_num_imgs = len(images_real) + len(images_fake)
+    def get(self, images1, images2):
+        """Calculate FID between images."""
+        self._last_num_imgs = len(images1) + len(images2)
 
         self._init_model()
-        m1, s1 = self._compute_statistics_of_imgs(images_real)
-        m2, s2 = self._compute_statistics_of_imgs(images_fake)
+        m1, s1 = self.compute_statistics_of_imgs(images1)
+        m2, s2 = self.compute_statistics_of_imgs(images2)
         return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
 
-    def get_from_paths(self, path_images_real, path_images_fake):
-        """Calculate FID between real and fake images."""
+    @staticmethod
+    def calculate_frechet_distance(m1,s1,m2,s2):
+        """Calculate FID."""
+        return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
+
+    def get_from_paths(self, path_images1, path_images2):
+        """Calculate FID between image folders."""
         if self.cuda:
             device = torch.device('cuda')
         else:
             device = torch.device('cpu')
         return fid_score.calculate_fid_given_paths(
-            [path_images_real, path_images_fake],
+            [path_images1, path_images2],
             batch_size=self.batch_size,
             device=device,
             dims=self.dims,

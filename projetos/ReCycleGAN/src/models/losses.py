@@ -1,4 +1,4 @@
-# pylint: disable=C0103
+# pylint: disable=invalid-name
 """Module with CycleGAN losses."""
 from dataclasses import dataclass
 import pandas as pd

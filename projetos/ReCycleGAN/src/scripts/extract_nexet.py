@@ -1,4 +1,4 @@
-# pylint: disable=C0413
+# pylint: disable=import-error,wrong-import-position
 """Create DayNight database for model training."""
 
 import sys
