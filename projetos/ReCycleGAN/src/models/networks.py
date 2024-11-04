@@ -65,49 +65,48 @@ class ResidualBlock(nn.Module):
         return x + self.conv_block(x)
     
 class SelfAttention(nn.Module):
-    """ Self attention Layer
-    Implementation inspired on "A New CycleGAN-Based Style Transfer Method"
-    Link: https://ieeexplore.ieee.org/document/10361163
-    """
     def __init__(self, in_channels):
         super(SelfAttention, self).__init__()
         self.in_channels = in_channels
         
-        # Reduce channel dimensions for query and key to save computation
+        # Reduce spatial dimensions and channels for efficiency
         self.query_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
         self.key_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
-        
-        # Keep the same number of channels for value as input
         self.value_conv = nn.Conv2d(in_channels, in_channels, kernel_size=1)
+        
+        # Add spatial reduction for attention computation
+        self.pool = nn.AvgPool2d(kernel_size=2, stride=2)
         
         self.gamma = nn.Parameter(torch.zeros(1))
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
-        """
-        inputs :
-            x : input feature maps (B X C X W X H)
-        returns :
-            out : self attention value + input feature
-        """
         batch_size, channels, width, height = x.size()
         
-        # Project query, key, and value
-        proj_query = self.query_conv(x).view(batch_size, -1, width * height).permute(0, 2, 1)  # B X (W*H) X C'
-        proj_key = self.key_conv(x).view(batch_size, -1, width * height)  # B X C' X (W*H)
-        proj_value = self.value_conv(x).view(batch_size, -1, width * height)  # B X C X (W*H)
-
-        # Calculate attention weights
-        energy = torch.bmm(proj_query, proj_key)  # B X (W*H) X (W*H)
-        attention = self.softmax(energy)  # B X (W*H) X (W*H)
-
-        # Apply attention to values
-        out = torch.bmm(proj_value, attention.permute(0, 2, 1))  # B X C X (W*H)
-        out = out.view(batch_size, channels, width, height)  # B X C X W X H
-
-        # Apply residual connection with learnable scaling factor
-        out = self.gamma * out + x
-        return out
+        # Reduce spatial dimensions for key and query
+        x_pooled = self.pool(x)
+        
+        # Project and reshape query
+        proj_query = self.query_conv(x)
+        proj_query = proj_query.view(batch_size, -1, width * height).permute(0, 2, 1)
+        
+        # Project and reshape key (using pooled input)
+        proj_key = self.key_conv(x_pooled)
+        proj_key = proj_key.view(batch_size, -1, (width//2) * (height//2))
+        
+        # Project and reshape value (using pooled input)
+        proj_value = self.value_conv(x_pooled)
+        proj_value = proj_value.view(batch_size, -1, (width//2) * (height//2))
+        
+        # Calculate attention with reduced spatial dimensions
+        energy = torch.bmm(proj_query, proj_key)  # (B, HW, H'W')
+        attention = self.softmax(energy)  # (B, HW, H'W')
+        
+        # Apply attention and reshape
+        out = torch.bmm(proj_value.permute(0, 2, 1), attention.permute(0, 2, 1))  # (B, H'W', C)
+        out = out.permute(0, 2, 1).view(batch_size, channels, width, height)
+        
+        return self.gamma * out + x
 
 class Generator(nn.Module):
     """
