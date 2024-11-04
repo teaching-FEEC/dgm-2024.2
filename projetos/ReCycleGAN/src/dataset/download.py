@@ -4,7 +4,7 @@ import zipfile
 import requests
 
 # URL of the ZIP file
-NEXET = 'https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.0-nexet/Nexet.zip'
+NEXET = 'https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.1-nexet/Nexet.zip'
 
 def download_and_extract(url, path, verbose=False):
     """
