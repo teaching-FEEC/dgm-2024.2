@@ -211,39 +211,39 @@ def get_lpips(data_loaders, use_cuda=True):
     return results
 
 
-def distance_dict_to_table(distances, keys):
-    """Transform dict of distances into table."""
+def metric_dict_to_table(metrics, keys):
+    """Transform dict of metrics into table."""
     d_table = np.zeros([len(keys),len(keys)])
     for i, k1 in enumerate(keys[:-1]):
         for j, k2 in enumerate(keys[i+1:]):
-            d_table[i,j+i+1] = distances[(k1,k2)]
-            d_table[j+i+1,i] = distances[(k1,k2)]
+            d_table[i,j+i+1] = metrics[(k1,k2)]
+            d_table[j+i+1,i] = metrics[(k1,k2)]
     return d_table
 
 
-def transform_distances(distances, transform):
-    """Transform distances."""
+def transform_metrics(metrics, transform):
+    """Transform metrics."""
     out = {}
     for p in ['A','B']:
         out[p] = {}
-        for k,v in distances[p].items():
+        for k,v in metrics[p].items():
             out[p][k] = transform(v)
     return out
 
 
-def print_distance_pairs(distances):
-    """Print distance pairs."""
+def print_metric_pairs(metrics):
+    """Print metric pairs."""
     for p in ['A','B']:
-        print(f"Distances for {p} images")
-        for k,v in distances[p].items():
+        print(f"metrics for {p} images")
+        for k,v in metrics[p].items():
             print(f"\t{k[0]} - {k[1]}: {v:.4g}")
         print()
 
 
-def plot_distances(distances, labels, title):
-    """Plot distances."""
+def plot_metrics(metrics, labels, title):
+    """Plot metrics."""
     for p in ['A','B']:
-        table = distance_dict_to_table(distances[p], labels)
+        table = metric_dict_to_table(metrics[p], labels)
         points_2d = create_2d_map(table)
         plot_2d_map(
             points_2d,
@@ -253,7 +253,7 @@ def plot_distances(distances, labels, title):
 
         data = {
             'class': labels[1:],
-            'value': [distances[p][(labels[0],k)] for k in labels[1:]]
+            'value': [metrics[p][(labels[0],k)] for k in labels[1:]]
         }
         plot_hbar(
             data,
@@ -263,28 +263,28 @@ def plot_distances(distances, labels, title):
             y_label='')
 
 
-def plot_histograms(distances, labels, title):
+def plot_histograms(metrics, labels, title):
     """Plot histograms."""
     for p in ['A','B']:
-        distances_list = []
+        metrics_list = []
         for k in labels[1:]:
-            distances_list.append(distances[p][('Real',k)].flatten())
+            metrics_list.append(metrics[p][('Real',k)].flatten())
         plot_stacked_histograms(
-            distances_list,
+            metrics_list,
             labels[1:],
             file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_histograms_{p}.png',
             title=f'{title.upper()} for {p} Images', xlabel=f'{title.upper()} to Real Images',
             figsize=(8, 1.5))
 
 
-def save_distances(distances, file_name):
-    """Save distances to file."""
+def save_metrics(metrics, file_name):
+    """Save metrics to file."""
     file_path = BASE_FOLDER / f'docs/assets/evaluation/{file_name}'
     with open(file_path, 'wb') as file:
-        pickle.dump(distances, file)
+        pickle.dump(metrics, file)
 
-def load_distances(file_name):
-    """Load distances from file."""
+def load_metrics(file_name):
+    """Load metrics from file."""
     file_path = BASE_FOLDER / f'docs/assets/evaluation/{file_name}'
     with open(file_path, 'rb') as file:
         return pickle.load(file)
@@ -294,7 +294,7 @@ def main():
     """Main function."""
 
     n_tests = 4
-    recalculate_distances = False
+    recalculate_metrics = False
 
     # Build translated images
     # for i_ in range(1, n_tests+1):
@@ -316,23 +316,23 @@ def main():
         data_loaders[k] = build_data_loaders(v)
     labels = list(model_list.keys())
 
-    if recalculate_distances:
-        fid_distances = get_fid(data_loaders)
-        save_distances(fid_distances, 'fid_distances.pkl')
+    if recalculate_metrics:
+        fid_metrics = get_fid(data_loaders)
+        save_metrics(fid_metrics, 'fid_metrics.pkl')
     else:
-        fid_distances = load_distances('fid_distances.pkl')
-    print_distance_pairs(fid_distances)
-    plot_distances(fid_distances, labels, 'FID')
+        fid_metrics = load_metrics('fid_metrics.pkl')
+    print_metric_pairs(fid_metrics)
+    plot_metrics(fid_metrics, labels, 'FID')
 
-    if recalculate_distances:
-        lpips_distances = get_lpips(data_loaders)
-        save_distances(lpips_distances, 'lpips_distances.pkl')
+    if recalculate_metrics:
+        lpips_metrics = get_lpips(data_loaders)
+        save_metrics(lpips_metrics, 'lpips_metrics.pkl')
     else:
-        lpips_distances = load_distances('lpips_distances.pkl')
-    lpips_distances_mean = transform_distances(lpips_distances, transform=lambda x: float(x.mean()))
-    print_distance_pairs(lpips_distances_mean)
-    plot_distances(lpips_distances_mean, labels, 'LPIPS')
-    plot_histograms(lpips_distances, labels, 'LPIPS')
+        lpips_metrics = load_metrics('lpips_metrics.pkl')
+    lpips_metrics_mean = transform_metrics(lpips_metrics, transform=lambda x: float(x.mean()))
+    print_metric_pairs(lpips_metrics_mean)
+    plot_metrics(lpips_metrics_mean, labels, 'LPIPS')
+    plot_histograms(lpips_metrics, labels, 'LPIPS')
 
     # Calculate LPIPS
     #   Sample images along histogram
