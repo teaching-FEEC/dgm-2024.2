@@ -69,30 +69,44 @@ class SelfAttention(nn.Module):
     Implementation inspired on "A New CycleGAN-Based Style Transfer Method"
     Link: https://ieeexplore.ieee.org/document/10361163
     """
-
-    def __init__(self, input_channel):
+    def __init__(self, in_channels):
         super(SelfAttention, self).__init__()
-        self.chanel_in = input_channel
-
-        self.query_conv = nn.Conv2d(input_channel, input_channel // 8, 1)
-        self.key_conv   = nn.Conv2d(input_channel, input_channel // 8, 1)
-        self.value_conv = nn.Conv2d(input_channel, input_channel, 1)
-        self.gamma      = nn.Parameter(torch.zeros(1))
-        self.softmax    = nn.Softmax(dim=-1)
+        self.in_channels = in_channels
+        
+        # Reduce channel dimensions for query and key to save computation
+        self.query_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
+        self.key_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
+        
+        # Keep the same number of channels for value as input
+        self.value_conv = nn.Conv2d(in_channels, in_channels, kernel_size=1)
+        
+        self.gamma = nn.Parameter(torch.zeros(1))
+        self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
-        m_batchsize, C, width, height = x.size()
-        attention_query = self.query_conv(x).view(m_batchsize, -1, width * height).permute(0, 2, 1)  # B X CX(N) # Q
-        attention_key   = self.key_conv(x).view(m_batchsize, -1, width * height)  # B X C x (*W*H)  # K
-        energy          = torch.bmm(attention_query, attention_key)  # transpose check
-        attention       = self.softmax(energy)  # BX (N) X (N)
-        attention_value = self.value_conv(x).view(m_batchsize, -1, width * height)  # B X C X N
+        """
+        inputs :
+            x : input feature maps (B X C X W X H)
+        returns :
+            out : self attention value + input feature
+        """
+        batch_size, channels, width, height = x.size()
+        
+        # Project query, key, and value
+        proj_query = self.query_conv(x).view(batch_size, -1, width * height).permute(0, 2, 1)  # B X (W*H) X C'
+        proj_key = self.key_conv(x).view(batch_size, -1, width * height)  # B X C' X (W*H)
+        proj_value = self.value_conv(x).view(batch_size, -1, width * height)  # B X C X (W*H)
 
-        out = torch.bmm(attention_value, attention.permute(0, 2, 1))
-        out = out.view(m_batchsize, C, width, height)
+        # Calculate attention weights
+        energy = torch.bmm(proj_query, proj_key)  # B X (W*H) X (W*H)
+        attention = self.softmax(energy)  # B X (W*H) X (W*H)
 
+        # Apply attention to values
+        out = torch.bmm(proj_value, attention.permute(0, 2, 1))  # B X C X (W*H)
+        out = out.view(batch_size, channels, width, height)  # B X C X W X H
+
+        # Apply residual connection with learnable scaling factor
         out = self.gamma * out + x
-
         return out
 
 class Generator(nn.Module):
@@ -174,7 +188,7 @@ class Generator(nn.Module):
                     conv_layer,
                     norm_layer(n_feat // 2),
                     nn.ReLU(inplace=True),
-                    SelfAttention(128)
+                    SelfAttention(input_channel=64)
                 ))
             else:
                 self.decoder.append(nn.Sequential(
