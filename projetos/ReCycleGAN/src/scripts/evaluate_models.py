@@ -48,15 +48,15 @@ def build_data_loaders(folder_name):
     out = {}
     for p in ['A','B']:
         if folder_name == 'real':
-            f_name = f'input_{p}'
             images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_all_filtered.csv'
+            f_name = f'input_{p}'
         else:
-            if p == 'A':
-                fake_p = 'B'
-            else:
-                fake_p = 'A'
-            f_name = f'output_{fake_p}_{folder_name}'
+            fake_p = 'B' if p == 'A' else 'A'
             images_csv = BASE_FOLDER / f'data/external/nexet/input_{fake_p}_all_filtered.csv'
+            if folder_name == 'oposite':
+                f_name = f'input_{fake_p}'
+            else:
+                f_name = f'output_{fake_p}_{folder_name}'
         out[p] = get_img_dataloader(
             csv_file = images_csv,
             img_dir = BASE_FOLDER / f'data/external/nexet/{f_name}',
@@ -186,50 +186,62 @@ def distance_dict_to_table(distances, keys):
             d_table[j+i+1,i] = distances[(k1,k2)]
     return d_table
 
-if __name__ == '__main__':
+def main():
+    """Main function."""
 
     # Build translated images
-    # for i_ in range(1, 4):
+    # for i_ in range(1, 5):
     #     build_images(i_)
 
     # Build image data loaders
-    model_list_ = {
+    model_list = {
         'Real': 'real',
+        'Oposite class': 'oposite',
         'CycleGAN': 'cyclegan',
         'CycleGAN-turbo': 'turbo',
     }
-    for i_ in range(1, 4):
-        model_list_[TEST_CASES[str(i_)]['short_description']] = f'test_{i_}'
+    for i in range(1, 5):
+        test_case = TEST_CASES[str(i)]
+        model_list[test_case['short_description']] = f'test_{i}'
 
-    data_loaders_ = {}
-    for k_,v_ in model_list_.items():
-        data_loaders_[k_] = build_data_loaders(v_)
+    data_loaders = {}
+    for k,v in model_list.items():
+        data_loaders[k] = build_data_loaders(v)
 
     # Calculate FID distances
-    fid_dict_ = get_fid(data_loaders_)
+    fid_dict = get_fid(data_loaders)
 
     print('FID distances')
-    for p_ in ['A','B']:
-        print(f'Imgs {p_}')
-        for k_,v_ in fid_dict_[p_].items():
-            print(f'\t{str(k_)}: {v_:0.3f}')
+    for p in ['A','B']:
+        print(f'Imgs {p}')
+        for k,v in fid_dict[p].items():
+            print(f'\t{str(k)}: {v:0.3f}')
 
-    labels_ = list(model_list_.keys())
-    for p_ in ['A','B']:
-        fid_table_ = distance_dict_to_table(fid_dict_[p_], labels_)
-        fid_2d_points_ = create_2d_map(fid_table_)
+    labels = list(model_list.keys())
+    for p in ['A','B']:
+        fid_table = distance_dict_to_table(fid_dict[p], labels)
+        fid_2d_points = create_2d_map(fid_table)
         plot_2d_map(
-            fid_2d_points_,
-            labels_,
-            file_path=BASE_FOLDER / f'docs/assets/evaluation/fid_map_images_{p_}.png',
-            title=f'FID for {p_} Images')
+            fid_2d_points,
+            labels,
+            file_path=BASE_FOLDER / f'docs/assets/evaluation/fid_map_images_{p}.png',
+            title=f'FID for {p} Images')
 
-        data_ = {
-            'class': labels_[1:],
-            'value': [fid_dict_[p_][(labels_[0],k)] for k in labels_[1:]]
+        data = {
+            'class': labels[1:],
+            'value': [fid_dict[p][(labels[0],k)] for k in labels[1:]]
         }
         plot_hbar(
-            data_,
-            file_path=BASE_FOLDER / f'docs/assets/evaluation/fid_bar_images_{p_}.png',
-            title=f'FID for {p_} Images',
+            data,
+            file_path=BASE_FOLDER / f'docs/assets/evaluation/fid_bar_images_{p}.png',
+            title=f'FID for {p} Images',
             x_label='FID to Real Images')
+
+    # Calculate LPIPS
+    #   Same plots (with mean distance)
+    #   Compare histograms
+    #   Sample images along histogram
+    # Build samples with all translations
+
+if __name__ == '__main__':
+    main()
