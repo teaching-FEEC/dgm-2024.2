@@ -98,7 +98,7 @@ def plot_hbar(data, file_path, title=None, x_label=None, y_label=None):
     plt.close()
 
 
-def plot_stacked_histograms(tensors, labels, file_path, bins=10, title=None, xlabel='Value', figsize=(8, 2)):
+def plot_stacked_histograms(tensors, labels, file_path, bins=20, title=None, xlabel='Value', figsize=(8, 2)):
     """Plot stacked histograms."""
     num_plots = len(tensors)
     _, axes = plt.subplots(num_plots, 1, figsize=(figsize[0], figsize[1] * num_plots), sharex=True)
@@ -293,8 +293,11 @@ def load_distances(file_name):
 def main():
     """Main function."""
 
+    n_tests = 4
+    recalculate_distances = False
+
     # Build translated images
-    # for i_ in range(1, 5):
+    # for i_ in range(1, n_tests+1):
     #     build_images(i_)
 
     # Build image data loaders
@@ -304,27 +307,32 @@ def main():
         'CycleGAN': 'cyclegan',
         'CycleGAN-turbo': 'turbo',
     }
-    for i in range(1, 5):
+    for i in range(1, n_tests+1):
         test_case = TEST_CASES[str(i)]
         model_list[test_case['short_description']] = f'test_{i}'
 
     data_loaders = {}
     for k,v in model_list.items():
         data_loaders[k] = build_data_loaders(v)
-
-    fid_distances = get_fid(data_loaders)
-    print_distance_pairs(fid_distances)
     labels = list(model_list.keys())
-    plot_distances(fid_distances, labels, 'FID')
-    save_distances(fid_distances, 'fid_distances.pkl')
 
-    lpips_distances = get_lpips(data_loaders)
+    if recalculate_distances:
+        fid_distances = get_fid(data_loaders)
+        save_distances(fid_distances, 'fid_distances.pkl')
+    else:
+        fid_distances = load_distances('fid_distances.pkl')
+    print_distance_pairs(fid_distances)
+    plot_distances(fid_distances, labels, 'FID')
+
+    if recalculate_distances:
+        lpips_distances = get_lpips(data_loaders)
+        save_distances(lpips_distances, 'lpips_distances.pkl')
+    else:
+        lpips_distances = load_distances('lpips_distances.pkl')
     lpips_distances_mean = transform_distances(lpips_distances, transform=lambda x: float(x.mean()))
     print_distance_pairs(lpips_distances_mean)
-    labels = list(model_list.keys())
     plot_distances(lpips_distances_mean, labels, 'LPIPS')
     plot_histograms(lpips_distances, labels, 'LPIPS')
-    save_distances(lpips_distances, 'lpips_distances.pkl')
 
     # Calculate LPIPS
     #   Sample images along histogram
