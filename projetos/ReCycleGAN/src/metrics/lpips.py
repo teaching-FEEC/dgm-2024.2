@@ -63,7 +63,12 @@ class LPIPS():
         """Return the number of pairs used in the last call to get."""
         return self._last_num_pairs
 
-    def _lpips_dataloader(self, img1, img2, normalize, use_all_pairs):
+    def lpips_dataloader(self, img1, img2, normalize, use_all_pairs, description=None):
+        """Calculate LPIPS between pairs of images using DataLoaders.
+
+        Attention: this routine assumes that both img1 and img2 are DataLoaders.
+        If use_all_pairs is False, it is assumed that both DataLoaders have the same length.
+        """
         if use_all_pairs:
             n_max = self.max_pairs
         else:
@@ -71,8 +76,12 @@ class LPIPS():
 
         n = 0
         pred_arr = torch.empty(0)
+        if description is None:
+            p_bar = tqdm(total=n_max)
+        else:
+            p_bar = tqdm(total=n_max, desc=description)
         while True:
-            for batch1,batch2 in tqdm(zip(img1,img2)):
+            for batch1,batch2 in zip(img1,img2):
 
                 if self.cuda:
                     batch1 = batch1.cuda()
@@ -86,8 +95,10 @@ class LPIPS():
 
                 pred_arr = torch.cat((pred_arr, lpips_values.cpu()))
                 n += len(batch1)
+                p_bar.update(len(batch1))
                 if n >= n_max:
                     self._last_num_pairs = n
+                    p_bar.close()
                     return pred_arr
 
 
@@ -155,5 +166,5 @@ class LPIPS():
                 raise ValueError(msg)
 
         if isinstance(images1, torch.utils.data.DataLoader):
-            return self._lpips_dataloader(images1, images2, normalize=self.rescale, use_all_pairs=all_pairs)
+            return self.lpips_dataloader(images1, images2, normalize=self.rescale, use_all_pairs=all_pairs)
         return self._lpips(images1, images2, normalize=self.rescale, use_all_pairs=all_pairs)
