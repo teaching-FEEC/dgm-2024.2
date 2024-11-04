@@ -15,7 +15,7 @@ BASE = {
     'use_cuda': True,
 
     'print_memory': True,
-    "num_epochs": 100,
+    "num_epochs": 50,
     "checkpoint_interval": 2,
     "n_samples": None,
 
