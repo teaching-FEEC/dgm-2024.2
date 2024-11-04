@@ -88,8 +88,8 @@ Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na _va
 
 * Novos elementos na arquitetura da rede:
   * [x] Skip connections [[9]](https://arxiv.org/abs/2403.12036)
-  * [x] Camadas de atenção
-  * [ ] Adaptadores LoRA
+  * [x] Camadas de atenção [[14]](https://doi.org/10.1109/ICDACAI59742.2023.00142)
+  * [x] Adaptadores LoRA
 * Funções de perda adicionais:
   * [ ] Perdas baseadas em redes pré-treinadas [[7]](https://arxiv.org/abs/2105.14576)
   * [x] Suavização do Gerador [[10]](https://arxiv.org/abs/1912.04958)
@@ -104,7 +104,7 @@ Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na _va
     * CycleGAN-turbo [[9]](https://arxiv.org/abs/2403.12036)
   * [ ] Percepção de usuários
 
-As caixas de seleção indicam os os elementos, entre os inicialmente propostos, que foram efetivamente aplicados no projeto. Os adaptadores LoRA não foram estudados porque posteriormente descobriu-se serem mais indicados para uso em redes pré-treinadas. Devido à limitação de _hardware_ disponível (o treinamento foi feito no Colab), a proposta de incluir perdas associadas a redes pré-treinadas foi descartada.
+As caixas de seleção indicam os os elementos, entre os inicialmente propostos, que foram efetivamente aplicados no projeto. Os adaptadores LoRA foram implementados, mas não foram avaliados porque posteriormente descobriu-se serem indicados para uso em redes pré-treinadas. Devido à limitação de _hardware_ disponível (o treinamento foi feito no Colab), a proposta de incluir perdas associadas a redes pré-treinadas foi descartada.
 
 A avaliação foi realizada apenas para uma tarefa. Foi utilizada a base de dados **Nexet** para realizar transferência de estilo (_style transfer_) entre imagens tiradas de câmeras de carro durante o dia e durante a noite. A segunda tarefa proposta era de fazer remoção de ruído (_image restoration_) das imagens das bases de dados **O-Haze**, **I-Haze** e **D_Hazy**. A segunda tarefa foi abandonada por limitação de _hardware_.
 
@@ -225,8 +225,16 @@ Observou-se que algumas imagens da base de dados Nexet apresentavam característ
   <strong>Exemplos de grupos de imagens consideradas difíceis para o treinamento.</strong>
 </p>
 
+Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216  (5%) das imagens da classe **Noite**. Os totais de imagens para cada classe são apresentados abaixo.
 
-[Notebook](src/notebooks/Filter_DayNight.ipynb)
+| Classe       | Treino | Teste | Total |
+|--------------|--------|-------|-------|
+|**Dia** (A)   | 3788   | 949   | 4737  |
+|**Noite** (B) | 3316   | 842   | 4158  |
+
+Todo o procedimento de filtro das imagens está codificado em um único [Notebook](src/notebooks/Filter_DayNight.ipynb).
+
+A base de dados utilizada pode ser encontrada neste [link](https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.1-nexet/Nexet.zip). Foram utilizadas as imagens listadas no arquivos com final _\_filtered.csv_.
 
 #### O-Haze, I-Haze e D-Hazy
 
@@ -250,9 +258,25 @@ Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e 
 Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos.
 -->
 
-Para cada uma das tarefas propostas, as imagens de treino são utilizadas para treinar a ReCycleGAN. A qualidade das imagens geradas pela rede é avaliada comparando com as imagens de teste.
+O _workflow_ deste projeto se divide em duas etapas: treino e avaliação.
 
-Para monitorar e registrar os logs e resultados dos treinamentos e avaliações é utilizada a plataforma [Weights & Biases](https://wandb.ai/site).
+1. **Treino da ReCycleGAN**
+    * Feito para cada variante dos hyperparâmetros.
+    * Dados de entrada são as imagens de treino das classes **A** e **B**.
+        * Para aumentar a quantidade de amostras (_data augmentation_), foram aplicadas transformações adicionais às imagens de entrada:
+            1. Redimensionamento para 112% da imagem original, com interpolação bicúbica.
+            1. Corte aleatório (_random crop_) para as dimensões originais.
+            1. Inversão horizontal aleatória (_random horizontal flip_).
+    * Todo o treinamento foi feito no Colab: [Notebook](src/notebooks/ReCycleGAN_colab.ipynb).
+    * Para monitorar e registrar os logs e resultados dos treinamentos foi utilizada a plataforma [Weights & Biases](https://wandb.ai/site).
+        * Para não onerar o treinamento, as métricas de FID e LPIPS são calculadas apenas para as imagens de teste.
+2. **Avaliação dos Resultados**
+    * Os autores da métrica FID sugerem usar ao menos 2048 imagens para seu cálculo. O número total de imagens para cada classe não é muito alto. Optou-se por utilizar as imagens de treino e teste para avaliação das métricas.
+    * Para incrementar a análise, foram geradas imagens traduzidas com a versão original da **CycleGAN** [[1]](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) e com uma versão atualizada, **CycleGAN-turbo** [[9]](https://github.com/GaParmar/img2img-turbo).
+        * A CycleGAN precisou ser treinada com a base de dados Nexet. O treinamento foi feito com as opções padrão, por 40 épocas.
+        * A CycleGAN-turbo tem uma versão já treinada com a base Nexet, de modo que não foi necessário treinar esta rede.
+    * São feitas avaliações comparando as imagens reais com as imagens da outra classe traduzidas (e.g.: imagens da classe **A** e imagens traduzidas da classe **B** para a classe **A**).
+        * _Abusando_ da ideia de distâncias das métricas, são montados mapas 2d com a posição relativa dos modelos. O mapa é construído a partir das distâncias entre todos os possíveis conjuntos de imagens (reais x modelos, modelos x modelos), aplicando MDS (Multidimensional scaling)
 
 <div>
 <p align="center">
@@ -393,3 +417,7 @@ Zhang, Richard, et al. Proceedings of the IEEE conference on computer vision and
 [13] Deep Residual Learning for Image Recognition.<br>
 Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun. IEEE Conference on Computer Vision and Pattern Recognition (CVPR) 2016.<br>
 [[Paper]](https://doi.org/10.1109/CVPR.2016.90)
+
+[14] A New CycleGAN-Based Style Transfer Method.<br>
+H. Yan. 2nd International Conference on Data Analytics, Computing and Artificial Intelligence (ICDACAI), Zakopane, Poland, 2023, pp. 712-719<br>
+[[Paper]](https://doi.org/10.1109/ICDACAI59742.2023.00142)
