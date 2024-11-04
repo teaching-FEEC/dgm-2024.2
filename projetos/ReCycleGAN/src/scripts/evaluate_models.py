@@ -157,13 +157,34 @@ def get_fid(data_loaders, use_cuda=True):
 
     pairs = list(itertools.combinations(data_loaders.keys(), 2))
 
-    print('Calculating FID for all pairs')
+    print(f'Calculating FID for all {len(pairs)} pairs')
     results = {'A':{}, 'B':{}}
     for pair in tqdm(pairs):
         for p in ['A','B']:
             m1, s1 = statistics[pair[0]][p]
             m2, s2 = statistics[pair[1]][p]
             results[p][pair] = fid.calculate_frechet_distance(m1, s1, m2, s2)
+    return results
+
+
+def get_lpips(data_loaders, use_cuda=True):
+    """Calculates the LPIPS score for a list of models."""
+    print('Loading LPIPS model')
+    lpips = LPIPS(cuda=use_cuda)
+
+    pairs = list(itertools.combinations(data_loaders.keys(), 2))
+    print(f'Calculating LPIPS for all {len(pairs)} pairs')
+    results = {'A':{}, 'B':{}}
+    for pair in pairs:
+        for p in ['A','B']:
+            imgs1 = data_loaders[pair[0]][p]
+            imgs2 = data_loaders[pair[1]][p]
+            n = min(len(imgs1.dataset), len(imgs2.dataset))
+            imgs1.dataset.set_len(n)
+            imgs2.dataset.set_len(n)
+            results[p][pair] = lpips.lpips_dataloader(
+                imgs1, imgs2, description=str(pair),
+                normalize=False, use_all_pairs=False)
     return results
 
 
@@ -177,17 +198,22 @@ def distance_dict_to_table(distances, keys):
     return d_table
 
 
-def print_distance_pairs(distances, transform=None):
+def transform_distances(distances, transform):
+    """Transform distances."""
+    out = {}
+    for p in ['A','B']:
+        out[p] = {}
+        for k,v in distances[p].items():
+            out[p][k] = transform(v)
+    return out
+
+
+def print_distance_pairs(distances):
     """Print distance pairs."""
-    if transform is None:
-        def f(x):
-            return x
-    else:
-        f = transform
     for p in ['A','B']:
         print(f"Distances for {p} images")
         for k,v in distances[p].items():
-            print(f"\t{k[0]} - {k[1]}: {f(v):.3g}")
+            print(f"\t{k[0]} - {k[1]}: {v:.3g}")
         print()
 
 
@@ -224,11 +250,11 @@ def main():
     # Build image data loaders
     model_list = {
         'Real': 'real',
-        # 'Oposite class': 'oposite',
+        'Oposite class': 'oposite',
         'CycleGAN': 'cyclegan',
-        # 'CycleGAN-turbo': 'turbo',
+        'CycleGAN-turbo': 'turbo',
     }
-    for i in range(1, 2):
+    for i in range(1, 5):
         test_case = TEST_CASES[str(i)]
         model_list[test_case['short_description']] = f'test_{i}'
 
@@ -236,13 +262,20 @@ def main():
     for k,v in model_list.items():
         data_loaders[k] = build_data_loaders(v)
 
-    fid_distances = get_fid(data_loaders)
-    print_distance_pairs(fid_distances)
+    # fid_distances = get_fid(data_loaders)
+    # print_distance_pairs(fid_distances)
+    # labels = list(model_list.keys())
+    # plot_distances(fid_distances, labels, 'FID')
+
+    lpips_distances = get_lpips(data_loaders)
+    def mean(x):
+        return float(x.mean())
+    lpips_distances_mean = transform_distances(lpips_distances, transform=mean)
+    print_distance_pairs(lpips_distances_mean)
     labels = list(model_list.keys())
-    plot_distances(fid_distances, labels, 'FID')
+    plot_distances(lpips_distances_mean, labels, 'LPIPS')
 
     # Calculate LPIPS
-    #   Same plots (with mean distance)
     #   Compare histograms
     #   Sample images along histogram
     # Build samples with all translations
