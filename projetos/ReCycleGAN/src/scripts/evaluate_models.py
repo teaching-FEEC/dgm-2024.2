@@ -3,6 +3,7 @@
 import sys
 import itertools
 from pathlib import Path
+import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.manifold import MDS
@@ -83,7 +84,7 @@ def plot_hbar(data, file_path, title=None, x_label=None, y_label=None):
     plt.figure(figsize=(6, 4))
     sns.barplot(y='class', x='value', data=df, edgecolor='gray', color='skyblue')
     for index, value in enumerate(df['value']):
-        plt.text(df['value'].max()*0.025, index, f'{value:.2f}', color='black', ha="left", va="center")
+        plt.text(df['value'].max()*0.025, index, f'{value:.4g}', color='black', ha="left", va="center")
 
     if title is not None:
         plt.title(title, fontsize=16, weight='bold')
@@ -213,7 +214,7 @@ def print_distance_pairs(distances):
     for p in ['A','B']:
         print(f"Distances for {p} images")
         for k,v in distances[p].items():
-            print(f"\t{k[0]} - {k[1]}: {v:.3g}")
+            print(f"\t{k[0]} - {k[1]}: {v:.4g}")
         print()
 
 
@@ -239,6 +240,17 @@ def plot_distances(distances, labels, title):
             x_label=f'{title.upper()} to Real Images',
             y_label='')
 
+def save_distances(distances, file_name):
+    """Save distances to file."""
+    file_path = BASE_FOLDER / f'docs/assets/evaluation/{file_name}'
+    with open(file_path, 'wb') as file:
+        pickle.dump(distances, file)
+
+def load_distances(file_name):
+    """Load distances from file."""
+    file_path = BASE_FOLDER / f'docs/assets/evaluation/{file_name}'
+    with open(file_path, 'rb') as file:
+        return pickle.load(file)
 
 def main():
     """Main function."""
@@ -262,10 +274,10 @@ def main():
     for k,v in model_list.items():
         data_loaders[k] = build_data_loaders(v)
 
-    # fid_distances = get_fid(data_loaders)
-    # print_distance_pairs(fid_distances)
-    # labels = list(model_list.keys())
-    # plot_distances(fid_distances, labels, 'FID')
+    fid_distances = get_fid(data_loaders)
+    print_distance_pairs(fid_distances)
+    labels = list(model_list.keys())
+    plot_distances(fid_distances, labels, 'FID')
 
     lpips_distances = get_lpips(data_loaders)
     def mean(x):
@@ -274,6 +286,9 @@ def main():
     print_distance_pairs(lpips_distances_mean)
     labels = list(model_list.keys())
     plot_distances(lpips_distances_mean, labels, 'LPIPS')
+
+    save_distances(fid_distances, 'fid_distances.pkl')
+    save_distances(lpips_distances, 'lpips_distances.pkl')
 
     # Calculate LPIPS
     #   Compare histograms
