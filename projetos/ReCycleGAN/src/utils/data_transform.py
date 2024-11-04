@@ -223,7 +223,7 @@ class ImageTools():
 
 
     @staticmethod
-    def show_img(img, title=None, figsize=(4, 3), nrow=None, labels=None):
+    def show_img(img, title=None, figsize=(4, 3), nrow=None, labels=None, rotation=90):
         """Show a group of images using matplotlib.
 
         If negative values are present in the image tensor, it is assumed
@@ -247,6 +247,9 @@ class ImageTools():
             List of labels to display along the vertical axis.
             If None, no labels are displayed.
             (Default: None)
+        rotation: int
+            Rotation angle of the labels.
+            (Default: 90)
         """
         if len(img.shape) > 4:
             msg = 'Image tensor has more than 4 dimensions.'
@@ -261,7 +264,7 @@ class ImageTools():
             if nrow is None:
                 nrow = int(max(4, min(8, np.ceil(img.shape[0] / 2))))
             grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False)
-            return ImageTools.show_img(grid, title=title, figsize=figsize, labels=labels)
+            return ImageTools.show_img(grid, title=title, figsize=figsize, labels=labels, rotation=rotation)
 
         img = img.permute(1, 2, 0)
         if img.shape[2]==1:
@@ -281,7 +284,7 @@ class ImageTools():
             num_labels = len(labels) * 2 + 1
             y_ticks = np.linspace(0, img.shape[0] - 1, num_labels)
             y_lab = [labels[i//2] if i % 2 == 1 else '' for i in range(num_labels)]
-            axs.set_yticks(ticks=y_ticks, labels=y_lab, rotation=90, fontsize=f_size)
+            axs.set_yticks(ticks=y_ticks, labels=y_lab, rotation=rotation, fontsize=f_size)
 
         plt.tight_layout()
         return fig

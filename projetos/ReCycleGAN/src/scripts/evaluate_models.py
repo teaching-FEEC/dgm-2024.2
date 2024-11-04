@@ -5,6 +5,9 @@ import itertools
 from pathlib import Path
 import pickle
 import numpy as np
+import torch
+from torchvision import transforms
+from PIL import Image
 import matplotlib.pyplot as plt
 from sklearn.manifold import MDS
 import pandas as pd
@@ -20,7 +23,7 @@ from src.utils.utils import save_dict_as_json
 from src.utils.data_loader import get_img_dataloader
 from src.metrics.fid import FID
 from src.metrics.lpips import LPIPS
-
+from src.utils.data_transform import ImageTools
 
 def create_2d_map(distances):
     """Create a 2D map of points given a list of distances between the points."""
@@ -277,6 +280,37 @@ def plot_histograms(metrics, labels, title):
             figsize=(8, 1.5))
 
 
+def save_samples(real_image_list, real_class, models):
+    """Save image tranlation samples to file."""
+    def img_from_name(img_name, model):
+        if model == 'Real':
+            img_path = BASE_FOLDER / f'data/external/nexet/input_{real_class}' / img_name
+        else:
+            img_path = BASE_FOLDER / f'data/external/nexet/output_{real_class}_{model}' / img_name
+        image = Image.open(img_path).convert('RGB')
+        image = transforms.ToTensor()(image)
+        return image
+
+    images = []
+    for img_name in real_image_list:
+        images.append(img_from_name(img_name, 'Real'))
+    for v in models.values():
+        for img_name in real_image_list:
+            images.append(img_from_name(img_name, v))
+
+    images_tensor = torch.stack(images)
+
+    ImageTools.show_img(
+        images_tensor,
+        title=f'Translation Samples for {real_class} Images',
+        figsize = (20, 3*len(models)), nrow=len(real_image_list),
+        labels=['Real'] + list(models),
+        rotation=0
+    )
+    plt.savefig(BASE_FOLDER / f'docs/assets/evaluation/Samples_{real_class}.png')
+    plt.close()
+
+
 def save_metrics(metrics, file_name):
     """Save metrics to file."""
     file_path = BASE_FOLDER / f'docs/assets/evaluation/{file_name}'
@@ -334,9 +368,17 @@ def main():
     plot_metrics(lpips_metrics_mean, labels, 'LPIPS')
     plot_histograms(lpips_metrics, labels, 'LPIPS')
 
+    for p in ['A','B']:
+        images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_all_filtered.csv'
+        df = pd.read_csv(images_csv)
+        img_list = df['file_name'].sample(5).tolist()
+        models = model_list.copy()
+        models.pop('Real', None)
+        models.pop('Oposite class', None)
+        save_samples(img_list, p, models)
+
     # Calculate LPIPS
     #   Sample images along histogram
-    # Build samples with all translations
 
 if __name__ == '__main__':
     main()
