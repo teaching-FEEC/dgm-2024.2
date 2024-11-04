@@ -98,6 +98,28 @@ def plot_hbar(data, file_path, title=None, x_label=None, y_label=None):
     plt.close()
 
 
+def plot_stacked_histograms(tensors, labels, file_path, bins=10, title=None, xlabel='Value', figsize=(8, 2)):
+    """Plot stacked histograms."""
+    num_plots = len(tensors)
+    _, axes = plt.subplots(num_plots, 1, figsize=(figsize[0], figsize[1] * num_plots), sharex=True)
+    if num_plots == 1:
+        axes = [axes]
+
+    for i, (tensor, ax) in enumerate(zip(tensors, axes)):
+        array = tensor.numpy()
+        sns.histplot(array, bins=bins, kde=False, ax=ax, edgecolor='black',stat='density', alpha=0.5)
+        ax.set_ylabel(labels[i])
+        ax.grid(False)
+
+    sns.despine()
+    axes[-1].set_xlabel(xlabel)
+    if title is not None:
+        plt.suptitle(title, fontsize=16, weight='bold')
+    plt.tight_layout()
+    plt.savefig(file_path)
+    plt.close()
+
+
 def build_images(case, device='cuda'):
     """Generates translated images the CycleGAN model."""
     print(f"Building Translated Images for Test Case {case}")
@@ -240,6 +262,21 @@ def plot_distances(distances, labels, title):
             x_label=f'{title.upper()} to Real Images',
             y_label='')
 
+
+def plot_histograms(distances, labels, title):
+    """Plot histograms."""
+    for p in ['A','B']:
+        distances_list = []
+        for k in labels[1:]:
+            distances_list.append(distances[p][('Real',k)].flatten())
+        plot_stacked_histograms(
+            distances_list,
+            labels[1:],
+            file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_histograms_{p}.png',
+            title=f'{title.upper()} for {p} Images', xlabel=f'{title.upper()} to Real Images',
+            figsize=(8, 1.5))
+
+
 def save_distances(distances, file_name):
     """Save distances to file."""
     file_path = BASE_FOLDER / f'docs/assets/evaluation/{file_name}'
@@ -251,6 +288,7 @@ def load_distances(file_name):
     file_path = BASE_FOLDER / f'docs/assets/evaluation/{file_name}'
     with open(file_path, 'rb') as file:
         return pickle.load(file)
+
 
 def main():
     """Main function."""
@@ -278,20 +316,17 @@ def main():
     print_distance_pairs(fid_distances)
     labels = list(model_list.keys())
     plot_distances(fid_distances, labels, 'FID')
+    save_distances(fid_distances, 'fid_distances.pkl')
 
     lpips_distances = get_lpips(data_loaders)
-    def mean(x):
-        return float(x.mean())
-    lpips_distances_mean = transform_distances(lpips_distances, transform=mean)
+    lpips_distances_mean = transform_distances(lpips_distances, transform=lambda x: float(x.mean()))
     print_distance_pairs(lpips_distances_mean)
     labels = list(model_list.keys())
     plot_distances(lpips_distances_mean, labels, 'LPIPS')
-
-    save_distances(fid_distances, 'fid_distances.pkl')
+    plot_histograms(lpips_distances, labels, 'LPIPS')
     save_distances(lpips_distances, 'lpips_distances.pkl')
 
     # Calculate LPIPS
-    #   Compare histograms
     #   Sample images along histogram
     # Build samples with all translations
 
