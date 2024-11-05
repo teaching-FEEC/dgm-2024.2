@@ -38,13 +38,21 @@ def plot_2d_map(points_2d, labels, file_path, title=None, label_dist=0.025):
 
     df = pd.DataFrame(points_2d, columns=['x', 'y'])
     df['label'] = labels
-    plt.figure(figsize=(6, 4))
-    scatter = sns.scatterplot(data=df, x='x', y='y', hue='label', palette='viridis', s=100)
+
+    if label_dist > 0:
+        plt.figure(figsize=(6, 4))
+    else:
+        plt.figure(figsize=(6.5, 4))
+
+    scatter = sns.scatterplot(data=df, x='x', y='y', hue='label', palette='Set1', s=100)
     plt.gca().set_aspect('equal', adjustable='box')
 
     if title is not None:
         plt.title(title, fontsize=16, weight='bold')
-    scatter.legend_.remove()
+    if label_dist > 0:
+        scatter.legend_.remove()
+    else:
+        plt.legend(title='Model', bbox_to_anchor=(1.05, 1), loc='upper left')
 
     plt.xlabel('')
     plt.ylabel('')
@@ -66,15 +74,16 @@ def plot_2d_map(points_2d, labels, file_path, title=None, label_dist=0.025):
         x_max_ = (x_min+x_max)/2.0 + y_range / 2.0
         plt.gca().set_xlim(x_min_, x_max_)
 
-    y_min, y_max = plt.gca().get_ylim()
-    y_range = y_max - y_min
-    label_dist *= y_range
-    for i in range(len(df)):
-        plt.text(df['x'][i], df['y'][i] + label_dist, df['label'][i],
-                 horizontalalignment='center',
-                 size='small', #  fontsize=9,
-                 color='black',
-        )
+    if label_dist > 0:
+        y_min, y_max = plt.gca().get_ylim()
+        y_range = y_max - y_min
+        label_dist *= y_range
+        for i in range(len(df)):
+            plt.text(df['x'][i], df['y'][i] + label_dist, df['label'][i],
+                    horizontalalignment='center',
+                    size='small', #  fontsize=9,
+                    color='black',
+            )
 
     plt.tight_layout()
     plt.savefig(file_path)
@@ -253,6 +262,12 @@ def plot_metrics(metrics, labels, title):
             labels,
             file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_map_images_{p}.png',
             title=f'{title.upper()} for {p} Images')
+        plot_2d_map(
+            points_2d,
+            labels,
+            file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_map_images_{p}_legend.png',
+            title=f'{title.upper()} for {p} Images',
+            label_dist=0)
 
         data = {
             'class': labels[1:],
@@ -327,12 +342,17 @@ def load_metrics(file_name):
 def main():
     """Main function."""
 
-    n_tests = 4
-    recalculate_metrics = False
+    n_tests = 5
+    test_cases_to_build_images = [] # Indexes of test cases to build images
+    recalculate_metrics = False # If False, will load metrics from pkl files
+    n_samples = 5
+    # best_model = 5 # Index of the 'best' model
+
 
     # Build translated images
-    # for i_ in range(1, n_tests+1):
-    #     build_images(i_)
+    for i in test_cases_to_build_images:
+        build_images(i)
+
 
     # Build image data loaders
     model_list = {
@@ -350,6 +370,8 @@ def main():
         data_loaders[k] = build_data_loaders(v)
     labels = list(model_list.keys())
 
+
+    # Calculate FID
     if recalculate_metrics:
         fid_metrics = get_fid(data_loaders)
         save_metrics(fid_metrics, 'fid_metrics.pkl')
@@ -358,6 +380,8 @@ def main():
     print_metric_pairs(fid_metrics)
     plot_metrics(fid_metrics, labels, 'FID')
 
+
+    # Calculate LPIPS
     if recalculate_metrics:
         lpips_metrics = get_lpips(data_loaders)
         save_metrics(lpips_metrics, 'lpips_metrics.pkl')
@@ -368,10 +392,12 @@ def main():
     plot_metrics(lpips_metrics_mean, labels, 'LPIPS')
     plot_histograms(lpips_metrics, labels, 'LPIPS')
 
+
+    # Save samples
     for p in ['A','B']:
         images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_all_filtered.csv'
         df = pd.read_csv(images_csv)
-        img_list = df['file_name'].sample(5).tolist()
+        img_list = df['file_name'].sample(n_samples).tolist()
         models = model_list.copy()
         models.pop('Real', None)
         models.pop('Oposite class', None)
@@ -379,6 +405,10 @@ def main():
 
     # Calculate LPIPS
     #   Sample images along histogram
+    #       Define the 'best' test case
+    #       Get the mean distance from each model image to the real images
+    #       Order images and sample evenly along the histogram
+    #       Plot histogram of distances with samples images
 
 if __name__ == '__main__':
     main()
