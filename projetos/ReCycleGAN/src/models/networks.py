@@ -75,36 +75,38 @@ class SelfAttention(nn.Module):
         self.value_conv = nn.Conv2d(in_channels, in_channels, kernel_size=1)
         
         # Add spatial reduction for attention computation
-        self.pool = nn.AvgPool2d(kernel_size=2, stride=2)
+        self.pool = nn.AvgPool2d(kernel_size=4, stride=4)
         
         self.gamma = nn.Parameter(torch.zeros(1))
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
-        batch_size, channels, width, height = x.size()
+        batch_size, channels, height, width = x.size()
         
         # Reduce spatial dimensions for key and query
         x_pooled = self.pool(x)
+        pooled_height, pooled_width = x_pooled.shape[2:]
         
         # Project and reshape query
-        proj_query = self.query_conv(x)
-        proj_query = proj_query.view(batch_size, -1, width * height).permute(0, 2, 1)
+        proj_query = self.query_conv(x_pooled)  # Use pooled input for query too
+        proj_query = proj_query.view(batch_size, -1, pooled_height * pooled_width)  # (B, C', HW/16)
         
         # Project and reshape key (using pooled input)
         proj_key = self.key_conv(x_pooled)
-        proj_key = proj_key.view(batch_size, -1, (width//2) * (height//2))
+        proj_key = proj_key.view(batch_size, -1, pooled_height * pooled_width)  # (B, C', HW/16)
         
         # Project and reshape value (using pooled input)
         proj_value = self.value_conv(x_pooled)
-        proj_value = proj_value.view(batch_size, -1, (width//2) * (height//2))
+        proj_value = proj_value.view(batch_size, -1, pooled_height * pooled_width)  # (B, C, HW/16)
         
         # Calculate attention with reduced spatial dimensions
-        energy = torch.bmm(proj_query, proj_key)  # (B, HW, H'W')
-        attention = self.softmax(energy)  # (B, HW, H'W')
+        energy = torch.bmm(proj_query.permute(0, 2, 1), proj_key)  # (B, HW/16, HW/16)
+        attention = self.softmax(energy)
         
         # Apply attention and reshape
-        out = torch.bmm(proj_value.permute(0, 2, 1), attention.permute(0, 2, 1))  # (B, H'W', C)
-        out = out.permute(0, 2, 1).view(batch_size, channels, width, height)
+        out = torch.bmm(proj_value, attention.permute(0, 2, 1))  # (B, C, HW/16)
+        out = out.view(batch_size, channels, pooled_height, pooled_width)
+        out = F.interpolate(out, size=(height, width), mode='bilinear', align_corners=False)
         
         return self.gamma * out + x
 
