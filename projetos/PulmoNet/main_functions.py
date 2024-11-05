@@ -65,11 +65,21 @@ def run_train_epoch(gen,
                 if counter_steps_before_upd_disc == steps_to_complete_bfr_upd_disc:
                     counter_steps_before_upd_disc = 0
 
-            progress_bar.set_postfix(
-                desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
-                      f'gen loss: {mean_loss_gen / (counter_batches_used_to_upd_gen)},'
-                      f'disc loss: {mean_loss_disc / (counter_batches_used_to_upd_disc)}'))
-            
+            if counter_batches_used_to_upd_disc > 0 and counter_batches_used_to_upd_gen > 0:
+                progress_bar.set_postfix(
+                    desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
+                        f'gen loss: {mean_loss_gen / (counter_batches_used_to_upd_gen)},'
+                        f'disc loss: {mean_loss_disc / (counter_batches_used_to_upd_disc)}'))
+            elif counter_batches_used_to_upd_disc > 0 and counter_batches_used_to_upd_gen == 0:
+                progress_bar.set_postfix(
+                    desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
+                        f'disc loss: {mean_loss_disc / (counter_batches_used_to_upd_disc)}'))
+            elif counter_batches_used_to_upd_disc == 0 and counter_batches_used_to_upd_gen > 0:
+                progress_bar.set_postfix(
+                    desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
+                        f'gen loss: {mean_loss_gen / (counter_batches_used_to_upd_gen)}'))
+
+
     if use_wandb == True:
         wandb.log({"gen_loss_train": mean_loss_gen/(counter_batches_used_to_upd_gen), 
                     "disc_loss_train": mean_loss_disc/(counter_batches_used_to_upd_disc)})
