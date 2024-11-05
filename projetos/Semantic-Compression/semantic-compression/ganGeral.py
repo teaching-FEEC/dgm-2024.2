@@ -360,14 +360,22 @@ class GCGAN(models.Model):
               x0 = self.preprocess(x)
               x0_concat = tf.concat([x0, xs], axis=-1)
 
-              x_hat = self.autoencoder(x0, xs, training=False)
-              x_hat_concat = tf.concat([x_hat, xs], axis=-1)
 
               if  self.SC == 0:
+                    x_hat = self.autoencoder(x0, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0 + tf.random.normal(shape=tf.shape(x0), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat + tf.random.normal(shape=tf.shape(x_hat), mean=0.0, stddev=0.1)
 
+              elif self.SC == 1:
+                    x_hat = self.autoencoder(x0, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
+                    x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
+                    x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
+
               else:
+                    x_hat = self.autoencoder(x0_concat, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
 
@@ -395,14 +403,21 @@ class GCGAN(models.Model):
               x0 = self.preprocess(x)
               x0_concat = tf.concat([x0, xs], axis=-1)
 
-              x_hat = self.autoencoder(x0_concat, training=True)
-              x_hat_concat = tf.concat([x_hat, xs], axis=-1)
-
               if  self.SC == 0:
+                    x_hat = self.autoencoder(x0, xs, training=True)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0 + tf.random.normal(shape=tf.shape(x0), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat + tf.random.normal(shape=tf.shape(x_hat), mean=0.0, stddev=0.1)
 
+              elif self.SC == 1:
+                    x_hat = self.autoencoder(x0, xs, training=True)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
+                    x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
+                    x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
+
               else:
+                    x_hat = self.autoencoder(x0_concat, xs, training=True)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
 
@@ -432,14 +447,21 @@ class GCGAN(models.Model):
               x0 = self.preprocess(x)
               x0_concat = tf.concat([x0, xs], axis=-1)
 
-              x_hat = self.autoencoder(x0_concat, training=False)
-              x_hat_concat = tf.concat([x_hat, xs], axis=-1)
-
               if  self.SC == 0:
+                    x_hat = self.autoencoder(x0, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0 + tf.random.normal(shape=tf.shape(x0), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat + tf.random.normal(shape=tf.shape(x_hat), mean=0.0, stddev=0.1)
 
+              elif self.SC == 1:
+                    x_hat = self.autoencoder(x0, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
+                    x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
+                    x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
+
               else:
+                    x_hat = self.autoencoder(x0_concat, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
 
@@ -468,14 +490,21 @@ class GCGAN(models.Model):
               x0 = self.preprocess(x)
               x0_concat = tf.concat([x0, xs], axis=-1)
 
-              x_hat = self.autoencoder(x0_concat, training=False)
-              x_hat_concat = tf.concat([x_hat, xs], axis=-1)
-
               if  self.SC == 0:
+                    x_hat = self.autoencoder(x0, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0 + tf.random.normal(shape=tf.shape(x0), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat + tf.random.normal(shape=tf.shape(x_hat), mean=0.0, stddev=0.1)
 
+              elif self.SC == 1:
+                    x_hat = self.autoencoder(x0, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
+                    x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
+                    x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
+
               else:
+                    x_hat = self.autoencoder(x0_concat, xs, training=False)
+                    x_hat_concat = tf.concat([x_hat, xs], axis=-1)
                     x0_noisy = x0_concat + tf.random.normal(shape=tf.shape(x0_concat), mean=0.0, stddev=0.1)
                     x_hat_noisy = x_hat_concat + tf.random.normal(shape=tf.shape(x_hat_concat), mean=0.0, stddev=0.1)
 
@@ -500,13 +529,23 @@ class GCGAN(models.Model):
         x0 = self.preprocess(x)
         x0_concat = tf.concat([x0, xs], axis=-1)
 
-        x_hat = self.autoencoder(x0, training=False)
-        x_hat_concat = tf.concat([x_hat, xs], axis=-1)
 
         if self.SC == 0:
+                x_hat = self.autoencoder(x0, training=False)
+                x_hat_concat = tf.concat([x_hat, xs], axis=-1)
+
                 y = self.discriminator(x0, training=False)
                 y_hat = self.discriminator(x_hat, training=False)
+        elif self.SC == 1:
+                x_hat = self.autoencoder(x0, training=False)
+                x_hat_concat = tf.concat([x_hat, xs], axis=-1)
+
+                y = self.discriminator(x0_concat, training=False)
+                y_hat = self.discriminator(x_hat_concat, training=False) 
         else:
+                x_hat = self.autoencoder(x0_concat, training=False)
+                x_hat_concat = tf.concat([x_hat, xs], axis=-1)
+
                 y = self.discriminator(x0_concat, training=False)
                 y_hat = self.discriminator(x_hat_concat, training=False) 
 
