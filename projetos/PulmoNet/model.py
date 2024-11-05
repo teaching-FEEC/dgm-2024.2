@@ -86,9 +86,9 @@ class Discriminator(nn.Module):
         self.conv2 = block_discriminator(in_dim=64, out_dim=128,stride_size=2,use_batchnorm=True)
         self.conv3 = block_discriminator(in_dim=128, out_dim=256,stride_size=2,use_batchnorm=True)
         self.conv4 = block_discriminator(in_dim=256, out_dim=512,stride_size=1,use_batchnorm=True)
-        #self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
-        #                           nn.Sigmoid())
-        self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True))
+        self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
+                                   nn.Sigmoid())
+        #self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True))
 
     def forward(self, x, y):
         xy_concat = torch.cat([y, x], dim=1)

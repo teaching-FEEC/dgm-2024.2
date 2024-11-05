@@ -105,8 +105,8 @@ processed_data_folder = str(config['data'].get('processed_data_folder',
                                                '/mnt/shared/ctdata_thr25'))
 dataset_type = str(config['data'].get('dataset',
                                     'lungCTData'))
-start_point_test_data = int(config['data']['start_point_test_data'])
-end_point_test_data = int(config['data']['end_point_test_data'])
+start_point_test_data = config['data'].get('start_point_test_data',None)
+end_point_test_data = config['data'].get('end_point_test_data',None)
 batch_size = int(config['data']['batch_size'])
 transformations = config['data'].get('transformations',None)
 if transformations is not None:
@@ -136,9 +136,9 @@ gen = FACTORY_DICT["model_gen"]["Generator"]()
 gen.load_state_dict(torch.load(trained_gen_path, weights_only=True))
 gen.to(device)
 
-
 # Obtenção dos dados de teste
 dataset_test = FACTORY_DICT['dataset'][dataset_type](processed_data_folder=processed_data_folder,
+                                                                mode='all_test',
                                                                 start=start_point_test_data,
                                                                 end=end_point_test_data,
                                                                 transform=transform,
