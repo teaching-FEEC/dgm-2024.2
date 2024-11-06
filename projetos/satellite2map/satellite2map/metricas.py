@@ -73,6 +73,6 @@ def PA(batch_pred, batch_true, delta=5/256):
     correct_pixels = (diff < delta).sum()
 
     # if the difference is less than delta, the pixel is correct
-    pixel_accuracy = correct_pixels.item() / (batch_pred.size(2) * batch_pred.size(3) * batch_pred.size(0))
+    pixel_accuracy = correct_pixels.item() / (batch_pred.size(2) * batch_pred.size(3) * batch_pred.size(1))
 
     return pixel_accuracy

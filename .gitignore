@@ -2,3 +2,4 @@ projetos/satellite2map/data/
 projetos/satellite2map/models/*/checkpoints/
 *__pycache__/
 .gitignore
+*.zip
