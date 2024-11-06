@@ -252,28 +252,20 @@ class Discriminator(nn.Module):
                  ):
         super().__init__()
 
+        layers = [
+            nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
+            nn.LeakyReLU(0.2, inplace=True),
+            self.discriminator_block(n_features, 2 * n_features, norm_layer),
+            self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
+            self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
+        ]
+        
         if add_attention == 'disc':
-            self.model = nn.Sequential(
-                nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
-                nn.LeakyReLU(0.2, inplace=True),
-
-                self.discriminator_block(n_features, 2 * n_features, norm_layer),
-                self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
-                self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
-                SelfAttention(512),
-                nn.Conv2d(8 * n_features, 1, 4, padding=1)
-            )
-        else:
-            self.model = nn.Sequential(
-                nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
-                nn.LeakyReLU(0.2, inplace=True),
-
-                self.discriminator_block(n_features, 2 * n_features, norm_layer),
-                self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
-                self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
-
-                nn.Conv2d(8 * n_features, 1, 4, padding=1)
-            )
+            layers.append(SelfAttention(in_channels=8 * n_features))
+            
+        layers.append(nn.Conv2d(8 * n_features, 1, 4, padding=1))
+        
+        self.model = nn.Sequential(*layers)
 
     def discriminator_block(self, input_dim, output_dim, norm_layer):
         """
