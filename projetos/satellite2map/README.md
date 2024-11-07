@@ -3,8 +3,9 @@
 
 # `Satellite2Map Project: Satellite Image Translation Models for Maps (supervised and unsupervised)`
 
-## Apresentação
 
+
+## Apresentação
 O presente projeto foi originado no contexto das atividades da disciplina de pós-graduação *IA376N - IA generativa: de modelos a aplicações multimodais*, 
 oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra. Paula Dornhofer Paro Costa, do Departamento de Engenharia de Computação e Automação (DCA) da Faculdade de Engenharia Elétrica e de Computação (FEEC).
 
@@ -16,98 +17,78 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 Link para os [slides](https://docs.google.com/presentation/d/1wfFYGmEwGVK_7xQVmFo_O_I16TSq4QnFY-srznNGeVQ/edit?usp=sharing)
 
 
-## Resumo (Abstract)
 
+## Resumo (Abstract)
 Com a finalidade de estudar os principais métodos da área de *image-to-image translation* (I2IT), o objetivo deste projeto é explorar o problema da extração de mapas a partir de imagens de  satélite utilizando duas abordagens diferentes: uma supervisionada (Pix2Pix) e outra não supervisionada (CycleGAN).
 O modelo Pix2pix foi implementado e treinado com a base de dados de seu próprio artigo. Os resultados foram imagens coerentes porém distorcidas e com perdas de alguns elementos relevantes para esse tipo de dado, como consistência de ruas e preservação de rotas. Como limitação, destaca-se necessidade de um conjunto de dados com pares de imagens correspondentes, o que pode ser difícil de obter para algumas tarefas.
 Já o modelo CycleGAN utilizou os mesmos datasets do Pix2Pix, contudocomo por exemplo Monet2Photo
 
 
+
  ## Descrição do Problema/Motivação
-
  Uma das subáreas de IA generativa que obteve alguns dos mais impressionantes resultados dos últimos anos tem sido a área de *image-to-image translation* (I2IT) [[1]](#1). Dentro dessa subárea, um problema frequentemente abordado é a obtenção de mapas a partir de imagens de satélite, e vice-versa, devido às suas inúmeras aplicações, por exemplo, ajudando governos a tomarem medidas rapidamente em casos de desastres naturais [[2]](#2).
-
  A motivação pelo estudo desse problema é avaliar aplicações menos convencionais de modelos generativos, visto que a síntese de dados já é estudada com frequência. Além disso, mapas são um tipo de dado muito rico em informações diversas, sendo relevantes para problemas distintos, desde criação de rotas até segmentação semântica de vegetações. 
-
  O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como presença corpos d'àgua, parques, etc.
-
  Durante as etapas de treino, validação, testes e inferências, serão utilizados Datasets de imagens de Nova Iorque. Por fim, o modelo será testado com dados novos e desconhecidos, a partir de imagens de satelite da UNICAMP, para avaliação do seu desempenho.
 
 
+
 ## Objetivo
-
 O objetivo final principal será extrair o mapa de uma localidade a partir de sua foto de satélite e, como objetivo extra, testar a generalização do modelo tentando extrair o mesmo mapa a partir de uma imagem da UNICAMP.
-
 Outros objetivos incluem:
-
 - Familiarização com aplicações menos convencionais de GANs.
 - Estudo da avaliação quantitativa e qualitativa de modelos generativos.
 - Aprender as etapas do processo de pesquisa na área de modelos generativos.
 - Entender como parâmetros e hiperparâmetros afetam os resultados finais obtidos.
 
+
+
 ## Metodologia
 
 - **Abordagens escolhidas**: As duas abordagens escolhidas são baseadas em métodos consolidados na área de I2IT e até hoje são usados como *benchmarks* para novos trabalhos:
     1. Pix2Pix (2016)[[3]](#3): Possivelmente o framework mais amplamente adotado em problemas de I2IT, o modelo consiste em uma GAN condicional onde a condição é a imagem de entrada.
-
     2. MapGen-GAN (2021)[[2]](#2): MapGen-GAN é uma implementação da CycleGAN otimizada para o problema de extração de mapas de imagens de satélite. A CycleGAN, proposta pelos mesmos criadores do Pix2Pix, também é uma arquitetura muito utilizada em I2IT e tem um processo de treinamento diferente, buscando otimizar uma loss de "consistência de ciclo" que procura garantir que a imagem original seja a mais próxima possível da imagem obtida pelo mapeamento inverso da imagem traduzida.
-
 - **Ferramentas**: As ferramentas utilizadas são as mais difundidas na comunidade de Deep Learning atualmente:
     - Criação e treinamento dos modelos: PyTorch
     - Monitoramento de métricas: WandB 
-
 - **Resultados esperados**: Devido à quantidade limitada de dados disponíveis e aos dados utilizados não corresponderem a paisagens brasileiras ou próximas das paisagens da Unicamp, é de se esperar um enviesamento do modelo à cidade de Nova Iorque. Esse enviesamento provavelmente será refletido até mesmo em aplicações do modelo a paisagens rurais ou litorâneas. No entanto, espera-se que o modelo consiga extrair mapas qualitativamente bons ainda que apresentem algumas distorções, principalmente em áreas mais rurais.
-
 - **Metodologia de avaliação**: As métricas de avaliação quantitativa que serão utilizadas serão:
-
 
 **1. Erro Quadrático Médio (MSE)**
 
   **Teoria**:
   O Erro Quadrático Médio é uma métrica comum usada para quantificar a diferença entre a imagem prevista e a imagem de verdade. É definido como:
-
  ![image](https://github.com/user-attachments/assets/a9ff5edd-390a-424a-884d-766c5534f618)
-
   onde N é o número total de pixels, Itrue é o valor do pixel i da imagem real e Ipred é o valor do pixel i da imagem gerada.
 
   **Referências**:
-
   •	Zhang, Z. et al. (2012). "A survey of image denoising methods." Proceedings of the IEEE.
   •	Shapiro, J. (2001). "Embedded Image Coding using the Coder/Decoder." IEEE Transactions on Image Processing.
 
     **Aplicação na Tradução de Imagem**:
-
   Em tarefas de tradução de imagem, o MSE é usado para avaliar a precisão em nível de pixel das imagens geradas. Um MSE mais baixo indica uma correspondência mais próxima com a imagem de verdade, sugerindo que as imagens geradas preservam bem os detalhes e o conteúdo das imagens originais.
-
-
 
 **2. Relação Sinal-Ruído de Pico (PSNR)**
    
   **Teoria**:
   O PSNR é derivado do MSE e fornece uma medida do erro máximo. É expresso em decibéis (dB) e definido como:
-
  ![image](https://github.com/user-attachments/assets/310943d6-47e4-4350-b15b-ffa2d79571cd)
-
   onde p é o número de bits por pixel.
 
-
 **3. Índice de Similaridade Estrutural (SSIM)**
-
   **Teoria**:
   O SSIM é uma métrica perceptual que mede a similaridade estrutural entre duas imagens. Baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
-
 ![image](https://github.com/user-attachments/assets/65b1b8f5-0d5b-4a0f-823c-d399c0b44076)
-
   onde μ e σ são as médias e desvios padrão das imagens, e C1 e C2 são constantes para estabilizar a divisão.
 
   **Referências**:
-
   •	Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image quality assessment: From error visibility to structural similarity." IEEE Transactions on Image Processing.
   •	Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine.
 
   **Aplicação na Tradução de Imagem**:
-
   O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
+
+
 
 ## Bases de Dados e Evolução
 > Elencar bases de dados utilizadas no projeto.
@@ -124,50 +105,53 @@ Exemplos de pares de imagens da base de dados:
 ![data](reports/figures/data.png)
 
 
+
 ## Workflow Pix2pix
 
 ![workflow_pix2pix](reports/figures/workflow_pix2pix.png)
+
+
 
 ## Treinamento:
 
 **CycleGAN:**
 - Evolução da Loss do Gerador:
-
 ![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
 
-- Evolução da Loss do Discriminador:
 
+- Evolução da Loss do Discriminador:
 ![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
 
-- Resultado Parcial da Época 10:
 
+- Resultado Parcial da Época 10:
 ![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
 
-- Resultado Parcial da Época 50:
 
+- Resultado Parcial da Época 50:
 ![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
 
-- Resultado Parcial da Época 90:
 
+- Resultado Parcial da Época 90:
 ![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
+
 
 
 **Pix2Pix:**
 - Evolução da Loss (Gerador e Discriminador):
-
 ![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
 
-- Resultado Parcial da Época 10:
 
+- Resultado Parcial da Época 10:
 ![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
 
-- Resultado Parcial da Época 50:
 
+- Resultado Parcial da Época 50:
 ![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
 
-- Resultado Parcial da Época 90:
 
+- Resultado Parcial da Época 90:
 ![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
+
 
 
 A partir dos gráficos de loss, é possível observar que o modelo convergiu visto que a loss do gerador começa a diminuir sem diminuir a loss do discriminador. Um discriminador ideal independe do gerador. De fato, os resultados obtidos nessa primeira implementação do Pix2pix mostram que houve sim uma convergência do modelo com o gerador produzindo imagens coerentes com a imagem de entrada e que possuem aspectos de mapas. No entanto, os resultados finais não possuem um nível de verossimilhança capaz de confundir um humano, muito menos são possíveis de se utilizar em aplicações reais.
