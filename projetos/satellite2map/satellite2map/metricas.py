@@ -56,7 +56,7 @@ def SSIM(batch_pred, batch_true):
 
     return np.mean(ssim_values)
 \
-def PA(batch_pred, batch_true, delta=5/256):
+def PA(batch_pred, batch_true, delta=5/255):
     """
     Calcula a acurácia de pixel para um batch de imagens.
 
@@ -65,6 +65,9 @@ def PA(batch_pred, batch_true, delta=5/256):
     :param delta: Limiar de diferença para considerar um pixel correto.
     :return: Acurácia de pixel para o batch.
     """
+    # scaling the images to [0, 1]
+    batch_pred = batch_pred * 0.5 + 0.5
+    batch_true = batch_true * 0.5 + 0.5
 
     # calculating the difference between the prediction and the ground truth
     diff = torch.abs(batch_pred - batch_true)
@@ -73,6 +76,6 @@ def PA(batch_pred, batch_true, delta=5/256):
     correct_pixels = (diff < delta).sum()
 
     # if the difference is less than delta, the pixel is correct
-    pixel_accuracy = correct_pixels.item() / (batch_pred.size(2) * batch_pred.size(3) * batch_pred.size(1))
+    pixel_accuracy = correct_pixels.item() / torch.numel(batch_pred)
 
     return pixel_accuracy
