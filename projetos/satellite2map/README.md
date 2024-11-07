@@ -5,7 +5,7 @@
 
 
 
-## Apresentação
+## Apresentação do Projeto
 O presente projeto foi originado no contexto das atividades da disciplina de pós-graduação *IA376N - IA generativa: de modelos a aplicações multimodais*, 
 oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra. Paula Dornhofer Paro Costa, do Departamento de Engenharia de Computação e Automação (DCA) da Faculdade de Engenharia Elétrica e de Computação (FEEC).
 
@@ -158,7 +158,7 @@ A partir dos gráficos de loss, é possível observar que o modelo convergiu vis
 
 Esse tipo de imperfeição caracterizam uma limitação do modelo, oque é possível de se comparar ao observar os resultados obtidos pelos próprios autores. Uma limitação que também foi observada é que o modelo consegue resultados muito melhores em áreas residenciais urbanas (sem corpos d'àgua como rios ou mar, áreas verdes ou grandes avenidas) pois os mapas dessas áreas são mais simples, compostos apenas de tons de cinza e ruas brancas. Os piores resultados foram observados em parques e áreas verdes com corpos d'àgua próximos.
 
-Isso se deve ao fato de que o dataset é composto por imagens de Nova Iorque, uma região urbana com poucas áreas verdes e rios ou mar. Obter mais imagens de áreas rurais ajudaria o modelo a aprender outros padrões de urbanização e melhoraria o desempenho nessas regiões.
+Isso se deve ao fato de que o dataset é composto https://github.com/cosmerodolfo/dgm-2024.2.gitpor imagens de Nova Iorque, uma região urbana com poucas áreas verdes e rios ou mar. Obter mais imagens de áreas rurais ajudaria o modelo a aprender outros padrões de urbanização e melhoraria o desempenho nessas regiões.
 
 Ainda não foram implementadas métricas quantitativas, mas esse será nosso próximo passo.
 
