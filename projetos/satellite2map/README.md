@@ -130,7 +130,7 @@ Exemplos de pares de imagens da base de dados:
 
 ## Treinamento:
 
-_CycleGAN:_ 
+**CycleGAN:**
 - Evolução da Loss do Gerador:
 
 ![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
@@ -138,12 +138,36 @@ _CycleGAN:_
 - Evolução da Loss do Discriminador:
 
 ![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
-  
 
-Pix2Pix:
+- Resultado Parcial da Época 10:
+
+![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
+
+- Resultado Parcial da Época 50:
+
+![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
+
+- Resultado Parcial da Época 90:
+
+![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
+
+
+**Pix2Pix:**
 - Evolução da Loss (Gerador e Discriminador):
 
 ![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
+
+- Resultado Parcial da Época 10:
+
+![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
+
+- Resultado Parcial da Época 50:
+
+![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
+
+- Resultado Parcial da Época 90:
+
+![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
 
 
 A partir dos gráficos de loss, é possível observar que o modelo convergiu visto que a loss do gerador começa a diminuir sem diminuir a loss do discriminador. Um discriminador ideal independe do gerador. De fato, os resultados obtidos nessa primeira implementação do Pix2pix mostram que houve sim uma convergência do modelo com o gerador produzindo imagens coerentes com a imagem de entrada e que possuem aspectos de mapas. No entanto, os resultados finais não possuem um nível de verossimilhança capaz de confundir um humano, muito menos são possíveis de se utilizar em aplicações reais.
