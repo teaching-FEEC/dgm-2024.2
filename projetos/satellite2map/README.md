@@ -130,7 +130,7 @@ Exemplos de pares de imagens da base de dados:
 
 ## Treinamento:
 
-CycleGAN: 
+_CycleGAN:_ 
 - Evolução da Loss do Gerador:
 
 ![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
