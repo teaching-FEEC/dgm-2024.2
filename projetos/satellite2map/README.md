@@ -128,20 +128,23 @@ Exemplos de pares de imagens da base de dados:
 
 ![workflow_pix2pix](reports/figures/workflow_pix2pix.png)
 
-## Experimentos, Resultados e Discussão dos Resultados
+## Treinamento:
 
-Gráficos de loss:
+CycleGAN: 
+- Evolução da Loss do Gerador:
 
-![train_loss](reports/figures/train_loss.png)
+![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
 
-![val_loss](reports/figures/val_loss.png)
+- Evolução da Loss do Discriminador:
 
-Saídas obtidas ao longo do treinamento:
-![output_10](reports/figures/output_epoch10.png)
+![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
+  
 
-![output_50](reports/figures/output_epoch50.png)
+Pix2Pix:
+- Evolução da Loss (Gerador e Discriminador):
 
-![output_100](reports/figures/output_epoch100.png)
+![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
+
 
 A partir dos gráficos de loss, é possível observar que o modelo convergiu visto que a loss do gerador começa a diminuir sem diminuir a loss do discriminador. Um discriminador ideal independe do gerador. De fato, os resultados obtidos nessa primeira implementação do Pix2pix mostram que houve sim uma convergência do modelo com o gerador produzindo imagens coerentes com a imagem de entrada e que possuem aspectos de mapas. No entanto, os resultados finais não possuem um nível de verossimilhança capaz de confundir um humano, muito menos são possíveis de se utilizar em aplicações reais.
 
