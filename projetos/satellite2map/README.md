@@ -5,7 +5,7 @@
 
 
 
-## Apresentação do Projeto
+## Apresentação
 O presente projeto foi originado no contexto das atividades da disciplina de pós-graduação *IA376N - IA generativa: de modelos a aplicações multimodais*, 
 oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra. Paula Dornhofer Paro Costa, do Departamento de Engenharia de Computação e Automação (DCA) da Faculdade de Engenharia Elétrica e de Computação (FEEC).
 
@@ -54,39 +54,43 @@ Outros objetivos incluem:
 - **Resultados esperados**: Devido à quantidade limitada de dados disponíveis e aos dados utilizados não corresponderem a paisagens brasileiras ou próximas das paisagens da Unicamp, é de se esperar um enviesamento do modelo à cidade de Nova Iorque. Esse enviesamento provavelmente será refletido até mesmo em aplicações do modelo a paisagens rurais ou litorâneas. No entanto, espera-se que o modelo consiga extrair mapas qualitativamente bons ainda que apresentem algumas distorções, principalmente em áreas mais rurais.
 - **Metodologia de avaliação**: As métricas de avaliação quantitativa que serão utilizadas serão:
 
-**1. Erro Quadrático Médio (MSE)**
 
-  **Teoria**:
-  O Erro Quadrático Médio é uma métrica comum usada para quantificar a diferença entre a imagem prevista e a imagem de verdade. É definido como:
- ![image](https://github.com/user-attachments/assets/a9ff5edd-390a-424a-884d-766c5534f618)
-  onde N é o número total de pixels, Itrue é o valor do pixel i da imagem real e Ipred é o valor do pixel i da imagem gerada.
+    **1. Erro Quadrático Médio (MSE)**
 
-  **Referências**:
-  •	Zhang, Z. et al. (2012). "A survey of image denoising methods." Proceedings of the IEEE.
-  •	Shapiro, J. (2001). "Embedded Image Coding using the Coder/Decoder." IEEE Transactions on Image Processing.
+        - Teoria:
+      O Erro Quadrático Médio é uma métrica comum usada para quantificar a diferença entre a imagem prevista e a imagem de verdade. É definido como:
 
-    **Aplicação na Tradução de Imagem**:
-  Em tarefas de tradução de imagem, o MSE é usado para avaliar a precisão em nível de pixel das imagens geradas. Um MSE mais baixo indica uma correspondência mais próxima com a imagem de verdade, sugerindo que as imagens geradas preservam bem os detalhes e o conteúdo das imagens originais.
+    ![image](https://github.com/user-attachments/assets/a9ff5edd-390a-424a-884d-766c5534f618)
+      
+      onde N é o número total de pixels, Itrue é o valor do pixel i da imagem real e Ipred é o valor do pixel i da imagem gerada.
 
-**2. Relação Sinal-Ruído de Pico (PSNR)**
-   
-  **Teoria**:
-  O PSNR é derivado do MSE e fornece uma medida do erro máximo. É expresso em decibéis (dB) e definido como:
- ![image](https://github.com/user-attachments/assets/310943d6-47e4-4350-b15b-ffa2d79571cd)
-  onde p é o número de bits por pixel.
+        - Aplicação na Tradução de Imagem:
+      Em tarefas de tradução de imagem, o MSE é usado para avaliar a precisão em nível de pixel das imagens geradas. Um MSE mais baixo indica uma correspondência mais próxima com a imagem de verdade, sugerindo que as imagens geradas preservam bem os detalhes e o conteúdo das imagens originais.
 
-**3. Índice de Similaridade Estrutural (SSIM)**
-  **Teoria**:
-  O SSIM é uma métrica perceptual que mede a similaridade estrutural entre duas imagens. Baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
-![image](https://github.com/user-attachments/assets/65b1b8f5-0d5b-4a0f-823c-d399c0b44076)
-  onde μ e σ são as médias e desvios padrão das imagens, e C1 e C2 são constantes para estabilizar a divisão.
 
-  **Referências**:
-  •	Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image quality assessment: From error visibility to structural similarity." IEEE Transactions on Image Processing.
-  •	Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine.
+    **2. Relação Sinal-Ruído de Pico (PSNR)**
+      
+        - Teoria:
+      O PSNR é derivado do MSE e fornece uma medida do erro máximo. É expresso em decibéis (dB) e definido como:
 
-  **Aplicação na Tradução de Imagem**:
-  O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
+    ![image](https://github.com/user-attachments/assets/310943d6-47e4-4350-b15b-ffa2d79571cd)
+      
+      onde p é o número de bits por pixel.
+
+        - Aplicação na Tradução de Imagem:
+      O PSNR é usado em tradução de imagem para fornecer uma maneira padronizada de comparar a qualidade das imagens geradas em relação à verdade. Valores de PSNR mais altos indicam melhor qualidade da imagem, significando menos distorção nas imagens geradas.
+
+    **3. Índice de Similaridade Estrutural (SSIM)**
+
+        - Teoria:
+      O SSIM é uma métrica perceptual que mede a similaridade estrutural entre duas imagens. Baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
+
+    ![image](https://github.com/user-attachments/assets/65b1b8f5-0d5b-4a0f-823c-d399c0b44076)
+      
+      onde μ e σ são as médias e desvios padrão das imagens, e C1 e C2 são constantes para estabilizar a divisão.
+
+        - Aplicação na Tradução de Imagem:
+      O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
 
 
 
@@ -112,47 +116,72 @@ Exemplos de pares de imagens da base de dados:
 
 
 
-## Treinamento:
+## Treinamento e Validação:
 
-**CycleGAN:**
-- Evolução da Loss do Gerador:
-![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
+- **CycleGAN**:
 
-
-- Evolução da Loss do Discriminador:
-![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
-
-
-- Resultado Parcial da Época 10:
-![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
-
-
-- Resultado Parcial da Época 50:
-![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
-
-
-- Resultado Parcial da Época 90:
-![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
+    - Evolução da Loss do Gerador:
+    ![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
 
 
 
-**Pix2Pix:**
-- Evolução da Loss (Gerador e Discriminador):
-![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
+    - Evolução da Loss do Discriminador:
+    ![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
 
 
-- Resultado Parcial da Época 10:
-![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
+
+    - Resultado Parcial da Época 10:
+    ![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
 
 
-- Resultado Parcial da Época 50:
-![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
+
+    - Resultado Parcial da Época 50:
+    ![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
 
 
-- Resultado Parcial da Época 90:
-![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
+
+    - Resultado Parcial da Época 90:
+    ![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
+
+    - Métricas:
+    
+    x
+
+    x
+
+    x
+
+    x
 
 
+- **Pix2Pix**:
+    - Evolução da Loss (Gerador e Discriminador):
+    ![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
+
+
+
+    - Resultado Parcial da Época 10:
+    ![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
+
+
+
+    - Resultado Parcial da Época 50:
+    ![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
+
+
+
+    - Resultado Parcial da Época 90:
+    ![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
+
+    - Métricas:
+    
+    x
+
+    x
+
+    x
+    
+    x
 
 A partir dos gráficos de loss, é possível observar que o modelo convergiu visto que a loss do gerador começa a diminuir sem diminuir a loss do discriminador. Um discriminador ideal independe do gerador. De fato, os resultados obtidos nessa primeira implementação do Pix2pix mostram que houve sim uma convergência do modelo com o gerador produzindo imagens coerentes com a imagem de entrada e que possuem aspectos de mapas. No entanto, os resultados finais não possuem um nível de verossimilhança capaz de confundir um humano, muito menos são possíveis de se utilizar em aplicações reais.
 
@@ -188,3 +217,14 @@ J. -Y. Zhu, T. Park, P. Isola and A. A. Efros, "Unpaired Image-to-Image Translat
 <a id="5">[5]</a>
 Song, J.; Li, J.; Chen, H.; Wu J. RSMT: A Remote Sensing Image-to-Map Translation Model via Adversarial Deep Transfer Learning. *Remote Sensing*. **2022**, 14, 919.
 
+<a id="6">[6]</a>
+Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image quality assessment: From error visibility to structural similarity." IEEE Transactions on Image Processing.
+
+<a id="7">[7]</a>
+Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine.
+
+<a id="8">[8]</a>
+Zhang, Z. et al. (2012). "A survey of image denoising methods." Proceedings of the IEEE.
+
+<a id="9">[9]</a>
+Shapiro, J. (2001). "Embedded Image Coding using the Coder/Decoder." IEEE Transactions on Image Processing.
