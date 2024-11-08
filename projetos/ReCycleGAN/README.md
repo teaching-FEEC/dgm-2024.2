@@ -1,4 +1,5 @@
 # `ReCycleGAN: CycleGAN Revisitado`
+
 # `ReCycleGAN: Revisiting CycleGAN`
 
 ## Apresentação
@@ -23,7 +24,6 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 [[Slides]](fake.link)
 [[PDF]](./docs/assets/E3.pdf)
 
-
 ## Resumo (Abstract)
 <!--
 Resumo do objetivo, metodologia **e resultados** obtidos (na entrega E2 é possível relatar resultados parciais). Sugere-se máximo de 100 palavras.
@@ -31,35 +31,34 @@ Resumo do objetivo, metodologia **e resultados** obtidos (na entrega E2 é poss�
 A tradução imagem-imagem busca um mapeamento entre domínios que compartilham relação.
 A `CycleGAN` teve significativo impacto ao propor uma arquitetura que trabalha com dados não pareados. Novos elementos foram propostos posteriormente, aumentando a qualidade das imagens geradas. As redes mais atuais se apoiam em modelos de larga escala.
 
-Este projeto revisitará a proposta original da CycleGAN, avaliando o impacto de diferentes propostas feitas posteriormente. Busca-se uma arquitetura com melhor desempenho que a CycleGAN original, e treinável com uma estrutura de _hardware_ mais acessível.
+Este projeto revisitará a proposta original da CycleGAN, avaliando o impacto de diferentes propostas feitas posteriormente. Busca-se uma arquitetura com melhor desempenho que a CycleGAN original, e treinável com uma estrutura de *hardware* mais acessível.
 
-A tarefa abordada neste projeto foi a traduzir imagens feitas a partir de câmeras instaladas em painéis de carros (_dashboard cameras_) de dia para noite e de noite para dia. Foram utilizadas as imagens da base de dados **Nexet** para a cidade de Nova York.
+A tarefa abordada neste projeto foi a traduzir imagens feitas a partir de câmeras instaladas em painéis de carros (*dashboard cameras*) de dia para noite e de noite para dia. Foram utilizadas as imagens da base de dados **Nexet** para a cidade de Nova York.
 
-Diferentes modificações foram testadas na estrutura original da CycleGAN, e a que teve maior impacto foi a introdução de _skip connections_ entre o codificador e o decodificador das redes generativas.
+Diferentes modificações foram testadas na estrutura original da CycleGAN, e a que teve maior impacto foi a introdução de *skip connections* entre o codificador e o decodificador das redes generativas.
 Foi feita a comparação desta nova rede com modelos propostos de código aberto. As métricas de FID e LPIPS mostram que foi possível alcançar resultados comparáveis aos de redes maiores.
 
 ## Descrição do Problema/Motivação
 <!--
 Descrição do contexto gerador do tema do projeto. Motivação para abordar este tema de projeto.
 -->
-Um dos problemas mais tradicionais na área de visão computacional é o de **tradução imagem-imagem** (_`image-to-image translation`_). Nesta classe de problemas, o objetivo principal é mapear uma imagem de entrada pertencente a um domínio, para um domínio de saída diferente, mas onde ambos os domínios compartilham uma certa relação ou correspondência.
+Um dos problemas mais tradicionais na área de visão computacional é o de **tradução imagem-imagem** (*`image-to-image translation`*). Nesta classe de problemas, o objetivo principal é mapear uma imagem de entrada pertencente a um domínio, para um domínio de saída diferente, mas onde ambos os domínios compartilham uma certa relação ou correspondência.
 
 Em 2017 foi apresentada a arquitetura `CycleGAN` [[1]](https://arxiv.org/abs/1703.10593), com o objetivo de realizar tradução de imagens em base de dados não pareadas. A CycleGAN faz uso de duas redes adversariais (GAN), que fazem os mapeamentos de um domínio em outro ($G:X \rightarrow Y$) e o mapeamento inverso ($F:Y \rightarrow X$). Às funções de perda de cada GAN é adicionada uma perda associada à consistência dos mapeamentos: $\mathcal{L}(F(G(x)),x)$ e $\mathcal{L}(G(F(y)),y)$.
 
 <div>
-<p align="center">
-<img src='docs/assets/CycleGAN.png' align="center" alt="CycleGAN" width=600px>
-</p>
+  <p align="center">
+    <img src='docs/assets/CycleGAN.png' align="center" alt="CycleGAN" width=600px>
+  </p>
 </div>
 
 <p align="center">
-  <strong>Estrutura Geral da CycleGAN <a href="https://arxiv.org/abs/1703.10593">[1]</a>.</strong>
+    <strong>Estrutura Geral da CycleGAN <a href="https://arxiv.org/abs/1703.10593">[1]</a>.</strong>
 </p>
 
-A partir deste momento foram propostas outras soluções para este problema e outros problemas relacionados tais como transferência de estilo (_`style transfer`_), remoção de ruído [[2]](https://arxiv.org/pdf/1805.05308v1) e melhoria de qualidade de imagem (_`image enhancement`_) [[3]](https://arxiv.org/pdf/2312.11748v1), alcançando resultados cada vez melhores.
+A partir deste momento foram propostas outras soluções para este problema e outros problemas relacionados tais como transferência de estilo (*`style transfer`*), remoção de ruído [[2]](https://arxiv.org/pdf/1805.05308v1) e melhoria de qualidade de imagem (*`image enhancement`*) [[3]](https://arxiv.org/pdf/2312.11748v1), alcançando resultados cada vez melhores.
 
 Muitas das arquiteturas mais recentes se baseiam no uso e/ou ajuste fino de modelos de larga escala pré-treinados. O treinamento destas redes requer grande poder computacional e significativo número de amostras.
-
 
 ## Objetivo
 <!--
@@ -68,11 +67,10 @@ Descrição do que o projeto se propõe a fazer.
 -->
 O objetivo deste projeto foi, a partir da arquitetura original da CycleGAN, investigar e avaliar o impacto da incorporação de algumas das ideias que foram propostas posteriormente, aplicado na tradução dia-noite de imagens de trânsito. Especificamente, os objetivos são:
 
-* Investigar e reproduzir a `CycleGAN original` (_vanilla_) e obter uma referência com a qual comparar a nova arquitetura na resolução do problema proposto.
+* Investigar e reproduzir a `CycleGAN original` (*vanilla*) e obter uma referência com a qual comparar a nova arquitetura na resolução do problema proposto.
 * Investigar e `reproduzir propostas mais recentes` de modificações na CycleGAN e compará-las com a CycleGAN tradicional em relação aos dois dos problemas propostos.
 * Investigar e incorporar `novas métricas` de avaliação quantitativa e qualitativa das saídas da rede.
 * Fazer `comparativo` entre as arquiteturas propostas e redes pré-treinadas propostas na literatura, buscando entender criticamente qual variação melhor performa para o problema proposto.
-
 
 ## Metodologia
 <!--
@@ -84,7 +82,7 @@ Apontar ferramentas relevantes.
 Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
 -->
 
-Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na _vanilla_. Diferentes elementos foram alterados e/ou adicionados:
+Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na *vanilla*. Diferentes elementos foram alterados e/ou adicionados:
 
 * Novos elementos na arquitetura da rede:
   * [x] Skip connections [[9]](https://arxiv.org/abs/2403.12036)
@@ -100,16 +98,15 @@ Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na _va
   * [x] LPIPS [[12]](https://arxiv.org/abs/1801.03924)
 * Comparativo com outras redes:
   * [x] Redes de difusão:
-    * CycleGAN _original_ [[1]](https://arxiv.org/abs/1703.10593)
+    * CycleGAN *original* [[1]](https://arxiv.org/abs/1703.10593)
     * CycleGAN-turbo [[9]](https://arxiv.org/abs/2403.12036)
   * [ ] Percepção de usuários
 
-As caixas de seleção indicam os os elementos, entre os inicialmente propostos, que foram efetivamente aplicados no projeto. Os adaptadores LoRA foram implementados, mas não foram avaliados porque posteriormente descobriu-se serem indicados para uso em redes pré-treinadas. Devido à limitação de _hardware_ disponível (o treinamento foi feito no Colab), a proposta de incluir perdas associadas a redes pré-treinadas foi descartada.
+As caixas de seleção indicam os os elementos, entre os inicialmente propostos, que foram efetivamente aplicados no projeto. Os adaptadores LoRA foram implementados, mas não foram avaliados porque posteriormente descobriu-se serem indicados para uso em redes pré-treinadas. Devido à limitação de *hardware* disponível (o treinamento foi feito no Colab), a proposta de incluir perdas associadas a redes pré-treinadas foi descartada.
 
-A avaliação foi realizada apenas para uma tarefa. Foi utilizada a base de dados **Nexet** para realizar transferência de estilo (_style transfer_) entre imagens tiradas de câmeras de carro durante o dia e durante a noite. A segunda tarefa proposta era de fazer remoção de ruído (_image restoration_) das imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy**. A segunda tarefa foi abandonada por limitação de _hardware_.
+A avaliação foi realizada apenas para uma tarefa. Foi utilizada a base de dados **Nexet** para realizar transferência de estilo (*style transfer*) entre imagens tiradas de câmeras de carro durante o dia e durante a noite. A segunda tarefa proposta era de fazer remoção de ruído (*image restoration*) das imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy**. A segunda tarefa foi abandonada por limitação de *hardware*.
 
 Foram avaliadas duas das métricas de qualidade de imagem inicialmente propostas: [FID](https://github.com/mseitzer/pytorch-fid) e [LPIPS](https://github.com/richzhang/PerceptualSimilarity/). Optou-se por focar nestas duas por aparentemente serem mais presentes na literatura e terem implementações em PyTorch disponibilizadas pelos seus autores: [pytorch-fid](https://pypi.org/project/pytorch-fid/) e [lpips](https://pypi.org/project/lpips/).
-
 
 ### Bases de Dados e Evolução
 <!--
@@ -119,7 +116,7 @@ Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento
 
 | |Base de Dados | Endereço na Web | Resumo descritivo|
 |-|----- | ----- | -----|
-|✓|[Nexet 2017](https://data.getnexar.com/blog/nexet-the-largest-and-most-diverse-road-dataset-in-the-world/) | [Cópia no Kaggle](https://www.kaggle.com/datasets/solesensei/nexet-original)<br> | Base de dados com 50.000 imagens de câmeras automotivas (_dashboard cameras_).<br> Tem dados anotados de condição de luz (dia, noite, ocaso) e local (Nova York, São Francisco, Tel Aviv, Resto do mundo)|
+|✓|[Nexet 2017](https://data.getnexar.com/blog/nexet-the-largest-and-most-diverse-road-dataset-in-the-world/) | [Cópia no Kaggle](https://www.kaggle.com/datasets/solesensei/nexet-original)<br> | Base de dados com 50.000 imagens de câmeras automotivas (*dashboard cameras*).<br> Tem dados anotados de condição de luz (dia, noite, ocaso) e local (Nova York, São Francisco, Tel Aviv, Resto do mundo)|
 |✗|[O-HAZE](https://arxiv.org/pdf/1804.05101v1) | [Base oficial](https://data.vision.ee.ethz.ch/cvl/ntire18//o-haze/) | 35 imagens embaçadas (tamanho 2833×4657 pixels) para treinamento.<br> Inclui 5 imagens embaçadas para validação, juntamente com suas respectivas imagens de referência.|
 |✗|[I-HAZE](https://arxiv.org/pdf/1804.05091v1) | [Base oficial](https://data.vision.ee.ethz.ch/cvl/ntire18//i-haze/) | 25 imagens de interiores embaçadas (tamanho 2833×4657 pixels) para treinamento.<br> Inclui 5 imagens embaçadas para validação, acompanhadas de suas respectivas imagens de referência. |
 |✗|[D-HAZY](https://ieeexplore.ieee.org/document/7532754) | [Cópia no SemanticScholar](https://www.semanticscholar.org/paper/D-HAZY%3A-A-dataset-to-evaluate-quantitatively-Ancuti-Ancuti/9451d0b1bfbba5f3e19c083866f1394aabf7d06c) | Coleção de mais de 1400 imagens de interiores do NYU Depth Dataset, com mapas de profundidade para cada imagem.<br> Os mapas são utilizados para sintetizar cenas embaçadas.|
@@ -134,7 +131,7 @@ Faça uma descrição sobre o que concluiu sobre esta base. Sugere-se que respon
 
 A ReCycleGAN foi construída para acessar as bases de dados com um mesmo tipo de estrutura. As imagens são ajustadas para um aspecto 1:1 (corte centralizado) e é feita mudança de escala para 256x256. As imagens são separadas em duas pastas: **input\_A** e **input\_B**, correspondendo às duas classes utilizadas no treinamento (dia e noite, por exemplo). Para teste foram separadas 20% das imagens de cada grupo. Para cada pasta existem dois arquivos CSV com a lista do nomes dos arquivos para treinamento e para teste, de forma que não existe necessidade de ajustar os nomes dos arquivos das imagens.
 
-```
+```text
     data
     ├── dataset_name
     │   ├── input_A
@@ -153,79 +150,19 @@ A ReCycleGAN foi construída para acessar as bases de dados com um mesmo tipo de
 
 #### Nexet 2017
 
-A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1280x720. Todas as imagens tem dados de condição de luz (dia, noite, ocaso) e local (Nova York, São Francisco, Tel Aviv, Resto do mundo). Também existem dados anotados da posição (_box_) dos veículos que aparecem em cada imagem. Para o treinamento e teste das redes propostas foram utilizadas apenas as imagens 1280x720 de Nova York, nas condições de luz **dia** (4885 imagens) e **noite** (4406 imagens).
+A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1280x720. Todas as imagens tem dados de condição de luz (dia, noite, ocaso) e local (Nova York, São Francisco, Tel Aviv, Resto do mundo). Também existem dados anotados da posição (*box*) dos veículos que aparecem em cada imagem. Para o treinamento e teste das redes propostas foram utilizadas apenas as imagens 1280x720 de Nova York, nas condições de luz **dia** (4885 imagens) e **noite** (4406 imagens).
 
 <div>
-<p align="center">
-<img src='docs/assets/nexet_imgs.png' align="center" alt="Imagens Nexet" width=600px>
-</p>
+  <p align="center">
+    <img src='docs/assets/nexet_imgs.png' align="center" alt="Imagens Nexet" width=600px>
+  </p>
 </div>
 
 <p align="center">
-  <strong>Exemplos de imagens da base Nexet 2017 (dia acima e noite abaixo).</strong>
+  < strong>Exemplos de imagens da base Nexet 2017 (dia acima e noite abaixo).</strong>
 </p>
 
-Algumas das imagens da base de dados parecem ter tido problemas na sua captura. Em diversas imagens o conteúdo da mesma se encontrava em um dos cantos da imagem. Para tratar estas imagens é feita uma busca pela linhas e colunas da imagem buscando _informação_. Uma linha ou coluna é considerada _sem informação_ quando a imagem equivalente em escala de cinza não tinha nenhum pixel com valor maior que 10 (em uma escala até 255). A imagem original é então cortada na região _com informação_ antes de escalar e cortar as imagens para 256x256. Imagens recortadas com menos de 256 pixeis de altura ou largura foram ignoradas (imagem à esquerda abaixo).
-
-<div>
-<p align="center">
-<img src='docs/assets/nexet/bad_image01.jpg' align="center" alt="Imagem ruim" width=250px>
-<img src='docs/assets/nexet/bad_image02.jpg' align="center" alt="Imagem ruim" width=250px>
-</p>
-</div>
-
-<p align="center">
-  <strong>Exemplos de imagens com problemas.</strong>
-</p>
-
-Observou-se que algumas imagens da base de dados Nexet apresentavam características que poderiam comprometer a qualidade do treinamento. Foi feito um trabalho _semi_-manual de filtragem destas imagens. Muitas das análises foram feitas com base nas _distâncias_ entre as imagens de cada grupo. Estas distâncias foram calculadas a partir da saída da penúltima camada de uma rede classificadora de imagens pré-treinada ResNet18 [[13]](https://doi.org/10.1109/CVPR.2016.90), disponibilizada diretamente no [PyTorch](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet18.html). Esta extração de características foi realizada com as imagens já escaladas e recortadas para o formato de treinamento.
-
-**Imagens muito parecidas**
-  * Foram listados os pares de imagens que apresentavam menores distâncias entre si.
-  * Foi definido por inspeção visual, para a classe **dia**, que os 93 pares mais próximos eram de imagens muito semelhantes. Para cada par uma das imagens é excluída da base de dados.
-  * Para a classe **noite** esta abordagem não se mostrou muito eficiente. Imagens com pequena distância entre si não eram consideradas parecidas em uma inspeção visual. Para esta classe nenhuma imagem foi retirada.
-
-<div>
-<p align="center">
-<img src='docs/assets/nexet/close_pair_day_01.png' align="center" alt="Imagens próximas" width=350px>
-<img src='docs/assets/nexet/close_pair_day_02.png' align="center" alt="Imagens próximas" width=350px>
-</p>
-</div>
-
-<p align="center">
-  <strong>Exemplos de pares de imagens muito parecidas na classe dia.</strong>
-</p>
-
-<div>
-<p align="center">
-<img src='docs/assets/nexet/close_pair_night_01.png' align="center" alt="Imagens próximas" width=350px>
-<img src='docs/assets/nexet/close_pair_night_02.png' align="center" alt="Imagens próximas" width=350px>
-</p>
-</div>
-
-<p align="center">
-  <strong>Exemplos de pares de imagens muito parecidas na classe noite.</strong>
-</p>
-
-
-**Imagens _Difíceis_**
-  * Para _facilitar_ o treinamento da rede, foram excluídas imagens com características consideradas _difíceis_ ou que não ajudam no treinamento: chuva _forte_, túneis, desfoque, objetos bloqueando a visão.
-  * Para esta análise as imagens de cada classe foram agrupadas em 20 classes, com **k-Means**. Para cada classe foram sorteadas 36 imagens e foi feita uma análise visual de cada grupo.
-  * A partir da análise visual, os grupos que foram considerados _problemáticos_ são novamente divididos com k-means. A análise visual dos subgrupos é que define que conjuntos de imagens são excluídos do treinamento.
-
-
-<div>
-<p align="center">
-<img src="docs/assets/nexet/bad_cluster_day.jpg" align="center" alt="Imagens difíceis" width=350px>
-<img src="docs/assets/nexet/bad_cluster_night.jpg" align="center" alt="Imagens difíceis" width=350px>
-</p>
-</div>
-
-<p align="center">
-  <strong>Exemplos de grupos de imagens consideradas difíceis para o treinamento.</strong>
-</p>
-
-Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216  (5%) das imagens da classe **Noite**. Os totais de imagens para cada classe são apresentados abaixo.
+Foram feitas diferentes análises nas imagens. Uma explicação mais completa é feita [aqui](./docs/Nexet.md). Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216  (5%) das imagens da classe **Noite**. Os totais de imagens para cada classe são apresentados abaixo.
 
 | Classe       | Treino | Teste | Total |
 |--------------|--------|-------|-------|
@@ -234,22 +171,21 @@ Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216  (5%
 
 Todo o procedimento de filtro das imagens está codificado em um único [Notebook](src/notebooks/Filter_DayNight.ipynb).
 
-A base de dados utilizada pode ser encontrada neste [link](https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.1-nexet/Nexet.zip). Foram utilizadas as imagens listadas nos arquivos com _filtered.csv_ no final do nome.
+A base de dados utilizada pode ser encontrada neste [link](https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.1-nexet/Nexet.zip). Foram utilizadas as imagens listadas nos arquivos com *\_filtered.csv* no final do nome.
 
 #### O-Haze, I-Haze e D-Hazy
 
-As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** não foram trabalhadas neste projeto. **O-Haze** e **I-Haze** tem poucas imagens, e todas de alta resolução (2833×4657). Pode ser feito um processo de aumento de dados (_data augmentation_) nestas imagens, gerando diversas imagens 256x256 a partir das imagens originais. **D-Hazy** tem um número maior de imagens, e mapas de profundidade para cada imagem. Podem ser geradas imagens embaçadas com diferentes níveis de efeitos de embaçamento a partir das imagens originais e respectivos mapas de profundidade.
+As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** não foram trabalhadas neste projeto. **O-Haze** e **I-Haze** tem poucas imagens, e todas de alta resolução (2833×4657). Pode ser feito um processo de aumento de dados (*data augmentation*) nestas imagens, gerando diversas imagens 256x256 a partir das imagens originais. **D-Hazy** tem um número maior de imagens, e mapas de profundidade para cada imagem. Podem ser geradas imagens embaçadas com diferentes níveis de efeitos de embaçamento a partir das imagens originais e respectivos mapas de profundidade.
 
 <div>
-<p align="center">
-<img src='docs/assets/haze_imgs.png' align="center" alt="Imagens Haze" width=600px>
-</p>
+  <p align="center">
+    <img src='docs/assets/haze_imgs.png' align="center" alt="Imagens Haze" width=600px>
+  </p>
 </div>
 
 <p align="center">
   <strong>Exemplos de imagens da base O-Haze (blur acima e sharp abaixo).</strong>
 </p>
-
 
 ### Workflow
 <!--
@@ -258,18 +194,19 @@ Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e 
 Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos.
 -->
 
-O _workflow_ deste projeto se divide em duas etapas: treino e avaliação.
+O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
 
 1. **Treino da ReCycleGAN**
     * Feito para cada variante dos hyperparâmetros.
     * Dados de entrada são as imagens de treino das classes **A** e **B**.
-        * Para aumentar a quantidade de amostras (_data augmentation_), foram aplicadas transformações adicionais às imagens de entrada:
+        * Para aumentar a quantidade de amostras (*data augmentation*), foram aplicadas transformações adicionais às imagens de entrada:
             1. Redimensionamento para 112% da imagem original, com interpolação bicúbica.
-            1. Corte aleatório (_random crop_) para as dimensões originais.
-            1. Inversão horizontal aleatória (_random horizontal flip_).
-    * Todo o treinamento foi feito no Colab: [Notebook](src/notebooks/ReCycleGAN_colab.ipynb).
+            1. Corte aleatório (*random crop*) para as dimensões originais.
+            1. Inversão horizontal aleatória (*random horizontal flip*).
+    * Todo o treinamento foi feito com um *Notebook* formatado para usar o Colab: [Link](src/notebooks/ReCycleGAN_colab.ipynb).
     * Para monitorar e registrar os logs e resultados dos treinamentos foi utilizada a plataforma [Weights & Biases](https://wandb.ai/site).
         * Para não onerar o treinamento, as métricas de FID e LPIPS são calculadas apenas para as imagens de teste.
+
 2. **Avaliação dos Resultados**
     * Os autores da métrica FID sugerem usar ao menos 2048 imagens para seu cálculo. O número total de imagens para cada classe não é muito alto. Optou-se por utilizar as imagens de treino e teste para avaliação das métricas.
     * Para incrementar a análise, foram geradas imagens traduzidas com a versão original da **CycleGAN** [[1]](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) e com uma versão atualizada, **CycleGAN-turbo** [[9]](https://github.com/GaParmar/img2img-turbo).
@@ -278,9 +215,9 @@ O _workflow_ deste projeto se divide em duas etapas: treino e avaliação.
     * São feitas avaliações comparando as imagens reais com as imagens da outra classe traduzidas (e.g.: imagens da classe **A** e imagens traduzidas da classe **B** para a classe **A**).
 
 <div>
-<p align="center">
-<img src='docs/assets/workflow.png' align="center" alt="Workflow" width=600px>
-</p>
+  <p align="center">
+    <img src='docs/assets/workflow.png' align="center" alt="Workflow" width=600px>
+  </p>
 </div>
 
 <p align="center">
@@ -294,11 +231,10 @@ A CycleGAN consiste de duas redes geradoras (`gen_AtoB` e `gen_BtoA`) e duas red
 Cada rede geradora tem 3 seções: Encoder, Transformer e Decoder.
 
 * No **Encoder** cada imagem de entrada passa em uma série de filtros convolucionais que comprimem a imagem e aumentam o número de canais.
-    * O primeiro conjunto de filtros transforma uma imagem (256, 256, 3) para uma representação (_características_, 64, 256), onde _características_ é definido pelo usuário. 
-    * Os dois conjuntos de filtros seguintes levam a representações mais comprimidas, enquanto dobram o número de canais a cada passo.
+  * O primeiro conjunto de filtros transforma uma imagem (256, 256, 3) para uma representação (*características*, 64, 256), onde *características* é definido pelo usuário.
+  * Os dois conjuntos de filtros seguintes levam a representações mais comprimidas, enquanto dobram o número de canais a cada passo.
 * No **Transformer** são utilizados 9 blocos residuais, que não alteram o formato da representação.
 * No **Decoder** são aplicados dois filtros deconvolucionais que restauram a imagem para o formato original.
-
 
 <!-- Then the output of encoder after activation function is applied is passed into the transformer. The transformer contains 6 or 9 residual blocks based on the size of input.
 
@@ -329,7 +265,7 @@ de **performance** e que contenha conteúdo que possa ser classificado como **co
 
 ### Experimentos
 
-Foram realizados testes com diferentes modificações à estrutura original da CycleGAN para avaliar o conjunto de hiperparâmetros _ótimo_. Devido às limitações de _hardware_ disponível, optou-se por fazer uma busca manual. Foram avaliadas um total de 8 variações individuais nos hiperparâmetros da rede. O primeiro teste já mostra que a ideia foi a de buscar reduzir o tamanho da rede em comparação com a CycleGAN original.
+Foram realizados testes com diferentes modificações à estrutura original da CycleGAN para avaliar o conjunto de hiperparâmetros *ótimo*. Devido às limitações de *hardware* disponível, optou-se por fazer uma busca manual. Foram avaliadas um total de 8 variações individuais nos hiperparâmetros da rede. O primeiro teste já mostra que a ideia foi a de buscar reduzir o tamanho da rede em comparação com a CycleGAN original.
 
 | Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Reg. | Parâmetros |
 |-|-|-|-|-|-|-|-|-|
@@ -347,13 +283,13 @@ Foram realizados testes com diferentes modificações à estrutura original da C
 
 Colunas da tabela de hiperpâmetros:
 
-* **Carac.**: Número de _features_ da saída da primeira camada convolucional das redes geradoras.
+* **Carac.**: Número de *features* da saída da primeira camada convolucional das redes geradoras.
 * **B. Res.**: Número de blocos residuais das redes geradoras.
-* **AMP**: Uso da opção [_Automatic Mixed Precision_](https://pytorch.org/tutorials/recipes/recipes/amp_recipe.html) para redução da demanda de memória para treinamento da ReCycleGAN.
-* **Skip**: Uso de _skip connections_ entre as camadas de _downsampling_ e _upsampling_ das redes geradoras.
+* **AMP**: Uso da opção [*Automatic Mixed Precision*](https://pytorch.org/tutorials/recipes/recipes/amp_recipe.html) para redução da demanda de memória para treinamento da ReCycleGAN.
+* **Skip**: Uso de *skip connections* entre as camadas de *downsampling* e *upsampling* das redes geradoras.
 * **Loss**: Função agregadora no cálculo das funções de perda: log da entropia cruzada binária (usada na CycleGAN original) ou erro quadrático médio (usado em revisões posteriores).
-* **Atenção**: Adição de camadas de atenção ao _upsampling_ das redes geradoras e/ou às redes discriminadoras.
-* **Reg.**: Uso de termo de regularização na função de perda associado à métrica _perceptual path length_. Este termo tende a suavizar o jacobiano da rede geradora.
+* **Atenção**: Adição de camadas de atenção ao *upsampling* das redes geradoras e/ou às redes discriminadoras.
+* **Reg.**: Uso de termo de regularização na função de perda associado à métrica *perceptual path length*. Este termo tende a suavizar o jacobiano da rede geradora.
 * **Parâmetros**: Total de parâmetros treináveis das quatro redes presentes em cada modelo: geradora A→B, geradora B→A, discriminadora A e discriminadora B. O símbolo MM nesta tabela significa milhões.
 
 Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros listados não se aplicam (**na**).
@@ -361,7 +297,6 @@ Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros li
 ### Resultados
 
 A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste.
-
 
 |Transformação |Modelo | FID | LPIPS |
 |-|-|-:|-:|
@@ -390,50 +325,6 @@ A tabela abaixo apresenta um resumo dos principais resultados obtidos na compara
 
 A coluna das transformações é preenchida apenas na primeira linha do respectivo conjunto de resultados para reduzir a poluição visual da tabela. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
-_Abusando_ da ideia de distâncias das métricas, são montados mapas 2d com a posição relativa dos modelos. O mapa é construído a partir das distâncias entre todos os possíveis conjuntos de imagens (reais x modelos, modelos x modelos) e aplicando MDS (Multidimensional scaling) para reduzir a informação a duas dimensões.
-
-<div>
-<p align=“center”>
-<img src=‘docs/assets/evaluation/fid_map_images_A.png’ align=“center” alt=“Mapa FID imagens A” width=300px>
-</p>
-<p align=“center”>
-  <strong>Mapa dos modelos avaliados com FID para imagens da classe A.</strong>
-</p>
-</div>
-
-<div>
-<p align=“center”>
-<img src=‘docs/assets/evaluation/fid_map_images_B.png’ align=“center” alt=“Mapa FID imagens B” width=300px>
-</p>
-<p align=“center”>
-  <strong>Mapa dos modelos avaliados com FID para imagens da classe B.</strong>
-</p>
-</div>
-
-Os mapas de modelos baseados nas médias da métrica LPIPS não geraram bons resultados. Foi preciso introduzir um ajuste antes de montar o mapa das distâncias. A média dos valores de LPIPS não é zero quando se compara um conjunto de imagens consigo, dando uma ideia de coerência entre as imagens de um mesmo conjunto. Desta forma, avaliou-se que faz sentido fazer a subtração entre o LPIPS médio entre dois conjuntos de imagens com a média dos LPIPS de cada um dos dois conjuntos de imagens consigo.
-
-$$
-LPIPS_{A-B}^{dist} = LPIPS_{A-B} - \frac{1}{2}(LPIPS_{A-A} - LPIPS_{B-B})
-$$
-
-<div>
-<p align=“center”>
-<img src=‘docs/assets/evaluation/lpips_map_images_A.png’ align=“center” alt=“Mapa LPIPS imagens A” width=300px>
-</p>
-<p align=“center”>
-  <strong>Mapa dos modelos avaliados com LPIPS para imagens da classe A.</strong>
-</p>
-</div>
-
-<div>
-<p align=“center”>
-<img src=‘docs/assets/evaluation/lpips_map_images_B.png’ align=“center” alt=“Mapa LPIPS imagens B” width=300px>
-</p>
-<p align=“center”>
-  <strong>Mapa dos modelos avaliados com LPIPS para imagens da classe B.</strong>
-</p>
-</div>
-
 Exemplos de imagens transformadas são apresentados abaixo.
 
 <div>
@@ -445,20 +336,16 @@ Exemplos de imagens transformadas são apresentados abaixo.
 </p>
 </div>
 
-
 <div>
-<p align=“center”>
-<img src=‘docs/assets/evaluation/Samples_B.png’ align=“center” alt=“Imagens B” width=600px>
+<p align="center">
+<img src='docs/assets/evaluation/Samples_B.png' align="center" alt="Imagens B" width=600px>
 </p>
-<p align=“center”>
+<p align="center">
   <strong>Exemplos de imagens transformadas de noite para dia.</strong>
 </p>
 </div>
 
-
 ### Discussão
-
-
 
 ## Conclusão
 <!--
@@ -467,11 +354,11 @@ Na entrega parcial do projeto (E2) pode conter informações sobre quais etapas 
 Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outros aspectos, possibilidades de continuidade do projeto.
 -->
 
-A primeira etapa do projeto, de levantamento de alternativas, se mostrou bastante desafiadora por conta da necessidade de adaptação dos códigos encontrados para uma única estrutura. A base de dados **Nexet** já foi reorganizada para ser utilizada neste projeto.
+<!-- A primeira etapa do projeto, de levantamento de alternativas, se mostrou bastante desafiadora por conta da necessidade de adaptação dos códigos encontrados para uma única estrutura. A base de dados **Nexet** já foi reorganizada para ser utilizada neste projeto.
 
-Com os principais elementos já organizados (CycleGAN _Vanilla_, métricas FID e LPIPS, e uma das bases de dados), o próximo passo será o de treinar a rede para a tarefa de transferência de estilo. Diferentes opções de estrutura para o treinamento estão em avaliação (Colab, Modal, AWS).
+Com os principais elementos já organizados (CycleGAN *Vanilla*, métricas FID e LPIPS, e uma das bases de dados), o próximo passo será o de treinar a rede para a tarefa de transferência de estilo. Diferentes opções de estrutura para o treinamento estão em avaliação (Colab, Modal, AWS).
 
-Os resultados da rede CycleGAN-turbo apontam para uma maior dificuldade na transformação de imagens de noite para dia do que o contrário.
+Os resultados da rede CycleGAN-turbo apontam para uma maior dificuldade na transformação de imagens de noite para dia do que o contrário. -->
 
 ## Referências Bibliográficas
 <!--
