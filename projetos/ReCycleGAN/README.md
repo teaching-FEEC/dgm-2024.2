@@ -276,7 +276,6 @@ O _workflow_ deste projeto se divide em duas etapas: treino e avaliação.
         * A CycleGAN precisou ser treinada com a base de dados Nexet. O treinamento foi feito com as opções padrão, por 40 épocas.
         * A CycleGAN-turbo tem uma versão já treinada com a base Nexet, de modo que não foi necessário treinar esta rede.
     * São feitas avaliações comparando as imagens reais com as imagens da outra classe traduzidas (e.g.: imagens da classe **A** e imagens traduzidas da classe **B** para a classe **A**).
-        * _Abusando_ da ideia de distâncias das métricas, são montados mapas 2d com a posição relativa dos modelos. O mapa é construído a partir das distâncias entre todos os possíveis conjuntos de imagens (reais x modelos, modelos x modelos) e aplicando MDS (Multidimensional scaling) para reduzir a informação a duas dimensões.
 
 <div>
 <p align="center">
@@ -328,6 +327,8 @@ O que se espera da seção de resultados é que ela **apresente e discuta** some
 de **performance** e que contenha conteúdo que possa ser classificado como **compartilhamento organizado, didático e reprodutível de conhecimento relevante para a comunidade**.
 -->
 
+### Experimentos
+
 Foram realizados testes com diferentes modificações à estrutura original da CycleGAN para avaliar o conjunto de hiperparâmetros _ótimo_. Devido às limitações de _hardware_ disponível, optou-se por fazer uma busca manual. Foram avaliadas um total de 8 variações individuais nos hiperparâmetros da rede. O primeiro teste já mostra que a ideia foi a de buscar reduzir o tamanho da rede em comparação com a CycleGAN original.
 
 | Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Reg. | Parâmetros |
@@ -356,6 +357,8 @@ Colunas da tabela de hiperpâmetros:
 * **Parâmetros**: Total de parâmetros treináveis das quatro redes presentes em cada modelo: geradora A→B, geradora B→A, discriminadora A e discriminadora B. O símbolo MM nesta tabela significa milhões.
 
 Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros listados não se aplicam (**na**).
+
+### Resultados
 
 A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste.
 
@@ -387,17 +390,75 @@ A tabela abaixo apresenta um resumo dos principais resultados obtidos na compara
 
 A coluna das transformações é preenchida apenas na primeira linha do respectivo conjunto de resultados para reduzir a poluição visual da tabela. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
+_Abusando_ da ideia de distâncias das métricas, são montados mapas 2d com a posição relativa dos modelos. O mapa é construído a partir das distâncias entre todos os possíveis conjuntos de imagens (reais x modelos, modelos x modelos) e aplicando MDS (Multidimensional scaling) para reduzir a informação a duas dimensões.
+
+<div>
+<p align=“center”>
+<img src=‘docs/assets/evaluation/fid_map_images_A.png’ align=“center” alt=“Mapa FID imagens A” width=300px>
+</p>
+<p align=“center”>
+  <strong>Mapa dos modelos avaliados com FID para imagens da classe A.</strong>
+</p>
+</div>
+
+<div>
+<p align=“center”>
+<img src=‘docs/assets/evaluation/fid_map_images_B.png’ align=“center” alt=“Mapa FID imagens B” width=300px>
+</p>
+<p align=“center”>
+  <strong>Mapa dos modelos avaliados com FID para imagens da classe B.</strong>
+</p>
+</div>
+
+Os mapas de modelos baseados nas médias da métrica LPIPS não geraram bons resultados. Foi preciso introduzir um ajuste antes de montar o mapa das distâncias. A média dos valores de LPIPS não é zero quando se compara um conjunto de imagens consigo, dando uma ideia de coerência entre as imagens de um mesmo conjunto. Desta forma, avaliou-se que faz sentido fazer a subtração entre o LPIPS médio entre dois conjuntos de imagens com a média dos LPIPS de cada um dos dois conjuntos de imagens consigo.
+
+$$
+LPIPS_{A-B}^{dist} = LPIPS_{A-B} - \frac{1}{2}(LPIPS_{A-A} - LPIPS_{B-B})
+$$
+
+<div>
+<p align=“center”>
+<img src=‘docs/assets/evaluation/lpips_map_images_A.png’ align=“center” alt=“Mapa LPIPS imagens A” width=300px>
+</p>
+<p align=“center”>
+  <strong>Mapa dos modelos avaliados com LPIPS para imagens da classe A.</strong>
+</p>
+</div>
+
+<div>
+<p align=“center”>
+<img src=‘docs/assets/evaluation/lpips_map_images_B.png’ align=“center” alt=“Mapa LPIPS imagens B” width=300px>
+</p>
+<p align=“center”>
+  <strong>Mapa dos modelos avaliados com LPIPS para imagens da classe B.</strong>
+</p>
+</div>
+
 Exemplos de imagens transformadas são apresentados abaixo.
 
 <div>
 <p align="center">
-<img src='docs/assets/turbo_imgs.png' align="center" alt="Imagens CycleGAN-turbo" width=600px>
+<img src='docs/assets/evaluation/Samples_A.png' align="center" alt="Imagens A" width=600px>
+</p>
+<p align="center">
+  <strong>Exemplos de imagens transformadas de dia para noite.</strong>
 </p>
 </div>
 
-<p align="center">
+
+<div>
+<p align=“center”>
+<img src=‘docs/assets/evaluation/Samples_B.png’ align=“center” alt=“Imagens B” width=600px>
+</p>
+<p align=“center”>
   <strong>Exemplos de imagens transformadas de noite para dia.</strong>
 </p>
+</div>
+
+
+### Discussão
+
+
 
 ## Conclusão
 <!--
