@@ -332,16 +332,16 @@ Foram realizados testes com diferentes modificações à estrutura original da C
 
 | Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Reg. | Parâmetros |
 |-|-|-|-|-|-|-|-|-|
-|CycleGAN     | 64     | 9       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  | 11 MM |
-|CycleGAN-turbo | na | na | na | na | MSE | na | na | MM|
-|ReCycleGAN 1 | 32     | 5       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  |  MM |
-|ReCycleGAN 2 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✗  |  MM |
-|ReCycleGAN 3 | 32     | 5       |  ✓  |  ✓   | log-BCE |  ✗   |  ✗  |  MM |
-|ReCycleGAN 4 | 32     | 5       |  ✓  |  ✗   |     MSE |  ✗   |  ✗  |  MM |
-|ReCycleGAN 5 | 32     | 5       |  ✓  |  ✓   |     MSE |  ✗   |  ✗  | MM |
-|ReCycleGAN 6 | 32     | 5       |  ✓  |  ✗   | log-BCE | Gen  |  ✗  | MM |
-|ReCycleGAN 7 | 32     | 5       |  ✓  |  ✗   | log-BCE | Disc |  ✗  | MM |
-|ReCycleGAN 8 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✓  | MM |
+|CycleGAN     | 64     | 9       |     |      | log-BCE |     |     | 11 MM |
+|CycleGAN-turbo | na   | na      | na  | na   |     MSE | na | na | MM|
+|ReCycleGAN 1 | 32     | 5       |     |      | log-BCE |      |     |  MM |
+|ReCycleGAN 2 | 32     | 5       |  ✓  |      | log-BCE |      |     |  MM |
+|ReCycleGAN 3 | 32     | 5       |  ✓  |  ✓   | log-BCE |      |     |  MM |
+|ReCycleGAN 4 | 32     | 5       |  ✓  |      |     MSE |      |     |  MM |
+|ReCycleGAN 5 | 32     | 5       |  ✓  |  ✓   |     MSE |      |     | MM |
+|ReCycleGAN 6 | 32     | 5       |  ✓  |      | log-BCE | Gen  |     | MM |
+|ReCycleGAN 7 | 32     | 5       |  ✓  |      | log-BCE | Disc |     | MM |
+|ReCycleGAN 8 | 32     | 5       |  ✓  |      | log-BCE |      |  ✓  | MM |
 |ReCycleGAN 9 | 32     | 5       |  ✓  |  ✓   |     MSE |  Gen+Disc   |  ✓  | MM |
 
 Colunas da tabela de hiperpâmetros:
