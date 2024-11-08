@@ -326,19 +326,29 @@ O que se espera da seção de resultados é que ela **apresente e discuta** some
 de **performance** e que contenha conteúdo que possa ser classificado como **compartilhamento organizado, didático e reprodutível de conhecimento relevante para a comunidade**.
 -->
 
-Foram realizados testes com diferentes modificações à estrutura original da CycleGAN. Foram primeiramente avaliadas um total de 8 variações individuais nos hiperparâmetros da rede.
+Foram realizados testes com diferentes modificações à estrutura original da CycleGAN para avaliar o conjunto de hiperparâmetros _ótimo_. Devido às limitações de _hardware_ disponível, optou-se por fazer uma busca manual. Foram avaliadas um total de 8 variações individuais nos hiperparâmetros da rede. O primeiro teste já mostra que a ideia foi a de buscar reduzir o tamanho da rede em comparação com a CycleGAN original. A última linha da tabela abaixo é a avaliação do conjunto de parâmetros _ótimos_.
 
-| Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Regularização |
+| Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Reg. |
 |-|-|-|-|-|-|-|-|
-|Original| 64     | 9       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  |
-|Teste 1 | 32     | 5       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  |
-|Teste 2 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✗  |
-|Teste 3 | 32     | 5       |  ✓  |  ✓   | log-BCE |  ✗   |  ✗  |
-|Teste 4 | 32     | 5       |  ✓  |  ✗   |     MSE |  ✗   |  ✗  |
-|Teste 5 | 32     | 5       |  ✓  |  ✓   |     MSE |  ✗   |  ✗  |
-|Teste 6 | 32     | 5       |  ✓  |  ✗   | log-BCE | Gen  |  ✗  |
-|Teste 7 | 32     | 5       |  ✓  |  ✗   | log-BCE | Disc |  ✗  |
-|Teste 8 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✓  |
+|CycleGAN     | 64     | 9       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  |
+|ReCycleGAN 1 | 32     | 5       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  |
+|ReCycleGAN 2 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✗  |
+|ReCycleGAN 3 | 32     | 5       |  ✓  |  ✓   | log-BCE |  ✗   |  ✗  |
+|ReCycleGAN 4 | 32     | 5       |  ✓  |  ✗   |     MSE |  ✗   |  ✗  |
+|ReCycleGAN 5 | 32     | 5       |  ✓  |  ✓   |     MSE |  ✗   |  ✗  |
+|ReCycleGAN 6 | 32     | 5       |  ✓  |  ✗   | log-BCE | Gen  |  ✗  |
+|ReCycleGAN 7 | 32     | 5       |  ✓  |  ✗   | log-BCE | Disc |  ✗  |
+|ReCycleGAN 8 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✓  |
+|ReCycleGAN 9 | 32     | 5       |  ✓  |  ✓   |     MSE |  Gen+Disc   |  ✓  |
+
+Colunas da tabela de hiperpâmetros:
+    * **Carac.**: Número de _features_ da saída da primeira camada convolucional das redes geradoras.
+    * **B. Res.**: Número de blocos residuais das redes geradoras.
+    * **AMP**: Uso da opção [_Automatic Mixed Precision_](https://pytorch.org/tutorials/recipes/recipes/amp_recipe.html) para redução da demanda de memória para treinamento da ReCycleGAN.
+    * **Skip**: Uso de _skip connections_ entre as camadas de _downsampling_ e _upsampling_ das redes geradoras.
+    * **Loss**: Função agregadora no cálculo das funções de perda: log da entropia cruzada binária (usada na CycleGAN original) ou erro quadrático médio (usado em revisões posteriores).
+    * **Atenção**: Adição de camadas de atenção ao _upsampling_ das redes geradoras e/ou às redes discriminadoras.
+    * **Reg.**: Uso de termo de regularização na função de perda associado à métrica _perceptual path length_. Este termo tende a suavizar o jacobiano da rede geradora.
 
 A tabela abaixo apresenta um resumo dos principais resultados obtidos.
 
