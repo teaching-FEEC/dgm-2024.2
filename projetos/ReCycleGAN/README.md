@@ -325,6 +325,8 @@ A tabela abaixo apresenta um resumo dos principais resultados obtidos na compara
 
 A coluna das transformações é preenchida apenas na primeira linha do respectivo conjunto de resultados para reduzir a poluição visual da tabela. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
+Uma maior variedade de apresentações das métricas é apresentada neste [link](./docs/Results.md).
+
 Exemplos de imagens transformadas são apresentados abaixo.
 
 <div>
