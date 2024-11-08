@@ -326,12 +326,21 @@ O que se espera da seção de resultados é que ela **apresente e discuta** some
 de **performance** e que contenha conteúdo que possa ser classificado como **compartilhamento organizado, didático e reprodutível de conhecimento relevante para a comunidade**.
 -->
 
-Foram realizados testes com diferentes modificações à estrutura original da CycleGAN. Foram avaliadas um total de 8 variações. A tabela abaixo apresenta um resumo dos principais resultados obtidos.
+Foram realizados testes com diferentes modificações à estrutura original da CycleGAN. Foram primeiramente avaliadas um total de 8 variações individuais nos hiperparâmetros da rede.
 
 | Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Regularização |
-|———|———|———|——|——|——|———|—————|
-|Original| 64     | 9       | não | não  | log-BCE | não  | não           |
-|Teste 1 | 32     | 5       | não | não  | log-BCE | não  | não |
+|-|-|-|-|-|-|-|-|
+|Original| 64     | 9       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  |
+|Teste 1 | 32     | 5       |  ✗  |  ✗   | log-BCE |  ✗   |  ✗  |
+|Teste 2 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✗  |
+|Teste 3 | 32     | 5       |  ✓  |  ✓   | log-BCE |  ✗   |  ✗  |
+|Teste 4 | 32     | 5       |  ✓  |  ✗   |     MSE |  ✗   |  ✗  |
+|Teste 5 | 32     | 5       |  ✓  |  ✓   |     MSE |  ✗   |  ✗  |
+|Teste 6 | 32     | 5       |  ✓  |  ✗   | log-BCE | Gen  |  ✗  |
+|Teste 7 | 32     | 5       |  ✓  |  ✗   | log-BCE | Disc |  ✗  |
+|Teste 8 | 32     | 5       |  ✓  |  ✗   | log-BCE |  ✗   |  ✓  |
+
+A tabela abaixo apresenta um resumo dos principais resultados obtidos.
 
 
 Até o momento não foi treinada nenhuma rede. Um resultado preliminar importante é o das métricas implementadas (FID e LPIPS). Foram feitos diversos testes com as imagens **Nexet** para avaliar a _escala_ de cada métrica. Observou-se que ambas métricas apresentaram resultados coerentes. Os valores das métricas comparando as imagens transformadas pela rede `CycleGAN-turbo` com as imagens de teste (**4** e **5**) tem valores entre a comparação das imagens de treino e teste da mesma categoria (**1** e **2**) e a comparação entre imagens de treino de categorias distintas (**3**).
