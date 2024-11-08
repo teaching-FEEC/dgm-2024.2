@@ -296,36 +296,23 @@ Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros li
 
 ### Resultados
 
-A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste.
+A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
-|Transformação |Modelo | FID | LPIPS |
-|-|-|-:|-:|
-|A→B|CycleGAN |     .0 | 0. ± 0. |
-||ReCycleGAN 1 |     .0 | 0. ± 0. |
-||ReCycleGAN 2 |     .0 | 0. ± 0. |
-||ReCycleGAN 3 |     .0 | 0. ± 0. |
-||ReCycleGAN 4 |     .0 | 0. ± 0. |
-||ReCycleGAN 5 |     .0 | 0. ± 0. |
-||ReCycleGAN 6 |     .0 | 0. ± 0. |
-||ReCycleGAN 7 |     .0 | 0. ± 0. |
-||ReCycleGAN 8 |     .0 | 0. ± 0. |
-||ReCycleGAN 9 |     .0 | 0. ± 0. |
-|B→A|CycleGAN-turbo |     .0 | 0. ± 0. |
-||CycleGAN |     .0 | 0. ± 0. |
-||ReCycleGAN 1 |     .0 | 0. ± 0. |
-||ReCycleGAN 2 |     .0 | 0. ± 0. |
-||ReCycleGAN 3 |     .0 | 0. ± 0. |
-||ReCycleGAN 4 |     .0 | 0. ± 0. |
-||ReCycleGAN 5 |     .0 | 0. ± 0. |
-||ReCycleGAN 6 |     .0 | 0. ± 0. |
-||ReCycleGAN 7 |     .0 | 0. ± 0. |
-||ReCycleGAN 8 |     .0 | 0. ± 0. |
-||ReCycleGAN 9 |     .0 | 0. ± 0. |
-||CycleGAN-turbo |     .0 | 0. ± 0. |
+|Modelo | FID A→B | LPIPS A→B | FID B→A | LPIPS B→A |
+|-|-:|-:|-:|-:|
+|CycleGAN     |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 1 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 2 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 3 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 4 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 5 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 6 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 7 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 8 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 9 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|CycleGAN-turbo |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
 
-A coluna das transformações é preenchida apenas na primeira linha do respectivo conjunto de resultados para reduzir a poluição visual da tabela. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
-
-Uma maior variedade de apresentações das métricas é apresentada neste [link](./docs/Results.md).
+Uma maior variedade de apresentações das métricas é apresentada neste [**link**](./docs/Results.md).
 
 Exemplos de imagens transformadas são apresentados abaixo.
 
