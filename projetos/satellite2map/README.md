@@ -57,40 +57,40 @@ Outros objetivos incluem:
 
     **1. Erro Quadrático Médio (MSE)**
 
-        - Teoria:
-      O Erro Quadrático Médio é uma métrica comum usada para quantificar a diferença entre a imagem prevista e a imagem de verdade. É definido como:
+    - Teoria:
+  O Erro Quadrático Médio é uma métrica comum usada para quantificar a diferença entre a imagem prevista e a imagem de verdade. É definido como:
 
     ![image](https://github.com/user-attachments/assets/a9ff5edd-390a-424a-884d-766c5534f618)
       
-      onde N é o número total de pixels, Itrue é o valor do pixel i da imagem real e Ipred é o valor do pixel i da imagem gerada.
+    onde N é o número total de pixels, Itrue é o valor do pixel i da imagem real e Ipred é o valor do pixel i da imagem gerada.
 
-        - Aplicação na Tradução de Imagem:
-      Em tarefas de tradução de imagem, o MSE é usado para avaliar a precisão em nível de pixel das imagens geradas. Um MSE mais baixo indica uma correspondência mais próxima com a imagem de verdade, sugerindo que as imagens geradas preservam bem os detalhes e o conteúdo das imagens originais.
+    - Aplicação na Tradução de Imagem:
+  Em tarefas de tradução de imagem, o MSE é usado para avaliar a precisão em nível de pixel das imagens geradas. Um MSE mais baixo indica uma correspondência mais próxima com a imagem de verdade, sugerindo que as imagens geradas preservam bem os detalhes e o conteúdo das imagens originais.
 
 
     **2. Relação Sinal-Ruído de Pico (PSNR)**
       
-        - Teoria:
-      O PSNR é derivado do MSE e fornece uma medida do erro máximo. É expresso em decibéis (dB) e definido como:
+    - Teoria:
+  O PSNR é derivado do MSE e fornece uma medida do erro máximo. É expresso em decibéis (dB) e definido como:
 
     ![image](https://github.com/user-attachments/assets/310943d6-47e4-4350-b15b-ffa2d79571cd)
       
-      onde p é o número de bits por pixel.
+    onde p é o número de bits por pixel.
 
-        - Aplicação na Tradução de Imagem:
-      O PSNR é usado em tradução de imagem para fornecer uma maneira padronizada de comparar a qualidade das imagens geradas em relação à verdade. Valores de PSNR mais altos indicam melhor qualidade da imagem, significando menos distorção nas imagens geradas.
+    - Aplicação na Tradução de Imagem:
+  O PSNR é usado em tradução de imagem para fornecer uma maneira padronizada de comparar a qualidade das imagens geradas em relação à verdade. Valores de PSNR mais altos indicam melhor qualidade da imagem, significando menos distorção nas imagens geradas.
 
     **3. Índice de Similaridade Estrutural (SSIM)**
 
-        - Teoria:
-      O SSIM é uma métrica perceptual que mede a similaridade estrutural entre duas imagens. Baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
+    - Teoria:
+  O SSIM é uma métrica perceptual que mede a similaridade estrutural entre duas imagens. Baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
 
     ![image](https://github.com/user-attachments/assets/65b1b8f5-0d5b-4a0f-823c-d399c0b44076)
       
-      onde μ e σ são as médias e desvios padrão das imagens, e C1 e C2 são constantes para estabilizar a divisão.
+    onde μ e σ são as médias e desvios padrão das imagens, e C1 e C2 são constantes para estabilizar a divisão.
 
-        - Aplicação na Tradução de Imagem:
-      O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
+    - Aplicação na Tradução de Imagem:
+  O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
 
 
 
@@ -120,30 +120,35 @@ Exemplos de pares de imagens da base de dados:
 
 - **CycleGAN**:
 
-    - Evolução da Loss do Gerador:
-    ![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
+  -- Evolução da Loss do Gerador:
+
+![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
+
+
+  -- Evolução da Loss do Discriminador:
+
+![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
 
 
 
-    - Evolução da Loss do Discriminador:
-    ![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
+  -- Resultado Parcial da Época 10:
+
+![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
 
 
 
-    - Resultado Parcial da Época 10:
-    ![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
+  -- Resultado Parcial da Época 50:
+
+![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
 
 
 
-    - Resultado Parcial da Época 50:
-    ![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
+  -- Resultado Parcial da Época 90:
+
+![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
 
 
-
-    - Resultado Parcial da Época 90:
-    ![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
-
-    - Métricas:
+  -- Métricas:
     
     x
 
@@ -155,25 +160,29 @@ Exemplos de pares de imagens da base de dados:
 
 
 - **Pix2Pix**:
-    - Evolução da Loss (Gerador e Discriminador):
-    ![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
+  -- Evolução da Loss (Gerador e Discriminador):
+
+![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
 
 
 
-    - Resultado Parcial da Época 10:
-    ![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
+  -- Resultado Parcial da Época 10:
+
+![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
 
 
 
-    - Resultado Parcial da Época 50:
-    ![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
+  -- Resultado Parcial da Época 50:
+
+![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
 
 
 
-    - Resultado Parcial da Época 90:
-    ![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
+  -- Resultado Parcial da Época 90:
 
-    - Métricas:
+![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
+
+  -- Métricas:
     
     x
 
