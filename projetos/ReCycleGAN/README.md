@@ -292,17 +292,7 @@ Colunas da tabela de hiperpâmetros:
 * **P.Ger.**: Total de parâmetros treináveis de cada rede geradora do modelo, em milhões.
 * **P.Disc.**: Total de parâmetros treináveis de cada rede discriminadora do modelo, em milhões.
 
-Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros listados não se aplicam (**na**). A rede geradora da CycleGAN-turbo tem diversos elementos, e alguns são compartilhados entre as redes geradoras A→B e B→A. Além disso, muitos dos pesos são pré-treinados. A tabela abaixo lista o total de parâmetros associados a cada elemento. Para ter uma melhor comparação com os demais modelos, na tabela acima foi reportada a metade da soma dos pesos treináveis das quatro VAE e da U-net. Foi assumido que o encoder de texto é uma rede acessória.
-
-| Elemento     |Total (MM)|Treináveis (MM) |
-|-|:-:|:-:|
-| VAE Encoder  |  170,077 |   1,786 |
-| VAE Decoder  |  170,077 |   1,786 |
-| U-net        |  947,025 |  81,114 |
-| Text Encoder |  340,388 | 340,388 |
-| VAE A→B      |   85,039 |   0,893 |
-| VAE B→A      |   85,039 |   0,893 |
-| Total        | 1457,490 | 423,289 |
+Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros listados não se aplicam (**na**). Uma explicação sobre o número de parâmatros da CycleGAN-turbo é feita neste [link](./docs/CycleGAN-turbo.md).
 
 
 ### Resultados
