@@ -9,7 +9,7 @@ from PIL import Image
 from torchvision import transforms
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from src.utils import remove_all_files, load_json_to_dict
+from src.utils.utils import remove_all_files, load_json_to_dict, count_parameters
 from src.models.cyclegan import CycleGAN
 
 def init_new_cycle_gan(params):
@@ -67,6 +67,12 @@ def translate_images(params):
     params['restart_epoch'] = cyclegan.load_model(params['restart_path'])
     print(f"Restarting from {Path(params['restart_path']).name}")
     print(f"  Epoch: {params['restart_epoch']}")
+
+    print("  Parameters:")
+    print(f'    Generator A to B: {count_parameters(cyclegan.gen_AtoB):,}')
+    print(f'    Generator B to A: {count_parameters(cyclegan.gen_BtoA):,}')
+    print(f'    Discriminator A:  {count_parameters(cyclegan.dis_A):,}')
+    print(f'    Discriminator B:  {count_parameters(cyclegan.dis_B):,}')
 
     data_folder = params["data_folder"]
 
