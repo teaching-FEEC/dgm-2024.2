@@ -310,17 +310,19 @@ Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros li
 A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
 |Modelo | Épocas | FID A→B | LPIPS A→B | FID B→A | LPIPS B→A |
-|-|-:|-:|-:|-:|-:|
-|CycleGAN       | 41  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|CycleGAN-turbo |     |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 1   | 40  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 2   | 38  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 3   | 42  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 4   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 5   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 6   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 7   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 8   | 32  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|-|:-:|:-:|:-:|:-:|:-:|
+|CycleGAN       | 41  |    53,44   |    0,5853   ± 0,04370 |    28,81   |   0,5395   ± 0,04669 |
+|CycleGAN-turbo |     |  **50,39** |    0,6146   ± 0,04229 |    35,00   |   0,5282   ± 0,05043 |
+|ReCycleGAN 1   | 40  |   129,0    |    0,5852   ± 0,04327 |    40,78   |   0,5275   ± 0,04426 |
+|ReCycleGAN 2   | 38  |   154,2    |    0,5893   ± 0,04163 |    38,79   | **0,5253** ± 0,04411 |
+|ReCycleGAN 3   | 42  |   158,2    |    0,6088   ± 0,03889 |    75,83   |   0,5332   ± 0,04321 |
+|ReCycleGAN 4   | 49  |    88,00   |    0,5894   ± 0,04110 |  **27,69** |   0,5289   ± 0,04685 |
+|ReCycleGAN 5   | 49  |    97,48   |    0,5964   ± 0,04294 |    47,80   |   0,5287   ± 0,04546 |
+|ReCycleGAN 6   | 49  |   141,5    |  **0,5789** ± 0,04261 |    70,01   |   0,5472   ± 0,04025 |
+|ReCycleGAN 7   | 49  |   120,8    |    0,5799   ± 0,04065 |    45,72   |   0,5394   ± 0,04551 |
+|ReCycleGAN 8   | 32  |   341,6    |    1,0140   ± 0,03567 |   418,3    |   0,6833   ± 0,03227 |
+
+Os melhores resultados estão destacados em negrito.
 
 Uma maior variedade de apresentações das métricas é apresentada neste [**link**](./docs/Results.md).
 
@@ -328,19 +330,11 @@ Exemplos de imagens transformadas são apresentados abaixo.
 
 <div>
 <p align="center">
-<img src='docs/assets/evaluation/Samples_A.png' align="center" alt="Imagens A" width=600px>
+<img src='docs/assets/evaluation/Samples_A_with8.png' align="center" alt="Imagens A" width=600px>
+<img src='docs/assets/evaluation/Samples_B_with8.png' align="center" alt="Imagens B" width=600px>
 </p>
 <p align="center">
-  <strong>Exemplos de imagens transformadas de dia para noite.</strong>
-</p>
-</div>
-
-<div>
-<p align="center">
-<img src='docs/assets/evaluation/Samples_B.png' align="center" alt="Imagens B" width=600px>
-</p>
-<p align="center">
-  <strong>Exemplos de imagens transformadas de noite para dia.</strong>
+  <strong>Exemplos de imagens transformadas de dia para noite (A) e de noite para dia (B).</strong>
 </p>
 </div>
 

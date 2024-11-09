@@ -1,59 +1,78 @@
 # Resultados
 
-A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste.
+A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparaÃ§Ã£o das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as mÃ©tricas foram calculadas usando as imagens de treino e de teste. Para a mÃ©trica LPIPS sÃ£o apresentados o valor mÃ©dio e o desvio padrÃ£o.
 
-|Transformação |Modelo | FID | LPIPS |
-|-|-|-:|-:|
-|A?B|CycleGAN |     .0 | 0. ± 0. |
-||ReCycleGAN 1 |     .0 | 0. ± 0. |
-||ReCycleGAN 2 |     .0 | 0. ± 0. |
-||ReCycleGAN 3 |     .0 | 0. ± 0. |
-||ReCycleGAN 4 |     .0 | 0. ± 0. |
-||ReCycleGAN 5 |     .0 | 0. ± 0. |
-||ReCycleGAN 6 |     .0 | 0. ± 0. |
-||ReCycleGAN 7 |     .0 | 0. ± 0. |
-||ReCycleGAN 8 |     .0 | 0. ± 0. |
-||ReCycleGAN 9 |     .0 | 0. ± 0. |
-|B?A|CycleGAN-turbo |     .0 | 0. ± 0. |
-||CycleGAN |     .0 | 0. ± 0. |
-||ReCycleGAN 1 |     .0 | 0. ± 0. |
-||ReCycleGAN 2 |     .0 | 0. ± 0. |
-||ReCycleGAN 3 |     .0 | 0. ± 0. |
-||ReCycleGAN 4 |     .0 | 0. ± 0. |
-||ReCycleGAN 5 |     .0 | 0. ± 0. |
-||ReCycleGAN 6 |     .0 | 0. ± 0. |
-||ReCycleGAN 7 |     .0 | 0. ± 0. |
-||ReCycleGAN 8 |     .0 | 0. ± 0. |
-||ReCycleGAN 9 |     .0 | 0. ± 0. |
-||CycleGAN-turbo |     .0 | 0. ± 0. |
+|Modelo | Ã‰pocas | FID Aâ†’B | LPIPS Aâ†’B | FID Bâ†’A | LPIPS Bâ†’A |
+|-|:-:|:-:|:-:|:-:|:-:|
+|CycleGAN       | 41  |    53,44   |    0,5853   Â± 0,04370 |    28,81   |   0,5395   Â± 0,04669 |
+|CycleGAN-turbo |     |  **50,39** |    0,6146   Â± 0,04229 |    35,00   |   0,5282   Â± 0,05043 |
+|ReCycleGAN 1   | 40  |   129,0    |    0,5852   Â± 0,04327 |    40,78   |   0,5275   Â± 0,04426 |
+|ReCycleGAN 2   | 38  |   154,2    |    0,5893   Â± 0,04163 |    38,79   | **0,5253** Â± 0,04411 |
+|ReCycleGAN 3   | 42  |   158,2    |    0,6088   Â± 0,03889 |    75,83   |   0,5332   Â± 0,04321 |
+|ReCycleGAN 4   | 49  |    88,00   |    0,5894   Â± 0,04110 |  **27,69** |   0,5289   Â± 0,04685 |
+|ReCycleGAN 5   | 49  |    97,48   |    0,5964   Â± 0,04294 |    47,80   |   0,5287   Â± 0,04546 |
+|ReCycleGAN 6   | 49  |   141,5    |  **0,5789** Â± 0,04261 |    70,01   |   0,5472   Â± 0,04025 |
+|ReCycleGAN 7   | 49  |   120,8    |    0,5799   Â± 0,04065 |    45,72   |   0,5394   Â± 0,04551 |
+|ReCycleGAN 8   | 32  |   341,6    |    1,0140   Â± 0,03567 |   418,3    |   0,6833   Â± 0,03227 |
 
-A coluna das transformações é preenchida apenas na primeira linha do respectivo conjunto de resultados para reduzir a poluição visual da tabela. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
+Os melhores resultados estÃ£o destacados em negrito.
+
+Os resultados sÃ£o apresentados em forma grÃ¡fica abaixo. A classe oposta Ã© apresentada para ser um indicativo de imagens de baixa qualidade.
+
+<div>
+  <p align="center">
+    <img src='assets/evaluation/fid_bar_images_A_with8.png' align="center" alt="FID imagens A" width=500px>
+    <img src='assets/evaluation/fid_bar_images_B_with8.png' align="center" alt="FID imagens B" width=500px>
+  </p>
+  <p align="center">
+    <strong>FID para imagens da classe A e B.</strong>
+  </p>
+</div>
+
+<div>
+  <p align="center">
+    <img src='assets/evaluation/lpips_bar_images_A_with8.png' align="center" alt="LPIPS imagens A" width=500px>
+    <img src='assets/evaluation/lpips_bar_images_B_with8.png' align="center" alt="LPIPS imagens B" width=500px>
+  </p>
+  <p align="center">
+    <strong>LPIPS para imagens da classe A e B.</strong>
+  </p>
+</div>
+
+O caso de teste 8 (termo de regularizaÃ§Ã£o na funÃ§Ã£o de perda) teve comportamento divergente, gerando imagens transformadas de baixa qualidade. Este modelo Ã© ignorado nas avaliaÃ§Ãµes que seguem.
+
+## Histogramas de LPIPS
+
+Uma outra tentativa de anÃ¡lise dos resultados foi comparar as distribuiÃ§Ãµes dos valores de LPIPS entre as imagens reais e falsas, por modelo testado.
+
+<div>
+  <p align="center">
+    <img src='assets/evaluation/lpips_histograms_A.png' align="center" alt="Histograma LPIPS imagens A" width=500px>
+    <img src='assets/evaluation/lpips_histograms_B.png' align="center" alt="Histograma LPIPS imagens B" width=500px>
+  </p>
+  <p align="center">
+    <strong>Histogramas de valores de LPIPS para imagens das classes A e B.</strong>
+  </p>
+</div>
+
 
 ## Mapas de Modelos
 
-*Abusando* da ideia de distâncias das métricas, são montados mapas 2d com a posição relativa dos modelos. O mapa é construído a partir das distâncias entre todos os possíveis conjuntos de imagens (reais x modelos, modelos x modelos) e aplicando MDS (Multidimensional scaling) para reduzir a informação a duas dimensões.
+*Abusando* da ideia de distÃ¢ncias das mÃ©tricas, foram montados mapas 2d com a posiÃ§Ã£o relativa dos modelos. O mapa Ã© construÃ­do a partir das distÃ¢ncias entre todos os possÃ­veis conjuntos de imagens (reais x modelos, modelos x modelos) e aplicando MDS (Multidimensional scaling) para reduzir a informaÃ§Ã£o a duas dimensÃµes.
 
 <div>
 <p align="center">
-<img src='assets/evaluation/fid_map_images_A.png' align="center" alt="Mapa FID imagens A" width=300px>
+<img src='assets/evaluation/fid_map_images_A.png' align="center" alt="Mapa FID imagens A" width=500px>
+<img src='assets/evaluation/fid_map_images_B.png' align="center" alt="Mapa FID imagens B" width=500px>
 </p>
 <p align="center">
-  <strong>Mapa dos modelos avaliados com FID para imagens da classe A.</strong>
+  <strong>Mapa dos modelos avaliados com FID para imagens das classes A e B.</strong>
 </p>
 </div>
 
-<div>
-<p align="center">
-<img src='assets/evaluation/fid_map_images_B.png' align="center" alt="Mapa FID imagens B" width=300px>
-</p>
-<p align="center">
-  <strong>Mapa dos modelos avaliados com FID para imagens da classe B.</strong>
-</p>
-</div>
+Os mapas de modelos baseados nas mÃ©dias da mÃ©trica LPIPS nÃ£o geraram bons resultados. Foi preciso introduzir um ajuste antes de montar o mapa das distÃ¢ncias. A mÃ©dia dos valores de LPIPS nÃ£o Ã© zero quando se compara um conjunto de imagens com o mesmo conjunto. Desta forma o LPIPS se aproxima mais de uma medida de *coerÃªncia* entre as imagens do que uma distÃ¢ncia.
 
-Os mapas de modelos baseados nas médias da métrica LPIPS não geraram bons resultados. Foi preciso introduzir um ajuste antes de montar o mapa das distâncias. A média dos valores de LPIPS não é zero quando se compara um conjunto de imagens com o mesmo conjunto. Desta forma o LPIPS se aproxima mais de uma medida de *coerência* entre as imagens do que uma distância.
-
-O formato dos histogramas dos valores de LPIPS é aproximadamente de uma Gaussiana. Optou-se por usar a distância de Wasserstein como medida de distância entre a distribuição das imagens reais entre si ($G_{RR}$) e a distribuição entre as imagens reais e as imagens falsas ($G_{RF}$).
+O formato dos histogramas dos valores de LPIPS Ã© aproximadamente de uma Gaussiana. Optou-se por usar a distÃ¢ncia de Wasserstein como medida de distÃ¢ncia entre a distribuiÃ§Ã£o das imagens reais entre si ($G_{RR}$) e a distribuiÃ§Ã£o entre as imagens reais e as imagens falsas ($G_{RF}$).
 
 $$
   W(G_{RR},G_{RF}) = \sqrt{(\mu_{RR} - \mu_{RF})^2 + (\sigma_{RR} - \sigma_{RF})^2}
@@ -61,85 +80,27 @@ $$
 
 <div>
   <p align="center">
-    <img src='assets/evaluation/lpips_map_images_A.png' align="center" alt="Mapa LPIPS imagens A" width=300px>
+    <img src='assets/evaluation/w-lpips_map_images_A.png' align="center" alt="Mapa LPIPS imagens A" width=500px>
+    <img src='assets/evaluation/w-lpips_map_images_B.png' align="center" alt="Mapa LPIPS imagens B" width=500px>
   </p>
   <p align="center">
-    <strong>Mapa dos modelos avaliados com LPIPS para imagens da classe A.</strong>
+    <strong>Mapa dos modelos avaliados com LPIPS para imagens das classes A e B.</strong>
   </p>
 </div>
 
-<div>
-  <p align="center">
-    <img src='assets/evaluation/lpips_map_images_B.png' align="center" alt="Mapa LPIPS imagens B" width=300px>
-  </p>
-  <p align="center">
-    <strong>Mapa dos modelos avaliados com LPIPS para imagens da classe B.</strong>
-  </p>
-</div>
-
-## Histogramas de LPIPS
-
-Uma outra tentativa de análise dos resultados foi comparar as distribuições dos valores de LPIPS entre as imagens reais e falsas, por modelo testado.
-
-<div>
-  <p align="center">
-    <img src='assets/evaluation/lpips_histograms_A.png' align="center" alt="Histograma LPIPS imagens A" width=300px>
-  </p>
-  <p align="center">
-    <strong>Histogramas de valores de LPIPS para imagens da classe A.</strong>
-  </p>
-</div>
-
-<div>
-  <p align="center">
-    <img src='assets/evaluation/lpips_histograms_B.png' align="center" alt="Histograma LPIPS imagens B" width=300px>
-  </p>
-  <p align="center">
-    <strong>Histogramas de valores de LPIPS para imagens da classe B.</strong>
-  </p>
-</div>
-
-## Amostragem de Imagens
-
-A última análise foi a da coerência do LPIPS com a qualidade perceptual das imagens. Foi construído um histograma do valor médio do LPIPS entre todas as imagens reais e cada uma das imagens falsas geradas por um dos modelos de teste. Foram amostradas imagens com diferentes valores de LPIPS médio.
-
-<div>
-  <p align="center">
-    <img src='assets/evaluation/lpips_histograms_samples_A.png' align="center" alt="Amostras de imagens A de um modelo" width=300px>
-  </p>
-  <p align="center">
-    <strong>Amostras com diferentes valores de LPIPS médio para imagens da classe A geradas com o modelo XXXXX.</strong>
-  </p>
-</div>
-
-<div>
-  <p align="center">
-    <img src='assets/evaluation/lpips_histograms_samples_B.png' align="center" alt="Amostras de imagens B de um modelo" width=300px>
-  </p>
-  <p align="center">
-    <strong>Amostras com diferentes valores de LPIPS médio para imagens da classe B geradas com o modelo XXXXX.</strong>
-  </p>
-</div>
+A marca associada Ã s imagens da classe oposta foi removida das figuras acima por estar muito afastada das demais.
 
 ## Exemplos
 
-Exemplos de imagens transformadas aleatórias são apresentados abaixo.
+
+Exemplos de imagens transformadas sÃ£o apresentados abaixo.
 
 <div>
-  <p align="center">
-    <img src='assets/evaluation/Samples_A.png' align="center" alt="Imagens A" width=600px>
-  </p>
-  <p align="center">
-    <strong>Exemplos de imagens transformadas de dia para noite.</strong>
-  </p>
-</div>
-
-
-<div>
-  <p align="center">
-    <img src='assets/evaluation/Samples_B.png' align="center" alt="Imagens B" width=600px>
-  </p>
-  <p align="center">
-    <strong>Exemplos de imagens transformadas de noite para dia.</strong>
-  </p>
+<p align="center">
+<img src='assets/evaluation/Samples_A_with8.png' align="center" alt="Imagens A" width=500px>
+<img src='assets/evaluation/Samples_B_with8.png' align="center" alt="Imagens B" width=500px>
+</p>
+<p align="center">
+  <strong>Exemplos de imagens transformadas de dia para noite (A) e de noite para dia (B).</strong>
+</p>
 </div>
