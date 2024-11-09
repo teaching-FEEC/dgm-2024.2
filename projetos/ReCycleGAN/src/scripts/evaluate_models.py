@@ -359,7 +359,7 @@ def main():
 
     n_tests = 7
     test_cases_to_build_images = [] # Indexes of test cases to build images
-    recalculate_metrics = True # If False, will load metrics from pkl files
+    recalculate_metrics = False # If False, will load metrics from pkl files
     n_samples = 5
     # best_model = 5 # Index of the 'best' model
 
@@ -386,7 +386,7 @@ def main():
     labels = list(model_list.keys())
 
 
-    # Calculate FID
+    print('========= FID =========')
     if recalculate_metrics:
         fid_metrics = get_fid(data_loaders)
         save_metrics(fid_metrics, 'fid_metrics.pkl')
@@ -396,7 +396,7 @@ def main():
     plot_metrics(fid_metrics, labels, 'FID')
 
 
-    # Calculate LPIPS
+    print('========= LPIPS =========')
     if recalculate_metrics:
         lpips_metrics = get_lpips(data_loaders)
         save_metrics(lpips_metrics, 'lpips_metrics.pkl')
@@ -406,10 +406,13 @@ def main():
     lpips_metrics_mean = transform_metrics(lpips_metrics, transform=lambda x: float(x.mean()))
     lpips_metrics_std = transform_metrics(lpips_metrics, transform=lambda x: float(x.std()))
     print_metric_pairs(lpips_metrics_mean, lpips_metrics_std)
+    plot_metrics(lpips_metrics_mean, labels, 'LPIPS')
+
     lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
     print("LPIPS 'distances'")
     print_metric_pairs(lpips_metrics_dist)
-    plot_metrics(lpips_metrics_dist, labels, 'LPIPS')
+    labels.remove('Oposite class')
+    plot_metrics(lpips_metrics_dist, labels, 'W-LPIPS')
 
     # Save samples
     for p in ['A','B']:
