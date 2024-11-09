@@ -267,19 +267,18 @@ de **performance** e que contenha conteúdo que possa ser classificado como **co
 
 Foram realizados testes com diferentes modificações à estrutura original da CycleGAN para avaliar o conjunto de hiperparâmetros *ótimo*. Devido às limitações de *hardware* disponível, optou-se por fazer uma busca manual. Foram avaliadas um total de 8 variações individuais nos hiperparâmetros da rede. O primeiro teste já mostra que a ideia foi a de buscar reduzir o tamanho da rede em comparação com a CycleGAN original.
 
-| Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Reg. | Parâmetros |
-|-|-|-|-|-|-|-|-|-|
-|CycleGAN     | 64     | 9       |     |      | log-BCE |     |     | 11 MM |
-|CycleGAN-turbo | na   | na      | na  | na   |     MSE | na | na | MM|
-|ReCycleGAN 1 | 32     | 5       |     |      | log-BCE |      |     |  MM |
-|ReCycleGAN 2 | 32     | 5       |  ✓  |      | log-BCE |      |     |  MM |
-|ReCycleGAN 3 | 32     | 5       |  ✓  |  ✓   | log-BCE |      |     |  MM |
-|ReCycleGAN 4 | 32     | 5       |  ✓  |      |     MSE |      |     |  MM |
-|ReCycleGAN 5 | 32     | 5       |  ✓  |  ✓   |     MSE |      |     | MM |
-|ReCycleGAN 6 | 32     | 5       |  ✓  |      | log-BCE | Gen  |     | MM |
-|ReCycleGAN 7 | 32     | 5       |  ✓  |      | log-BCE | Disc |     | MM |
-|ReCycleGAN 8 | 32     | 5       |  ✓  |      | log-BCE |      |  ✓  | MM |
-|ReCycleGAN 9 | 32     | 5       |  ✓  |  ✓   |     MSE |  Gen+Disc   |  ✓  | MM |
+| Modelo | Carac. | B. Res. | AMP | Skip | Loss | Atenção | Reg. | P.Ger. (MM) | P.Disc. (MM) |
+|-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|CycleGAN     | 64     | 9       |     |      | log-BCE |      |     | 11,378 | 2,765 |
+|CycleGAN-turbo | na   | na      |  na | na   |     MSE | na   | na  |   |   |
+|ReCycleGAN 1   | 32   | 5       |     |      | log-BCE |      |     | 1,670 | 0,694 |
+|ReCycleGAN 2   | 32   | 5       |  ✓  |      | log-BCE |      |     | 1,670 | 0,694 |
+|ReCycleGAN 3   | 32   | 5       |  ✓  |  ✓   | log-BCE |      |     | 1,670 | 0,694 |
+|ReCycleGAN 4   | 32   | 5       |  ✓  |      |     MSE |      |     | 1,670 | 0,694 |
+|ReCycleGAN 5   | 32   | 5       |  ✓  |  ✓   |     MSE |      |     | 1,670 | 0,694 |
+|ReCycleGAN 6   | 32   | 5       |  ✓  |      | log-BCE | Gen  |     | 1,676 | 0,694 |
+|ReCycleGAN 7   | 32   | 5       |  ✓  |      | log-BCE | Disc |     | 1,670 | 0,776 |
+|ReCycleGAN 8   | 32   | 5       |  ✓  |      | log-BCE |      |  ✓  | 1,670 | 0,694 |
 
 Colunas da tabela de hiperpâmetros:
 
@@ -290,7 +289,8 @@ Colunas da tabela de hiperpâmetros:
 * **Loss**: Função agregadora no cálculo das funções de perda: log da entropia cruzada binária (usada na CycleGAN original) ou erro quadrático médio (usado em revisões posteriores).
 * **Atenção**: Adição de camadas de atenção ao *upsampling* das redes geradoras e/ou às redes discriminadoras.
 * **Reg.**: Uso de termo de regularização na função de perda associado à métrica *perceptual path length*. Este termo tende a suavizar o jacobiano da rede geradora.
-* **Parâmetros**: Total de parâmetros treináveis das quatro redes presentes em cada modelo: geradora A→B, geradora B→A, discriminadora A e discriminadora B. O símbolo MM nesta tabela significa milhões.
+* **P.Ger.**: Total de parâmetros treináveis de cada rede geradora do modelo, em milhões.
+* **P.Disc.**: Total de parâmetros treináveis de cada rede discriminadora do modelo, em milhões.
 
 Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros listados não se aplicam (**na**).
 
@@ -298,19 +298,18 @@ Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros li
 
 A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
-|Modelo | FID A→B | LPIPS A→B | FID B→A | LPIPS B→A |
-|-|-:|-:|-:|-:|
-|CycleGAN     |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 1 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 2 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 3 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 4 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 5 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 6 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 7 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 8 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|ReCycleGAN 9 |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
-|CycleGAN-turbo |     .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|Modelo | Épocas | FID A→B | LPIPS A→B | FID B→A | LPIPS B→A |
+|-|-:|-:|-:|-:|-:|
+|CycleGAN       | 41  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|CycleGAN-turbo |     |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 1   | 40  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 2   | 38  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 3   | 42  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 4   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 5   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 6   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 7   | 49  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
+|ReCycleGAN 8   | 32  |   .0 | 0. ± 0. |     .0 | 0. ± 0. |
 
 Uma maior variedade de apresentações das métricas é apresentada neste [**link**](./docs/Results.md).
 
