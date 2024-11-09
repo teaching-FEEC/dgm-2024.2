@@ -67,7 +67,8 @@ class LPIPS():
         """Calculate LPIPS between pairs of images using DataLoaders.
 
         Attention: this routine assumes that both img1 and img2 are DataLoaders.
-        If use_all_pairs is False, it is assumed that both DataLoaders have the same length.
+        If use_all_pairs is False, it is assumed that both DataLoaders have the same length
+        and same batch size.
         """
         if use_all_pairs:
             n_max = self.max_pairs

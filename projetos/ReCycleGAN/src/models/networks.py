@@ -65,36 +65,51 @@ class ResidualBlock(nn.Module):
         return x + self.conv_block(x)
 
 class SelfAttention(nn.Module):
-    """ Self attention Layer
-    Implementation inspired on "A New CycleGAN-Based Style Transfer Method"
-    Link: https://ieeexplore.ieee.org/document/10361163
-    """
-
-    def __init__(self, input_channel):
+    def __init__(self, in_channels):
         super(SelfAttention, self).__init__()
-        self.chanel_in = input_channel
+        self.in_channels = in_channels
 
-        self.query_conv = nn.Conv2d(input_channel, input_channel // 8, 1)
-        self.key_conv   = nn.Conv2d(input_channel, input_channel // 8, 1)
-        self.value_conv = nn.Conv2d(input_channel, input_channel, 1)
-        self.gamma      = nn.Parameter(torch.zeros(1))
-        self.softmax    = nn.Softmax(dim=-1)
+        # Reduce spatial dimensions and channels for efficiency
+        self.query_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
+        self.key_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
+        self.value_conv = nn.Conv2d(in_channels, in_channels, kernel_size=1)
+
+        # Add spatial reduction for attention computation
+        self.pool = nn.AvgPool2d(kernel_size=4, stride=4)
+
+        self.gamma = nn.Parameter(torch.zeros(1))
+        self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
         """Forward pass through the self-attention layer."""
-        m_batchsize, C, width, height = x.size()
-        attention_query = self.query_conv(x).view(m_batchsize, -1, width * height).permute(0, 2, 1)  # B X CX(N) # Q
-        attention_key   = self.key_conv(x).view(m_batchsize, -1, width * height)  # B X C x (*W*H)  # K
-        energy          = torch.bmm(attention_query, attention_key)  # transpose check
-        attention       = self.softmax(energy)  # BX (N) X (N)
-        attention_value = self.value_conv(x).view(m_batchsize, -1, width * height)  # B X C X N
+        batch_size, channels, height, width = x.size()
 
-        out = torch.bmm(attention_value, attention.permute(0, 2, 1))
-        out = out.view(m_batchsize, C, width, height)
+        # Reduce spatial dimensions for key and query
+        x_pooled = self.pool(x)
+        pooled_height, pooled_width = x_pooled.shape[2:]
 
-        out = self.gamma * out + x
+        # Project and reshape query
+        proj_query = self.query_conv(x_pooled)  # Use pooled input for query too
+        proj_query = proj_query.view(batch_size, -1, pooled_height * pooled_width)  # (B, C', HW/16)
 
-        return out
+        # Project and reshape key (using pooled input)
+        proj_key = self.key_conv(x_pooled)
+        proj_key = proj_key.view(batch_size, -1, pooled_height * pooled_width)  # (B, C', HW/16)
+
+        # Project and reshape value (using pooled input)
+        proj_value = self.value_conv(x_pooled)
+        proj_value = proj_value.view(batch_size, -1, pooled_height * pooled_width)  # (B, C, HW/16)
+
+        # Calculate attention with reduced spatial dimensions
+        energy = torch.bmm(proj_query.permute(0, 2, 1), proj_key)  # (B, HW/16, HW/16)
+        attention = self.softmax(energy)
+
+        # Apply attention and reshape
+        out = torch.bmm(proj_value, attention.permute(0, 2, 1))  # (B, C, HW/16)
+        out = out.view(batch_size, channels, pooled_height, pooled_width)
+        out = F.interpolate(out, size=(height, width), mode='bilinear', align_corners=False)
+
+        return self.gamma * out + x
 
 class Generator(nn.Module):
     """
@@ -175,7 +190,7 @@ class Generator(nn.Module):
                     conv_layer,
                     norm_layer(n_feat // 2),
                     nn.ReLU(inplace=True),
-                    SelfAttention(128)
+                    SelfAttention(in_channels=n_feat // 2)
                 ))
             else:
                 self.decoder.append(nn.Sequential(
@@ -238,28 +253,20 @@ class Discriminator(nn.Module):
                  ):
         super().__init__()
 
+        layers = [
+            nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
+            nn.LeakyReLU(0.2, inplace=True),
+            self.discriminator_block(n_features, 2 * n_features, norm_layer),
+            self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
+            self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
+        ]
+
         if add_attention == 'disc':
-            self.model = nn.Sequential(
-                nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
-                nn.LeakyReLU(0.2, inplace=True),
+            layers.append(SelfAttention(in_channels=8 * n_features))
 
-                self.discriminator_block(n_features, 2 * n_features, norm_layer),
-                self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
-                self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
-                SelfAttention(512),
-                nn.Conv2d(8 * n_features, 1, 4, padding=1)
-            )
-        else:
-            self.model = nn.Sequential(
-                nn.Conv2d(input_nc, n_features, 4, stride=2, padding=1),
-                nn.LeakyReLU(0.2, inplace=True),
+        layers.append(nn.Conv2d(8 * n_features, 1, 4, padding=1))
 
-                self.discriminator_block(n_features, 2 * n_features, norm_layer),
-                self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
-                self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
-
-                nn.Conv2d(8 * n_features, 1, 4, padding=1)
-            )
+        self.model = nn.Sequential(*layers)
 
     def discriminator_block(self, input_dim, output_dim, norm_layer):
         """

@@ -41,7 +41,7 @@ class CycleGAN(BaseModel):
                  n_residual_blocks=9, n_features=64, n_downsampling=2,
                  norm_type='instance',
                  add_skip=False,
-                 add_attention=False,
+                 add_attention=None,
                  add_lora=False, lora_rank=4,
                  use_replay_buffer=False,
                  replay_buffer_size=50,
@@ -77,7 +77,7 @@ class CycleGAN(BaseModel):
             'input_nc': input_nc,
             'n_features': n_features, 
             'norm_layer': nn.InstanceNorm2d,
-            'add_attention': False
+            'add_attention': add_attention
         }
 
         self.gen_AtoB = Generator(**gen_params).to(self.device)

@@ -105,12 +105,21 @@ class FID():
         self._init_model()
         m1, s1 = self.compute_statistics_of_imgs(images1)
         m2, s2 = self.compute_statistics_of_imgs(images2)
-        return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
+        return FID.calculate_frechet_distance(m1, s1, m2, s2)
 
     @staticmethod
     def calculate_frechet_distance(m1,s1,m2,s2):
         """Calculate FID."""
-        return fid_score.calculate_frechet_distance(m1, s1, m2, s2)
+        try:
+            fid = fid_score.calculate_frechet_distance(m1, s1, m2, s2)
+        except ValueError as e:
+            if "Imaginary component" in str(e):
+                print("Warning: Encountered imaginary component in FID calculation. Setting FID to a large value.")
+                fid = 1000  # Or another large value to indicate poor performance
+            else:
+                raise e
+
+        return fid
 
     def get_from_paths(self, path_images1, path_images2):
         """Calculate FID between image folders."""
