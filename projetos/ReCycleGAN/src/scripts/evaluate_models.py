@@ -20,7 +20,7 @@ BASE_FOLDER = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(BASE_FOLDER))
 from src.utils.test_cases import TEST_CASES
 from src.utils.utils import save_dict_as_json
-from src.utils.data_loader import get_img_dataloader
+from src.utils.data_loader import get_img_dataloader, copy_dataloader
 from src.metrics.fid import FID
 from src.metrics.lpips import LPIPS
 from src.utils.data_transform import ImageTools
@@ -179,7 +179,7 @@ def build_data_loaders(folder_name):
 
 
 def get_fid(data_loaders, use_cuda=True):
-    """Calculates the FID score for a list of models."""
+    """Calculates the FID score for all pairs in a list of models."""
     print('Loading FID model')
     fid = FID(dims=2048, cuda=use_cuda)
 
@@ -203,7 +203,7 @@ def get_fid(data_loaders, use_cuda=True):
 
 
 def get_lpips(data_loaders, use_cuda=True):
-    """Calculates the LPIPS score for a list of models."""
+    """Calculates the LPIPS score for all pairs in a list of models."""
     print('Loading LPIPS model')
     lpips = LPIPS(cuda=use_cuda)
 
@@ -212,8 +212,8 @@ def get_lpips(data_loaders, use_cuda=True):
     results = {'A':{}, 'B':{}}
     for p in ['A','B']:
         for pair in pairs + [('Real','Real')]:
-            imgs1 = data_loaders[pair[0]][p]
-            imgs2 = data_loaders[pair[1]][p]
+            imgs1 = copy_dataloader(data_loaders[pair[0]][p])
+            imgs2 = copy_dataloader(data_loaders[pair[1]][p])
             n = min(len(imgs1.dataset), len(imgs2.dataset))
             imgs1.dataset.set_len(n)
             imgs2.dataset.set_len(n)
@@ -357,9 +357,9 @@ def load_metrics(file_name):
 def main():
     """Main function."""
 
-    n_tests = 5
+    n_tests = 7
     test_cases_to_build_images = [] # Indexes of test cases to build images
-    recalculate_metrics = False # If False, will load metrics from pkl files
+    recalculate_metrics = True # If False, will load metrics from pkl files
     n_samples = 5
     # best_model = 5 # Index of the 'best' model
 
@@ -407,8 +407,9 @@ def main():
     lpips_metrics_std = transform_metrics(lpips_metrics, transform=lambda x: float(x.std()))
     print_metric_pairs(lpips_metrics_mean, lpips_metrics_std)
     lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
-    plot_metrics(lpips_metrics_mean, labels, 'LPIPS')
-
+    print("LPIPS 'distances'")
+    print_metric_pairs(lpips_metrics_dist)
+    plot_metrics(lpips_metrics_dist, labels, 'LPIPS')
 
     # Save samples
     for p in ['A','B']:
