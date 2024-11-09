@@ -330,8 +330,8 @@ Exemplos de imagens transformadas são apresentados abaixo.
 
 <div>
 <p align="center">
-<img src='docs/assets/evaluation/Samples_A_with8.png' align="center" alt="Imagens A" width=600px>
-<img src='docs/assets/evaluation/Samples_B_with8.png' align="center" alt="Imagens B" width=600px>
+<img src='docs/assets/evaluation/Samples_A_with8.png' align="center" alt="Imagens A" width=500px>
+<img src='docs/assets/evaluation/Samples_B_with8.png' align="center" alt="Imagens B" width=500px>
 </p>
 <p align="center">
   <strong>Exemplos de imagens transformadas de dia para noite (A) e de noite para dia (B).</strong>
