@@ -9,10 +9,11 @@ import torch
 from torchvision import transforms
 from PIL import Image
 import matplotlib.pyplot as plt
-from sklearn.manifold import MDS
+from sklearn.manifold import MDS, TSNE
 import pandas as pd
 import seaborn as sns
 from tqdm import tqdm
+import plotly.express as px
 
 from test_model import translate_images
 
@@ -25,11 +26,14 @@ from src.metrics.fid import FID
 from src.metrics.lpips import LPIPS
 from src.utils.data_transform import ImageTools
 
-def create_2d_map(distances):
-    """Create a 2D map of points given a list of distances between the points."""
+def create_nd_map(distances, dimensions=2):
+    """Create a n-D map of points given a list of distances between the points."""
     distances = np.array(distances)
-    mds = MDS(n_components=2, dissimilarity='precomputed', random_state=42)
-    points_2d = mds.fit_transform(distances)
+    mds = MDS(n_components=len(distances)-1, dissimilarity='precomputed', random_state=42)
+    points_nd = mds.fit_transform(distances)
+    tsne = TSNE(n_components=dimensions, perplexity=len(distances)-1, random_state=42)
+    points_2d = tsne.fit_transform(points_nd)
+
     return points_2d
 
 
@@ -89,12 +93,37 @@ def plot_2d_map(points_2d, labels, file_path, title=None, label_dist=0.025):
     plt.savefig(file_path)
     plt.close()
 
+def plot_3d_map(points_3d, labels, file_path, title=None):
+    """
+    Plot an interactive 3D map of points and save it as an HTML file.
+
+    Parameters:
+    ------------
+    points_3d: np.ndarray
+        The 3D coordinates of the points.
+    labels: list
+        A list of labels corresponding to the points.
+    file_path: str
+        The path to save the plot HTML file. If None, the plot is shown.
+    title: str, optional
+        The title of the plot.
+    """
+    df = pd.DataFrame(points_3d, columns=['x', 'y', 'z'])
+    df['label'] = labels
+
+    fig = px.scatter_3d(df, x='x', y='y', z='z', color='label', title=title)
+    fig.update_layout(scene=dict(aspectmode='data'))
+    fig.write_html(file_path.with_suffix('.html'))
+
 
 def plot_hbar(data, file_path, title=None, x_label=None, y_label=None):
     """Plot horizontal bars."""
     df = pd.DataFrame(data)
     plt.figure(figsize=(6, 4))
-    sns.barplot(y='class', x='value', data=df, edgecolor='gray', color='skyblue')
+    if 'std' in df.columns:
+        sns.barplot(y='class', x='value', data=df, edgecolor='gray', color='skyblue', xerr=df['std'])
+    else:
+        sns.barplot(y='class', x='value', data=df, edgecolor='gray', color='skyblue')
     for index, value in enumerate(df['value']):
         plt.text(df['value'].max()*0.025, index, f'{value:.4g}', color='black', ha="left", va="center")
 
@@ -269,9 +298,13 @@ def print_metric_pairs(metrics1, metrics2=None):
 
 def plot_metrics(metrics, labels, title):
     """Plot metrics."""
+    metrics_std = None
+    if isinstance(metrics, list):
+        metrics_mean, metrics_std = metrics
+        metrics = metrics_mean
     for p in ['A','B']:
         table = metric_dict_to_table(metrics[p], labels)
-        points_2d = create_2d_map(table)
+        points_2d = create_nd_map(table, dimensions=2)
         plot_2d_map(
             points_2d,
             labels,
@@ -284,10 +317,19 @@ def plot_metrics(metrics, labels, title):
             title=f'{title.upper()} for {p} Images',
             label_dist=0)
 
+        points_3d = create_nd_map(table, dimensions=3)
+        plot_3d_map(
+            points_3d,
+            labels,
+            file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_map3D_images_{p}.html',
+            title=f'{title.upper()} for {p} Images')
+
         data = {
             'class': labels[1:],
             'value': [metrics[p][(labels[0],k)] for k in labels[1:]]
         }
+        if metrics_std is not None:
+            data['std'] = [metrics_std[p][(labels[0],k)] for k in labels[1:]]
         plot_hbar(
             data,
             file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_bar_images_{p}.png',
@@ -372,7 +414,7 @@ def main():
     # Build image data loaders
     model_list = {
         'Real': 'real',
-        'Oposite class': 'oposite',
+        # 'Oposite class': 'oposite',
         'CycleGAN': 'cyclegan',
         'CycleGAN-turbo': 'turbo',
     }
@@ -406,12 +448,12 @@ def main():
     lpips_metrics_mean = transform_metrics(lpips_metrics, transform=lambda x: float(x.mean()))
     lpips_metrics_std = transform_metrics(lpips_metrics, transform=lambda x: float(x.std()))
     print_metric_pairs(lpips_metrics_mean, lpips_metrics_std)
-    plot_metrics(lpips_metrics_mean, labels, 'LPIPS')
+    plot_metrics([lpips_metrics_mean, lpips_metrics_std], labels, 'LPIPS')
 
     lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
     print("LPIPS 'distances'")
     print_metric_pairs(lpips_metrics_dist)
-    labels.remove('Oposite class')
+    # labels.remove('Oposite class')
     plot_metrics(lpips_metrics_dist, labels, 'W-LPIPS')
 
     # Save samples
@@ -421,7 +463,7 @@ def main():
         img_list = df['file_name'].sample(n_samples).tolist()
         models = model_list.copy()
         models.pop('Real', None)
-        models.pop('Oposite class', None)
+        # models.pop('Oposite class', None)
         save_samples(img_list, p, models)
 
     # Calculate LPIPS
