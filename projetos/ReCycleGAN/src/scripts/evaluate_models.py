@@ -375,7 +375,7 @@ def save_samples(real_image_list, real_class, models):
     ImageTools.show_img(
         images_tensor,
         title=f'Translation Samples for {real_class} Images',
-        figsize = (20, 3*len(models)), nrow=len(real_image_list),
+        figsize = (3*len(real_image_list)+5, 3*len(models)), nrow=len(real_image_list),
         labels=['Real'] + list(models),
         rotation=0
     )
@@ -402,7 +402,7 @@ def main():
     n_tests = 7
     test_cases_to_build_images = [] # Indexes of test cases to build images
     recalculate_metrics = False # If False, will load metrics from pkl files
-    n_samples = 5
+    n_samples = 12
     # best_model = 5 # Index of the 'best' model
 
 
