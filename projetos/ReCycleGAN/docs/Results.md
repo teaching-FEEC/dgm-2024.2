@@ -17,7 +17,7 @@ A tabela abaixo apresenta um resumo dos principais resultados obtidos na compara
 
 Os melhores resultados estão destacados em negrito.
 
-Os resultados são apresentados em forma gráfica abaixo. A classe oposta é apresentada para ser um indicativo de imagens de baixa qualidade.
+Os resultados são apresentados em forma gráfica abaixo.
 
 <div>
   <p align="center">
@@ -35,7 +35,7 @@ Os resultados são apresentados em forma gráfica abaixo. A classe oposta é apr
     <img src='assets/evaluation/lpips_bar_images_B_with8.png' align="center" alt="LPIPS imagens B" width=500px>
   </p>
   <p align="center">
-    <strong>LPIPS para imagens da classe A e B.</strong>
+    <strong>LPIPS para imagens da classe A e B. As barras representam os valores médios, e as linhas horizontais indicam o respectivo desvio padrão.</strong>
   </p>
 </div>
 
@@ -55,10 +55,9 @@ Uma outra tentativa de análise dos resultados foi comparar as distribuições d
   </p>
 </div>
 
-
 ## Mapas de Modelos
 
-*Abusando* da ideia de distâncias das métricas, foram montados mapas 2d com a posição relativa dos modelos. O mapa é construído a partir das distâncias entre todos os possíveis conjuntos de imagens (reais x modelos, modelos x modelos) e aplicando MDS (Multidimensional scaling) para reduzir a informação a duas dimensões.
+*Abusando* da ideia de distâncias das métricas, foram montados mapas 2D com a posição relativa dos modelos. O mapa é construído a partir das distâncias entre todos os possíveis conjuntos de imagens (reais x modelos, modelos x modelos). A matriz de distância é transformada em uma lista de coordenadas com MDS (Multidimensional scaling), e então é aplicado T-SNE para reduzir a informação a duas dimensões. A transformação direta da matriz de distâncias em um mapa 2D não gerou bons resultados.
 
 <div>
 <p align="center">
@@ -88,7 +87,14 @@ $$
   </p>
 </div>
 
-A marca associada às imagens da classe oposta foi removida das figuras acima por estar muito afastada das demais.
+Mapas em 3D são apresentados nos links abaixo:
+
+* [FID das imagens A](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/fid_map3D_images_A.html)
+* [FID das imagens B](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/fid_map3D_images_B.html)
+* [LPIPS das imagens A](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_A.html) (baseado na distância de Wasserstein).
+* [LPIPS das imagens B](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_B.html) (baseado na distância de Wasserstein).
+
+<!-- Atualizar para documentação final: https://raw.githack.com/ -->
 
 ## Exemplos
 

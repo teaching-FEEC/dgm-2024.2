@@ -162,16 +162,16 @@ A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1
   < strong>Exemplos de imagens da base Nexet 2017 (dia acima e noite abaixo).</strong>
 </p>
 
-Foram feitas diferentes análises nas imagens. Uma explicação mais completa é feita [aqui](./docs/Nexet.md). Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216  (5%) das imagens da classe **Noite**. Os totais de imagens para cada classe são apresentados abaixo.
+Foram feitas diferentes análises nas imagens. Uma explicação mais completa é feita [**aqui**](./docs/Nexet.md). Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216  (5%) das imagens da classe **Noite**. Os totais de imagens para cada classe são apresentados abaixo.
 
 | Classe       | Treino | Teste | Total |
 |--------------|--------|-------|-------|
 |**Dia** (A)   | 3788   | 949   | 4737  |
 |**Noite** (B) | 3316   | 842   | 4158  |
 
-Todo o procedimento de filtro das imagens está codificado em um único [Notebook](src/notebooks/Filter_DayNight.ipynb).
+Todo o procedimento de filtro das imagens está codificado em um único [**Notebook**](src/notebooks/Filter_DayNight.ipynb).
 
-A base de dados utilizada pode ser encontrada neste [link](https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.1-nexet/Nexet.zip). Foram utilizadas as imagens listadas nos arquivos com *\_filtered.csv* no final do nome.
+A base de dados utilizada pode ser encontrada neste [**link**](https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.1-nexet/Nexet.zip). Foram utilizadas as imagens listadas nos arquivos com *\_filtered.csv* no final do nome.
 
 #### O-Haze, I-Haze e D-Hazy
 
@@ -218,11 +218,10 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
   <p align="center">
     <img src='docs/assets/workflow.png' align="center" alt="Workflow" width=800px>
   </p>
+  <p align="center">
+    <strong>Workflow de trabalho.</strong>
+  </p>
 </div>
-
-<p align="center">
-  <strong>Workflow de trabalho.</strong>
-</p>
 
 #### Arquitetura da Rede
 
@@ -292,10 +291,12 @@ Colunas da tabela de hiperpâmetros:
 * **P.Ger.**: Total de parâmetros treináveis de cada rede geradora do modelo, em milhões.
 * **P.Disc.**: Total de parâmetros treináveis de cada rede discriminadora do modelo, em milhões.
 
-Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros listados não se aplicam (**na**). Uma explicação sobre o número de parâmatros da CycleGAN-turbo é feita neste [link](./docs/CycleGAN-turbo.md).
+Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros listados não se aplicam (**na**). Uma explicação sobre o número de parâmatros da CycleGAN-turbo é feita neste [**link**](./docs/CycleGAN-turbo.md).
 
 
 ### Resultados
+
+Uma maior variedade de apresentações das métricas é feita neste [**link**](./docs/Results.md).
 
 A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
@@ -313,8 +314,6 @@ A tabela abaixo apresenta um resumo dos principais resultados obtidos na compara
 |ReCycleGAN 8   | 32  |   341,6    |    1,0140   ± 0,03567 |   418,3    |   0,6833   ± 0,03227 |
 
 Os melhores resultados estão destacados em negrito.
-
-Uma maior variedade de apresentações das métricas é apresentada neste [**link**](./docs/Results.md).
 
 Exemplos de imagens transformadas são apresentados abaixo.
 
