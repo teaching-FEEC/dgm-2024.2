@@ -94,7 +94,10 @@ def plot_hbar(data, file_path, title=None, x_label=None, y_label=None):
     """Plot horizontal bars."""
     df = pd.DataFrame(data)
     plt.figure(figsize=(6, 4))
-    sns.barplot(y='class', x='value', data=df, edgecolor='gray', color='skyblue')
+    if 'std' in df.columns:
+        sns.barplot(y='class', x='value', data=df, edgecolor='gray', color='skyblue', xerr=df['std'])
+    else:
+        sns.barplot(y='class', x='value', data=df, edgecolor='gray', color='skyblue')
     for index, value in enumerate(df['value']):
         plt.text(df['value'].max()*0.025, index, f'{value:.4g}', color='black', ha="left", va="center")
 
@@ -269,6 +272,10 @@ def print_metric_pairs(metrics1, metrics2=None):
 
 def plot_metrics(metrics, labels, title):
     """Plot metrics."""
+    metrics_std = None
+    if isinstance(metrics, list):
+        metrics_mean, metrics_std = metrics
+        metrics = metrics_mean
     for p in ['A','B']:
         table = metric_dict_to_table(metrics[p], labels)
         points_2d = create_2d_map(table)
@@ -288,6 +295,8 @@ def plot_metrics(metrics, labels, title):
             'class': labels[1:],
             'value': [metrics[p][(labels[0],k)] for k in labels[1:]]
         }
+        if metrics_std is not None:
+            data['std'] = [metrics_std[p][(labels[0],k)] for k in labels[1:]]
         plot_hbar(
             data,
             file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_bar_images_{p}.png',
@@ -372,7 +381,7 @@ def main():
     # Build image data loaders
     model_list = {
         'Real': 'real',
-        'Oposite class': 'oposite',
+        # 'Oposite class': 'oposite',
         'CycleGAN': 'cyclegan',
         'CycleGAN-turbo': 'turbo',
     }
@@ -406,7 +415,7 @@ def main():
     lpips_metrics_mean = transform_metrics(lpips_metrics, transform=lambda x: float(x.mean()))
     lpips_metrics_std = transform_metrics(lpips_metrics, transform=lambda x: float(x.std()))
     print_metric_pairs(lpips_metrics_mean, lpips_metrics_std)
-    plot_metrics(lpips_metrics_mean, labels, 'LPIPS')
+    plot_metrics([lpips_metrics_mean, lpips_metrics_std], labels, 'LPIPS')
 
     lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
     print("LPIPS 'distances'")
@@ -421,7 +430,7 @@ def main():
         img_list = df['file_name'].sample(n_samples).tolist()
         models = model_list.copy()
         models.pop('Real', None)
-        models.pop('Oposite class', None)
+        # models.pop('Oposite class', None)
         save_samples(img_list, p, models)
 
     # Calculate LPIPS
