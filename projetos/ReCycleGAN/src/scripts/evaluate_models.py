@@ -194,10 +194,7 @@ def build_data_loaders(folder_name):
         else:
             fake_p = 'B' if p == 'A' else 'A'
             images_csv = BASE_FOLDER / f'data/external/nexet/input_{fake_p}_all_filtered.csv'
-            if folder_name == 'oposite':
-                f_name = f'input_{fake_p}'
-            else:
-                f_name = f'output_{fake_p}_{folder_name}'
+            f_name = f'output_{fake_p}_{folder_name}'
         out[p] = get_img_dataloader(
             csv_file = images_csv,
             img_dir = BASE_FOLDER / f'data/external/nexet/{f_name}',
@@ -414,7 +411,6 @@ def main():
     # Build image data loaders
     model_list = {
         'Real': 'real',
-        # 'Oposite class': 'oposite',
         'CycleGAN': 'cyclegan',
         'CycleGAN-turbo': 'turbo',
     }
@@ -453,7 +449,6 @@ def main():
     lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
     print("LPIPS 'distances'")
     print_metric_pairs(lpips_metrics_dist)
-    # labels.remove('Oposite class')
     plot_metrics(lpips_metrics_dist, labels, 'W-LPIPS')
 
     # Save samples
@@ -463,7 +458,6 @@ def main():
         img_list = df['file_name'].sample(n_samples).tolist()
         models = model_list.copy()
         models.pop('Real', None)
-        # models.pop('Oposite class', None)
         save_samples(img_list, p, models)
 
     # Calculate LPIPS
