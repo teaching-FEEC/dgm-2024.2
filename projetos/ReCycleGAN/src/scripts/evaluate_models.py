@@ -420,7 +420,7 @@ def main():
     lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
     print("LPIPS 'distances'")
     print_metric_pairs(lpips_metrics_dist)
-    labels.remove('Oposite class')
+    # labels.remove('Oposite class')
     plot_metrics(lpips_metrics_dist, labels, 'W-LPIPS')
 
     # Save samples
