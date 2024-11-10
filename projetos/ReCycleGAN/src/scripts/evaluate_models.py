@@ -9,7 +9,7 @@ import torch
 from torchvision import transforms
 from PIL import Image
 import matplotlib.pyplot as plt
-from sklearn.manifold import MDS
+from sklearn.manifold import MDS, TSNE
 import pandas as pd
 import seaborn as sns
 from tqdm import tqdm
@@ -28,8 +28,11 @@ from src.utils.data_transform import ImageTools
 def create_2d_map(distances):
     """Create a 2D map of points given a list of distances between the points."""
     distances = np.array(distances)
-    mds = MDS(n_components=2, dissimilarity='precomputed', random_state=42)
-    points_2d = mds.fit_transform(distances)
+    mds = MDS(n_components=len(distances)-1, dissimilarity='precomputed', random_state=42)
+    points_nd = mds.fit_transform(distances)
+    tsne = TSNE(n_components=2, perplexity=len(distances)-1, random_state=42)
+    points_2d = tsne.fit_transform(points_nd)
+
     return points_2d
 
 
