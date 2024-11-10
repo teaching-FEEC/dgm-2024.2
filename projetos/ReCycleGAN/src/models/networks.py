@@ -184,7 +184,7 @@ class Generator(nn.Module):
             conv_layer = nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
                                    stride=2, padding=1, output_padding=1)
             
-            if add_attention == 'gen':
+            if add_attention in ['gen', 'both']:
                 self.decoder.append(nn.Sequential(
                     conv_layer,
                     norm_layer(n_feat // 2),
@@ -260,7 +260,7 @@ class Discriminator(nn.Module):
             self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
         ]
         
-        if add_attention == 'disc':
+        if add_attention in ['disc', 'both']:
             layers.append(SelfAttention(in_channels=8 * n_features))
             
         layers.append(nn.Conv2d(8 * n_features, 1, 4, padding=1))
