@@ -216,7 +216,7 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
 
 <div>
   <p align="center">
-    <img src='docs/assets/workflow.png' align="center" alt="Workflow" width=600px>
+    <img src='docs/assets/workflow.png' align="center" alt="Workflow" width=800px>
   </p>
 </div>
 
