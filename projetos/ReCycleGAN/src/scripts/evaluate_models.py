@@ -14,6 +14,7 @@ import pandas as pd
 import seaborn as sns
 from tqdm import tqdm
 import plotly.express as px
+from scipy.stats import wasserstein_distance
 
 from test_model import translate_images
 
@@ -248,17 +249,15 @@ def get_lpips(data_loaders, use_cuda=True):
                 normalize=False, use_all_pairs=False)
     return results
 
-def lpips_distance(mu, sigma):
+def lpips_distance(lpips):
     """Calculate Wasserstein distances from LPIPS statistics."""
     out = {'A':{}, 'B':{}}
     for p in ['A','B']:
-        mu2 = mu[p][('Real','Real')]
-        sigma2 = sigma[p][('Real','Real')]
-        for k in mu[p]:
+        u = lpips[p][('Real','Real')]
+        for k in lpips[p]:
             if k[0] != k[1]:
-                mu1 = mu[p][k]
-                sigma1 = sigma[p][k]
-                out[p][k] = np.sqrt((mu1-mu2)**2 + (sigma1-sigma2)**2)
+                v = lpips[p][k]
+                out[p][k] = wasserstein_distance(u.flatten(), v.flatten())
     return out
 
 def metric_dict_to_table(metrics, keys):
@@ -446,7 +445,7 @@ def main():
     print_metric_pairs(lpips_metrics_mean, lpips_metrics_std)
     plot_metrics([lpips_metrics_mean, lpips_metrics_std], labels, 'LPIPS')
 
-    lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
+    lpips_metrics_dist = lpips_distance(lpips_metrics)
     print("LPIPS 'distances'")
     print_metric_pairs(lpips_metrics_dist)
     plot_metrics(lpips_metrics_dist, labels, 'W-LPIPS')
