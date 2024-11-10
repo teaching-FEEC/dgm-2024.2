@@ -13,6 +13,7 @@ from sklearn.manifold import MDS, TSNE
 import pandas as pd
 import seaborn as sns
 from tqdm import tqdm
+import plotly.express as px
 
 from test_model import translate_images
 
@@ -25,12 +26,12 @@ from src.metrics.fid import FID
 from src.metrics.lpips import LPIPS
 from src.utils.data_transform import ImageTools
 
-def create_2d_map(distances):
-    """Create a 2D map of points given a list of distances between the points."""
+def create_nd_map(distances, dimensions=2):
+    """Create a n-D map of points given a list of distances between the points."""
     distances = np.array(distances)
     mds = MDS(n_components=len(distances)-1, dissimilarity='precomputed', random_state=42)
     points_nd = mds.fit_transform(distances)
-    tsne = TSNE(n_components=2, perplexity=len(distances)-1, random_state=42)
+    tsne = TSNE(n_components=dimensions, perplexity=len(distances)-1, random_state=42)
     points_2d = tsne.fit_transform(points_nd)
 
     return points_2d
@@ -91,6 +92,28 @@ def plot_2d_map(points_2d, labels, file_path, title=None, label_dist=0.025):
     plt.tight_layout()
     plt.savefig(file_path)
     plt.close()
+
+def plot_3d_map(points_3d, labels, file_path, title=None):
+    """
+    Plot an interactive 3D map of points and save it as an HTML file.
+
+    Parameters:
+    ------------
+    points_3d: np.ndarray
+        The 3D coordinates of the points.
+    labels: list
+        A list of labels corresponding to the points.
+    file_path: str
+        The path to save the plot HTML file. If None, the plot is shown.
+    title: str, optional
+        The title of the plot.
+    """
+    df = pd.DataFrame(points_3d, columns=['x', 'y', 'z'])
+    df['label'] = labels
+
+    fig = px.scatter_3d(df, x='x', y='y', z='z', color='label', title=title)
+    fig.update_layout(scene=dict(aspectmode='data'))
+    fig.write_html(file_path.with_suffix('.html'))
 
 
 def plot_hbar(data, file_path, title=None, x_label=None, y_label=None):
@@ -281,7 +304,7 @@ def plot_metrics(metrics, labels, title):
         metrics = metrics_mean
     for p in ['A','B']:
         table = metric_dict_to_table(metrics[p], labels)
-        points_2d = create_2d_map(table)
+        points_2d = create_nd_map(table, dimensions=2)
         plot_2d_map(
             points_2d,
             labels,
@@ -293,6 +316,13 @@ def plot_metrics(metrics, labels, title):
             file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_map_images_{p}_legend.png',
             title=f'{title.upper()} for {p} Images',
             label_dist=0)
+
+        points_3d = create_nd_map(table, dimensions=3)
+        plot_3d_map(
+            points_3d,
+            labels,
+            file_path=BASE_FOLDER / f'docs/assets/evaluation/{title.lower()}_map3D_images_{p}.html',
+            title=f'{title.upper()} for {p} Images')
 
         data = {
             'class': labels[1:],

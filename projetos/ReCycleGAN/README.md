@@ -215,13 +215,17 @@ Outro resultado importante de nota é que para ambas métricas a transformação
 
 <div>
 <p align="center">
-<img src='docs/assets/turbo_imgs.png' align="center" alt="Imagens CycleGAN-turbo" width=600px>
+<img src='./docs/assets/turbo_imgs.png' align="center" alt="Imagens CycleGAN-turbo" width=600px>
 </p>
 </div>
 
 <p align="center">
   <strong>Exemplos de imagens transformadas com a CycleGAN-turbo (de noite para dia acima e de dia para noite abaixo).</strong>
 </p>
+
+<iframe src="./docs/assets/evaluation/w-lpips_map3D_images_A.html" width="600" height="600"></iframe>
+
+[3d plot](./docs/assets/evaluation/w-lpips_map3D_images_A.html)
 
 ## Conclusão
 <!--
