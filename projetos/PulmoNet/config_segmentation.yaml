@@ -1,0 +1,36 @@
+model:
+  name_model: "unet_vanilla"
+  dir_save_results: "./unet_vanilla/"
+  new_model: True
+  path_to_saved_model: ""
+
+data:
+  processed_data_folder: "C:/Users/julia/OneDrive/Desktop/xuxu/IA376/projeto_final/dataset/segmentation_data/"
+  dataset: "processedCTData"
+  start_point_train_data: 0
+  end_point_train_data: 10e3
+  start_point_validation_data: 10e3
+  end_point_validation_data: 12e3
+
+training:
+  batch_size_train: 20
+  batch_size_validation: 8
+  n_epochs: 50
+
+loss: 
+  criterion: 
+    name: "BCEWithLogitsLoss"
+  
+optimizer:
+  type: "Adam"
+  lr: 0.0002
+  info:
+    betas: [0.5, 0.999]
+  path_to_saved_optimizer: ""
+
+save_models_and_results:
+  step_to_safe_save_models: 3
+  save_best_model: True
+
+wandb:
+  activate: False

@@ -2,8 +2,8 @@
 from tqdm import trange
 import torch
 import gc
-from losses import get_gen_loss, get_disc_loss
-from utils import plt_save_example_synth_img, set_requires_grad
+from losses import get_gen_loss, get_disc_loss, get_unet_loss
+from utils import plt_save_example_synth_img, set_requires_grad, plt_save_example_airways_img
 import wandb
 
 def run_train_epoch(gen, 
@@ -156,6 +156,81 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir,device):
                                     save_dir=save_dir)
             
 
+### U-Net ---------------------------------------------------------
+def run_train_epoch_unet(unet, criterion, data_loader, unet_opt, epoch, device):
+
+    mean_loss = 0 
+    counter_batches_used_to_upd = 0   
+
+    with trange(len(data_loader), desc='Train Loop') as progress_bar:
+        for batch_idx, batch in zip(progress_bar, data_loader):
+
+            input_img_batch = batch[0]
+            input_airway_batch = batch[1]
+
+            input_img = input_img_batch.to(device)
+            input_airway = input_airway_batch.to(device)
+            
+            unet_opt.zero_grad()
+            loss = get_unet_loss(unet,criterion,input_airway,input_img,device)
+            if loss.requires_grad:
+                loss.backward()  # Compute gradients
+                unet_opt.step()  # Update model parameters
+            else:
+                print("Loss does not require gradients. Check your input tensors.")
+            mean_loss = mean_loss + loss.item() 
+            counter_batches_used_to_upd += 1
+
+            progress_bar.set_postfix(
+                desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
+                      f'loss: {(mean_loss / counter_batches_used_to_upd)}'))
+    
+    return (mean_loss / counter_batches_used_to_upd)
 
 
+def run_validation_epoch_unet(unet, criterion, data_loader, epoch, device):
+
+    mean_loss = 0
+
+    with torch.no_grad():
+        torch.cuda.empty_cache()
+        gc.collect()
+        with trange(len(data_loader), desc='Validation Loop') as progress_bar:
+            for batch_idx, batch in zip(progress_bar, data_loader):
+
+                input_img_batch = batch[0]
+                input_airway_batch = batch[1]
+
+                input_img = input_img_batch.to(device)
+                input_airway = input_airway_batch.to(device)
+                loss = get_unet_loss(unet,criterion,input_airway,input_img,device)
+                mean_loss = mean_loss + loss.item() 
+
+                progress_bar.set_postfix(
+                desc=(f'[epoch: {epoch + 1:d}], iteration: {batch_idx:d}/{len(data_loader):d},'
+                      f'loss: {mean_loss / (batch_idx + 1)}'))
+
+    return (mean_loss/len(data_loader))
+
+
+def valid_on_the_fly_unet(unet, data_loader,epoch,save_dir,device):
+
+    unet.eval()
+
+    with torch.no_grad():
+        for batch in data_loader:
+            input_img_batch = batch[0]
+            input_airway_batch = batch[1]
+            
+            input_img = input_img_batch[:1,:,:,:].to(device)
+            input_airway = input_airway_batch[:1,:,:].to(device)
+           
+            gen_seg = unet(input_img)
+            break
+
+        plt_save_example_airways_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 
+                                    input_airway_ref=input_airway[0,:,:].detach().cpu().numpy(), 
+                                    gen_seg_ref=gen_seg[0,0,:,:].detach().cpu().numpy(), 
+                                    epoch=epoch+1, 
+                                    save_dir=save_dir)
 

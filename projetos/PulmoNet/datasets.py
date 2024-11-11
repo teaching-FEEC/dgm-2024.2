@@ -178,54 +178,54 @@ class processedCTData(Dataset):
         if start is not None and end is not None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))[start:end]
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))[start:end]
             self.labels = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))[start:end]
         elif start is not None and end is None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))[start:]
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))[start:]
             self.labels = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))[start:]
         elif start is None and end is not None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))[:end]
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))[:end]
             self.labels = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))[:end]
         else:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))
             self.labels = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))
         self.transform = transform
         assert len(self.cts) == len(self.labels)

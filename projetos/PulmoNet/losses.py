@@ -1,6 +1,7 @@
 from typing import Any
 import torch
 import torch.nn as nn
+import numpy as np
 
 class Regularizer:
     def __init__(self, regularization_type):
@@ -75,4 +76,11 @@ def get_gen_loss(gen, disc, criterion, input_mask, input_img, device, regularize
         regularization = regularizer(regularization_level=regularization_level, input_mask=input_mask, 
                                      input_img=input_img, gen_img=gen_img, device=device)
         loss += regularization
+    return loss
+
+
+def get_unet_loss(unet,criterion,target,input,device):
+    out_unet = unet(input) # tensor de saída da unet
+    loss = criterion(np.squeeze(out_unet),target)
+
     return loss

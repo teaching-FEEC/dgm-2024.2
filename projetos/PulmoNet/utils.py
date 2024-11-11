@@ -147,6 +147,17 @@ def plt_save_example_synth_during_test(input_img_ref,  gen_img_ref, save_dir, im
     plt.close()
 
 
+def plt_save_example_airways_img(input_img_ref, input_airway_ref, gen_seg_ref, epoch, save_dir): 
+    fig, ax = plt.subplots(1, 3, figsize=(18, 4))
+    ax.flat[0].imshow(input_img_ref, cmap='gray')
+    ax.flat[1].imshow(input_airway_ref, cmap='gray')
+    ax.flat[2].imshow(gen_seg_ref, cmap='gray')
+    ax.flat[0].set_title('Original Input')
+    ax.flat[1].set_title('Expected Airway')
+    ax.flat[2].set_title('Generated Airway')
+    plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+
+
 def save_quantitative_results(fid, ssim_complete, luminance_complete, contrast_complete, struct_sim_complete,
                               ssim_center, luminance_center, contrast_center, struct_sim_center, save_path):
 
@@ -190,6 +201,17 @@ def plot_training_evolution(path, mean_loss_train_gen_list, mean_loss_validation
     ax[0].set_xlabel('Epochs')
     ax[1].set_xlabel('Epochs')
     plt.savefig(path+'losses_evolution.png')
+
+
+def plot_training_evolution_unet(path, mean_loss_train_unet_list, mean_loss_validation_unet_list):
+    fig, ax = plt.subplots(1, 1, figsize=(14, 4))
+    ax[0].plot(mean_loss_train_unet_list, label='Train')
+    ax[0].plot(mean_loss_validation_unet_list, label='Validation')
+    ax[0].legend(loc='upper right')
+    ax[0].set_title('U-Net')
+    ax[0].set_xlabel('Epochs')
+    plt.savefig(path+'losses_evolution.png')
+
 
 def prepare_environment_for_new_model(new_model, dir_save_results,dir_save_models,dir_save_example):
     os.makedirs(dir_save_results, exist_ok=True)
@@ -278,6 +300,34 @@ def resume_training(dir_save_models, name_model, gen, disc, gen_opt, disc_opt, c
                             usual_name_ref=name_model, 
                             object_name='disc_scheduler_state')
     return last_epoch
+
+
+def resume_training_unet(dir_save_models, name_model, unet, unet_opt, config):
+    print('Loading old model to keep training...')
+    
+    if os.path.isfile(dir_save_models+f"{name_model}_training_state_savesafe"):
+        with open(dir_save_models+f"{name_model}_training_state_savesafe", 'r') as file:
+            training_state = json.load(file)
+        last_epoch = training_state['epoch']
+    else:
+        last_epoch = None
+
+    reload_saved_object(path_to_object='path_to_saved_model_unet', 
+                        object_dict=config['model'], 
+                        object_instance=unet, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='unet')
+    
+    reload_saved_object(path_to_object='path_to_saved_unet_optimizer', 
+                        object_dict=config['optimizer'], 
+                        object_instance=unet_opt, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='unet_optimizer')
+
+    return last_epoch
+
 
 def add_uniform_noise(tensor, intensity=1, lung_area: bool = False):
     transform = MinMaxNormalize()
