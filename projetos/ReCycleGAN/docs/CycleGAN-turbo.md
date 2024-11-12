@@ -13,3 +13,12 @@ A rede geradora da CycleGAN-turbo tem diversos elementos, e alguns são comparti
 | Discriminadora A→B |    3,672 |   3,672 |
 | Discriminadora B→A |    3,672 |   3,672 |
 | Total              | 1464.834 | 430.633 |
+
+<div>
+  <p align="center">
+    <img src='assets/CycleGAN-turbo.jpg' align="center" alt="CycleGAN turbo" width=800px>
+  </p>
+  <p align="center">
+    <strong>Arquitetura da CycleGAN-turbo.</strong>
+  </p>
+</div>
