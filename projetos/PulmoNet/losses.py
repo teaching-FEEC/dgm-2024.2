@@ -9,7 +9,9 @@ class Regularizer:
         if regularization_type is not None:
             if not isinstance(regularization_type, list):
                 self.regularization_type = [regularization_type]
-
+            else:
+                self.regularization_type = regularization_type
+                
             for reg in self.regularization_type:
                 if 'MAE' in reg:
                     self.L1norm = nn.L1Loss()
