@@ -36,6 +36,9 @@ data/city:
 	rm -rf data/city/gtFine
 	mogrify -verbose -interpolate Integer -filter point -resize 384x384^ data/city/*/semantic/*.png
 
+models/pspnet_city_200.pth:
+	wget "https://drive.usercontent.google.com/download?id=1pySL9fL8YXXewn8iUPfmlZCUhzjBLmUp&export=download&confirm=yes" -O models/pspnet_city_200.pth
+
 train: semantic-compression/config.py
 	mkdir -p models
 	python semantic-compression/modeling/train.py
