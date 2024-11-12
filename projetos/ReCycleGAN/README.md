@@ -184,7 +184,7 @@ As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** não foram tra
 </div>
 
 <p align="center">
-  <strong>Exemplos de imagens da base O-Haze (blur acima e sharp abaixo).</strong>
+  <strong>Exemplos de imagens da base O-Haze (hazy acima e sharp abaixo).</strong>
 </p>
 
 ### Workflow
