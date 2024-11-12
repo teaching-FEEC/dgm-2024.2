@@ -185,16 +185,16 @@ def build_images(case, device='cuda'):
     translate_images(params)
 
 
-def build_data_loaders(folder_name):
+def build_data_loaders(folder_name, option='all'):
     """Builds the data loaders for the images."""
     out = {}
     for p in ['A','B']:
         if folder_name == 'real':
-            images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_all_filtered.csv'
+            images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_{option}_filtered.csv'
             f_name = f'input_{p}'
         else:
             fake_p = 'B' if p == 'A' else 'A'
-            images_csv = BASE_FOLDER / f'data/external/nexet/input_{fake_p}_all_filtered.csv'
+            images_csv = BASE_FOLDER / f'data/external/nexet/input_{fake_p}_{option}_filtered.csv'
             f_name = f'output_{fake_p}_{folder_name}'
         out[p] = get_img_dataloader(
             csv_file = images_csv,
@@ -260,6 +260,14 @@ def lpips_distance(lpips):
                 out[p][k] = wasserstein_distance(u.flatten(), v.flatten())
     return out
 
+# def lpips_detailed(test_case):
+#     """Calculate LPIPS for each image."""
+#     real = build_data_loaders(f'real', option='test')
+#     test = build_data_loaders(f'test_{test_case}', option='test')
+
+#     return get_lpips(data_loaders)
+
+
 def metric_dict_to_table(metrics, keys):
     """Transform dict of metrics into table."""
     d_table = np.zeros([len(keys),len(keys)])
@@ -268,7 +276,6 @@ def metric_dict_to_table(metrics, keys):
             d_table[i,j+i+1] = metrics[(k1,k2)]
             d_table[j+i+1,i] = metrics[(k1,k2)]
     return d_table
-
 
 def transform_metrics(metrics, transform):
     """Transform metrics."""
@@ -395,9 +402,9 @@ def load_metrics(file_name):
 def main():
     """Main function."""
 
-    n_tests = 7
-    test_cases_to_build_images = [] # Indexes of test cases to build images
-    recalculate_metrics = False # If False, will load metrics from pkl files
+    n_tests = 9
+    test_cases_to_build_images = [9] # Indexes of test cases to build images
+    recalculate_metrics = True # If False, will load metrics from pkl files
     n_samples = 12
     # best_model = 5 # Index of the 'best' model
 
