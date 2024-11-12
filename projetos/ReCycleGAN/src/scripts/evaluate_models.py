@@ -7,6 +7,7 @@ import pickle
 import numpy as np
 import torch
 from torchvision import transforms
+from torchvision.utils import make_grid
 from PIL import Image
 import matplotlib.pyplot as plt
 from sklearn.manifold import MDS, TSNE
@@ -14,6 +15,7 @@ import pandas as pd
 import seaborn as sns
 from tqdm import tqdm
 import plotly.express as px
+from scipy.stats import wasserstein_distance
 
 from test_model import translate_images
 
@@ -184,20 +186,17 @@ def build_images(case, device='cuda'):
     translate_images(params)
 
 
-def build_data_loaders(folder_name):
+def build_data_loaders(folder_name, option='all'):
     """Builds the data loaders for the images."""
     out = {}
     for p in ['A','B']:
         if folder_name == 'real':
-            images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_all_filtered.csv'
+            images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_{option}_filtered.csv'
             f_name = f'input_{p}'
         else:
             fake_p = 'B' if p == 'A' else 'A'
-            images_csv = BASE_FOLDER / f'data/external/nexet/input_{fake_p}_all_filtered.csv'
-            if folder_name == 'oposite':
-                f_name = f'input_{fake_p}'
-            else:
-                f_name = f'output_{fake_p}_{folder_name}'
+            images_csv = BASE_FOLDER / f'data/external/nexet/input_{fake_p}_{option}_filtered.csv'
+            f_name = f'output_{fake_p}_{folder_name}'
         out[p] = get_img_dataloader(
             csv_file = images_csv,
             img_dir = BASE_FOLDER / f'data/external/nexet/{f_name}',
@@ -251,18 +250,111 @@ def get_lpips(data_loaders, use_cuda=True):
                 normalize=False, use_all_pairs=False)
     return results
 
-def lpips_distance(mu, sigma):
+def lpips_distance(lpips):
     """Calculate Wasserstein distances from LPIPS statistics."""
     out = {'A':{}, 'B':{}}
     for p in ['A','B']:
-        mu2 = mu[p][('Real','Real')]
-        sigma2 = sigma[p][('Real','Real')]
-        for k in mu[p]:
+        u = lpips[p][('Real','Real')]
+        for k in lpips[p]:
             if k[0] != k[1]:
-                mu1 = mu[p][k]
-                sigma1 = sigma[p][k]
-                out[p][k] = np.sqrt((mu1-mu2)**2 + (sigma1-sigma2)**2)
+                v = lpips[p][k]
+                out[p][k] = wasserstein_distance(u.flatten(), v.flatten())
     return out
+
+def lpips_detailed(test_case, option='test', use_cuda=True):
+    """Calculate LPIPS for each image."""
+    lpips = LPIPS(cuda=use_cuda)
+    real = build_data_loaders('real', option=option)
+
+    out = {'A':{}, 'B':{}}
+    for p in ['A','B']:
+        out[p] = {'file_name':[], 'lpips':[]}
+
+        print(f'Loading {p} real images')
+        real_imgs = torch.empty(0)
+        for batch in tqdm(real[p]):
+            real_imgs = torch.concat([real_imgs, batch])
+
+        print(f'Calculating LPIPS for {p} images')
+        fake_p = 'B' if p == 'A' else 'A'
+        images_csv = BASE_FOLDER / f'data/external/nexet/input_{fake_p}_{option}_filtered.csv'
+        df = pd.read_csv(images_csv)
+        for img_name in tqdm(df['file_name']):
+            img_path = BASE_FOLDER / f'data/external/nexet/output_{fake_p}_test_{test_case}' / img_name
+            image = Image.open(img_path).convert('RGB')
+            image = transforms.ToTensor()(image)
+            out[p]['file_name'].append(img_name)
+            out[p]['lpips'].append(lpips.get(real_imgs, image.unsqueeze(0), all_pairs=True))
+
+    return out
+
+def _get_percentiles_file_names(file_names, values, percentiles):
+    """Get the file_names associated to each percentile of the values."""
+    combined = list(zip(values, file_names))
+    combined.sort(key=lambda x: x[0])
+    index = []
+    for p in percentiles:
+        index.append(int(np.ceil((p / 100) * (len(values)-1))) - 1)
+    return [combined[index[i]] for i in range(len(index))]
+
+def best_model_histogram(best_model, lpips_values, file_path, bins=20, percentiles = None):
+    """Plot histogram of LPIPS distances for the best model."""
+    if percentiles is None:
+        percentiles = [0, 25, 50, 75, 100]
+
+    for p in ['A','B']:
+        fake_p = 'B' if p == 'A' else 'A'
+        _, axes = plt.subplots(3, 1, figsize=(8, 6))
+
+        all_values = torch.stack(lpips_values[p]['lpips'])
+        values = all_values.mean(dim=1).numpy().flatten()
+
+        sns.histplot(values, bins=bins, kde=False, ax=axes[0], edgecolor='black', stat='density', alpha=0.5)
+        axes[0].set_xlabel('LPIPS')
+        axes[0].set_ylabel('Density')
+        axes[0].grid(False)
+        for percentile in percentiles:
+            value_at_percentile = np.percentile(values, percentile)
+            axes[0].axvline(value_at_percentile, color='red', linestyle='-', linewidth=1)
+            axes[0].text(value_at_percentile, axes[0].get_ylim()[1] * 0.9, f'P{percentile:02}', color='red', ha='right', rotation=90)
+
+        file_names = lpips_values[p]['file_name']
+        percentiles_file_names = _get_percentiles_file_names(file_names, values, percentiles)
+        images = []
+        for _, img_name in percentiles_file_names:
+            img_path = BASE_FOLDER / f'data/external/nexet/input_{fake_p}' / img_name
+            image = Image.open(img_path).convert('RGB')
+            image = transforms.ToTensor()(image)
+            images.append(image)
+        images_tensor = torch.stack(images)
+        img_grid = make_grid(images_tensor, nrow=len(percentiles)).permute(1, 2, 0)
+        axes[1].imshow(img_grid)
+        axes[1].yaxis.set_visible(False)
+        num_labels = len(percentiles) * 2 + 1
+        x_ticks = np.linspace(0, img_grid.shape[1] - 1, num_labels)
+        x_lab = [r'$\downarrow$' if i % 2 == 1 else '' for i in range(num_labels)]
+        axes[1].set_xticks(ticks=x_ticks, labels=x_lab, fontsize=12)
+
+        images = []
+        for _, img_name in percentiles_file_names:
+            img_path = BASE_FOLDER / f'data/external/nexet/output_{fake_p}_test_{best_model}' / img_name
+            image = Image.open(img_path).convert('RGB')
+            image = transforms.ToTensor()(image)
+            images.append(image)
+        images_tensor = torch.stack(images)
+        img_grid = make_grid(images_tensor, nrow=len(percentiles)).permute(1, 2, 0)
+        axes[2].imshow(img_grid)
+        axes[2].yaxis.set_visible(False)
+        num_labels = len(percentiles) * 2 + 1
+        x_ticks = np.linspace(0, img_grid.shape[1] - 1, num_labels)
+        x_lab = [f'P{percentiles[i//2]:02}:{percentiles_file_names[i//2][0]:0.4f}' if i % 2 == 1 else '' for i in range(num_labels)]
+        axes[2].set_xticks(ticks=x_ticks, labels=x_lab, fontsize=12)
+
+        sns.despine()
+        plt.suptitle(rf'Test Case {best_model}: {fake_p}$\rightarrow${p} Transformation', fontsize=16, weight='bold')
+        plt.tight_layout()
+        plt.savefig(file_path.parent / f'{file_path.stem}_{p}{file_path.suffix}')
+        plt.close()
 
 def metric_dict_to_table(metrics, keys):
     """Transform dict of metrics into table."""
@@ -272,7 +364,6 @@ def metric_dict_to_table(metrics, keys):
             d_table[i,j+i+1] = metrics[(k1,k2)]
             d_table[j+i+1,i] = metrics[(k1,k2)]
     return d_table
-
 
 def transform_metrics(metrics, transform):
     """Transform metrics."""
@@ -375,7 +466,7 @@ def save_samples(real_image_list, real_class, models):
     ImageTools.show_img(
         images_tensor,
         title=f'Translation Samples for {real_class} Images',
-        figsize = (20, 3*len(models)), nrow=len(real_image_list),
+        figsize = (3*len(real_image_list)+5, 3*len(models)), nrow=len(real_image_list),
         labels=['Real'] + list(models),
         rotation=0
     )
@@ -399,11 +490,11 @@ def load_metrics(file_name):
 def main():
     """Main function."""
 
-    n_tests = 7
+    n_tests = 9
     test_cases_to_build_images = [] # Indexes of test cases to build images
     recalculate_metrics = False # If False, will load metrics from pkl files
-    n_samples = 5
-    # best_model = 5 # Index of the 'best' model
+    n_samples = 12
+    best_model = 9 # Index of the 'best' model
 
 
     # Build translated images
@@ -414,7 +505,6 @@ def main():
     # Build image data loaders
     model_list = {
         'Real': 'real',
-        # 'Oposite class': 'oposite',
         'CycleGAN': 'cyclegan',
         'CycleGAN-turbo': 'turbo',
     }
@@ -450,11 +540,23 @@ def main():
     print_metric_pairs(lpips_metrics_mean, lpips_metrics_std)
     plot_metrics([lpips_metrics_mean, lpips_metrics_std], labels, 'LPIPS')
 
-    lpips_metrics_dist = lpips_distance(lpips_metrics_mean, lpips_metrics_std)
+    lpips_metrics_dist = lpips_distance(lpips_metrics)
     print("LPIPS 'distances'")
     print_metric_pairs(lpips_metrics_dist)
-    # labels.remove('Oposite class')
     plot_metrics(lpips_metrics_dist, labels, 'W-LPIPS')
+
+    # Detailed LPIPS
+    if recalculate_metrics:
+        lpips_best_model = lpips_detailed(best_model)
+        save_metrics(lpips_best_model, 'lpips_best_model.pkl')
+    else:
+        lpips_best_model = load_metrics('lpips_best_model.pkl')
+    best_model_histogram(
+        best_model=best_model,
+        lpips_values=lpips_best_model,
+        file_path= BASE_FOLDER / 'docs/assets/evaluation/lpips_best_model_histogram.png',
+        percentiles=[5, 25, 50, 75, 95])
+
 
     # Save samples
     for p in ['A','B']:
@@ -463,15 +565,9 @@ def main():
         img_list = df['file_name'].sample(n_samples).tolist()
         models = model_list.copy()
         models.pop('Real', None)
-        # models.pop('Oposite class', None)
         save_samples(img_list, p, models)
 
-    # Calculate LPIPS
-    #   Sample images along histogram
-    #       Define the 'best' test case
-    #       Get the mean distance from each model image to the real images
-    #       Order images and sample evenly along the histogram
-    #       Plot histogram of distances with samples images
+
 
 if __name__ == '__main__':
     main()
