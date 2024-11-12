@@ -8,7 +8,7 @@ from save_models_and_training import safe_save, save_trained_models, delete_safe
 from lr_scheduler import LRScheduler
 from losses import Regularizer
 from main_functions import run_train_epoch, run_validation_epoch, valid_on_the_fly
-from utils import read_yaml, plot_training_evolution, retrieve_metrics_from_csv, prepare_environment_for_new_model, resume_training
+from utils import read_yaml, plot_training_evolution, retrieve_metrics_from_csv, prepare_environment_for_new_model, resume_training, start_from_pretrained_model
 
 config_path = input("Enter path for YAML file with training description: ")
 
@@ -24,6 +24,7 @@ dir_save_results = str(config['model'].get('dir_save_results',
 dir_save_models = dir_save_results+'models/'
 dir_save_example = dir_save_results+'examples/'
 new_model = bool(config['model'].get('new_model', True))
+use_pretrained_model= bool(config['model'].get('use_pretrained_model', False))
 
 #models
 gen = FACTORY_DICT["model_gen"]["Generator"]().to(device)
@@ -161,6 +162,8 @@ prepare_environment_for_new_model(new_model=new_model,
                                   dir_save_example=dir_save_example)
 if new_model is True:
     save_training_losses.initialize_losses_file()
+    if use_pretrained_model is True:
+        start_from_pretrained_model(gen=gen, disc=disc, config=config)
 else:
     epoch_resumed_from = resume_training(dir_save_models=dir_save_models, 
                                         name_model=name_model, 

@@ -279,6 +279,30 @@ def resume_training(dir_save_models, name_model, gen, disc, gen_opt, disc_opt, c
                             object_name='disc_scheduler_state')
     return last_epoch
 
+def start_from_pretrained_model(gen, disc, config):
+    if config['model']['path_to_saved_model_gen'] != "":
+        print('Loading pre-trained generator...')
+        reload_saved_object(path_to_object='path_to_saved_model_gen', 
+                            object_dict=config['model'], 
+                            object_instance=gen, 
+                            usual_directory='', 
+                            usual_name_ref='', 
+                            object_name='')
+    else:
+        print('No path to pre-trained generator. Training from random weights!')
+        
+    if config['model']['path_to_saved_model_disc'] != "":
+        print('Loading pre-trained discriminator...')
+        reload_saved_object(path_to_object='path_to_saved_model_disc', 
+                            object_dict=config['model'], 
+                            object_instance=disc, 
+                            usual_directory='', 
+                            usual_name_ref='', 
+                            object_name='')
+    else:
+        print('No path to pre-trained discriminator. Training from random weights!')
+
+
 def add_uniform_noise(tensor, intensity=1, lung_area: bool = False):
     transform = MinMaxNormalize()
     tensor = tensor.detach().to(torch.float32)

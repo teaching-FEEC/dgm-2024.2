@@ -9,9 +9,8 @@ class Regularizer:
         if regularization_type is not None:
             if not isinstance(regularization_type, list):
                 self.regularization_type = [regularization_type]
-            else:
-                self.regularization_type = regularization_type
-            for reg in regularization_type:
+
+            for reg in self.regularization_type:
                 if 'MAE' in reg:
                     self.L1norm = nn.L1Loss()
                 elif 'MSE' in reg:
@@ -23,7 +22,7 @@ class Regularizer:
         if self.regularization_type is not None:
             if not isinstance(regularization_level, list):
                 regularization_level = [regularization_level]
-            
+
             regularization = torch.tensor(0,dtype=torch.float32).to(device)
             for idx,reg in enumerate(self.regularization_type):
                 if reg == 'MAE':
