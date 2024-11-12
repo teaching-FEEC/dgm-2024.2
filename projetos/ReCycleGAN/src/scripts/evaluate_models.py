@@ -443,7 +443,7 @@ def plot_histograms(metrics, labels, title):
             figsize=(8, 1.5))
 
 
-def save_samples(real_image_list, real_class, models):
+def save_samples(real_image_list, real_class, models, file_name='Samples'):
     """Save image tranlation samples to file."""
     def img_from_name(img_name, model):
         if model == 'Real':
@@ -470,7 +470,7 @@ def save_samples(real_image_list, real_class, models):
         labels=['Real'] + list(models),
         rotation=0
     )
-    plt.savefig(BASE_FOLDER / f'docs/assets/evaluation/Samples_{real_class}.png')
+    plt.savefig(BASE_FOLDER / f'docs/assets/evaluation/{file_name}_{real_class}.png')
     plt.close()
 
 
@@ -567,6 +567,16 @@ def main():
         models.pop('Real', None)
         save_samples(img_list, p, models)
 
+    for p in ['A','B']:
+        images_csv = BASE_FOLDER / f'data/external/nexet/input_{p}_all_filtered.csv'
+        df = pd.read_csv(images_csv)
+        img_list = df['file_name'].sample(5).tolist()
+        models = {
+            'CycleGAN': 'cyclegan',
+            'CycleGAN-turbo': 'turbo',
+            f'ReCycleGAN {best_model}': f'test_{best_model}',
+        }
+        save_samples(img_list, p, models, 'Samples_best_model')
 
 
 if __name__ == '__main__':
