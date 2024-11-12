@@ -11,10 +11,22 @@ from torch.utils import data
 from tqdm.auto import tqdm
 
 
+class SemanticResize(nn.Module):
+    def __init__(self, size):
+        super().__init__()
+        self.x_transform = v2.Resize(size=size)
+        self.s_transform = v2.Resize(size=size, interpolation=v2.InterpolationMode.NEAREST_EXACT)
+
+    def forward(self, sample):
+        return {'x': self.x_transform(sample['x']), 's': self.s_transform(sample['s'])}
+
+
 class SemanticData(data.Dataset):
-    def __init__(self, folder_path, transform=None):
+    def __init__(self, folder_path, transform=None, x_transform=None, s_transform=None):
         super().__init__()
         self.transform = transform
+        self.x_transform = x_transform
+        self.s_transform = s_transform
         self.img_files = glob.glob(os.path.join(folder_path, 'images', '*.jpg'))
         self.mask_files = []
         for img_path in self.img_files:
@@ -30,11 +42,14 @@ class SemanticData(data.Dataset):
             sample = {'x': data, 's': label}
             if self.transform:
                 sample = self.transform(sample)
+            if self.x_transform:
+                sample['x'] = self.x_transform(sample['x'])
+            if self.s_transform:
+                sample['s'] = self.s_transform(sample['s'])
             return sample
 
     def __len__(self):
         return len(self.img_files)
-
 
 
 def download_cityscapes():
