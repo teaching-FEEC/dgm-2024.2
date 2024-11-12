@@ -1,8 +1,8 @@
 # Resultados
 
-A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
+A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, traduzidas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
-|Modelo | Épocas | FID A→B | LPIPS A→B | FID B→A | LPIPS B→A |
+|Modelo | Épocas | FID B→A | LPIPS B→A | FID A→B | LPIPS A→B |
 |-|:-:|:-:|:-:|:-:|:-:|
 |CycleGAN       | 41  |    53,44   |    0,5853   ± 0,04370 |    28,81   |   0,5395   ± 0,04669 |
 |CycleGAN-turbo |     |  **50,39** |    0,6146   ± 0,04229 |    35,00   |   0,5282   ± 0,05043 |
@@ -14,6 +14,7 @@ A tabela abaixo apresenta um resumo dos principais resultados obtidos na compara
 |ReCycleGAN 6   | 49  |   141,5    |  **0,5789** ± 0,04261 |    70,01   |   0,5472   ± 0,04025 |
 |ReCycleGAN 7   | 49  |   120,8    |    0,5799   ± 0,04065 |    45,72   |   0,5394   ± 0,04551 |
 |ReCycleGAN 8   | 32  |   341,6    |    1,0140   ± 0,03567 |   418,3    |   0,6833   ± 0,03227 |
+|ReCycleGAN 9   | 49  |    93,91   |    0,5878   ± 0,04309 |    36,02   |   0,5400   ± 0,04468 |
 
 Os melhores resultados estão destacados em negrito.
 
@@ -21,8 +22,8 @@ Os resultados são apresentados em forma gráfica abaixo.
 
 <div>
   <p align="center">
-    <img src='assets/evaluation/fid_bar_images_A_with8.png' align="center" alt="FID imagens A" width=500px>
-    <img src='assets/evaluation/fid_bar_images_B_with8.png' align="center" alt="FID imagens B" width=500px>
+    <img src='assets/evaluation/fid_bar_images_A.png' align="center" alt="FID imagens A" width=500px>
+    <img src='assets/evaluation/fid_bar_images_B.png' align="center" alt="FID imagens B" width=500px>
   </p>
   <p align="center">
     <strong>FID para imagens da classe A e B.</strong>
@@ -31,15 +32,14 @@ Os resultados são apresentados em forma gráfica abaixo.
 
 <div>
   <p align="center">
-    <img src='assets/evaluation/lpips_bar_images_A_with8.png' align="center" alt="LPIPS imagens A" width=500px>
-    <img src='assets/evaluation/lpips_bar_images_B_with8.png' align="center" alt="LPIPS imagens B" width=500px>
+    <img src='assets/evaluation/lpips_bar_images_A.png' align="center" alt="LPIPS imagens A" width=500px>
+    <img src='assets/evaluation/lpips_bar_images_B.png' align="center" alt="LPIPS imagens B" width=500px>
   </p>
   <p align="center">
     <strong>LPIPS para imagens da classe A e B. As barras representam os valores médios, e as linhas horizontais indicam o respectivo desvio padrão.</strong>
   </p>
 </div>
 
-O caso de teste 8 (termo de regularização na função de perda) teve comportamento divergente, gerando imagens transformadas de baixa qualidade. Este modelo é ignorado nas avaliações que seguem.
 
 ## Histogramas de LPIPS
 
@@ -47,13 +47,30 @@ Uma outra tentativa de análise dos resultados foi comparar as distribuições d
 
 <div>
   <p align="center">
-    <img src='assets/evaluation/lpips_histograms_A.png' align="center" alt="Histograma LPIPS imagens A" width=500px>
-    <img src='assets/evaluation/lpips_histograms_B.png' align="center" alt="Histograma LPIPS imagens B" width=500px>
+    <img src='assets/evaluation/lpips_histograms_A.png' align="center" alt="Histogramas LPIPS imagens A" width=500px>
+    <img src='assets/evaluation/lpips_histograms_B.png' align="center" alt="Histogramas LPIPS imagens B" width=500px>
   </p>
   <p align="center">
     <strong>Histogramas de valores de LPIPS para imagens das classes A e B.</strong>
   </p>
 </div>
+
+# Amostras com Base no Histograma
+
+Para o teste de caso 9 foi feito um histograma mais detalhado. Este histograma foi montado comparando cada imagem traduzida pelo modelo com todas as imagens reais. Para cada imagem traduzida foi guardado o valor médio do LPIPS. Nesta avaliação foram utilizadas as imagens de teste apenas.
+
+Todas as imagens traduzidas foram ranqueadas segundo o LPIPS médio e são apresentados alguns exemplos nos gráficos abaixo junto com a imagem original.
+
+<div>
+  <p align="center">
+    <img src='assets/evaluation/lpips_best_model_histogram_A.png' align="center" alt="Histograma LPIPS imagens A" width=500px>
+    <img src='assets/evaluation/lpips_best_model_histogram_B.png' align="center" alt="Histograma LPIPS imagens B" width=500px>
+  </p>
+  <p align="center">
+    <strong>Histogramas de valores de LPIPS para imagens das classes A e B.</strong>
+  </p>
+</div>
+
 
 ## Mapas de Modelos
 
@@ -96,17 +113,52 @@ Mapas em 3D são apresentados nos links abaixo:
 
 <!-- Atualizar para documentação final: https://raw.githack.com/ -->
 
-## Exemplos
 
+## Métricas do Teste de Caso 8
 
-Exemplos de imagens transformadas são apresentados abaixo.
+O caso de teste 8 (termo de regularização na função de perda) teve comportamento divergente, gerando imagens traduzidas de baixa qualidade. Este modelo fez uso de um termo de regularização na função de perda. Foram feitas três tentativas de ajuste da rede com esta opção, e em todas o resultado foi ruim.
+
+As imagens abaixo mostram o comportamento das métricas de FID e LPIPS ao longo do treinamento do modelo. Também são apresentadas amostras de imagens traduzidas.
 
 <div>
-<p align="center">
-<img src='assets/evaluation/Samples_A_with8.png' align="center" alt="Imagens A" width=500px>
-<img src='assets/evaluation/Samples_B_with8.png' align="center" alt="Imagens B" width=500px>
-</p>
-<p align="center">
-  <strong>Exemplos de imagens transformadas de dia para noite (A) e de noite para dia (B).</strong>
-</p>
+  <p align="center">
+    <img src='assets/evaluation/Case8/FID_BtoA.png' align="center" alt="Imagens A" width=400px>
+    <img src='assets/evaluation/Case8/LPIPS_BtoA.png' align="center" alt="Imagens A" width=400px>
+  </p>
+  <p align="center">
+    <strong>FID e LPIPS ao longo do treinamento do teste de caso 8.</strong>
+  </p>
+</div>
+
+<div>
+  <p align="center">
+    <img src='assets/evaluation/Case8/Imgs_22_BtoA.png' align="center" alt="Imagens A" width=400px>
+    <img src='assets/evaluation/Case8/Imgs_32_BtoA.png' align="center" alt="Imagens A" width=400px>
+  </p>
+  <p align="center">
+    <strong>Exemplos de tradução de imagens para dois momentos do treinamento: 22a e 32a épocas.</strong>
+  </p>
+</div>
+
+
+## Exemplos
+
+Exemplos de imagens traduzidas são apresentados abaixo.
+
+
+<div>
+  <p align="center">
+    <img src='assets/evaluation/Samples_A.png' align="center" alt="Imagens A" width=800px>
+  </p>
+  <p align="center">
+    <strong>Exemplos de imagens traduzidas de dia para noite.</strong>
+  </p>
+</div>
+<div>
+  <p align="center">
+    <img src='assets/evaluation/Samples_B.png' align="center" alt="Imagens B" width=800px>
+  </p>
+  <p align="center">
+    <strong>Exemplos de imagens traduzidas de noite para dia.</strong>
+  </p>
 </div>

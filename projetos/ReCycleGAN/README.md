@@ -171,7 +171,7 @@ Foram feitas diferentes análises nas imagens. Uma explicação mais completa é
 
 Todo o procedimento de filtro das imagens está codificado em um único [**Notebook**](src/notebooks/Filter_DayNight.ipynb).
 
-A base de dados utilizada pode ser encontrada neste [**link**](https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.1-nexet/Nexet.zip). Foram utilizadas as imagens listadas nos arquivos com *\_filtered.csv* no final do nome.
+A base de dados utilizada pode ser encontrada neste [**link**](https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.0-nexet/Nexet.zip). Foram utilizadas as imagens listadas nos arquivos com *\_filtered.csv* no final do nome.
 
 #### O-Haze, I-Haze e D-Hazy
 
@@ -278,6 +278,7 @@ Foram realizados testes com diferentes modificações à estrutura original da C
 |ReCycleGAN 6   | 32   | 5       |  ✓  |      | log-BCE | Gen  |     | 1,676 | 0,694 |
 |ReCycleGAN 7   | 32   | 5       |  ✓  |      | log-BCE | Disc |     | 1,670 | 0,776 |
 |ReCycleGAN 8   | 32   | 5       |  ✓  |      | log-BCE |      |  ✓  | 1,670 | 0,694 |
+|ReCycleGAN 9   | 32   | 5       |  ✓  |  ✓   |     MSE | Gen+Disc |     | 1,676 | 0,776 |
 
 Colunas da tabela de hiperpâmetros:
 
@@ -298,9 +299,9 @@ Como a CycleGAN-turbo tem uma outra estrutura, a maioria dos hiperparâmetros li
 
 Uma maior variedade de apresentações das métricas é feita neste [**link**](./docs/Results.md).
 
-A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, transformadas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
+A tabela abaixo apresenta um resumo dos principais resultados obtidos na comparação das imagens geradas por cada modelo testado com as imagens reais (e.g.: imagens da classe B, noite, traduzidas em imagens da classe A, dia, comparadas com as imagens reais da classe A). Todas as métricas foram calculadas usando as imagens de treino e de teste. Para a métrica LPIPS são apresentados o valor médio e o desvio padrão.
 
-|Modelo | Épocas | FID A→B | LPIPS A→B | FID B→A | LPIPS B→A |
+|Modelo | Épocas | FID B→A | LPIPS B→A | FID A→B | LPIPS A→B |
 |-|:-:|:-:|:-:|:-:|:-:|
 |CycleGAN       | 41  |    53,44   |    0,5853   ± 0,04370 |    28,81   |   0,5395   ± 0,04669 |
 |CycleGAN-turbo |     |  **50,39** |    0,6146   ± 0,04229 |    35,00   |   0,5282   ± 0,05043 |
@@ -312,22 +313,39 @@ A tabela abaixo apresenta um resumo dos principais resultados obtidos na compara
 |ReCycleGAN 6   | 49  |   141,5    |  **0,5789** ± 0,04261 |    70,01   |   0,5472   ± 0,04025 |
 |ReCycleGAN 7   | 49  |   120,8    |    0,5799   ± 0,04065 |    45,72   |   0,5394   ± 0,04551 |
 |ReCycleGAN 8   | 32  |   341,6    |    1,0140   ± 0,03567 |   418,3    |   0,6833   ± 0,03227 |
+|ReCycleGAN 9   | 49  |    93,91   |    0,5878   ± 0,04309 |    36,02   |   0,5400   ± 0,04468 |
 
 Os melhores resultados estão destacados em negrito.
 
-Exemplos de imagens transformadas são apresentados abaixo.
+Exemplos de imagens traduzidas são apresentados abaixo.
 
 <div>
-<p align="center">
-<img src='docs/assets/evaluation/Samples_A_with8.png' align="center" alt="Imagens A" width=500px>
-<img src='docs/assets/evaluation/Samples_B_with8.png' align="center" alt="Imagens B" width=500px>
-</p>
-<p align="center">
-  <strong>Exemplos de imagens transformadas de dia para noite (A) e de noite para dia (B).</strong>
-</p>
+  <p align="center">
+    <img src='docs/assets/evaluation/Samples_A.png' align="center" alt="Imagens A" width=800px>
+  </p>
+  <p align="center">
+    <strong>Exemplos de imagens traduzidas de dia para noite.</strong>
+  </p>
+</div>
+<div>
+  <p align="center">
+    <img src='docs/assets/evaluation/Samples_B.png' align="center" alt="Imagens B" width=800px>
+  </p>
+  <p align="center">
+    <strong>Exemplos de imagens traduzidas de noite para dia.</strong>
+  </p>
 </div>
 
 ### Discussão
+
+Antes da avaliação dos modelos, a expectativa era de que a tradução de noite para dia fosse mais difícil que o inverso. Tanto a avaliação qualitativa como as métricas se alinham com esta expectativa.
+
+Qualitativamente, as imagens geradas pela CycleGAN *aparentam* ser mais próximas de imagens reais que os demais modelos. Em algumas traduções o modelo CycleGAN-turbo teve desempenho *aparentemente* melhor que o CycleGAN. Entre as ReCycleGAN, os testes que usaram a função de perda MSE (4, 5 e 9) *aparentam* melhores resultados.
+
+A avaliação quantitativa da qualidade das imagens geradas se mostrou desafiadora. O exemplo do [caso de teste 8](./docs/Results.md) mostra que a métrica de FID não tem uma boa resposta na avaliação do problema proposto. Quando o treinamento do modelo começou a apresentar um comportamento divergente, apenas o LPIPS mudou de comportamento.
+O LPIPS se mostrou melhor que o FID, mas ainda inadequado para a avaliação da qualidade das imagens geradas.
+
+A tentativa de criar um mapa dos modelos não gerou resultados consistentes, sequer em [3D](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_A.html).
 
 ## Conclusão
 <!--
@@ -341,6 +359,18 @@ Na entrega final do projeto (E3) espera-se que a conclusão elenque, dentre outr
 Com os principais elementos já organizados (CycleGAN *Vanilla*, métricas FID e LPIPS, e uma das bases de dados), o próximo passo será o de treinar a rede para a tarefa de transferência de estilo. Diferentes opções de estrutura para o treinamento estão em avaliação (Colab, Modal, AWS).
 
 Os resultados da rede CycleGAN-turbo apontam para uma maior dificuldade na transformação de imagens de noite para dia do que o contrário. -->
+
+Deste projeto podem ser retiradas diferentes conclusões e lições aprendidas. Sobre a proposta do projeto temos três **conclusões principais**:
+
+* Para os objetivos propostos, **o tamanho da rede importa**. A CycleGAN original, com quase dez vezes mais pesos, teve, em geral, desempenho melhor que todas as opções de ReCycleGAN testadas.
+* A rede precisa ser **treinada para um problema específico**. A qualidade das traduções da CycleGAN-turbo depende da resolução da imagem real. Os exemplos de tradução no repositório desta rede (imagens 1280x720) são perceptivelmente melhores que os exemplos com as imagens utilizadas neste projeto (256x256).
+* **FID e LPIPS não são bons preditores** da qualidade das imagens geradas.
+
+Diversas lições foram aprendidas na realização deste projeto:
+
+* Acesso a *hardware* adequado é vital para um projeto de redes generativas.
+* Os repositórios de redes como a CycleGAN podem ser complexos, mas estão cheios de *dicas* de como facilitar o treinamento da rede. Muitas destes *pulos do gato* não estarão no artigo ou em implementações simplificadas que se encontra pela internet. Foi possível treinar a CycleGAN em uma GPU de laptop, ocupando menos de 3 GB de memória.
+* O código desenvolvido a quatro mão necessitou de muitos ajustes até ser funcional. Existe uma tendência do código ficar demasiado complexo ao longo do projeto. Foi essencial iniciar o projeto com boa organização e compartimentalização do código.
 
 ## Referências Bibliográficas
 <!--
