@@ -21,7 +21,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 [[PDF]](./docs/assets/E2.pdf)
 
 **Entrega 3 - Resultados finais**:
-[[Slides]](fake.link)
+[[Slides]](https://docs.google.com/presentation/d/1VNVsDmmZ8PWp1092z7aj-8GFIcjMuiPVxn6u_0tlezc/edit?usp=sharing)
 [[PDF]](./docs/assets/E3.pdf)
 
 ## Resumo (Abstract)
