@@ -1,18 +1,18 @@
 model:
-  name_model: "model_reg10_center_thr_25k_UnifNoiseAllImg"
+  name_model: "sweep_64"
   use_best_version: True
 
 data:
-  processed_data_folder: "/mnt/shared/ctdata_thr25"
+  processed_data_folder: "/mnt/shared/divided_data"
   dataset: "lungCTData"
-  start_point_test_data: 20000
-  end_point_test_data: 21000
   batch_size: 10
   transformations: 
-    transform: "AddUniformNoise"
+    transform: "AddGaussianNoise"
     info:
-      lung_area: False
-      intensity: 1
+      lung_area: True
+      intensity: 0.8185145299699786
+      mean: 0.5597838196435154
+      std: 0.2229110594696566
 
 evaluation:
   bQualitativa: True

@@ -32,19 +32,20 @@ def evaluate(gen,
         counter = 0
         with torch.no_grad():
             for batch in data_loader_test:
-                input_img_batch = batch[0]
-                input_mask_batch = batch[1]
+                if counter <= 20:
+                    input_img_batch = batch[0]
+                    input_mask_batch = batch[1]
 
-                input_img = input_img_batch.to(device)
-                input_mask = input_mask_batch.to(device)
+                    input_img = input_img_batch.to(device)
+                    input_mask = input_mask_batch.to(device)
 
-                gen_img = gen(input_mask)
-                counter=counter+1
+                    gen_img = gen(input_mask)
+                    counter=counter+1
 
-                plt_save_example_synth_during_test(input_img_ref=np.squeeze(input_img.detach().cpu().numpy())[0, :, :],
-                                                gen_img_ref=np.squeeze(gen_img.detach().cpu().numpy())[0, :, :],
-                                                save_dir=dir_to_save_gen_imgs,
-                                                img_idx=counter)
+                    plt_save_example_synth_during_test(input_img_ref=np.squeeze(input_img.detach().cpu().numpy())[0, :, :],
+                                                    gen_img_ref=np.squeeze(gen_img.detach().cpu().numpy())[0, :, :],
+                                                    save_dir=dir_to_save_gen_imgs,
+                                                    img_idx=counter)
 
     # Calcula FID
     if (bFID is True):

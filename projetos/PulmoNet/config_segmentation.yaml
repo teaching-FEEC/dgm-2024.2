@@ -26,11 +26,8 @@ optimizer:
   lr: 0.0002
   info:
     betas: [0.5, 0.999]
-  path_to_saved_optimizer: ""
+  path_to_saved_optimizer: "a"
 
 save_models_and_results:
   step_to_safe_save_models: 3
   save_best_model: True
-
-wandb:
-  activate: False

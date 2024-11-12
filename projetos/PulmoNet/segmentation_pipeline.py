@@ -10,7 +10,6 @@ da PulmoNet para a tarefa de segmentação das vias aéreas.
 
 import torch
 from torch.utils.data import DataLoader
-import wandb
 import os
 
 from constants import *
