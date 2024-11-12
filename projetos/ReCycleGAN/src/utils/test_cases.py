@@ -108,5 +108,14 @@ TEST_CASES = {
         'experiment_name': "TEST_CASE_8",
         'experiment_description': "CycleGAN with perceptual loss weight set to 5",
         'short_description': "8:2+PLPw=5"
+    },
+
+    "9": BASE | {
+        'add_skip': True,
+        'vanilla_loss': False,
+        'add_attention': 'both',
+        'experiment_name': "TEST_CASE_9",
+        'experiment_description': "ReCycleGAN: CycleGAN with skip connections, MSEloss and self-attention layers added to discriminator and generator.",
+        'short_description': "9:5+SlfAtt(both)"
     }
 }
