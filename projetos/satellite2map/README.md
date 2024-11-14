@@ -92,6 +92,15 @@ Outros objetivos incluem:
     - Aplicação na Tradução de Imagem:
   O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
 
+    **4. Acurácia Pixel a Pixel (PA)**
+
+    - Teoria:
+  Esta métrica se baseia na diferença absoluta pixel a pixel entre uma imagem gerada e a imagem de referência, com uma tolerância de erro, em que um pixel é considerado "correto" se a diferença absoluta entre o valor gerado e o valor real é menor que um limite (delta). 
+
+    ![alt text](image-1.png)
+      
+    onde N é o numero total de pixels, predi é o valor do pixel i na imagem gerada, truei é o valor do pixel i na imagem real, δ é o limite de tolerância que define se um pixel é correto ou não.
+
 
 
 ## Bases de Dados e Evolução
