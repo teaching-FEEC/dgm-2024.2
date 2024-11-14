@@ -18,7 +18,7 @@ Link para os [slides](https://docs.google.com/presentation/d/1wfFYGmEwGVK_7xQVmF
 
 
 
-## Resumo (Abstract)
+## Resumo
 Com a finalidade de estudar os principais métodos da área de *image-to-image translation* (I2IT), o objetivo deste projeto é explorar o problema da extração de mapas a partir de imagens de  satélite utilizando duas abordagens diferentes: uma supervisionada (Pix2Pix) e outra não supervisionada (CycleGAN).
 O modelo Pix2pix foi implementado e treinado com a base de dados de seu próprio artigo. Os resultados foram imagens coerentes porém distorcidas e com perdas de alguns elementos relevantes para esse tipo de dado, como consistência de ruas e preservação de rotas. Como limitação, destaca-se necessidade de um conjunto de dados com pares de imagens correspondentes, o que pode ser difícil de obter para algumas tarefas.
 Já o modelo CycleGAN utilizou os mesmos datasets do Pix2Pix, contudocomo por exemplo Monet2Photo
@@ -158,16 +158,6 @@ Exemplos de pares de imagens da base de dados:
 ![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
 
 
-  -- Métricas:
-    
-    x
-
-    x
-
-    x
-
-    x
-
 
 - **Pix2Pix**:
   -- Evolução da Loss (Gerador e Discriminador):
@@ -192,7 +182,7 @@ Exemplos de pares de imagens da base de dados:
 
 ![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
 
-  -- Métricas:
+- **Resultados:  Métricas**:
 
 Abaixo se encontram as métricas que foram coletadas durante a etapa de avaliação do modelo. Para maiores informações quanto ao código e procedimento adotado, tais detalhes poderão ser visualizados nos notebooks CGAN e Pix2Pix com sufixo "eval".
 
