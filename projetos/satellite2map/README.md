@@ -91,7 +91,8 @@ Outros objetivos incluem:
 
     - Aplicação na Tradução de Imagem:
   O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes de verdade.
-
+  Nesta métrica os resultados variam entre 0 e 1, e quanto maior o valor, melhor é a qualidade da imagem gerada em relação à imagem de referência.
+  
     **4. Acurácia Pixel a Pixel (PA)**
 
     - Teoria:
@@ -99,7 +100,7 @@ Outros objetivos incluem:
 
     ![alt text](image-1.png)
       
-    onde N é o numero total de pixels, predi é o valor do pixel i na imagem gerada, truei é o valor do pixel i na imagem real, δ é o limite de tolerância que define se um pixel é correto ou não.
+    onde N é o numero total de pixels, predi é o valor do pixel i na imagem gerada, truei é o valor do pixel i na imagem real, δ é o limite de tolerância que define se um pixel é correto ou não.  Nesta métrica os resultados variam entre 0 e 1, e quanto maior o valor, melhor é a acurácia da imagem gerada em relação à imagem de referência.
 
 
 
@@ -192,22 +193,16 @@ Exemplos de pares de imagens da base de dados:
 ![image](https://github.com/user-attachments/assets/69ae75fc-14e2-4906-8f36-31d079753cd9)
 
   -- Métricas:
-    
-    x
 
-    x
+Abaixo se encontram as métricas que foram coletadas durante a etapa de avaliação do modelo. Para maiores informações quanto ao código e procedimento adotado, tais detalhes poderão ser visualizados nos notebooks CGAN e Pix2Pix com sufixo "eval".
 
-    x
-    
-    x
+![alt text](image-3.png)
 
-A partir dos gráficos de loss, é possível observar que o modelo convergiu visto que a loss do gerador começa a diminuir sem diminuir a loss do discriminador. Um discriminador ideal independe do gerador. De fato, os resultados obtidos nessa primeira implementação do Pix2pix mostram que houve sim uma convergência do modelo com o gerador produzindo imagens coerentes com a imagem de entrada e que possuem aspectos de mapas. No entanto, os resultados finais não possuem um nível de verossimilhança capaz de confundir um humano, muito menos são possíveis de se utilizar em aplicações reais.
+De forma geral, destaca-se que o Pix2Pix apresentou um desempenho melhor em todas as métricas avaliadas, conforme visualizado na tabela acima.
 
-Esse tipo de imperfeição caracterizam uma limitação do modelo, oque é possível de se comparar ao observar os resultados obtidos pelos próprios autores. Uma limitação que também foi observada é que o modelo consegue resultados muito melhores em áreas residenciais urbanas (sem corpos d'àgua como rios ou mar, áreas verdes ou grandes avenidas) pois os mapas dessas áreas são mais simples, compostos apenas de tons de cinza e ruas brancas. Os piores resultados foram observados em parques e áreas verdes com corpos d'àgua próximos.
+Um dos motivos que explica este desempenho inferior da CGAN se deve ao fato deste modelo ser mais complexo, e como consequência demandar um período de treinamento maior do que o adotado neste trabalho.
 
-Isso se deve ao fato de que o dataset é composto https://github.com/cosmerodolfo/dgm-2024.2.gitpor imagens de Nova Iorque, uma região urbana com poucas áreas verdes e rios ou mar. Obter mais imagens de áreas rurais ajudaria o modelo a aprender outros padrões de urbanização e melhoraria o desempenho nessas regiões.
 
-Ainda não foram implementadas métricas quantitativas, mas esse será nosso próximo passo.
 
 ## Conclusão
 
