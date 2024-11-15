@@ -12,6 +12,45 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
  | Júlia Castro de Paula | 219193 | Eng. Elétrica |
  | Letícia Levin Diniz | 201438  | Eng. Elétrica |
 
+## Tabela de Conteúdos
+
+1. [Resumo](#resumo-abstract)
+2. [Links Importantes](#links-importantes)
+3. [Descrição do Problema / Motivação](#descrição-do-problemamotivação)
+4. [Objetivo](#objetivo)
+5. [Metodologia](#metodologia)
+    1. [Materiais de Referência](#materiais-de-referência)
+    2. [Modelo Proposto](#modelo-proposto)
+    3. [Bases de Dados e Evolução](#bases-de-dados-e-evolução)
+    4. [Workflow](#workflow)
+    5. [Ferramentas Relevantes](#ferramentas-relevantes)
+    6. [Métricas de Avaliação](#métricas-de-avaliação)
+        1. [Análise Qualitativa](#análise-qualitativa)
+        2. [Análise Quantitativa](#análise-quantitativa)
+        3. [Análise de Utilidade](#análise-de-utilidade)
+    7. [Cronograma](#cronograma)
+    8. [Ambiente Computacional](#ambiente-computacional)
+6. [Experimentos, Resultados e Discussão dos Resultados](#experimentos-resultados-e-discussão-dos-resultados)
+7. [Conclusão](#conclusão)
+    1. [Próximos Passos](#próximos-passos)
+8. [Referências Bibliográficas](#referências-bibliográficas)
+
+**ANEXOS**:
+1. [Varredura dos parâmetros da GAN para 10 mil dados]()
+2. [Testes adicionais com outras arquiteturas]()
+3. [Como rodar os modelos](#how-to-run)
+
+## Links Importantes
+Links para apresentações de slides e vídeos para entregas E1, E2 e E3 para a disciplina:
+
+[Link para o vídeo de apresentação E1](https://drive.google.com/file/d/1TlpQOlCh_lAI0-jPPMPWOzGZ_werCo3d/view?usp=sharing)
+
+[Link para a apresentação de slides E1](https://docs.google.com/presentation/d/1b8W0Cw1eiTbWlJ0CJJ8eMRA4zyu2iLhYvggi55-mOb0/edit?usp=sharing)
+
+[Link para a apresentação de slides E2](https://docs.google.com/presentation/d/1QH5_WpeTp7kQPSVB78ukK7msn-Tx09pZoM_3dWmeqC4/edit?usp=sharing)
+
+> TODO: link E3
+
 ## Resumo (Abstract)
 
 > TODO: Update
@@ -22,12 +61,6 @@ As tomografias computadorizadas (CT) pulmonares e a segmentação das vias aére
 As tomografias computadorizadas (CT) pulmonares, juntamente com a segmentação das vias aéreas, desempenham um papel crucial no diagnóstico preciso de doenças pulmonares. Ao gerar imagens detalhadas da região torácica, ela permite que médicos mapeiem a anatomia das vias aéreas antes de procedimentos cirúrgicos, avaliando a extensão de lesões e facilitando o acompanhamento da progressão de doenças respiratórias [[2]](#2). Além disso, a CT é fundamental para monitorar a eficácia de tratamentos e detectar seus possíveis efeitos colaterais [[5]](#5).
 
 A complexidade e diversidade do corpo humano dificultam a obtenção de grandes volumes de dados médicos para treinar modelos de aprendizado de máquina, como as redes neurais. Essa escassez de dados pode levar a diagnósticos imprecisos, comprometendo a qualidade do atendimento aos pacientes [[6]](#6). Com as redes generativas é possível criar dados de forma a compensar essa escassez, permitindo que as redes aprendam muito mais detalhes do que utilizando apenas aqueles obtidos de exames reais.
-
-[Link para o vídeo de apresentação E1](https://drive.google.com/file/d/1TlpQOlCh_lAI0-jPPMPWOzGZ_werCo3d/view?usp=sharing)
-
-[Link para a apresentação de slides E1](https://docs.google.com/presentation/d/1b8W0Cw1eiTbWlJ0CJJ8eMRA4zyu2iLhYvggi55-mOb0/edit?usp=sharing)
-
-[Link para a apresentação de slides E2](https://docs.google.com/presentation/d/1QH5_WpeTp7kQPSVB78ukK7msn-Tx09pZoM_3dWmeqC4/edit?usp=sharing)
 
 ## Objetivo
 Este projeto visa gerar imagens sintéticas de tomografia computadorizada (CT) da região torácica de alta fidelidade, também produzindo máscaras de segmentação das vias aéreas. A priori, o modelo generativo proposto terá como saída imagens em duas dimensões (2D) de CT da região do tórax, com grau de realismo suficiente e que possa auxiliar redes de segmentação de vias aéreas. 
@@ -146,8 +179,35 @@ A figura abaixo resume esta etapa de tratamento dos dados por completo.
 
 > TODO: Incluir mais detalhes da metodologia
 
-Em função da 
+Em uma perspectiva geral do projeto, a metodologia se divide em três grandes estágios:
+1. Preparação da base de dados;
+2. Treinamento e fine-tunning de modelos de síntese;
+3. Avaliação dos modelos gerados.
 
+No que diz respeito à preparação da base de dados, aplica-se o fluxo descrito na Figura 10, da seção anterior, na qual os dados são obtidos de uma fonte pública, processados e separados em conjuntos de treinamento, validação cruzada e testes. A saída desta etapa são 90 mil trios (fatia da CT pulmonar, segmentação feita por especialistas e máscara binária da região do pulmão), com dimensão 1 x 512 x 512 cada.
+
+Quanto a segunda etapa, implementa-se a arquitetura de uma GAN, descrita na seção [Modelo Proposto](#modelo-proposto), que foi concebida tomando como base o artigo [[1]](#1). Sob esta arquitetura, realiza-se uma busca pelos parâmetros ótimos de treinamento da rede conforme a tabela abaixo, a fim de encontrar a melhor combinação para gerar imagens sintéticas de CTs pulmonares mais realistas.
+Esta varredura inicial é feita com apenas 10 mil dados e analisada no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM).
+A partir desta análise inicial, seleciona-se três modelos para prosseguir com o treinamento com todos os dados disponíveis.
+
+|Parâmetros | Possibilidades |
+|----- | ----- |
+|Tipo de ruído | [Uniforme, Gaussiano] |
+|Localização do ruído | Na imagem completa ou apenas na região do pulmão|
+|Regularização | [0, 10] |
+|Beta |Entre 1989 e 2000 |
+|blabla | blabla |
+
+Dadas as restrições de tempo e capacidade computacional, não foram testadas todas as combinações de parâmetros da tabela acima. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros em quinze modelos, descritos na tabela abaixo.
+Ressalta-se que a configuração destes parâmetros é feita em um arquivo YAML.
+
+|Modelo | Tipo de Ruído | Localização do ruído | blabla|
+|----- | ----- | ----- | ------ |
+|Sweep10 | Gaussiano | Dentro da máscara | blabla |
+|Sweep256 | Gaussiano | Imagem completa | blabla |
+|blabla | blabla | blabla | blabla |
+
+Após esta etapa, passa-se os três melhores modelos para a etapa de avaliação de desempenho e qualidade dos resultados. Gera-se imagens sintéticas a partir de máscaras binárias de CTs pulmonares com ruído e realiza-se três testes: qualitativo, quantitativo e de utilidade. Tais testes serão descritos em mais detalhes na seção [Métricas de Avaliação](#métricas-de-avaliação).
 
 Em suma, o fluxo de trabalho proposto por este projeto, ilustrado na figura a seguir, inicia-se com a obtenção da base de dados ATM'22 e seu devido tratamento, conforme detalhado na seção anterior.
 Utilizando estes dados, alimenta-se a rede generativa com as fatias segmentadas (máscaras binárias). Já a rede discriminadora recebe os dados reais (sem segmentação) e os dados sintéticos, devendo classificar cada um como "real" ou "falso".
@@ -200,10 +260,18 @@ $$𝑠(𝑥, 𝑦) = \frac{𝜎_{𝑥𝑦} + 𝐶_{3}}{𝜎_{𝑥}𝜎_{𝑦} + 
 
 onde $𝜇_{𝑥}$, $𝜇_{𝑦}$, $𝜎_{𝑥}$, $𝜎_{𝑦}$, e $𝜎_{𝑥𝑦}$ são as médias locais, variâncias e covariâncias cruzadas para as imagens 𝑥, 𝑦, respectivamente. $𝐶_{1}$, $𝐶_{2}$ $𝐶_{3}$ são constantes.
 
+No caso do cálculo do SSIM, como o foco do projeto está associado com uma boa geração de vias aéreas pulmonares, esta métrica é calculada considerando tanto a saída completa (imagem 512 x 512) quanto apenas a região central (imagem 256 x 256).
+
 #### Análise de Utilidade
 Dado que o objetivo do projeto é gerar imagens sintéticas (2D) de CTs pulmonares realistas, avalia-se nesta etapa duas perspectivas. A primeira delas trata da segmentação das fatias sintéticas por meio da biblioteca *lungmask* e comparação desta saída com a máscara binária original que gerou esta imagem sintética. Isto é feito para avaliar se o gerador conseguiu manter o formato do pulmão original ou algo próximo a isso. Utiliza-se o SSIM para comparação destas duas fatias pulmonares segmentadas.
 
 Já a segunda perspectiva trata da utilidade do gerador, em termos de **feature extraction**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza as *features* extraídas pelo nosso gerador. Esta comparação será avaliada ao comparar as saídas com a própria segmentação presente na base de dados ATM'22, feita por especialistas. Além disso, será calculado o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2), e considera-se também calcular o tempo de processamento das redes U-Net e U-Net com *features* extraídos pela nossa Pix2Pix, a fim de verificar se também há uma otimização neste quesito.
+
+Ressalta-se que foram escolhidas duas funções de *loss* para esta tarefa: BCEWithLogitsLoss e DICELoss, tipicamente utilizadas em tarefas de segmentação de imagens médicas.
+Além disso, para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, são feitas três variações no processo de *fine-tunning*:
+1. Retreina-se todos os pesos da arquitetura, utilizando o conhecimento adquirido pela GAN apenas como uma inicialização não aleatória para o treinamento da rede de segmentação;
+2. Congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador;
+3. Congela-se todas as camadas do gerador, com excessão da última camada.
 
 Por fim, é importante destacar o caminho a ser seguido para a avaliação da rede generativa para as saídas em 3D, caso seja possível implementá-las dentro do prazo do projeto. Para esta aplicação, geraríamos um volume sintético e passaríamos esta saída pela rede de segmentação *medpseg* [[10]](#10). Feito isso, compararíamos as vias aéreas segmentadas com o *ground-truth* estabelecido na própria base de dados ATM'22.
 
@@ -229,6 +297,14 @@ Dado este fluxo, estipulamos o seguinte cronograma para desenvolvimento do proje
 
 
 
+### Ambiente Computacional
+> TODO: Falar sobre a máquina usada para treinar a GAN (quantidade de memória, tipo de GPU etc) e para treinar a rede de segmentação
+
+Os modelos da GAN foram treinados em uma máquina com XXXXX características
+
+Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado em um computador pessoal que tinha uma GPU RTX3050, 4G de memória de GPU, 16G de memória RAM e processador Intel I5 de 11ª geração.
+
+
 ## Experimentos, Resultados e Discussão dos Resultados
 > TODO: Atualizar com dados da E3
 
@@ -252,6 +328,9 @@ O projeto da rede PulmoNet busca a geração de fatias de CTs pulmonares a parti
 Seguindo o cronograma do projeto, as etapas até a entrega E2 foram cumpridas, de maneira que estamos atualmente na fase de treinamento do modelo e implementação dos métodos de avaliação. No caso do treinamento, estamos enfrentando algumas dificuldades que estão afetando a qualidade das saídas da rede, principalmente no quesito da velocidade de aprendizado do discriminador frente a do gerador.
 
 Os próximos passos do projeto tratam da finalização do treinamento do modelo, análise das métricas de avaliação e fine-tunning e aperfeiçoamento do modelo. Caso tenhamos tempo disponível, buscaremos a geração de volumes 3D de CTs pulmonares.
+
+### Próximos Passos
+> TODO
 
 ## Referências Bibliográficas
 
