@@ -85,3 +85,18 @@ def get_unet_loss(unet,criterion,target,input,device):
     loss = criterion(np.squeeze(out_unet),target)
 
     return loss
+
+
+class DiceLoss(nn.Module):
+    def __init__(self, smooth=1e-6):
+        super(DiceLoss, self).__init__()
+        self.smooth = smooth
+
+    def forward(self, inputs, targets):
+        inputs = torch.sigmoid(inputs)  # Apply sigmoid to get predictions
+        inputs_flat = inputs.view(-1)
+        targets_flat = targets.view(-1)
+        intersection = (inputs_flat * targets_flat).sum()
+        
+        dice = (2. * intersection + self.smooth) / (inputs_flat.sum() + targets_flat.sum() + self.smooth)
+        return 1 - dice

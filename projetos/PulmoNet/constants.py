@@ -3,6 +3,7 @@ from datasets import lungCTData, processedCTData
 from transforms import AddGaussianNoise, AddUniformNoise
 import torch
 from save_models_and_training import SaveBestModel, SaveTrainingLosses, SaveBestUnetModel, SaveUnetTrainingLosses
+from losses import DiceLoss
 
 
 FACTORY_DICT = {
@@ -11,6 +12,9 @@ FACTORY_DICT = {
     },
     "model_disc": {
         "Discriminator": Discriminator,
+    },
+    "model_unet": {
+        "Unet": Generator,
     },
     "dataset": {
         "lungCTData": lungCTData,
@@ -24,10 +28,11 @@ FACTORY_DICT = {
         "BCELoss": torch.nn.BCELoss,
         "BCEWithLogitsLoss": torch.nn.BCEWithLogitsLoss,
         "MSELoss": torch.nn.MSELoss,
+        "DiceLoss" : DiceLoss
     },
     "transforms": {
         "AddGaussianNoise": AddGaussianNoise,
-        "AddUniformNoise": AddUniformNoise,
+        "AddUniformNoise": AddUniformNoise
     },
     "savebest":{
         "SaveBestModel": SaveBestModel,

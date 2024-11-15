@@ -1,16 +1,18 @@
 model:
-  name_model: "unet_vanilla"
-  dir_save_results: "./unet_vanilla/"
+  name_model: "unet_example"
+  dir_save_results: "./unet_example/"
   new_model: True
-  path_to_saved_model: ""
+  path_to_saved_model: "./unet_example/models/unet_example_best.pt"
+
 
 data:
-  processed_data_folder: "C:/Users/julia/OneDrive/Desktop/xuxu/IA376/projeto_final/dataset/segmentation_data/"
-  dataset: "processedCTData"
+  processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"
+  train_dataset: "seg_train"
+  val_dataset: "seg_val"
   start_point_train_data: 0
-  end_point_train_data: 10e3
-  start_point_validation_data: 10e3
-  end_point_validation_data: 12e3
+  end_point_train_data: 14000
+  start_point_validation_data: 0
+  end_point_validation_data: 2000
 
 training:
   batch_size_train: 20
@@ -26,7 +28,7 @@ optimizer:
   lr: 0.0002
   info:
     betas: [0.5, 0.999]
-  path_to_saved_optimizer: "a"
+  path_to_saved_optimizer: ""
 
 save_models_and_results:
   step_to_safe_save_models: 3

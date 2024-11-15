@@ -20,7 +20,6 @@ from utils import read_yaml, plot_training_evolution_unet, retrieve_metrics_from
 config_path = input("Enter path for YAML file with training description: ")
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-#device = 'cpu'
 config = read_yaml(file=config_path)
 
 ####----------------------Definition-----------------------------------
@@ -30,14 +29,14 @@ dir_save_results = str(config['model'].get('dir_save_results',
                                             f'./{name_model}/'))
 dir_save_models = dir_save_results+'models/'
 dir_save_example = dir_save_results+'examples/'
+dir_save_test = dir_save_results+'test/'
 new_model = bool(config['model'].get('new_model', True))
 
 #models
 unet = FACTORY_DICT["model_unet"]["Unet"]().to(device)
 
 #data
-processed_data_folder = str(config['data'].get('processed_data_folder',
-                                               'C:/Users/julia/OneDrive/Desktop/xuxu/IA376/projeto_final/dataset/segmentation_data/'))
+processed_data_folder = str(config['data'].get('processed_data_folder',))
 dataset_type = str(config['data'].get('dataset',
                                     'processedCTData'))
 start_point_train_data = int(config['data']['start_point_train_data'])
@@ -85,12 +84,14 @@ if save_best_model is True:
 
 dataset_train = FACTORY_DICT["dataset"][dataset_type](
                             processed_data_folder=processed_data_folder,
+                            mode="seg_train",
                             start=start_point_train_data,
                             end=end_point_train_data,
                             transform=transform,
                             **transform_kwargs)
 dataset_validation = FACTORY_DICT["dataset"][dataset_type](
                             processed_data_folder=processed_data_folder,
+                            mode="seg_val",
                             start=start_point_validation_data,
                             end=end_point_validation_data,
                             transform=transform,
@@ -130,20 +131,14 @@ for epoch in range(n_epochs):
                                             data_loader=data_loader_train,
                                             unet_opt=unet_opt,
                                             epoch=epoch,
-                                            device=device,
-                                            use_wandb=False,
-                                            regularization_type=regularization_type,
-                                            regularization_level=regularization_level)
+                                            device=device)
     mean_loss_train_unet_list.append(loss_train_unet)
 
     loss_validation_unet = run_validation_epoch_unet(unet=unet,
                                                     criterion=criterion,
                                                     data_loader=data_loader_validation,
                                                     epoch=epoch,
-                                                    device=device,
-                                                    use_wandb=False,
-                                                    regularization_type=regularization_type,
-                                                    regularization_level=regularization_level)
+                                                    device=device)
     mean_loss_validation_unet_list.append(loss_validation_unet)
 
     if (new_model is True) or (epoch_resumed_from is None):
@@ -162,8 +157,7 @@ for epoch in range(n_epochs):
                         unet_optimizer=unet_opt,
                         current_lr=current_lr)
     if (epoch % step_to_safe_save_models == 0) or (epoch == n_epochs-1):
-        save_training_losses(mean_loss_train_unet_list=mean_loss_train_unet_list, 
-                 mean_loss_train_unet_list=mean_loss_train_unet_list)
+        save_training_losses(mean_loss_train_unet_list=mean_loss_train_unet_list)
     
     if save_best_model is True:
         best_model(current_score=loss_validation_unet, 
