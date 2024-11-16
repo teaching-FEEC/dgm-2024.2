@@ -191,7 +191,16 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
     <img src='docs/assets/workflow.png' align="center" alt="Workflow" width=800px>
   </p>
   <p align="center">
-    <strong>Workflow de trabalho.</strong>
+    <strong>Workflow de trabalho simplificado.</strong>
+  </p>
+</div>
+
+<div>
+  <p align="center">
+    <img src='docs/assets/test.png' align="center" alt="Workflow" width=800px>
+  </p>
+  <p align="center">
+    <strong>Workflow de trabalho completo.</strong>
   </p>
 </div>
 
