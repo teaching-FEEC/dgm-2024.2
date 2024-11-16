@@ -61,10 +61,7 @@ A partir deste momento foram propostas outras soluções para este problema e ou
 Muitas das arquiteturas mais recentes se baseiam no uso e/ou ajuste fino de modelos de larga escala pré-treinados. O treinamento destas redes requer grande poder computacional e significativo número de amostras.
 
 ## Objetivo
-<!--
-Descrição do que o projeto se propõe a fazer.
-É possível explicitar um objetivo geral e objetivos específicos do projeto.
--->
+
 O objetivo deste projeto foi, a partir da arquitetura original da CycleGAN, investigar e avaliar o impacto da incorporação de algumas das ideias que foram propostas posteriormente, aplicado na tradução dia-noite de imagens de trânsito. Especificamente, os objetivos são:
 
 * Investigar e reproduzir a `CycleGAN original` (*vanilla*) e obter uma referência com a qual comparar a nova arquitetura na resolução do problema proposto.
@@ -73,14 +70,6 @@ O objetivo deste projeto foi, a partir da arquitetura original da CycleGAN, inve
 * Fazer `comparativo` entre as arquiteturas propostas e redes pré-treinadas propostas na literatura, buscando entender criticamente qual variação melhor performa para o problema proposto.
 
 ## Metodologia
-<!--
-Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
-Descrever bases de dados utilizadas.
-Citar algoritmos de referência.
-Justificar os porquês dos métodos escolhidos.
-Apontar ferramentas relevantes.
-Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
--->
 
 Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na *vanilla*. Diferentes elementos foram alterados e/ou adicionados:
 
@@ -109,10 +98,6 @@ A avaliação foi realizada apenas para uma tarefa. Foi utilizada a base de dado
 Foram avaliadas duas das métricas de qualidade de imagem inicialmente propostas: [FID](https://github.com/mseitzer/pytorch-fid) e [LPIPS](https://github.com/richzhang/PerceptualSimilarity/). Optou-se por focar nestas duas por aparentemente serem mais presentes na literatura e terem implementações em PyTorch disponibilizadas pelos seus autores: [pytorch-fid](https://pypi.org/project/pytorch-fid/) e [lpips](https://pypi.org/project/lpips/).
 
 ### Bases de Dados e Evolução
-<!--
-Elencar bases de dados utilizadas no projeto.
-Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento sobre como ela foi analisada/usada, conforme exemplo a seguir.
--->
 
 | |Base de Dados | Endereço na Web | Resumo descritivo|
 |-|----- | ----- | -----|
@@ -120,14 +105,6 @@ Para cada base, coloque uma mini-tabela no modelo a seguir e depois detalhamento
 |✗|[O-HAZE](https://arxiv.org/pdf/1804.05101v1) | [Base oficial](https://data.vision.ee.ethz.ch/cvl/ntire18//o-haze/) | 35 imagens embaçadas (tamanho 2833×4657 pixels) para treinamento.<br> Inclui 5 imagens embaçadas para validação, juntamente com suas respectivas imagens de referência.|
 |✗|[I-HAZE](https://arxiv.org/pdf/1804.05091v1) | [Base oficial](https://data.vision.ee.ethz.ch/cvl/ntire18//i-haze/) | 25 imagens de interiores embaçadas (tamanho 2833×4657 pixels) para treinamento.<br> Inclui 5 imagens embaçadas para validação, acompanhadas de suas respectivas imagens de referência. |
 |✗|[D-HAZY](https://ieeexplore.ieee.org/document/7532754) | [Cópia no SemanticScholar](https://www.semanticscholar.org/paper/D-HAZY%3A-A-dataset-to-evaluate-quantitatively-Ancuti-Ancuti/9451d0b1bfbba5f3e19c083866f1394aabf7d06c) | Coleção de mais de 1400 imagens de interiores do NYU Depth Dataset, com mapas de profundidade para cada imagem.<br> Os mapas são utilizados para sintetizar cenas embaçadas.|
-
-<!--
-Faça uma descrição sobre o que concluiu sobre esta base. Sugere-se que respondam perguntas ou forneçam informações indicadas a seguir:
-* Qual o formato dessa base, tamanho, tipo de anotação?
-* Quais as transformações e tratamentos feitos? Limpeza, reanotação, etc.
-* Inclua um sumário com estatísticas descritivas da(s) base(s) de estudo.
-* Utilize tabelas e/ou gráficos que descrevam os aspectos principais da base que são relevantes para o projeto.
--->
 
 A ReCycleGAN foi construída para acessar as bases de dados com um mesmo tipo de estrutura. As imagens são ajustadas para um aspecto 1:1 (corte centralizado) e é feita mudança de escala para 256x256. As imagens são separadas em duas pastas: **input\_A** e **input\_B**, correspondendo às duas classes utilizadas no treinamento (dia e noite, por exemplo). Para teste foram separadas 20% das imagens de cada grupo. Para cada pasta existem dois arquivos CSV com a lista do nomes dos arquivos para treinamento e para teste, de forma que não existe necessidade de ajustar os nomes dos arquivos das imagens.
 
@@ -188,11 +165,6 @@ As imagens das bases de dados **O-Haze**, **I-Haze** e **D-Hazy** não foram tra
 </p>
 
 ### Workflow
-<!--
-Use uma ferramenta que permita desenhar o workflow e salvá-lo como uma imagem (Draw.io, por exemplo). Insira a imagem nessa seção.
-Você pode optar por usar um gerenciador de workflow (Sacred, Pachyderm, etc) e nesse caso use o gerenciador para gerar uma figura para você.
-Lembre-se que o objetivo de desenhar o workflow é ajudar a quem quiser reproduzir seus experimentos.
--->
 
 O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
 
@@ -223,30 +195,67 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
   </p>
 </div>
 
-#### Arquitetura da Rede
+### Arquitetura da Rede - CyclaGAN Vanilla
 
-A CycleGAN consiste de duas redes geradoras (`gen_AtoB` e `gen_BtoA`) e duas redes discriminadoras (`dis_A` e `dis_B`). As redes geradores tem a mesma estrutura, assim como as redes discriminadoras.
 
-Cada rede geradora tem 3 seções: Encoder, Transformer e Decoder.
+A CycleGAN é composta por duas redes geradoras (`gen_AtoB` e `gen_BtoA`) e duas redes discriminadoras (`dis_A` e `dis_B`). As redes geradoras possuem a mesma estrutura, assim como as discriminadoras.
 
-* No **Encoder** cada imagem de entrada passa em uma série de filtros convolucionais que comprimem a imagem e aumentam o número de canais.
-  * O primeiro conjunto de filtros transforma uma imagem (256, 256, 3) para uma representação (*características*, 64, 256), onde *características* é definido pelo usuário.
-  * Os dois conjuntos de filtros seguintes levam a representações mais comprimidas, enquanto dobram o número de canais a cada passo.
-* No **Transformer** são utilizados 9 blocos residuais, que não alteram o formato da representação.
-* No **Decoder** são aplicados dois filtros deconvolucionais que restauram a imagem para o formato original.
+### Estrutura do Gerador
 
-<!-- Then the output of encoder after activation function is applied is passed into the transformer. The transformer contains 6 or 9 residual blocks based on the size of input.
+Cada gerador da CycleGAN é dividido em três seções principais:
 
-The output of transformer is then passed into the decoder which uses 2 -deconvolution block of fraction strides to increase the size of representation to original size.
+1. **Encoder**: Extrai características da imagem de entrada através de convoluções, comprimindo sua representação, mas aumentando o número de canais.
+   - O primeiro conjunto de filtros transforma uma imagem de tamanho (256, 256, 3) em uma representação intermediária com *k* canais (ex: 64), conforme definido pelo usuário.
+   - Os próximos dois conjuntos de filtros continuam comprimindo a representação, enquanto dobram o número de canais a cada etapa.
+   
+2. **Transformer**: Aplica 6 ou 9 blocos residuais, dependendo do tamanho da entrada, sem alterar as dimensões da representação.
 
-### Architecture
+3. **Decoder**: Restaura a imagem ao seu tamanho original utilizando dois blocos de deconvolução (convoluções fracionárias).
 
-The architecture of generator is:
+A arquitetura completa do gerador pode ser descrita como:
 
-`c7s1-64, d128, d256, R256, R256, R256,
-R256, R256, R256, u128, u64, c7s1-3
+`c7s1-64, d128, d256, R256, R256, R256, R256, R256, R256, u128, u64, c7s1-3`
 
-where c7s1-k denote a 7×7 Convolution-InstanceNorm-ReLU layer with k filters and stride 1. dk denotes a 3 × 3 Convolution-InstanceNorm-ReLU layer with k filters and stride 2. Rk denotes a residual block that contains two 3 × 3 convolution layers with the same number of filters on both layer. uk denotes a 3 × 3 fractional-strides-Convolution-InstanceNorm-ReLU layer with k filters and stride 1/2 (i.e deconvolution operation). -->
+- `c7s1-k`: Camada de Convolução-InstanceNorm-ReLU com kernel 7×7, *k* filtros e stride 1.
+- `dk`: Convolução 3×3 com InstanceNorm e ReLU, *k* filtros e stride 2.
+- `Rk`: Bloco residual com duas camadas de convolução 3×3 com *k* filtros.
+- `uk`: Deconvolução fracionária (stride 1/2) com *k* filtros e ReLU.
+
+### Estrutura do Discriminador
+
+Os discriminadores da CycleGAN utilizam a abordagem **PatchGAN**. Diferentemente de um discriminador regular de GAN, que produz um único valor escalar como saída, o PatchGAN gera uma matriz de NxN saídas (ex: 70×70), onde cada valor indica se o respectivo "patch" da imagem é real ou falso.
+
+A arquitetura do discriminador é descrita como:
+
+`C64-C128-C256-C512`
+
+- `Ck`: Convolução 4×4 com InstanceNorm e LeakyReLU, *k* filtros e stride 2. 
+- A primeira camada (`C64`) não aplica InstanceNorm. Após a última camada, é realizada uma convolução para produzir uma saída 1×1.
+
+#### Funcoes de custo
+
+- **Adversarial Loss:**  é aplicada tanto às redes geradoras quanto às discriminadoras. Esta perda é definida como:
+
+$$ Loss_{advers} \left ( G, D_y, X, Y \right ) =\frac{1}{m}\sum \left ( 1 - D_y\left ( G\left ( x \right ) \right ) \right )^{2} $$  
+
+$$ Loss_{advers}\left ( F, D_x, Y, X \right ) =\frac{1}{m}\sum \left ( 1 - D_x\left ( F\left ( y \right ) \right ) \right )^{2} $$   
+
+- **Cycle Consistency Loss:** Devido à possibilidade das redes adversárias mapearem imagens de entrada para distribuições de saída aleatórias, a perda de consistência cíclica garante que, ao aplicar mapeamentos compostos, a imagem original seja preservada. Em termos técnicos, essa função de perda é usada para medir a taxa de erro no mapeamento de G(x) -> F(G(x)).
+
+$$ Loss_{cyc}\left ( G, F, X, Y \right ) =\frac{1}{m}\left [ \left ( F\left ( G\left ( x_i \right ) \right )-x_i \right ) +\left ( G\left ( F\left ( y_i \right ) \right )-y_i \right ) \right ] $$   
+
+
+- **Função de Custo Total**: A função de custo total da CycleGAN combina as perdas adversárias e cíclica:
+
+$$ 
+L \left ( G, F, D_x, D_y \right ) = L_{advers} \left ( G, D_y, X, Y \right ) + L_{advers} \left ( F, D_x, Y, X \right ) + \lambda L_{cyc} \left ( G, F, X, Y \right ) 
+$$
+
+O objetivo é minimizar a função de custo para os geradores \(G\) e \(F\), enquanto maximiza para os discriminadores \(D_x\) e \(D_y\):
+
+$$ 
+\min_{G, F} \max_{D_x, D_y} L \left ( G, F, D_x, D_y \right ) 
+$$
 
 ## Experimentos, Resultados e Discussão dos Resultados
 <!--
