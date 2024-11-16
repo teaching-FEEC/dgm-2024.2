@@ -200,6 +200,16 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
 
 A CycleGAN é composta por duas redes geradoras (`gen_AtoB` e `gen_BtoA`) e duas redes discriminadoras (`dis_A` e `dis_B`). As redes geradoras possuem a mesma estrutura, assim como as discriminadoras.
 
+<div>
+  <p align="center">
+    <img src='docs/assets/cyclegan_basic.png' align="center" alt="Estrutura básica CycleGAN" width=600px>
+  </p>
+</div>
+
+<p align="center">
+  <strong>Ilustração da estrutura básica da CycleGAN.</strong>
+</p>
+
 ### Estrutura do Gerador
 
 Cada gerador da CycleGAN é dividido em três seções principais:
@@ -232,7 +242,7 @@ A arquitetura do discriminador é descrita como:
 - `Ck`: Convolução 4×4 com InstanceNorm e LeakyReLU, *k* filtros e stride 2. 
 - A primeira camada (`C64`) não aplica InstanceNorm. Após a última camada, é realizada uma convolução para produzir uma saída 1×1.
 
-#### Funcoes de custo
+#### Funções de custo
 
 - **Adversarial Loss:**  é aplicada tanto às redes geradoras quanto às discriminadoras. Esta perda é definida como:
 
@@ -258,18 +268,6 @@ $$
 $$
 
 ## Experimentos, Resultados e Discussão dos Resultados
-<!--
-Na entrega parcial do projeto (E2), essa seção pode conter resultados parciais, explorações de implementações realizadas e
-discussões sobre tais experimentos, incluindo decisões de mudança de trajetória ou descrição de novos experimentos, como resultado dessas explorações.
-
-Na entrega final do projeto (E3), essa seção deverá elencar os **principais** resultados obtidos (não necessariamente todos), que melhor representam o cumprimento
-dos objetivos do projeto.
-
-A discussão dos resultados pode ser realizada em seção separada ou integrada à seção de resultados. Isso é uma questão de estilo.
-Considera-se fundamental que a apresentação de resultados não sirva como um tratado que tem como único objetivo mostrar que "se trabalhou muito".
-O que se espera da seção de resultados é que ela **apresente e discuta** somente os resultados mais **relevantes**, que mostre os **potenciais e/ou limitações** da metodologia, que destaquem aspectos
-de **performance** e que contenha conteúdo que possa ser classificado como **compartilhamento organizado, didático e reprodutível de conhecimento relevante para a comunidade**.
--->
 
 ### Experimentos
 
