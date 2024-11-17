@@ -27,6 +27,14 @@ def remove_all_files(folder_path):
                 remove_all_files(file)
 
 
+def join_csv(csv1_path, csv2_path, csv_out_path):
+    """Join two csv into a single csv file."""
+    df1 = pd.read_csv(csv1_path)
+    df2 = pd.read_csv(csv2_path)
+    df_all = pd.concat([df1, df2], axis=0)
+    df_all.to_csv(csv_out_path, index=False)
+
+
 def filter_dataframe(df, filter_dict):
     """Filter a DataFrame by multiple columns.
 

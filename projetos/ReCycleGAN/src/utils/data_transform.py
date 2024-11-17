@@ -1,3 +1,4 @@
+# pylint: disable=import-error
 """Module with class to build image dataset with transformations."""
 
 from pathlib import Path
@@ -45,15 +46,20 @@ class ImageTools():
 
         csv_file = Path(csv_file)
 
-        df = pd.DataFrame({'file_name': img_train})
+        df_train = pd.DataFrame({'file_name': img_train})
         new_name = csv_file.stem + '_train' + csv_file.suffix
         csv_file_train = csv_file.with_name(new_name)
-        df.to_csv(csv_file_train, index=False)
+        df_train.to_csv(csv_file_train, index=False)
 
-        df = pd.DataFrame({'file_name': img_test})
+        df_test = pd.DataFrame({'file_name': img_test})
         new_name = csv_file.stem + '_test' + csv_file.suffix
         csv_file_test = csv_file.with_name(new_name)
-        df.to_csv(csv_file_test, index=False)
+        df_test.to_csv(csv_file_test, index=False)
+
+        df_all = pd.concat([df_train, df_test], axis=0)
+        new_name = csv_file.stem + '_all' + csv_file.suffix
+        csv_file_test = csv_file.with_name(new_name)
+        df_all.to_csv(csv_file_test, index=False)
 
 
     @staticmethod
@@ -217,7 +223,7 @@ class ImageTools():
 
 
     @staticmethod
-    def show_img(img, title=None, figsize=(4, 3), nrow=None, labels=None):
+    def show_img(img, title=None, figsize=(4, 3), nrow=None, labels=None, rotation=90):
         """Show a group of images using matplotlib.
 
         If negative values are present in the image tensor, it is assumed
@@ -241,6 +247,9 @@ class ImageTools():
             List of labels to display along the vertical axis.
             If None, no labels are displayed.
             (Default: None)
+        rotation: int
+            Rotation angle of the labels.
+            (Default: 90)
         """
         if len(img.shape) > 4:
             msg = 'Image tensor has more than 4 dimensions.'
@@ -255,7 +264,7 @@ class ImageTools():
             if nrow is None:
                 nrow = int(max(4, min(8, np.ceil(img.shape[0] / 2))))
             grid = make_grid(img, nrow=nrow, normalize=False, scale_each=False)
-            return ImageTools.show_img(grid, title=title, figsize=figsize, labels=labels)
+            return ImageTools.show_img(grid, title=title, figsize=figsize, labels=labels, rotation=rotation)
 
         img = img.permute(1, 2, 0)
         if img.shape[2]==1:
@@ -275,7 +284,7 @@ class ImageTools():
             num_labels = len(labels) * 2 + 1
             y_ticks = np.linspace(0, img.shape[0] - 1, num_labels)
             y_lab = [labels[i//2] if i % 2 == 1 else '' for i in range(num_labels)]
-            axs.set_yticks(ticks=y_ticks, labels=y_lab, rotation=90, fontsize=f_size)
+            axs.set_yticks(ticks=y_ticks, labels=y_lab, rotation=rotation, fontsize=f_size)
 
         plt.tight_layout()
         return fig

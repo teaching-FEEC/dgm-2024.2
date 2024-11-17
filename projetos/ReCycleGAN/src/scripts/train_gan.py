@@ -9,8 +9,8 @@ from src.utils.test_cases import TEST_CASES
 
 def train(parameters):
     """Trains the CycleGAN model."""
-    model, data_loaders = init_cyclegan_train(parameters)
-    model = train_cyclegan(model, data_loaders, parameters)
+    model, data_loaders, metrics = init_cyclegan_train(parameters)
+    model = train_cyclegan(model, data_loaders, parameters, metrics)
 
 if __name__ == '__main__':
 

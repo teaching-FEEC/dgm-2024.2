@@ -1,4 +1,4 @@
-# pylint: disable=C0103,E0401,C0411
+# pylint: disable=wrong-import-position,no-name-in-module,wrong-import-order,import-error,invalid-name,line-too-long
 """Functions to control training and testing CycleGAN models."""
 import time
 import gc
@@ -8,8 +8,7 @@ import torch
 from torchvision import transforms
 from tqdm import tqdm
 import wandb
-import sys
-sys.path.append(str(Path(__file__).resolve().parent.parent / 'src'))
+
 from .utils import get_gpu_memory_usage, get_current_commit, remove_all_files, save_dict_as_json, load_json_to_dict
 from .data_loader import get_img_dataloader
 from .data_transform import ImageTools

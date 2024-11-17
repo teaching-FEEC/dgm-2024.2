@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,invalid-name
 """Module with network constructors and loss functions."""
 import math
 import random
@@ -6,7 +7,6 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from peft import LoraConfig
-from peft.utils import get_peft_model_state_dict
 
 class Identity(nn.Module):
     """Identity layer."""
@@ -30,7 +30,7 @@ def get_norm_layer(norm_type='instance'):
     elif norm_type == 'instance':
         norm_layer = functools.partial(nn.InstanceNorm2d, affine=False, track_running_stats=False)
     elif norm_type == 'none':
-        def norm_layer(x):
+        def norm_layer(x): #pylint: disable=unused-argument
             return Identity()
     else:
         raise NotImplementedError(f'normalization layer {norm_type} is not valid.')
@@ -63,51 +63,52 @@ class ResidualBlock(nn.Module):
     def forward(self, x):
         """Forward pass through the residual block."""
         return x + self.conv_block(x)
-    
+
 class SelfAttention(nn.Module):
     def __init__(self, in_channels):
         super(SelfAttention, self).__init__()
         self.in_channels = in_channels
-        
+
         # Reduce spatial dimensions and channels for efficiency
         self.query_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
         self.key_conv = nn.Conv2d(in_channels, in_channels // 8, kernel_size=1)
         self.value_conv = nn.Conv2d(in_channels, in_channels, kernel_size=1)
-        
+
         # Add spatial reduction for attention computation
         self.pool = nn.AvgPool2d(kernel_size=4, stride=4)
-        
+
         self.gamma = nn.Parameter(torch.zeros(1))
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
+        """Forward pass through the self-attention layer."""
         batch_size, channels, height, width = x.size()
-        
+
         # Reduce spatial dimensions for key and query
         x_pooled = self.pool(x)
         pooled_height, pooled_width = x_pooled.shape[2:]
-        
+
         # Project and reshape query
         proj_query = self.query_conv(x_pooled)  # Use pooled input for query too
         proj_query = proj_query.view(batch_size, -1, pooled_height * pooled_width)  # (B, C', HW/16)
-        
+
         # Project and reshape key (using pooled input)
         proj_key = self.key_conv(x_pooled)
         proj_key = proj_key.view(batch_size, -1, pooled_height * pooled_width)  # (B, C', HW/16)
-        
+
         # Project and reshape value (using pooled input)
         proj_value = self.value_conv(x_pooled)
         proj_value = proj_value.view(batch_size, -1, pooled_height * pooled_width)  # (B, C, HW/16)
-        
+
         # Calculate attention with reduced spatial dimensions
         energy = torch.bmm(proj_query.permute(0, 2, 1), proj_key)  # (B, HW/16, HW/16)
         attention = self.softmax(energy)
-        
+
         # Apply attention and reshape
         out = torch.bmm(proj_value, attention.permute(0, 2, 1))  # (B, C, HW/16)
         out = out.view(batch_size, channels, pooled_height, pooled_width)
         out = F.interpolate(out, size=(height, width), mode='bilinear', align_corners=False)
-        
+
         return self.gamma * out + x
 
 class Generator(nn.Module):
@@ -127,7 +128,7 @@ class Generator(nn.Module):
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
     """
     def __init__(self,
-                 input_nc, 
+                 input_nc,
                  output_nc,
                  n_residual_blocks=9,
                  n_features=64,
@@ -149,7 +150,7 @@ class Generator(nn.Module):
         self.encoder = nn.ModuleList()
         if add_lora:
             self.lora_modules_encoder = []
-        
+
         for i in range(n_downsampling):
             n_feat = n_features * 2 ** i
             conv_layer = nn.Conv2d(n_feat, 2 * n_feat, 3, stride=2, padding=1)
@@ -183,7 +184,7 @@ class Generator(nn.Module):
             n_feat = n_features * 2 ** (n_downsampling - i)
             conv_layer = nn.ConvTranspose2d(n_feat, n_feat // 2, 3,
                                    stride=2, padding=1, output_padding=1)
-            
+
             if add_attention in ['gen', 'both']:
                 self.decoder.append(nn.Sequential(
                     conv_layer,
@@ -202,7 +203,7 @@ class Generator(nn.Module):
                 lora_conf = LoraConfig(r=lora_rank, target_modules=[conv_layer], lora_alpha=lora_rank)
                 self.lora_modules_decoder.append(lora_conf)
 
-            
+
 
 
         self.final_layers = nn.Sequential(
@@ -242,11 +243,11 @@ class Discriminator(nn.Module):
     - input_nc: Number of input channels.
     - n_features: Number of features. Default is 64.
     - norm_layer: Normalization layer. Default is nn.InstanceNorm2d.
-    - add_attention: If True, add self-attention layer to the discriminator. Default is False. 
+    - add_attention: If True, add self-attention layer to the discriminator. Default is False.
     """
-    def __init__(self, 
-                 input_nc, 
-                 n_features=64, 
+    def __init__(self,
+                 input_nc,
+                 n_features=64,
                  norm_layer=nn.InstanceNorm2d,
                  add_attention=None,
                  ):
@@ -259,12 +260,12 @@ class Discriminator(nn.Module):
             self.discriminator_block(2 * n_features, 4 * n_features, norm_layer),
             self.discriminator_block(4 * n_features, 8 * n_features, norm_layer),
         ]
-        
+
         if add_attention in ['disc', 'both']:
             layers.append(SelfAttention(in_channels=8 * n_features))
-            
+
         layers.append(nn.Conv2d(8 * n_features, 1, 4, padding=1))
-        
+
         self.model = nn.Sequential(*layers)
 
     def discriminator_block(self, input_dim, output_dim, norm_layer):

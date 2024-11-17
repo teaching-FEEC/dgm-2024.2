@@ -4,7 +4,7 @@ import zipfile
 import requests
 
 # URL of the ZIP file
-NEXET = 'https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.0-nexet/Nexet.zip'
+RELEASE = 'https://github.com/TiagoCAAmorim/dgm-2024.2/releases/download/v0.1.0-nexet/'
 
 def download_and_extract(url, path, verbose=False):
     """
@@ -20,9 +20,9 @@ def download_and_extract(url, path, verbose=False):
     if verbose:
         print(f'Creating folder: {zip_path.parent}')
     zip_path.parent.mkdir(parents=True, exist_ok=True)
-    response = requests.get(url, timeout=10)
     if verbose:
-        print(f'Downloading file: {zip_path.name}')
+        print(f'Downloading {Path(url).name}.')
+    response = requests.get(url, timeout=10)
     with open(zip_path, 'wb') as f:
         f.write(response.content)
 
@@ -38,6 +38,10 @@ def download_and_extract(url, path, verbose=False):
         print('Done.')
 
 if __name__ == '__main__':
-    # Downloads and extracts to 'usual' folder.
-    out_folder = Path(__file__).parent.parent.parent / 'data/external/nexet'
-    download_and_extract(NEXET, out_folder, verbose=True)
+    # Downloads and extracts nexet images to 'usual' folder.
+    out_folder = Path(__file__).parent.parent.parent / 'data2/external/nexet'
+    for file in ['nexet.zip', 'output_cyclegan.zip', 'output_turbo.zip']:
+        download_and_extract(RELEASE + file, out_folder, verbose=True)
+
+    out_folder = Path(__file__).parent.parent.parent / 'data2/'
+    download_and_extract(RELEASE + 'checkpoints.zip', out_folder, verbose=True)
