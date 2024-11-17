@@ -1,6 +1,7 @@
 # pylint: disable=import-error,wrong-import-position,line-too-long
 """Script to load and evaluate models."""
 import sys
+import shutil
 import itertools
 from pathlib import Path
 import pickle
@@ -356,6 +357,34 @@ def best_model_histogram(best_model, lpips_values, file_path, bins=20, percentil
         plt.savefig(file_path.parent / f'{file_path.stem}_{p}{file_path.suffix}')
         plt.close()
 
+def get_images_for_poll(best_model, lpips_values, out_folder, percentiles):
+    """Save images for poll."""
+    for p in ['A','B']:
+        fake_p = 'B' if p == 'A' else 'A'
+        all_values = torch.stack(lpips_values[p]['lpips'])
+        values = all_values.mean(dim=1).numpy().flatten()
+        file_names = lpips_values[p]['file_name']
+        percentiles_file_names = _get_percentiles_file_names(file_names, values, percentiles)
+        new_folder = out_folder / p
+        new_folder.mkdir(parents=True, exist_ok=True)
+        for perc, (_, img_name) in zip(percentiles, percentiles_file_names):
+            img_path = BASE_FOLDER / f'data/external/nexet/input_{fake_p}' / img_name
+            img_path_out = new_folder / f'{perc}_real.png'
+            shutil.copy(img_path, img_path_out)
+
+            img_path = BASE_FOLDER / f'data/external/nexet/output_{fake_p}_cyclegan' / img_name
+            img_path_out = new_folder / f'{perc}_cyclegan.png'
+            shutil.copy(img_path, img_path_out)
+
+            img_path = BASE_FOLDER / f'data/external/nexet/output_{fake_p}_turbo' / img_name
+            img_path_out = new_folder / f'{perc}_turbo.png'
+            shutil.copy(img_path, img_path_out)
+
+            img_path = BASE_FOLDER / f'data/external/nexet/output_{fake_p}_test_{best_model}' / img_name
+            img_path_out = new_folder / f'{perc}_recyclegan_{best_model}.png'
+            shutil.copy(img_path, img_path_out)
+
+
 def metric_dict_to_table(metrics, keys):
     """Transform dict of metrics into table."""
     d_table = np.zeros([len(keys),len(keys)])
@@ -556,6 +585,13 @@ def main():
         lpips_values=lpips_best_model,
         file_path= BASE_FOLDER / 'docs/assets/evaluation/lpips_best_model_histogram.png',
         percentiles=[5, 25, 50, 75, 95])
+
+    get_images_for_poll(
+        best_model=best_model,
+        lpips_values=lpips_best_model,
+        out_folder=BASE_FOLDER / 'docs/assets/evaluation/poll',
+        percentiles=list(range(5,100,5))
+    )
 
 
     # Save samples
