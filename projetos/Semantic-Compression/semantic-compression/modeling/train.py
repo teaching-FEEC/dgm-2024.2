@@ -82,6 +82,7 @@ def main():
     if PT_EPOCHS > 0:
         model, losses = pre_train(model, train_loader)
         np.savetxt(os.path.join(PATH_MODELS, "pt_" + model.filename + ".txt"), np.array(losses))
+        print(losses[-1])
     model, ae_losses, dc_losses = fine_tune(model, train_loader)
     np.savetxt(os.path.join(PATH_MODELS, "ft_" + model.filename + ".txt"), np.array([ae_losses, dc_losses]))
 

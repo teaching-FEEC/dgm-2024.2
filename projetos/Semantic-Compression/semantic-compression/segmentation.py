@@ -278,7 +278,7 @@ def deeplab(model, x):
     image -= np.array([104.008, 116.669, 122.675])
     image = torch.from_numpy(image.transpose(2, 0, 1)).float().unsqueeze(0)
     image = image.to('cuda')
-    _, _, H, W = x.shape
+    H, W, _ = x.shape
     logits = model(image)
     logits = nn.functional.interpolate(logits, size=(H, W), mode="bilinear", align_corners=False)
     probs = nn.functional.softmax(logits, dim=1)[0]

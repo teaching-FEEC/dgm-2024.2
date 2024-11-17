@@ -1,5 +1,6 @@
 import os
 
+import cv2
 import numpy as np
 import pyiqa
 import torch
@@ -17,16 +18,16 @@ def iou(s, s_hat):
     labels = np.unique(s)
     iou = 0.0
     for label in labels:
-        thresh1 = np.where(s == label, 255, 0).astype(np.uint8)
-        thresh2 = np.where(s_hat == label, 255, 0).astype(np.uint8)
+        thresh1 = np.where(s == label, 1, 0).astype(np.uint8)
+        thresh2 = np.where(s_hat == label, 1, 0).astype(np.uint8)
         intersection = cv2.bitwise_and(thresh1, thresh2)
         union = cv2.bitwise_or(thresh1, thresh2)
         label_iou = np.sum(intersection) / np.sum(union)
-        iou += label_iou * np.sum(thresh1)
+        iou += label_iou * np.mean(thresh1)
     return iou
 
 
-def evaluate(model, seg, dataloader):
+def evaluate(model, phi, seg, dataloader):
     ds = []
     psis = []
     ious = []
@@ -50,7 +51,7 @@ def evaluate(model, seg, dataloader):
                 ious.append(iou(s0, s))
             ds.append(d(x_test, x_hat))
             psis.append(psi(x_hat))
-    return torch.concat(ds), torch.from_numpy(np.array(ious)), torch.concat(psis)
+    return torch.concat(ds), torch.from_numpy(np.array(ious)), torch.concat(psis)[:, 0]
 
 def main():
     # test dataset
@@ -96,7 +97,10 @@ def main():
         phi = psp
     seg.eval()
     # compute metrics
-    ds, ious, psis = evaluate(model, seg, test_loader)
+    ds, ious, psis = evaluate(model, phi, seg, test_loader)
+    np.savetxt(os.path.join(PATH_MODELS, "test_" + model.filename + ".txt"),
+               np.array([ds.cpu().numpy(), ious.cpu().numpy(), psis.cpu().numpy()]))
+    print(ds.mean(), ious.mean(), psis.mean())
     # plot samples
     plot_reconstruction(model, test_loader, "test", PATH_FIGS, model.filename)
 

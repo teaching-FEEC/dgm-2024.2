@@ -158,7 +158,7 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, x, s=None):
-        if not s:
+        if s is None:
             s = torch.zeros_like(x[..., :1, :, :])
         xs = torch.concatenate([x, s], axis=-3)
         h = self.h_in(xs)
@@ -176,7 +176,7 @@ class AutoEncoder(nn.Module):
         self.extractor = Encoder(filters, 1, channels, n_convs)
 
     def forward(self, x, s=None):
-        if not s:
+        if s is None:
             s = torch.zeros_like(x[..., :1, :, :])
         xs = torch.concatenate([x, s], axis=-3)
         w = self.encoder(xs)
@@ -217,7 +217,7 @@ class CGAN(nn.Module):
         self.filename = run_id
 
     def compress(self, x, s=None):
-        if not s:
+        if s is None:
             s = torch.zeros_like(x[..., :1, :, :])
         xs = torch.concatenate([x, s], axis=-3)
         w = self.autoencoder.encoder(xs)
