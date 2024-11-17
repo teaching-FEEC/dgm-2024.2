@@ -44,5 +44,7 @@ models/pspnet_city.pth:
 	wget "https://drive.usercontent.google.com/download?id=1pySL9fL8YXXewn8iUPfmlZCUhzjBLmUp&export=download&confirm=yes" -O models/pspnet_city.pth
 
 train: semantic-compression/config.py
-	mkdir -p models
-	python semantic-compression/modeling/train.py
+	python -m modeling.train
+
+predict: semantic-compression/config.py
+	python -m modeling.predict
