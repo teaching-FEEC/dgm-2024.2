@@ -2,29 +2,20 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from torchvision.utils import make_grid
 
 
-def plot_samples(images, fig_path, fname):
-    plt.figure(figsize=(10, 10))
-    for j in range(16):
-        img = (images[j].cpu().detach() + 1) * 0.5
-        img = img.permute(1, 2, 0).numpy()
-        plt.subplot(4, 4, j+1)
-        plt.imshow(img)
-        plt.axis('off')
-    if not os.path.exists(fig_path):
-        os.mkdir(fig_path)
-    plt.savefig(f'{fig_path}/{fname}.jpg')
-
-def plot_reconstruction(autoencoder, dataloader, epoch, fig_path, filename):
-    indices = np.random.randint(len(dataloader), size=16)
-    sampled_images = [dataloader.dataset[i][0].to(device) for i in indices]
-    autoencoder.eval()
-    output_images = [autoencoder(img) for img in sampled_images]
-    fname = f"og_{filename}_{epoch}"
-    plot_samples(sampled_images, fig_path, fname)
-    fname = f"re_{filename}_{epoch}"
-    plot_samples(output_images, fig_path, fname)
+def plot_reconstruction(model, dataloader, epoch, fig_path, filename):
+    sampled_images = [dataloader.dataset[i]['x'].to(model.device) for i in range(8)]
+    model.eval()
+    with torch.no_grad():
+        output_images = [model.autoencoder(img) for img in sampled_images]
+    images = sampled_images + output_images
+    grid = (make_grid(images, nrow=4) + 1) * 0.5
+    plt.figure(figsize=(16, 16))
+    plt.imshow(grid.permute(1, 2, 0).cpu())
+    plt.axis('off')
+    plt.savefig(f'{fig_path}/{filename}_{epoch}.jpg', bbox_inches='tight')
 
 def make_plot(model, losses, test_batch):
     xhat, what = model(test_batch)
