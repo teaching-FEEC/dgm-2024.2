@@ -362,7 +362,7 @@ Qualitativamente, as imagens geradas pela CycleGAN *aparentam* ser mais próxima
 A avaliação quantitativa da qualidade das imagens geradas se mostrou desafiadora. O exemplo do [caso de teste 8](./docs/Results.md) mostra que a métrica de FID não tem uma boa resposta na avaliação do problema proposto. Quando o treinamento do modelo começou a apresentar um comportamento divergente, apenas o LPIPS mudou de comportamento.
 O LPIPS se mostrou melhor que o FID, mas ainda inadequado para a avaliação da qualidade das imagens geradas.
 
-A tentativa de criar um mapa dos modelos não gerou resultados consistentes, sequer em [3D](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_A.html).
+A tentativa de criar um mapa dos modelos não gerou resultados consistentes, sequer em [3D](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/8d0be9292c2cee68c7110855f71fa53821b38abf/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_A.html).
 
 ## Conclusão
 <!--

@@ -106,12 +106,10 @@ $$
 
 Mapas em 3D são apresentados nos links abaixo:
 
-* [FID das imagens A](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/fid_map3D_images_A.html)
-* [FID das imagens B](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/fid_map3D_images_B.html)
-* [LPIPS das imagens A](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_A.html) (baseado na distância de Wasserstein).
-* [LPIPS das imagens B](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/documentation/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_B.html) (baseado na distância de Wasserstein).
-
-<!-- Atualizar para documentação final: https://raw.githack.com/ -->
+* [FID das imagens A](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/8d0be9292c2cee68c7110855f71fa53821b38abf/projetos/ReCycleGAN/docs/assets/evaluation/fid_map3D_images_A.html)
+* [FID das imagens B](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/8d0be9292c2cee68c7110855f71fa53821b38abf/projetos/ReCycleGAN/docs/assets/evaluation/fid_map3D_images_B.html)
+* [LPIPS das imagens A](https://rawcdn.githack.com/TiagoCAAmorim/dgm-2024.2/8d0be9292c2cee68c7110855f71fa53821b38abf/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_A.html) (baseado na distância de Wasserstein).
+* [LPIPS das imagens B](https://raw.githack.com/TiagoCAAmorim/dgm-2024.2/8d0be9292c2cee68c7110855f71fa53821b38abf/projetos/ReCycleGAN/docs/assets/evaluation/w-lpips_map3D_images_B.html) (baseado na distância de Wasserstein).
 
 
 ## Métricas do Teste de Caso 8
