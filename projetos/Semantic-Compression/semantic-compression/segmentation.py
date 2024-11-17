@@ -1,7 +1,13 @@
+import glob
+import os
+
 import cv2
 import numpy as np
 import torch
+import torch.hub
+from PIL import Image
 from torch import nn
+from tqdm.auto import tqdm
 
 
 def conv3x3(in_planes, out_planes, stride=1):
@@ -120,7 +126,7 @@ class PPM(nn.Module):
         x_size = x.size()
         out = [x]
         for f in self.features:
-            out.append(F.interpolate(f(x), x_size[2:], mode='bilinear', align_corners=True))
+            out.append(nn.functional.interpolate(f(x), x_size[2:], mode='bilinear', align_corners=True))
         return torch.cat(out, 1)
 
 
@@ -187,18 +193,18 @@ class PSPNet(nn.Module):
             x = self.ppm(x)
         x = self.cls(x)
         if self.zoom_factor != 1:
-            x = F.interpolate(x, size=(h, w), mode='bilinear', align_corners=True)
+            x = nn.functional.interpolate(x, size=(h, w), mode='bilinear', align_corners=True)
         if self.training:
             aux = self.aux(x_tmp)
             if self.zoom_factor != 1:
-                aux = F.interpolate(aux, size=(h, w), mode='bilinear', align_corners=True)
+                aux = nn.functional.interpolate(aux, size=(h, w), mode='bilinear', align_corners=True)
             main_loss = self.criterion(x, y)
             aux_loss = self.criterion(aux, y)
             return x.max(1)[1], main_loss, aux_loss
         else:
             return x
 
-def phi(model, x):
+def psp(model, x):
     """
     model: PSPNet instance
     x: uint8 ndarray[H, W, 3]
@@ -206,8 +212,8 @@ def phi(model, x):
     returns:
     s: int64 ndarray[H, W]
     """
-    crop_h = crop_w = 713
-    classes = 19
+    crop_h = crop_w = 713 # 713, 473
+    classes = 19 # 19, 150
     mean = [0.485, 0.456, 0.406]
     mean = [item * 255 for item in mean]
     std = [0.229, 0.224, 0.225]
@@ -256,3 +262,51 @@ def phi(model, x):
     prediction = prediction_crop[pad_h_half:pad_h_half+ori_h, pad_w_half:pad_w_half+ori_w]
     s = np.argmax(prediction, axis=2)
     return s
+
+def deeplab(model, x):
+    """
+    model: nn.Module
+    x: uint8 ndarray[H, W, 3]
+
+    returns:
+    s: int64 ndarray[H, W]
+    """
+    size = 513
+    scale = size / max(x.shape[:2])
+    image = cv2.resize(x, dsize=None, fx=scale, fy=scale)
+    image = image.astype(np.float32)
+    image -= np.array([104.008, 116.669, 122.675])
+    image = torch.from_numpy(image.transpose(2, 0, 1)).float().unsqueeze(0)
+    image = image.to('cuda')
+    _, _, H, W = x.shape
+    logits = model(image)
+    logits = nn.functional.interpolate(logits, size=(H, W), mode="bilinear", align_corners=False)
+    probs = nn.functional.softmax(logits, dim=1)[0]
+    probs = probs.cpu().numpy()
+    s = np.argmax(probs, axis=0)
+    return s
+
+def get_maps(path, dset=None):
+    if dset == "coco":
+        model = torch.hub.load("kazuto1011/deeplab-pytorch", "deeplabv2_resnet101", pretrained="cocostuff10k", n_classes=182)
+        model = model.to('cuda')
+        phi = deeplab
+    elif dset == "city":
+        model = PSPNet(layers=101, classes=19, zoom_factor=8, pretrained=False)
+        model = model.to('cuda')
+        checkpoint = torch.load("models/pspnet_city.pth")
+        model.load_state_dict(checkpoint['state_dict'], strict=False)
+        phi = psp
+    else:
+        return
+    model.eval()
+    img_files = glob.glob(os.path.join(path, 'images', '*.png'))
+    img_files += glob.glob(os.path.join(path, 'images', '*.jpg'))
+    fns = [os.path.splitext(os.path.basename(img_path))[0] for img_path in img_files]
+    map_files = [os.path.join(path, 'maps', fn + '.png') for fn in fns]
+    for i in tqdm(range(len(img_files))):
+        img_path = img_files[i]
+        map_path = map_files[i]
+        x = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        s = phi(model, x)
+        Image.fromarray(s).save(map_path)
