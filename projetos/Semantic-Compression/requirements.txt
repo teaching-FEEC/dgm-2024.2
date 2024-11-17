@@ -1,7 +1,7 @@
 cityscapesscripts
-cv2
 matplotlib
 numpy
+opencv-python
 Pillow
 scipy
 torch
