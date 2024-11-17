@@ -31,12 +31,12 @@ Resumo do objetivo, metodologia **e resultados** obtidos (na entrega E2 é poss�
 A tradução imagem-imagem busca um mapeamento entre domínios que compartilham relação.
 A `CycleGAN` teve significativo impacto ao propor uma arquitetura que trabalha com dados não pareados. Novos elementos foram propostos posteriormente, aumentando a qualidade das imagens geradas. As redes mais atuais se apoiam em modelos de larga escala.
 
-Este projeto revisitará a proposta original da CycleGAN, avaliando o impacto de diferentes propostas feitas posteriormente. Busca-se uma arquitetura com melhor desempenho que a CycleGAN original, e treinável com uma estrutura de *hardware* mais acessível.
+Este projeto revisita a proposta original da CycleGAN, avaliando o impacto de diferentes propostas feitas posteriormente. Buscou-se uma arquitetura com melhor desempenho que a CycleGAN original, e treinável com uma estrutura de *hardware* mais acessível.
 
 A tarefa abordada neste projeto foi a traduzir imagens feitas a partir de câmeras instaladas em painéis de carros (*dashboard cameras*) de dia para noite e de noite para dia. Foram utilizadas as imagens da base de dados **Nexet** para a cidade de Nova York.
 
-Diferentes modificações foram testadas na estrutura original da CycleGAN, e a que teve maior impacto foi a introdução de *skip connections* entre o codificador e o decodificador das redes generativas.
-Foi feita a comparação desta nova rede com modelos propostos de código aberto. As métricas de FID e LPIPS mostram que foi possível alcançar resultados comparáveis aos de redes maiores.
+Diferentes modificações foram testadas na estrutura original da CycleGAN, e as que tiveram maior impacto perceptual foram a função de perda quadrática e o uso de camadas de atenção na rede discriminadora.
+Foi feita a comparação desta nova rede com modelos propostos de código aberto. As métricas de FID e LPIPS não se alinharam bem com a avaliação visual dos autores. Em geral as redes com maior número de parâmetros tiveram resultados melhores.
 
 ## Descrição do Problema/Motivação
 <!--
@@ -56,7 +56,7 @@ Em 2017 foi apresentada a arquitetura `CycleGAN` [[1]](https://arxiv.org/abs/170
     <strong>Estrutura Geral da CycleGAN <a href="https://arxiv.org/abs/1703.10593">[1]</a>.</strong>
 </p>
 
-A partir deste momento foram propostas outras soluções para este problema e outros problemas relacionados tais como transferência de estilo (*`style transfer`*), remoção de ruído [[2]](https://arxiv.org/pdf/1805.05308v1) e melhoria de qualidade de imagem (*`image enhancement`*) [[3]](https://arxiv.org/pdf/2312.11748v1), alcançando resultados cada vez melhores.
+A partir deste momento foram propostas outras soluções para este problema e outros relacionados como transferência de estilo (*`style transfer`*), remoção de ruído [[2]](https://arxiv.org/pdf/1805.05308v1) e melhoria de qualidade de imagem (*`image enhancement`*) [[3]](https://arxiv.org/pdf/2312.11748v1), alcançando resultados cada vez melhores.
 
 Muitas das arquiteturas mais recentes se baseiam no uso e/ou ajuste fino de modelos de larga escala pré-treinados. O treinamento destas redes requer grande poder computacional e significativo número de amostras.
 
@@ -65,7 +65,7 @@ Muitas das arquiteturas mais recentes se baseiam no uso e/ou ajuste fino de mode
 O objetivo deste projeto foi, a partir da arquitetura original da CycleGAN, investigar e avaliar o impacto da incorporação de algumas das ideias que foram propostas posteriormente, aplicado na tradução dia-noite de imagens de trânsito. Especificamente, os objetivos são:
 
 * Investigar e reproduzir a `CycleGAN original` (*vanilla*) e obter uma referência com a qual comparar a nova arquitetura na resolução do problema proposto.
-* Investigar e `reproduzir propostas mais recentes` de modificações na CycleGAN e compará-las com a CycleGAN tradicional em relação aos dois dos problemas propostos.
+* Investigar e `reproduzir propostas mais recentes` de modificações na CycleGAN e compará-las com a formulação tradicional na solução do problema proposto.
 * Investigar e incorporar `novas métricas` de avaliação quantitativa e qualitativa das saídas da rede.
 * Fazer `comparativo` entre as arquiteturas propostas e redes pré-treinadas propostas na literatura, buscando entender criticamente qual variação melhor performa para o problema proposto.
 
@@ -78,6 +78,7 @@ Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na *va
   * [x] Camadas de atenção [[14]](https://doi.org/10.1109/ICDACAI59742.2023.00142)
   * [x] Adaptadores LoRA
 * Funções de perda adicionais:
+  * [x] Função de perda quadrática.
   * [ ] Perdas baseadas em redes pré-treinadas [[7]](https://arxiv.org/abs/2105.14576)
   * [x] Suavização do Gerador [[10]](https://arxiv.org/abs/1912.04958)
 * Novas métricas de avaliação:
@@ -89,7 +90,7 @@ Foram avaliadas diferentes variações da CyleGAN a partir da sua versão na *va
   * [x] Redes de difusão:
     * CycleGAN *original* [[1]](https://arxiv.org/abs/1703.10593)
     * CycleGAN-turbo [[9]](https://arxiv.org/abs/2403.12036)
-  * [ ] Percepção de usuários
+  * [X] Percepção de usuários
 
 As caixas de seleção indicam os os elementos, entre os inicialmente propostos, que foram efetivamente aplicados no projeto. Os adaptadores LoRA foram implementados, mas não foram avaliados porque posteriormente descobriu-se serem indicados para uso em redes pré-treinadas. Devido à limitação de *hardware* disponível (o treinamento foi feito no Colab), a proposta de incluir perdas associadas a redes pré-treinadas foi descartada.
 
@@ -136,7 +137,7 @@ A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1
 </div>
 
 <p align="center">
-  < strong>Exemplos de imagens da base Nexet 2017 (dia acima e noite abaixo).</strong>
+  <strong>Exemplos de imagens da base Nexet 2017 (dia acima e noite abaixo).</strong>
 </p>
 
 Foram feitas diferentes análises nas imagens. Uma explicação mais completa é feita [**aqui**](./docs/Nexet.md). Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216  (5%) das imagens da classe **Noite**. Os totais de imagens para cada classe são apresentados abaixo.
@@ -171,7 +172,7 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
 1. **Treino da ReCycleGAN**
     * Feito para cada variante dos hyperparâmetros.
     * Dados de entrada são as imagens de treino das classes **A** e **B**.
-        * Para aumentar a quantidade de amostras (*data augmentation*), foram aplicadas transformações adicionais às imagens de entrada:
+        * Para aumentar a quantidade de amostras, foram aplicadas transformações adicionais às imagens de entrada (*data augmentation*):
             1. Redimensionamento para 112% da imagem original, com interpolação bicúbica.
             1. Corte aleatório (*random crop*) para as dimensões originais.
             1. Inversão horizontal aleatória (*random horizontal flip*).
@@ -184,7 +185,7 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
     * Para incrementar a análise, foram geradas imagens traduzidas com a versão original da **CycleGAN** [[1]](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) e com uma versão atualizada, **CycleGAN-turbo** [[9]](https://github.com/GaParmar/img2img-turbo).
         * A CycleGAN precisou ser treinada com a base de dados Nexet. O treinamento foi feito com as opções padrão, por 40 épocas.
         * A CycleGAN-turbo tem uma versão já treinada com a base Nexet, de modo que não foi necessário treinar esta rede.
-    * São feitas avaliações comparando as imagens reais com as imagens da outra classe traduzidas (e.g.: imagens da classe **A** e imagens traduzidas da classe **B** para a classe **A**).
+    * São feitas avaliações comparando as imagens reais com as imagens da outra classe traduzidas (e.g.: imagens reais da classe **A** e imagens traduzidas da classe **B** para a classe **A**).
 
 <div>
   <p align="center">
@@ -197,14 +198,14 @@ O *workflow* deste projeto se divide em duas etapas: treino e avaliação.
 
 <div>
   <p align="center">
-    <img src='docs/assets/test.png' align="center" alt="Workflow" width=800px>
+    <img src='docs/assets/test.png' align="center" alt="Workflow" width=1200px>
   </p>
   <p align="center">
     <strong>Workflow de trabalho completo.</strong>
   </p>
 </div>
 
-### Arquitetura da Rede - CyclaGAN Vanilla
+### Arquitetura da Rede - CycleGAN Vanilla
 
 
 A CycleGAN é composta por duas redes geradoras (`gen_AtoB` e `gen_BtoA`) e duas redes discriminadoras (`dis_A` e `dis_B`). As redes geradoras possuem a mesma estrutura, assim como as discriminadoras.
@@ -219,14 +220,14 @@ A CycleGAN é composta por duas redes geradoras (`gen_AtoB` e `gen_BtoA`) e duas
   <strong>Ilustração da estrutura básica da CycleGAN.</strong>
 </p>
 
-### Estrutura do Gerador
+#### Estrutura do Gerador
 
 Cada gerador da CycleGAN é dividido em três seções principais:
 
 1. **Encoder**: Extrai características da imagem de entrada através de convoluções, comprimindo sua representação, mas aumentando o número de canais.
    - O primeiro conjunto de filtros transforma uma imagem de tamanho (256, 256, 3) em uma representação intermediária com *k* canais (ex: 64), conforme definido pelo usuário.
    - Os próximos dois conjuntos de filtros continuam comprimindo a representação, enquanto dobram o número de canais a cada etapa.
-   
+
 2. **Transformer**: Aplica 6 ou 9 blocos residuais, dependendo do tamanho da entrada, sem alterar as dimensões da representação.
 
 3. **Decoder**: Restaura a imagem ao seu tamanho original utilizando dois blocos de deconvolução (convoluções fracionárias).
@@ -240,7 +241,7 @@ A arquitetura completa do gerador pode ser descrita como:
 - `Rk`: Bloco residual com duas camadas de convolução 3×3 com *k* filtros.
 - `uk`: Deconvolução fracionária (stride 1/2) com *k* filtros e ReLU.
 
-### Estrutura do Discriminador
+#### Estrutura do Discriminador
 
 Os discriminadores da CycleGAN utilizam a abordagem **PatchGAN**. Diferentemente de um discriminador regular de GAN, que produz um único valor escalar como saída, o PatchGAN gera uma matriz de NxN saídas (ex: 70×70), onde cada valor indica se o respectivo "patch" da imagem é real ou falso.
 
@@ -248,32 +249,32 @@ A arquitetura do discriminador é descrita como:
 
 `C64-C128-C256-C512`
 
-- `Ck`: Convolução 4×4 com InstanceNorm e LeakyReLU, *k* filtros e stride 2. 
+- `Ck`: Convolução 4×4 com InstanceNorm e LeakyReLU, *k* filtros e stride 2.
 - A primeira camada (`C64`) não aplica InstanceNorm. Após a última camada, é realizada uma convolução para produzir uma saída 1×1.
 
 #### Funções de custo
 
 - **Adversarial Loss:**  é aplicada tanto às redes geradoras quanto às discriminadoras. Esta perda é definida como:
 
-$$ Loss_{advers} \left ( G, D_y, X, Y \right ) =\frac{1}{m}\sum \left ( 1 - D_y\left ( G\left ( x \right ) \right ) \right )^{2} $$  
+$$ Loss_{advers} \left ( G, D_y, X, Y \right ) =\frac{1}{m}\sum \left ( 1 - D_y\left ( G\left ( x \right ) \right ) \right )^{2} $$
 
-$$ Loss_{advers}\left ( F, D_x, Y, X \right ) =\frac{1}{m}\sum \left ( 1 - D_x\left ( F\left ( y \right ) \right ) \right )^{2} $$   
+$$ Loss_{advers}\left ( F, D_x, Y, X \right ) =\frac{1}{m}\sum \left ( 1 - D_x\left ( F\left ( y \right ) \right ) \right )^{2} $$
 
 - **Cycle Consistency Loss:** Devido à possibilidade das redes adversárias mapearem imagens de entrada para distribuições de saída aleatórias, a perda de consistência cíclica garante que, ao aplicar mapeamentos compostos, a imagem original seja preservada. Em termos técnicos, essa função de perda é usada para medir a taxa de erro no mapeamento de G(x) -> F(G(x)).
 
-$$ Loss_{cyc}\left ( G, F, X, Y \right ) =\frac{1}{m}\left [ \left ( F\left ( G\left ( x_i \right ) \right )-x_i \right ) +\left ( G\left ( F\left ( y_i \right ) \right )-y_i \right ) \right ] $$   
+$$ Loss_{cyc}\left ( G, F, X, Y \right ) =\frac{1}{m}\left [ \left ( F\left ( G\left ( x_i \right ) \right )-x_i \right ) +\left ( G\left ( F\left ( y_i \right ) \right )-y_i \right ) \right ] $$
 
 
 - **Função de Custo Total**: A função de custo total da CycleGAN combina as perdas adversárias e cíclica:
 
-$$ 
-L \left ( G, F, D_x, D_y \right ) = L_{advers} \left ( G, D_y, X, Y \right ) + L_{advers} \left ( F, D_x, Y, X \right ) + \lambda L_{cyc} \left ( G, F, X, Y \right ) 
+$$
+L \left ( G, F, D_x, D_y \right ) = L_{advers} \left ( G, D_y, X, Y \right ) + L_{advers} \left ( F, D_x, Y, X \right ) + \lambda L_{cyc} \left ( G, F, X, Y \right )
 $$
 
-O objetivo é minimizar a função de custo para os geradores \(G\) e \(F\), enquanto maximiza para os discriminadores \(D_x\) e \(D_y\):
+O objetivo é minimizar a função de custo para os geradores \(G\) e \(F\), enquanto maximiza para os discriminadores \($D_x$\) e \($D_y$\):
 
-$$ 
-\min_{G, F} \max_{D_x, D_y} L \left ( G, F, D_x, D_y \right ) 
+$$
+\min_{G, F} \max_{D_x, D_y} L \left ( G, F, D_x, D_y \right )
 $$
 
 ## Experimentos, Resultados e Discussão dos Resultados
@@ -385,7 +386,7 @@ Deste projeto podem ser retiradas diferentes conclusões e lições aprendidas. 
 Diversas lições foram aprendidas na realização deste projeto:
 
 * Acesso a *hardware* adequado é vital para um projeto de redes generativas.
-* Os repositórios de redes como a CycleGAN podem ser complexos, mas estão cheios de *dicas* de como facilitar o treinamento da rede. Muitas destes *pulos do gato* não estarão no artigo ou em implementações simplificadas que se encontra pela internet. Foi possível treinar a CycleGAN em uma GPU de laptop, ocupando menos de 3 GB de memória.
+* Os repositórios de redes como a CycleGAN podem ser complexos, mas estão cheios de *dicas* de como facilitar o treinamento da rede. Muitas destes *pulos do gato* não estão no artigo ou em implementações simplificadas que se encontra pela internet. Foi possível treinar a CycleGAN em uma GPU de laptop, ocupando menos de 3 GB de memória.
 * O código desenvolvido a quatro mão necessitou de muitos ajustes até ser funcional. Existe uma tendência do código ficar demasiado complexo ao longo do projeto. Foi essencial iniciar o projeto com boa organização e compartimentalização do código.
 
 ## Referências Bibliográficas

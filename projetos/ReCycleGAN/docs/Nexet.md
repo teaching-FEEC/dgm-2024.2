@@ -15,7 +15,7 @@ A base de dados **Nexet 2017** contém 50.000 imagens, e 99,8% tem resolução 1
 
 ## Imagens com Problemas
 
-Algumas das imagens da base de dados parecem ter tido problemas na sua captura. Em diversas imagens o conteúdo da mesma se encontrava em um dos cantos da imagem. Para tratar estas imagens é feita uma busca pela linhas e colunas da imagem buscando *informação*. Uma linha ou coluna é considerada *sem informação* quando a imagem equivalente em escala de cinza não tinha nenhum pixel com valor maior que 10 (em uma escala até 255). A imagem original é então cortada na região *com informação* antes de escalar e cortar as imagens para 256x256. Imagens recortadas com menos de 256 pixeis de altura ou largura foram ignoradas (imagem à esquerda abaixo).
+Algumas das imagens da base de dados parecem ter tido problemas na sua captura. Em diversas imagens o conteúdo da mesma se encontrava em um dos cantos da imagem. Para tratar estas imagens é feita uma busca pela linhas e colunas da imagem buscando *informação*. Uma linha ou coluna foi considerada *sem informação* quando a imagem equivalente em escala de cinza não tinha nenhum pixel com valor maior que 10 (em uma escala de zero a 255). A imagem original é então cortada na região *com informação* antes de escalar e cortar as imagens para 256x256. Imagens recortadas com menos de 256 pixeis de altura ou largura foram ignoradas (exemplo da imagem à esquerda abaixo).
 
 <div>
     <p align="center">
@@ -30,41 +30,44 @@ Algumas das imagens da base de dados parecem ter tido problemas na sua captura. 
 
 ## Filtro de Imagens
 
-Observou-se que algumas imagens da base de dados Nexet apresentavam características que poderiam comprometer a qualidade do treinamento. Foi feito um trabalho *semi*-manual de filtragem destas imagens. Muitas das análises foram feitas com base nas *distâncias* entre as imagens de cada grupo. Estas distâncias foram calculadas a partir da saída da penúltima camada de uma rede classificadora de imagens pré-treinada ResNet18 [[13]](https://doi.org/10.1109/CVPR.2016.90), disponibilizada diretamente no [PyTorch](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet18.html). Esta extração de características foi realizada com as imagens já escaladas e recortadas para o formato de treinamento.
+Observou-se que algumas imagens da base de dados Nexet apresentavam características que poderiam comprometer a qualidade do treinamento. Foi feito um trabalho *semi*-manual de filtragem destas imagens. Muitas das análises foram feitas com base nas *distâncias* entre as imagens de um mesmo grupo. Estas distâncias foram calculadas a partir da saída da penúltima camada de uma rede classificadora de imagens pré-treinada ResNet18 [[13]](https://doi.org/10.1109/CVPR.2016.90), disponibilizada diretamente no [PyTorch](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet18.html). Esta extração de características foi realizada com as imagens já escaladas e recortadas para o formato de treinamento.
 
 ### Imagens muito parecidas
 
-* Foram listados os pares de imagens que apresentavam menores distâncias entre si.
-* Foi definido por inspeção visual, para a classe **dia**, que os 93 pares mais próximos eram de imagens muito semelhantes. Para cada par uma das imagens é excluída da base de dados.
-* Para a classe **noite** esta abordagem não se mostrou muito eficiente. Imagens com pequena distância entre si não eram consideradas parecidas em uma inspeção visual. Para esta classe nenhuma imagem foi retirada.
+Foram listados os pares de imagens que apresentavam menores distâncias entre si.
+Foi definido por inspeção visual, para a classe **dia**, que os 93 pares mais próximos eram de imagens muito semelhantes. Para cada par uma das imagens é excluída da base de dados.
+
 
 <div>
     <p align="center">
         <img src='assets/nexet/close_pair_day_01.png' align="center" alt="Imagens próximas dia 1" width=350px>
         <img src='assets/nexet/close_pair_day_02.png' align="center" alt="Imagens próximas dia 2" width=350px>
     </p>
+    <p align="center">
+        <strong>Exemplos de pares de imagens muito parecidas na classe dia.</strong>
+    </p>
 </div>
 
-<p align="center">
-  <strong>Exemplos de pares de imagens muito parecidas na classe dia.</strong>
-</p>
+Para a classe **noite** esta abordagem não se mostrou muito eficiente. Imagens com pequena distância entre si não foram consideradas parecidas em uma inspeção visual. Para esta classe nenhuma imagem foi retirada.
+
 
 <div>
     <p align="center">
         <img src='assets/nexet/close_pair_night_01.png' align="center" alt="Imagens próximas noite 1" width=350px>
         <img src='assets/nexet/close_pair_night_02.png' align="center" alt="Imagens próximas noite 2" width=350px>
     </p>
+    <p align="center">
+        <strong>Exemplos de pares de imagens muito parecidas na classe noite.</strong>
+    </p>
 </div>
 
-<p align="center">
-    <strong>Exemplos de pares de imagens muito parecidas na classe noite.</strong>
-</p>
 
 ### Imagens *Difíceis*
 
-* Para *facilitar* o treinamento da rede, foram excluídas imagens com características consideradas *difíceis* ou que não ajudam no treinamento: chuva *forte*, túneis, desfoque, objetos bloqueando a visão.
-* Para esta análise as imagens de cada classe foram agrupadas em 20 classes, com **k-Means**. Para cada classe foram sorteadas 36 imagens e foi feita uma análise visual de cada grupo.
-* A partir da análise visual, os grupos que foram considerados *problemáticos* são novamente divididos com k-means. A análise visual dos subgrupos é que define que conjuntos de imagens são excluídos do treinamento.
+Para *facilitar* o treinamento da rede, foram excluídas imagens com características consideradas *difíceis* ou que não ajudam no treinamento: chuva *forte*, túneis, desfoque, objetos bloqueando a visão.
+Para esta análise as imagens de cada classe (dia ou noite) foram agrupadas em 20 conjuntos, com **k-Means**, utilizando a medida de _distância_ explicada anteriormente. Para cada um dos 20 conjuntos foram sorteadas 36 imagens e feita uma análise visual.
+
+A partir da análise visual, os conjuntos que foram considerados *problemáticos* são novamente divididos com k-means. A análise visual dos subconjuntos é que define que imagens são excluídas do treinamento.
 
 <div>
     <p align="center">
@@ -74,7 +77,7 @@ Observou-se que algumas imagens da base de dados Nexet apresentavam característ
 </div>
 
 <p align="center">
-    <strong>Exemplos de grupos de imagens consideradas difíceis para o treinamento.</strong>
+    <strong>Exemplos de conjuntos de imagens consideradas difíceis para o treinamento.</strong>
 </p>
 
 Os filtros aplicados retiraram 146 (3%) das imagens da classe **Dia** e 216 (5%) das imagens da classe **Noite**. Os totais de imagens para cada classe são apresentados abaixo.

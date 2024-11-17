@@ -116,7 +116,7 @@ Mapas em 3D são apresentados nos links abaixo:
 
 ## Métricas do Teste de Caso 8
 
-O caso de teste 8 (termo de regularização na função de perda) teve comportamento divergente, gerando imagens traduzidas de baixa qualidade. Este modelo fez uso de um termo de regularização na função de perda. Foram feitas três tentativas de ajuste da rede com esta opção, e em todas o resultado foi ruim.
+O caso de teste 8 teve comportamento divergente, gerando imagens traduzidas de baixa qualidade. Este modelo fez uso de um termo de regularização na função de perda. Foram feitas três tentativas de ajuste da rede com esta opção, e em todas o resultado foi ruim.
 
 As imagens abaixo mostram o comportamento das métricas de FID e LPIPS ao longo do treinamento do modelo. Também são apresentadas amostras de imagens traduzidas.
 
