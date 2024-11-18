@@ -50,6 +50,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+wandb/
 
 # Translations
 *.mo
@@ -70,7 +71,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
-
+site/*
 # PyBuilder
 .pybuilder/
 target/
@@ -167,3 +168,5 @@ no_sync/
 .vscode/
 
 data/*
+src/other/checkpoints/*
+*.pkl
