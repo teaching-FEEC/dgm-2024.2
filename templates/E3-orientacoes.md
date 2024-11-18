@@ -1,11 +1,11 @@
-# 2022.1 IA376L - Projeto - Entrega Final (E3)
+# 2024.2 IA376N - Projeto - Entrega Final (E3)
 
 ## Instruções Gerais
 
 O objetivo geral do projeto final desta disciplina é dar a oportunidade de implementação de um modelo generativo de sinais multimodais (imagens, áudio, texto, dados de saúde, sinais fisiológicos, sinais físicos, etc.), utilizando técnicas de deep learning.
 
 Na entrega final do seu projeto, seu grupo deverá:
- - Criar uma tag release 2023.2_IA376L_E2;
+ - Criar uma tag release 2024.2_IA376N_E2;
  - Atualizar o arquivo README.md do repositório segundo orientações dadas a seguir;
  - Submeter um novo pull request;
  - Preparar-se para a apresentação final de 15 minutos sobre o projeto.
