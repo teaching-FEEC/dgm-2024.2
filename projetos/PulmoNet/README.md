@@ -192,6 +192,8 @@ A partir desta análise inicial, seleciona-se três modelos para prosseguir com 
 
 |Parâmetros | Possibilidades |
 |----- | ----- |
+|Passos Disc | 1 a 10 |
+|Passos Gen | 1 a 10 |
 |Tipo de ruído | [Uniforme, Gaussiano] |
 |Localização do ruído | Na imagem completa ou apenas na região do pulmão|
 |Regularização | [0, 10] |
@@ -199,15 +201,31 @@ A partir desta análise inicial, seleciona-se três modelos para prosseguir com 
 |blabla | blabla |
 
 Dadas as restrições de tempo e capacidade computacional, não foram testadas todas as combinações de parâmetros da tabela acima. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros em quinze modelos, descritos na tabela abaixo.
-Ressalta-se que a configuração destes parâmetros é feita em um arquivo YAML.
+A configuração destes parâmetros é feita em um arquivo YAML.
 
-|Modelo | Tipo de Ruído | Localização do ruído | blabla|
-|----- | ----- | ----- | ------ |
-|Sweep10 | Gaussiano | Dentro da máscara | blabla |
-|Sweep256 | Gaussiano | Imagem completa | blabla |
-|blabla | blabla | blabla | blabla |
+[jogar para resultados -----------------]
+
+|Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão|	Intensidade	|Média Ruído	|Desvio Ruído	|Criterion	|Regularizador	|Nível Regularização	|Learning Rate	|Beta|
+| ----- | ----- | -----   | ----- | -----       | -----         | -----         |   -----  | ----- | -----| -----   |   -----       |
+|Sweep10|	4/2	|Gaussiano|	Falso |	0,3157719473|	0,7469069764|	0,1784581512|	BCELoss|	MSE|	8|	3,11E-04|	0,4597517629|
+|Sweep205|	3/1	|Gaussiano|	Verdadeiro|	0,5566831094|	0,5120044953|	0,3903814624|	MSELoss|	MAE|	10|	2,85E-04|	0,7555202559|
+|Sweep412|	1/1| Gaussiano|	Falso| 0,757255249|	0,5250495573|	0,4755411392|	MSELoss|	MAE|	4	|1,70E-04	|0,8811316699|
+|Sweep64	|1/2	|Gaussiano	|Verdadeiro	|0,81851453	|0,5597838196	|0,2229110595	|MSELoss	|MAE	|3	|3,75E-04	|0,8659691523|
+|Sweep123	|2/1	|Gaussiano	|Verdadeiro	|0,3320755603	|0,652635058	|0,3347731658	|MSELoss	|MAE	|4	|1,55E-04	|0,6252443893|
+|Sweep284	|1/2	|Gaussiano	|Verdadeiro	|0,4882098594	|0,872090533	|0,4466720449	|MSELoss	|MSE	|4	|2,24E-04	|0,6781061686|
+|Sweep394	|2/1	|Gaussiano	|Falso	|0,3715918515	|0,6996284578	|0,2871496533	|BCELoss	|MAE	|1	|3,40E-04	|0,4792751887|
+|Sweep497	|1/1	|Gaussiano	|Verdadeiro	|0,3039449554	|0,8749711247	|0,2897599163	|MSELoss	|MSE	|15	|1,32E-04	|0,840671948|
+|Sweep522	|4/2	|Gaussiano	|Falso	|0,8766142328	|0,6935412609	|0,3790460335	|MSELoss	|MSE_mask	|13	|3,40E-04	|0,5728743005|
+|Sweep71	|2/1	|Gaussiano	|Verdadeiro	|0,8172635438	|0,548984276	|0,3265456309	|BCELoss	|MSE_mask	|1	|2,82E-04	|0,52631016|
+|Sweep185	|4/1	|Uniforme	|Verdadeiro	|0,3563791549|	0,5899638112|	0,2158650277|	MSELoss|	MAE_mask|	5|	2,82E-04|	0,4240341338|
+|Sweep186	|2/1	|Uniforme	|Verdadeiro	|0,9795390854|	0,5310213915	|0,2623582226	|BCELoss	|MAE_mask	|4	|1,87E-04	|0,6069949071|
+|Sweep256	|1/2	|Gaussiano	|Verdadeiro	|0,3085178607	|0,6810390549	|0,1347611367	|MSELoss	|MAE_mask	|8	|3,16E-04	|0,4703302188|
+|Sweeo279	|4/2	|Gaussiano	|Falso	|0,6821396703	|0,9681958035	|0,1024100341	|MSELoss	|MAE_mask	|15	|2,58E-04	|0,6470046351|
+|Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,9864110063	|0,9929413808	|0,1007233152	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,4393293661|
 
 Após esta etapa, passa-se os três melhores modelos para a etapa de avaliação de desempenho e qualidade dos resultados. Gera-se imagens sintéticas a partir de máscaras binárias de CTs pulmonares com ruído e realiza-se três testes: qualitativo, quantitativo e de utilidade. Tais testes serão descritos em mais detalhes na seção [Métricas de Avaliação](#métricas-de-avaliação).
+
+Um ponto importante a ser destacado é a diferença do tipo de ruído aplicado na máscara de entrada do gerador. Como é possível observar nas tabelas acima, duas distribuições foram testadas: uniforme e gaussiana. xxxxxx
 
 Em suma, o fluxo de trabalho proposto por este projeto, ilustrado na figura a seguir, inicia-se com a obtenção da base de dados ATM'22 e seu devido tratamento, conforme detalhado na seção anterior.
 Utilizando estes dados, alimenta-se a rede generativa com as fatias segmentadas (máscaras binárias). Já a rede discriminadora recebe os dados reais (sem segmentação) e os dados sintéticos, devendo classificar cada um como "real" ou "falso".
@@ -300,9 +318,8 @@ Dado este fluxo, estipulamos o seguinte cronograma para desenvolvimento do proje
 ### Ambiente Computacional
 > TODO: Falar sobre a máquina usada para treinar a GAN (quantidade de memória, tipo de GPU etc) e para treinar a rede de segmentação
 
-Os modelos da GAN foram treinados em uma máquina com XXXXX características
-
-Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado em um computador pessoal que tinha uma GPU RTX3050, 4G de memória de GPU, 16G de memória RAM e processador Intel I5 de 11ª geração.
+Os modelos da GAN foram treinados em uma máquina com uma GPU NVIDIA GeForce RTX 3060.
+Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado em um computador pessoal que tinha uma GPU 	NVIDIA GeForce RTX 3050, 4G de memória de GPU, 16G de memória RAM e processador Intel I5 de 12ª geração.
 
 
 ## Experimentos, Resultados e Discussão dos Resultados
@@ -368,13 +385,19 @@ Como uma observação adicional, incluimos uma descrição de como executar as f
 
 **Treinamento da GAN:**
 
-`1.` Configurar parâmetros do modelo no arquivo `config.yaml` e a localização da pasta com os dados processados.
+1. Configurar parâmetros do modelo no arquivo `config.yaml` e a localização da pasta com os dados processados.
 
-`2.` Executar comando em seu terminal:
+2. Executar comando em seu terminal:
 
 ```
-training_pipeline.py config.yaml
+py training_pipeline.py
 ```
+
+3. Selecionar o arquivo YAML de configuração desejado:
+
+'''
+ config.yaml
+'''
 
 **Obtenção das métricas da GAN:**
 
