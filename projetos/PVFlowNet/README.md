@@ -11,23 +11,78 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 | Luis Alexsander Oroya Alvarado  | 217045  | Eng. Elétrica|
 | Washington Stalyn Alvarez Orbe  | 224189  | Eng. Elétrica|
 
+## Resumo 
 
-## Descrição Resumida do Projeto
-O projeto tem como tema a geração de cenários de geração fotovoltaica, com o objetivo de fornecer suporte para aplicações relacionadas ao dimensionamento e à operação de unidades de geração presentes em microrredes. 
-Esse trabalho está alinhado com as principais linhas de pesquisa do grupo, especialmente no campo da otimização estocástica, que demanda cenários capazes de modelar a variabilidade das fontes de energia renováveis. Dessa forma, identificou-se uma oportunidade de avanço ao combinar técnicas tradicionais de otimização com modelos de geração de cenários baseados em machine learning.
+O projeto tem como objetivo desenvolver uma metodologia para a geração de cenários aplicável à geração fotovoltaica (FV), com o propósito de fornecer suporte a aplicações relacionadas ao dimensionamento e operação de unidades de geração, especialmente distribuídas, presentes em microrredes.
 
-### Motivação 
+Este trabalho está alinhado com as linhas de atuação e pesquisa dos membros do grupo, particularmente nas áreas de otimização estocástica e planejamento da operação de sistemas elétricos, que requerem cenários capazes de modelar a variabilidade das fontes de energia renováveis. Assim, identificou-se uma oportunidade de pesquisa ao combinar técnicas tradicionais de otimização com modelos de geração de cenários baseados em inteligência artificial, visando garantir de forma ininterrupta o fornecimento de energia elétrica, considerando a confiabilidade na operação dos sistemas elétricos.
 
-- **Variabilidade e Incerteza na Geração Fotovoltaica:** A geração de energia solar apresenta uma variabilidade significativa devido a fatores como clima, horário e sazonalidade. Essa incerteza afeta diretamente a capacidade de prever quanto de energia será gerada em um determinado momento. Como consequência, tanto o planejamento quanto a operação de sistemas de geração fotovoltaica tornam-se desafiadores. A ausência de cenários realistas que capturem essa variabilidade pode levar a falhas no atendimento da demanda energética, colocando em risco a confiabilidade da microrrede.
+### Problemática 
 
-- **Impacto Econômico da Falta de Cenários Precisos:** A falta de cenários confiáveis também impacta financeiramente. No dimensionamento, sistemas subdimensionados geram uma maior dependência de outras fontes, enquanto o superdimensionamento resulta em investimentos elevados sem necessidade. Operacionalmente, decisões baseadas em previsões imprecisas podem resultar no acionamento de geradores de backup ou na compra de energia a preços elevados em momentos de pico. Isso aumenta os custos operacionais e compromete a viabilidade econômica das microrredes, especialmente em sistemas que integram várias fontes renováveis.
+Na operação dos sistemas elétricos, é fundamental um aproveitamento adequado dos diferentes recursos energéticos distribuídos, permitindo sua integração de forma a tornar os sistemas elétricos tradicionais menos centralizados, mais robustos e confiáveis. No entanto, muitas fontes de energia renováveis não são firmes, devido à sua natureza intermitente e variável.
 
-### Objetivo principal:
-O objetivo do projeto é desenvolver um Conditional Normalizing Flow-based model, condicionado ao mês e à temperatura, para a geração de cenários de geração fotovoltaica.
+- **Incerteza na Geração Fotovoltaica:** A geração PV apresenta uma variabilidade significativa devido a fatores como localização, clima, horário e sazonalidade. Essa incerteza afeta diretamente a capacidade de prever a quantidade de energia que será gerada e estará disponível em um determinado momento. Como consequência, tanto o planejamento quanto a operação de sistemas elétricos que tenham geração PV tornam-se desafiadores. A ausência de cenários realistas que capturem essa variabilidade pode resultar em falhas no atendimento da demanda energética, comprometendo a confiabilidade da microrrede.
 
-> [Link para o vídeo de apresentação](https://drive.google.com/file/d/1Tfcvgrx444mZr-ZxBIK41BJ1kSHkao99/view?usp=sharing)
+- **Impacto Econômico da Falta de Cenários Precisos:** A falta de cenários confiáveis também impacta financeiramente. No dimensionamento, sistemas subdimensionados geram uma maior dependência de outras fontes, enquanto o superdimensionamento resulta em investimentos elevados sem necessidade. Operacionalmente, decisões baseadas em previsões imprecisas podem resultar no acionamento de geradores de backup ou na compra de energia a preços elevados em momentos de alta demanda. Isso aumenta os custos operacionais e compromete a viabilidade econômica das microrredes, especialmente em sistemas que integram várias fontes renováveis.
 
-[Link para a apresentação de slides](https://docs.google.com/presentation/d/1wNXzfYHMkaAU3vaD-WrMQe-kaxg19UTsprnQ_qU0eXA/edit?usp=sharing)
+### Objetivo Principal:
+
+O objetivo do projeto é desenvolver um modelo generativo normalizado baseado em fluxos, que permita criar cenários prováveis mais desfavoráveis de geração PV, condicionados aos níveis de irradiância e temperatura previstos para uma determinada data.
+
+[Link para a apresentação de slides 1](https://docs.google.com/presentation/d/1wNXzfYHMkaAU3vaD-WrMQe-kaxg19UTsprnQ_qU0eXA/edit?usp=sharing)
+
+[Link para a apresentação de slides 2](https://docs.google.com/presentation/d/1a__ppcP4DdslarqXUyfrLHD8oQKRX4gB-ga-aI3HbXY/edit?usp=sharing)
+
+### Motivação:
+
+- Ajudar no processo de tomada de decisão para um gerenciamento ótimo de sistemas elétricos.
+- Desenvolver ferramentas que permitam um planejamento robusto da operação de microrredes.
+- Abordar o desafio das incertezas e variabilidade na geração PV.
+- Complementar problemas estocásticos e de piores scenarios.
+
+### Dataset Utilizado:
+
+|Base de Dados | Endereço na Web | Resumo descritivo|
+|----- | ----- | -----|
+|NSRDB |https://nsrdb.nrel.gov/about/what-is-the-nsrdb | O banco de dados nacional de radiação solar é uma coleção valores horários e semi-horários de dados meteorológicos, incluindo as três medições mais comuns de radiação solar. O dataset abrange os Estados Unidos e um conjunto crescente de locais internacionais, sendo a cidade de Nova York a localidade selecionada para este estudo.|
+
+O banco de dados considerado para determinar o nível de produção de energia PV inclui registros meteorológicos das últimas décadas de diversas cidades. Neste estudo, será considerada a cidade de Nova York para a aplicação da metodologia proposta. Os dados são fornecidos em formato .csv, permitindo sua utilização em uma ampla variedade de ferramentas.As principais características do conjunto de dados são as seguintes:
+
+- **Duração:** De 1998 a 2022
+- **Taxa de amostragem:** 30 minutos
+- **Dados utilizados:** Irradiação horizontal global, temperatura e calendário.
+
+O principal destaque deste dataset é que, embora não forneça diretamente os valores de geração PV, ela contém informações essenciais para seu cálculo. A ideia é utilizá-la para determinar os níveis de produção, relacionando-a com as diferentes variáveis, capacidades e tecnologias que uma planta de geração PV pode ter, as quais serão abordadas neste estudo com o propósito de desenvolver uma metodologia aplicável a diferentes projetos. A seguir, destacam-se as dependências mais importantes.
+
+**Fatores externos:** A temperatura e a irradiância impactam diretamente a geração PV. A irradiância determina a quantidade de energia solar disponível para ser convertida em eletricidade, sendo que maiores níveis de irradiância resultam em maior produção de energia. No entanto, a temperatura elevada pode reduzir a eficiência dos módulos, pois afeta a tensão de operação das células solares. Assim, enquanto a alta irradiância tende a aumentar a geração, o aumento da temperatura pode limitar esse ganho, como mostrado na Figura 1.
+
+![image info](./reports/figs/Figura_1.png)
+
+Figura 1: Relação entre irradiância e temperatura na geração de energia fotovoltaica.
+
+**Eficiencia dos componentes:** Os painéis solares operam com baixa eficiência quando a irradiância é muito baixa, devido às perdas de ativação e aos limiares mínimos de operação. Da mesma forma, os inversores, ao operar com valores inferiores à sua capacidade nominal, reduzem sua eficiência de conversão de energia devido às perdas e ao consumo energético em relação à energia transformada.
+
+O conjunto de dados foi carregado, verificado, interpolado e dividido para diferentes análises, como detecção de dados atípicos, tendência e sazonalidade, por se tratar de séries temporais. Como resultado dessa etapa de pré-processamento, o primeiro ano do conjunto de dados é apresentado na Figura 2.
+
+![image info](./reports/figs/Figura_2.png)
+
+Figura 2: Visualização dos dados históricos de geração fotovoltaica para o primeiro ano do conjunto de dados.
+
+Da mesma forma nas Figuras 3 e 4, são apresentados os dados de GHI e temperatura em curvas diárias para um determinado ano, onde são exibidos os valores médios máximos (linha azul pontilhada) e mínimos (linha vermelha pontilhada) das variáveis analisadas, assim como uma curva média representativa de cada um dos meses (linha verde contínua).
+
+![image info](./reports/figs/Figura_3.png)
+
+Figura 3: Curvas diárias de irradiância global horizontal (GHI) para um ano específico.
+
+![image info](./reports/figs/Figura_4.png)
+
+Figura 4: Curvas diárias de temperatura para um ano específico.
+
+Por fim, considerando as informações coletadas, utilizam-se modelos matemáticos simples que permitem relacionar as diferentes dependências que afetam a geração PV. Para isso, são propostos valores típicos de variáveis como: a temperatura nominal de operação dos painéis, o fator de temperatura, a eficiência e a potência nominal da planta e de seus conversores. Assim, serão treinados os modelos com resultados como os da Figura 5, onde são apresentadas diferentes curvas para um mesmo dia ao longo dos anos, evidenciando que a geração depende mais diretamente das condições climáticas do que do calendário.
+
+
+![image info](./reports/figs/Figura_5.png)
+Figura 5: Comparação de curvas de geração de energia fotovoltaica em diferentes anos para um mesmo dia.
 
 ## Metodologia Proposta
 
@@ -48,28 +103,54 @@ O objetivo do projeto é desenvolver um Conditional Normalizing Flow-based model
 - **Divisão do Dataset**: O dataset será dividido em conjuntos de **treinamento**, **validação** e **teste**, com uma proporção de 70%-15%-15%.
 
 ### 3. Definição do Modelo
-- **Arquitetura do Modelo**:  Será utilizado um modelo de **Conditional Normalizing Flow (CNF)**, uma técnica que transforma uma distribuição base simples em uma distribuição complexa e altamente multimodal. Diferentemente de abordagens como as redes adversariais generativas (GANs) e autoencoders variacionais (VAEs), os Normalizing Flows permitem calcular diretamente a verossimilhança exata dos dados. Isso é possível porque eles aprendem explicitamente a distribuição de probabilidade dos dados, o que também facilita a geração de novos cenários por meio da inversão do flow [[3]](#3). O CNF será capaz de modelar as correlações interdimensionais presentes nos dados de geração fotovoltaica, condicionando-os às variáveis exógenas. Essa abordagem possibilita capturar de forma precisa as complexidades da geração, mantendo uma estrutura probabilística estável, sem as dificuldades de convergência comuns em outros métodos gerativos [[4]](#4).
-- **Variáveis Condicionantes**: Inicialmente, a estação do ano será utilizada como a única variável de condição. Após a análise inicial, **temperatura** também será incluída como uma condição adicional para capturar o impacto climático na geração PV.
+- **Arquitetura do Modelo**: Será utilizado um modelo de **Mask Autoregressive Flow (MAF)**, uma variação dos **Normalizing Flows** que implementa uma estrutura autoregressiva para modelar distribuições complexas. Diferentemente de abordagens como as redes adversariais generativas (GANs) e autoencoders variacionais (VAEs), os Normalizing Flows permitem calcular diretamente a verossimilhança exata dos dados. Isso é possível porque eles aprendem explicitamente a distribuição de probabilidade dos dados, o que também facilita a geração de novos cenários por meio da inversão do flow [[3]](#3). O **MAF** consegue capturar eficientemente as dependências temporais e sazonais presentes nos dados de geração fotovoltaica, ao mesmo tempo em que garante a preservação da estrutura probabilística do modelo. Essa abordagem possibilita capturar de forma precisa as complexidades da geração, mantendo uma estrutura probabilística estável, sem as dificuldades de convergência comuns em outros métodos gerativos [[4]](#4).
+- **Variáveis Condicionantes**: Inicialmente, será utilizado o **mês** como a única variável de condição, permitindo que o modelo capture as variações sazonais na geração de energia. Em uma segunda etapa, será incluída a variável **temperatura** para capturar também o impacto climático sobre a geração fotovoltaica.
 
-### 4. Treinamento
+### 4. Fluxo de Trabalho do Modelo
+
+![image info](./reports/figs/WorkFlow.png)
+Figura 6: WorkFlow.
+
+O processo de treinamento e avaliação do modelo pode ser descrito pelo seguinte fluxo de trabalho:
+
+- **Dados Meteorológicos**: São utilizados dados meteorológicos coletados, como temperatura e irradiância solar, que influenciam diretamente a geração fotovoltaica.
+   
+- **Pré-processamento**: Os dados são pré-processados, o que envolve limpeza, normalização e preparação dos dados para serem utilizados no modelo.
+
+- **Engenharia de Características**: As variáveis meteorológicas são transformados em dados de geração fotovoltaica histórica.
+
+- **Normalizing Flow (MAF)**: Um modelo de **Mask Autoregressive Flow (MAF)** é utilizado para aprender a distribuição probabilística dos dados e gerar cenários sintéticos de geração fotovoltaica. Esse modelo é ajustado tanto com os dados meteorológicos quanto com os dados de geração histórica.
+
+- **Otimização de Hiperparâmetros**: O processo de otimização de hiperparâmetros é realizado utilizando *Grid Search*, buscando os parâmetros ideais para maximizar o desempenho do modelo.
+
+- **Avaliação Inicial (Métricas Loss, RMSE)**: Durante o treinamento do modelo, são utilizadas métricas como *Loss* e *RMSE* para avaliar o desempenho e ajustar os hiperparâmetros.
+
+- **Seleção do Melhor Modelo**: Após o processo de otimização, o melhor modelo é selecionado com base nas métricas de avaliação.
+
+- **Geração de Cenários Sintéticos**: O modelo final é utilizado para gerar dados sintéticos de geração fotovoltaica, que são comparados com os dados históricos.
+
+- **Avaliação dos Cenários Gerados (Métricas RMSE, DTW, Correlação)**: Os cenários gerados são avaliados utilizando métricas adicionais como *RMSE*, *DTW* (Dynamic Time Warping) e correlação, a fim de garantir que os cenários capturam adequadamente as variações observadas nos dados históricos.
+
+- **Classificação de Cenários**: Finalmente, os cenários são classificados com base nessas métricas, permitindo uma análise mais detalhada dos resultados gerados.
+
+### 5. Treinamento
 - **Função de Perda**: O treinamento será realizado utilizando uma função de perda baseada na maximização da **log-verossimilhança** dos dados condicionados.
-- **Otimizador**: Será utilizado um otimizador como **Adam** com taxa de aprendizado adaptativa para garantir a convergência estável do modelo.
-- **Hiperparâmetros**: Os hiperparâmetros, como o número de camadas do flow, a dimensão do espaço latente e o tamanho do batch, serão ajustados utilizando uma técnica de validação cruzada para encontrar a configuração ótima.
+- **Otimizador**: Será utilizado um otimizador como **Adam**.
+- **Hiperparâmetros**: Os hiperparâmetros, como o número de camadas intermediárias, o tamanho do batch e a taza de aprendizagem, serão ajustados utilizando a técnica *Grid Search* para encontrar a configuração ótima.
 
-### 5. Avaliação
+### 6. Avaliação
 - **Métricas de Avaliação**:
   - **Log-Verossimilhança (Log-Likelihood)**: Será utilizada para avaliar a adequação da distribuição gerada pelo modelo em relação aos dados reais, medindo a capacidade do modelo de ajustar-se às probabilidades dos dados observados.
-  - **Erro Médio Absoluto Percentual (MAPE)**: Será utilizado para medir a precisão do modelo em termos percentuais, comparando os valores reais de geração fotovoltaica com os cenários gerados.
   - **Erro Quadrático Médio (RMSE)**: Avaliará a magnitude dos erros ao longo do tempo, penalizando grandes desvios.
   - **Dynamic Time Warping (DTW)**: Comparará a similaridade entre as séries temporais reais e geradas, levando em conta possíveis desalinhamentos temporais.
   - **Correlação Temporal**: Será utilizada para verificar se o modelo captura corretamente as correlações temporais e os padrões de geração fotovoltaica ao longo do tempo [[5]](#5).
 
 - **Análise de Cenários Gerados**: Os cenários gerados serão comparados com os dados reais para verificar se as distribuições de probabilidade aprendidas pelo modelo capturam a variabilidade e as correlações presentes nos dados de geração fotovoltaica.
 
-### 6. Ajustes Adicionais
+### 7. Ajustes Adicionais
 - **Incorporação da Temperatura**: Após o treinamento inicial, o modelo será ajustado para incluir a temperatura como condição. A análise será repetida para avaliar o impacto dessa variável adicional na geração de cenários.
 
-### 7. Aplicação Final
+### 8. Aplicação Final
 - **Aplicação Externa**: Neste caso, os cenários gerados pelo modelo serão utilizados como entrada para um problema de dimensionamento e operação de uma microrrede. O objetivo será avaliar o desempenho do modelo ao fornecer dados realistas de geração fotovoltaica para otimizar a capacidade e a operação dos recursos energéticos distribuídos. 
 
 ## Cronograma
