@@ -31,7 +31,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 ### Slides e Vídeo apresentando o projeto
 
-- [Link para os slides](https://docs.google.com/presentation/d/1kVJqEns709zHCL8CGmtcWwi-9ul1a_NBjgTD9ov3QMI/edit#slide=id.p1)
+- Slides: [E1_Projeto_MariaFernanda_Raisson.pdf](https://github.com/user-attachments/files/17291787/E1_Projeto_MariaFernanda_Raisson.pdf)
+
 
 - [Link para o vídeo](https://drive.google.com/file/d/10UU3tbpaLdKtSWHwaHwwuAelCnEYYyK1/view?usp=sharing)
 
