@@ -1,0 +1,10 @@
+cityscapesscripts
+matplotlib
+numpy
+opencv-python
+Pillow
+pyiqa
+scipy
+torch
+torchvision
+tqdm
