@@ -64,7 +64,7 @@ A complexidade e diversidade do corpo humano, bem como o custo e acesso a CT, li
 
 ## Objetivo
 Este projeto visa gerar imagens sintéticas de tomografia computadorizada (CT) da região torácica. A priori, o modelo generativo proposto terá como saída imagens em duas dimensões (2D) de CT da região do tórax. Busca-se um grau de realismo suficiente para auxiliar redes de segmentação de vias aéreas. 
-Além disso, este trabalho também serve como uma primeira etapa de um projeto maior e mais ambicioso, no qual buscar-se-á a geração de volumes (imagens 3D) de tomografias pulmonares, uma combinação de imagens que juntas formam o equivalente a um exame real.
+Além disso, este trabalho também serve como uma primeira etapa de um projeto maior e mais ambicioso, no qual buscar-se-á a geração de volumes (3D) de tomografias pulmonares, uma combinação de imagens que juntas formam o equivalente a um exame real.
 
 ## Metodologia
 ### Materiais de Referência
