@@ -15,7 +15,7 @@ import os
 from constants import *
 from save_models_and_training import safe_save_unet, save_trained_models_unet, delete_safe_save_unet
 from main_functions import run_train_epoch_unet, run_validation_epoch_unet, valid_on_the_fly_unet
-from utils import read_yaml, plot_training_evolution_unet, retrieve_metrics_from_csv, prepare_environment_for_new_model, resume_training_unet
+from utils import read_yaml, plot_training_evolution_unet, retrieve_metrics_from_csv, prepare_environment_for_new_model, resume_training_unet, EarlyStopping
 
 config_path = input("Enter path for YAML file with training description: ")
 
@@ -83,14 +83,14 @@ else:
     transform = None
     transform_kwargs = {}
 
+b_early_stopping = bool(config['training']['early_stopping'])
+if b_early_stopping is True:
+    patience = int(config['training']['patience'])
+    delta = int(config['training']['delta'])
+    early_stopping = EarlyStopping(patience=patience, delta=delta)
+
 #loss
 criterion = FACTORY_DICT["criterion"][config['loss']['criterion']['name']](**config['loss']['criterion'].get('info',{}))
-if 'regularizer' in config['loss']:
-    regularization_type = config['loss']['regularizer']['type']
-    regularization_level = config['loss']['regularizer']['regularization']
-else:
-    regularization_type = None
-    regularization_level = None
 
 #optimizer
 optimizer_type = config['optimizer']['type']
@@ -193,10 +193,17 @@ for epoch in range(n_epochs):
                    unet=unet, 
                    epoch=epoch, 
                    use_wandb=False)
+        
+    ###------------------------------------------early_stopping----------------------------------
+    if b_early_stopping is True:
+        early_stopping(loss_validation_unet, unet)
+        if early_stopping.early_stop:
+            print("Early stopping")            
+            break
 
 ####----------------------Finishing-----------------------------------
 save_trained_models_unet(dir_save_models=dir_save_models, name_model=name_model, unet=unet)
-delete_safe_save_unet(dir_save_models=dir_save_models, name_model=name_model)
+#delete_safe_save_unet(dir_save_models=dir_save_models, name_model=name_model)
 
 if new_model is True:
     plot_training_evolution_unet(path=dir_save_results,
