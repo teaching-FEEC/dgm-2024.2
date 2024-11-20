@@ -69,7 +69,6 @@ O objetivo deste projeto é desenvolver um sistema baseado em redes GAIL (Genera
    - Analisar os resultados do treinamento, identificando padrões de sucesso e limitações nas trajetórias geradas.
    - Documentar os processos, resultados e aprendizados do projeto, fornecendo uma base para estudos futuros na área de robótica assistiva.
 
----
 
 ## Metodologia
 
@@ -102,6 +101,9 @@ O GAIL combina o aprendizado por imitação e o aprendizado por reforço, oferec
 ##### **Funcionamento**:
 - O GAIL aprende ao alternar entre otimizar o gerador e o discriminador. O discriminador tenta distinguir trajetórias geradas das demonstradas, enquanto o gerador tenta enganar o discriminador, produzindo trajetórias mais realistas.
 - A principal métrica usada no GAIL é a divergência de Jensen-Shannon entre as distribuições de ocupação (state-action pairs) do agente e do especialista. Isso garante que o modelo aprenda políticas que imitam os padrões observados nas demonstrações especialistas.
+
+![GANxGAIL](img/GANxGAIL.png)
+
 
 
 #### **Ambiente de Simulação RCareWorld:**
@@ -179,7 +181,7 @@ Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos d
   - Dimensão oculta das redes: hidden_dim=64
 
 
-6. **Validação e Avaliação das Trajetórias:**
+5. **Validação e Avaliação das Trajetórias:**
 
 - A validação e avaliação das trajetórias geradas foram realizadas com base em critérios quantitativos e qualitativos, garantindo que o modelo atenda aos requisitos de precisão e segurança:
 
@@ -196,12 +198,12 @@ Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos d
   - **Segurança:** Análise para identificar possíveis colisões ou movimentos arriscados que poderiam comprometer a segurança do paciente ou do manipulador.
 
 
-7. **Análise e Documentação dos Resultados:**
+6. **Análise e Documentação dos Resultados:**
    - Análise quantitativa e qualitativa dos resultados do modelo.
    - Geração de relatórios detalhados com gráficos e tabelas para descrever o desempenho do modelo.
 
 
----
+
 
 ### Bases de Dados e Evolução
 
