@@ -252,7 +252,7 @@ class processedCTData(Dataset):
         airway = airway_npz['arr_0']
         ct = torch.tensor(ct).to(torch.float32)
         ct = ct.unsqueeze(0)
-        airway = torch.tensor(airway).to(torch.float32)
+        airway = torch.tensor(airway.astype(float)).to(torch.float32)
         lung = torch.tensor(lung).to(torch.float32).unsqueeze(0)
 
         # Se uma função de transformada foi passada para o dataset, aplicá-la
