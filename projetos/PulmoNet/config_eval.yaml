@@ -1,22 +1,20 @@
 model:
-  name_model: "gen_dice_loss_freeze_example"
+  name_model: "sweep_64"
   use_best_version: True
 
 data:
-  processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"
-  dataset: "processedCTData"
+  processed_data_folder: "/mnt/shared/divided_data"
+  dataset: "lungCTData"
   batch_size: 10
   transformations: 
-    #transform: "AddGaussianNoise"
-    #info:
-      #lung_area: True
-      #intensity: 0.8185145299699786
-      #mean: 0.5597838196435154
-      #std: 0.2229110594696566
+    transform: "AddGaussianNoise"
+    info:
+      lung_area: True
+      intensity: 0.8185145299699786
+      mean: 0.5597838196435154
+      std: 0.2229110594696566
 
 evaluation:
-  bQualitativa: False
-  bFID: False
-  bSSIM: False
-  bDice: True
-  
+  bQualitativa: True
+  bFID: True
+  bSSIM: True
