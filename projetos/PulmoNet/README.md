@@ -31,6 +31,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
     7. [Cronograma](#cronograma)
     8. [Ambiente Computacional](#ambiente-computacional)
 6. [Experimentos, Resultados e Discussão dos Resultados](#experimentos-resultados-e-discussão-dos-resultados)
+    1. [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan)
+    2. [Resultados com 60 mil dados de treinamento da GAN](#resultados-com-60-mil-dados-de-treinamento-da-gan)
 7. [Conclusão](#conclusão)
     1. [Próximos Passos](#próximos-passos)
 8. [Referências Bibliográficas](#referências-bibliográficas)
@@ -73,15 +75,12 @@ O trabalho desenvolvido em [[1]](#1), propõe duas arquiteturas baseadas em GANs
 Além do artigo [[1]](#1), também serão considerados os trabalhos realizados em [[3]](#3) e [[4]](#4). No primeiro, desenvolveu-se uma GAN condicional para a geração de imagens CT pulmonares a partir de imagens de ressonância magnética. Já no segundo, utiliza-se um modelo baseado em GAN para a segmentação do pulmão em imagens CT que contém anomalias no tecido pulmonar. Apesar dos objetivos de tais trabalhos não serem os mesmos objetivos propostos para o presente projeto, eles propõem arquiteturas, estratégias de treino e de validação de resultados que podem ser adaptados e reaproveitados para o projeto em questão.
 
 ### Modelo Proposto
-
-> TODO: Atualizar arquiteturas + descrever melhor a loss
-
 Trabalhos correlatos ao nosso projeto indicam que a estratégia predominante para a síntese de CTs pulmonares e conversão imagem para imagem corresponde a aplicação de GANs (redes adversárias generativas). A estrutura de uma GAN é composta por uma rede neural "geradora", responsável por sintetizar as distribuições de entrada e retornar saídas similares aos dados reais, e uma rede neural "discriminadora", que deve ser capaz de classificar corretamente suas entradas como "reais" ou "falsas". Com isso, uma boa rede generativa deve ser capaz de enganar o discriminador, ao passo que um bom discriminador deve identificar corretamente os dados sintéticos em meio aos dados reais [[11]](#11).
 
 
-Este projeto se inspira no trabalho desenvolvido em [[1]](#1), o qual propõe duas arquiteturas baseadas em GANs para a síntese de imagens CT pulmonares a partir de máscaras binárias que segmentam a região pulmonar. Das arquiteturas propostas, inspira-se na arquitetura Pix2Pix, na qual o gerador é composto de um encoder que aumenta a profundidade da imagem enquanto diminui suas dimensões, seguido de um decoder que realiza o processo oposto. Tal arquitetura também utiliza conexões residuais. Na arquitetura proposta, o discriminador é composto por cinco camadas convolucionais, onde as quatro primeiras são seguidas por uma camada de ativação *LeakyReLu*, enquanto a última é seguida de uma função *sigmoide*. 
+Este projeto se inspira no trabalho desenvolvido em [[1]](#1), o qual propõe duas arquiteturas baseadas em GANs para a síntese de imagens CT pulmonares a partir de máscaras binárias que segmentam a região pulmonar. Das arquiteturas propostas, inspira-se na arquitetura Pix2Pix, na qual o gerador é composto de um *encoder* que aumenta a profundidade da imagem enquanto diminui suas dimensões, seguido de um *decoder* que realiza o processo oposto. Tal arquitetura também utiliza conexões residuais, que concatenam camadas da rede codificadora com a decodificadora. Além disso, na arquitetura proposta, o discriminador é composto por cinco camadas convolucionais, onde as quatro primeiras são seguidas por uma camada de ativação *LeakyReLu*, enquanto a última é seguida de uma função *sigmoide*. 
 
-No caso específico da nossa aplicação, utilizaremos como referência principal as arquiteturas propostas em [[1]](#1). Neste trabalho, uma rede Pix2Pix é utilizada pelo gerador, recebendo uma máscara binária com o formato de um pulmão em um CT e retornando esta imagem 2D preenchida com as vias aéras de um pulmão. Já a rede discriminadora segue a arquitetura 30 × 30 PatchGAN. Ambas estas estruturas foram inicialmente recomendadas por [[8]](#8).
+No caso específico da nossa aplicação, utilizaremos como referência principal as arquiteturas propostas em [[1]](#1). Neste trabalho, uma rede Pix2Pix é utilizada pelo gerador, recebendo uma máscara binária com o formato de um pulmão em um CT e retornando esta imagem 2D preenchida com as vias aéras de um pulmão. Já a rede discriminadora segue a arquitetura 30 × 30 PatchGAN, recebendo em sua entrada tanto a imagem do pulmão (real ou sintética) quanto a máscara binária de segmentação do pulmão. Ambas estas estruturas foram inicialmente recomendadas por [[8]](#8).
 As duas imagens abaixo ilustram as arquiteturas do gerador e discriminador, respectivamente.
 
 ![Arquitetura Pix2Pix proposta para gerador.](figs/arquitetura_gen.png?raw=true)
@@ -96,7 +95,11 @@ A função de *loss* aplica um critério similar à *Binary Cross Entropy*, com 
 
 $$arg\ min_{𝐺}\ max_{𝐷}\ E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)] + E_{𝑥,𝑧}[log(1 − 𝐷(𝑥, 𝐺(𝑥, 𝑧)))] + 𝜆E_{𝑥,𝑦,𝑧}[‖𝑦 − 𝐺(𝑥, 𝑧)‖_{1}]$$
 
-> Idealmente, deseja-se que a função de *loss* do gerador e a do discriminador encontrem um equilíbrio em torno de 0.5 (referência Goodfellow)
+Nota-se que a *loss* do discriminador é ajustada apenas em função da saída do discriminador, ao passo que a *loss* do gerador recebe informações tanto da imagem real do pulmão quanto da saída do discriminador.
+Idealmente, deseja-se que a função de *loss* do gerador e a do discriminador encontrem um equilíbrio em torno de 0.5 [[11]](#11).
+
+Alternativas para esta função foram testadas durante o processo de busca pelos hiperparâmetros da rede, como será abordado na seção [Workflow](#workflow). Tais variações incluem: regularização por MSE (*Mean Squared Error*) ao invés de MAE, regularização apenas na região da máscara que representa o interior do pulmão e regularização apenas na região da máscara que representa o exterior do pulmão.
+A partir de tais opções, buscou-se a função de *loss* ótima para a geração de imagens sintéticas com boa definição da estrutura externa ao pulmão (como músculos torácicos e a coluna vertebral) e com boa definição da região interna à área pulmonar (como as vias aéreas).
 
 ### Bases de Dados e Evolução
 Apesar de inspirar-se no artigo [[1]](#1), o desenvolvimento deste projeto utilizará a base de dados ATM'22, cuja descrição está na tabela abaixo. Tal base de dados não foi usada no desenvolvimento do projeto em [[1]](#1), mas foi escolhida no presente projeto devido a sua amplitude, a presença de dados volumétricos e em razão das imagens possuírem a delimitação das vias aéreas obtidas através de especialistas. Os volumes da base ATM'22 foram adquiridos em diferentes clínicas e considerando diferentes contextos clínicos. Construída para a realização de um desafio de segmentação automática de vias aéria utilizando IA, a base de dados está dividida em 300 volumes para treino, 50 para validação e 150 para teste.
@@ -178,9 +181,6 @@ A figura abaixo resume esta etapa de tratamento dos dados por completo.
 *Figura 10: Fluxograma para processamento da base de dados.*
 
 ### Workflow
-
-> TODO: Incluir mais detalhes da metodologia
-
 Em uma perspectiva geral do projeto, a metodologia se divide em três grandes estágios:
 1. Preparação da base de dados;
 2. Treinamento e fine-tunning de modelos de síntese;
@@ -189,45 +189,38 @@ Em uma perspectiva geral do projeto, a metodologia se divide em três grandes es
 No que diz respeito à preparação da base de dados, aplica-se o fluxo descrito na Figura 10, da seção anterior, na qual os dados são obtidos de uma fonte pública, processados e separados em conjuntos de treinamento, validação cruzada e testes. A saída desta etapa são 90 mil trios (fatia da CT pulmonar, segmentação feita por especialistas e máscara binária da região do pulmão), com dimensão 1 x 512 x 512 cada.
 
 Quanto a segunda etapa, implementa-se a arquitetura de uma GAN, descrita na seção [Modelo Proposto](#modelo-proposto), que foi concebida tomando como base o artigo [[1]](#1). Sob esta arquitetura, realiza-se uma busca pelos parâmetros ótimos de treinamento da rede conforme a tabela abaixo, a fim de encontrar a melhor combinação para gerar imagens sintéticas de CTs pulmonares mais realistas.
-Esta varredura inicial é feita com apenas 10 mil dados e analisada no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM).
-A partir desta análise inicial, seleciona-se três modelos para prosseguir com o treinamento com todos os dados disponíveis.
+A configuração destes parâmetros é feita em um arquivo YAML.
 
 |Parâmetros | Possibilidades |
 |----- | ----- |
-|Passos Disc | 1 a 10 |
-|Passos Gen | 1 a 10 |
+|Passos de atualização do discriminador | 1 a 4 |
+|Passos de atualização do gerador | 1 a 4 |
 |Tipo de ruído | [Uniforme, Gaussiano] |
 |Localização do ruído | Na imagem completa ou apenas na região do pulmão|
-|Regularização | [0, 10] |
-|Beta |Entre 1989 e 2000 |
-|blabla | blabla |
+|Média da distribuição do ruído | 0.5 a 1 |
+|Desvio-padrão da distribuição do ruído | 0.1 a 0.5 |
+|Intensidade | 0.3 a 1 |
+|Loss | BCE ou MSE |
+|Regularizador | MAE ou MSE |
+|Nível de regularização | 1 a 15 |
+|Região de regularização | Imagem completa, dentro do pulmão ou fora do pulmão |
+|Learning Rate do otimizador | $1.3 \times 10^{-4}$ a $3.75 \times 10^{-4}$ |
+|Parâmetro beta do otimizador |0.4 a 0.9 |
 
-Dadas as restrições de tempo e capacidade computacional, não foram testadas todas as combinações de parâmetros da tabela acima. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros em quinze modelos, descritos na tabela abaixo.
-A configuração destes parâmetros é feita em um arquivo YAML.
+Um ponto importante a ser destacado com relação a esta varredura é a diferença do tipo e nível de ruído aplicado na máscara de entrada do gerador. Como é possível observar na tabela acima, duas distribuições foram testadas: uniforme e gaussiana. Mais ainda, o nível e a localização do ruído também foram variados.
+Tais mudanças impactam na entrada recebida pelo gerador e, portanto, podem interferir no desempenho e qualidade do processo de síntese.
+A figura abaixo exemplifica as diferentes entradas no gerador a depender do ruído aplicado.
 
-[jogar para resultados -----------------]
+![Exemplos de entradas com diferentes tipos e níveis de ruídos.](figs/imagem_ruidos.png?raw=true)
 
-|Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão|	Intensidade	|Média Ruído	|Desvio Ruído	|Criterion	|Regularizador	|Nível Regularização	|Learning Rate	|Beta|
-| ----- | ----- | -----   | ----- | -----       | -----         | -----         |   -----  | ----- | -----| -----   |   -----       |
-|Sweep10|	4/2	|Gaussiano|	Falso |	0,3157719473|	0,7469069764|	0,1784581512|	BCELoss|	MSE|	8|	3,11E-04|	0,4597517629|
-|Sweep205|	3/1	|Gaussiano|	Verdadeiro|	0,5566831094|	0,5120044953|	0,3903814624|	MSELoss|	MAE|	10|	2,85E-04|	0,7555202559|
-|Sweep412|	1/1| Gaussiano|	Falso| 0,757255249|	0,5250495573|	0,4755411392|	MSELoss|	MAE|	4	|1,70E-04	|0,8811316699|
-|Sweep64	|1/2	|Gaussiano	|Verdadeiro	|0,81851453	|0,5597838196	|0,2229110595	|MSELoss	|MAE	|3	|3,75E-04	|0,8659691523|
-|Sweep123	|2/1	|Gaussiano	|Verdadeiro	|0,3320755603	|0,652635058	|0,3347731658	|MSELoss	|MAE	|4	|1,55E-04	|0,6252443893|
-|Sweep284	|1/2	|Gaussiano	|Verdadeiro	|0,4882098594	|0,872090533	|0,4466720449	|MSELoss	|MSE	|4	|2,24E-04	|0,6781061686|
-|Sweep394	|2/1	|Gaussiano	|Falso	|0,3715918515	|0,6996284578	|0,2871496533	|BCELoss	|MAE	|1	|3,40E-04	|0,4792751887|
-|Sweep497	|1/1	|Gaussiano	|Verdadeiro	|0,3039449554	|0,8749711247	|0,2897599163	|MSELoss	|MSE	|15	|1,32E-04	|0,840671948|
-|Sweep522	|4/2	|Gaussiano	|Falso	|0,8766142328	|0,6935412609	|0,3790460335	|MSELoss	|MSE_mask	|13	|3,40E-04	|0,5728743005|
-|Sweep71	|2/1	|Gaussiano	|Verdadeiro	|0,8172635438	|0,548984276	|0,3265456309	|BCELoss	|MSE_mask	|1	|2,82E-04	|0,52631016|
-|Sweep185	|4/1	|Uniforme	|Verdadeiro	|0,3563791549|	0,5899638112|	0,2158650277|	MSELoss|	MAE_mask|	5|	2,82E-04|	0,4240341338|
-|Sweep186	|2/1	|Uniforme	|Verdadeiro	|0,9795390854|	0,5310213915	|0,2623582226	|BCELoss	|MAE_mask	|4	|1,87E-04	|0,6069949071|
-|Sweep256	|1/2	|Gaussiano	|Verdadeiro	|0,3085178607	|0,6810390549	|0,1347611367	|MSELoss	|MAE_mask	|8	|3,16E-04	|0,4703302188|
-|Sweeo279	|4/2	|Gaussiano	|Falso	|0,6821396703	|0,9681958035	|0,1024100341	|MSELoss	|MAE_mask	|15	|2,58E-04	|0,6470046351|
-|Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,9864110063	|0,9929413808	|0,1007233152	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,4393293661|
+*Figura 11: Exemplos de entradas com diferentes tipos e níveis de ruídos.*
+
+Esta varredura inicial é feita com apenas 10 mil dados e analisada no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM).
+A partir desta análise inicial, seleciona-se três modelos para prosseguir com o treinamento com todos os dados disponíveis.
+Ressalta-se que, dadas as restrições de tempo e capacidade computacional, não foram testadas todas as combinações de parâmetros da tabela acima. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros em quinze modelos, conforme será apresentado na seção [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan).
 
 Após esta etapa, passa-se os três melhores modelos para a etapa de avaliação de desempenho e qualidade dos resultados. Gera-se imagens sintéticas a partir de máscaras binárias de CTs pulmonares com ruído e realiza-se três testes: qualitativo, quantitativo e de utilidade. Tais testes serão descritos em mais detalhes na seção [Métricas de Avaliação](#métricas-de-avaliação).
 
-Um ponto importante a ser destacado é a diferença do tipo de ruído aplicado na máscara de entrada do gerador. Como é possível observar nas tabelas acima, duas distribuições foram testadas: uniforme e gaussiana. xxxxxx
 
 Em suma, o fluxo de trabalho proposto por este projeto, ilustrado na figura a seguir, inicia-se com a obtenção da base de dados ATM'22 e seu devido tratamento, conforme detalhado na seção anterior.
 Utilizando estes dados, alimenta-se a rede generativa com as fatias segmentadas (máscaras binárias). Já a rede discriminadora recebe os dados reais (sem segmentação) e os dados sintéticos, devendo classificar cada um como "real" ou "falso".
@@ -235,7 +228,7 @@ Após o treinamento, avalia-se os dados sintéticos a partir de três perspectiv
 
 ![Fluxo para treinamento da PulmoNet.](figs/workflow_completo.png?raw=true)
 
-*Figura 11: Fluxo para treinamento da PulmoNet.*
+*Figura 12: Fluxo para treinamento da PulmoNet.*
 
 Destaca-se que, em operação (após a fase treinamento), espera-se que o modelo receba máscaras binárias com o formato do pulmão somadas a um ruído, retonando o preenchimento da área interna do pulmão.
 Uma mesma máscara binária poderá gerar imagens sintéticas distintas, devido ao ruído aleatório adicionado na entrada do modelo.
@@ -300,7 +293,7 @@ O projeto será implementado seguindo o seguinte fluxo lógico:
 
 ![Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.](figs/fluxo_logico.png?raw=true)
 
-*Figura 12: Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.*
+*Figura 13: Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.*
 
 Dado este fluxo, estipulamos o seguinte cronograma para desenvolvimento do projeto:
 
@@ -327,17 +320,28 @@ Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado e
 ## Experimentos, Resultados e Discussão dos Resultados
 > TODO: Atualizar com dados da E3
 
-Para a entrega parcial do projeto (E2), já foi feito um estudo de artigos na literatura no contexto do nosso projeto. Além disso, seguindo o cronograma do projeto, também foi finalizada a etapa de análise da base de dados e a definição das etapas de pré-processamento, conforme já discutido brevemente na seção sobre a base de dados. Mais ainda, também foi realizada a implementação da arquitetura inicial das GANs escolhidas para o projeto, tomando como base o desenvolvimento em [[1]](#1), e iniciou-se a etapa de treinamento deste modelo.
+### Resultados preliminares com 10 mil dados de treinamento da GAN
 
-Atualmente, estamos enfrentando dificuldades nesta etapa de treinamento, já que notamos que o discriminador estava ficando muito bom rápido demais, não permitindo que o gerador conseguisse avançar em seu aprendizado. Para solucionar este problema, tentaremos usar a estratégia de atualizar a *loss* do gerador com mais frequência do que a do discriminador (a priori, atualizaremos a loss do discriminador a cada 3 batches de atualização da loss do gerador).
+|Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão|	Intensidade	|Média Ruído	|Desvio Ruído	|Criterion	|Regularizador	|Nível Regularização	|Learning Rate	|Beta|
+| ----- | ----- | -----   | ----- | -----       | -----         | -----         |   -----  | ----- | -----| -----   |   -----       |
+|Sweep10|	4/2	|Gaussiano|	Falso |	0,3157719473|	0,7469069764|	0,1784581512|	BCELoss|	MSE|	8|	3,11E-04|	0,4597517629|
+|Sweep205|	3/1	|Gaussiano|	Verdadeiro|	0,5566831094|	0,5120044953|	0,3903814624|	MSELoss|	MAE|	10|	2,85E-04|	0,7555202559|
+|Sweep412|	1/1| Gaussiano|	Falso| 0,757255249|	0,5250495573|	0,4755411392|	MSELoss|	MAE|	4	|1,70E-04	|0,8811316699|
+|Sweep64	|1/2	|Gaussiano	|Verdadeiro	|0,81851453	|0,5597838196	|0,2229110595	|MSELoss	|MAE	|3	|3,75E-04	|0,8659691523|
+|Sweep123	|2/1	|Gaussiano	|Verdadeiro	|0,3320755603	|0,652635058	|0,3347731658	|MSELoss	|MAE	|4	|1,55E-04	|0,6252443893|
+|Sweep284	|1/2	|Gaussiano	|Verdadeiro	|0,4882098594	|0,872090533	|0,4466720449	|MSELoss	|MSE	|4	|2,24E-04	|0,6781061686|
+|Sweep394	|2/1	|Gaussiano	|Falso	|0,3715918515	|0,6996284578	|0,2871496533	|BCELoss	|MAE	|1	|3,40E-04	|0,4792751887|
+|Sweep497	|1/1	|Gaussiano	|Verdadeiro	|0,3039449554	|0,8749711247	|0,2897599163	|MSELoss	|MSE	|15	|1,32E-04	|0,840671948|
+|Sweep522	|4/2	|Gaussiano	|Falso	|0,8766142328	|0,6935412609	|0,3790460335	|MSELoss	|MSE_mask	|13	|3,40E-04	|0,5728743005|
+|Sweep71	|2/1	|Gaussiano	|Verdadeiro	|0,8172635438	|0,548984276	|0,3265456309	|BCELoss	|MSE_mask	|1	|2,82E-04	|0,52631016|
+|Sweep185	|4/1	|Uniforme	|Verdadeiro	|0,3563791549|	0,5899638112|	0,2158650277|	MSELoss|	MAE_mask|	5|	2,82E-04|	0,4240341338|
+|Sweep186	|2/1	|Uniforme	|Verdadeiro	|0,9795390854|	0,5310213915	|0,2623582226	|BCELoss	|MAE_mask	|4	|1,87E-04	|0,6069949071|
+|Sweep256	|1/2	|Gaussiano	|Verdadeiro	|0,3085178607	|0,6810390549	|0,1347611367	|MSELoss	|MAE_mask	|8	|3,16E-04	|0,4703302188|
+|Sweeo279	|4/2	|Gaussiano	|Falso	|0,6821396703	|0,9681958035	|0,1024100341	|MSELoss	|MAE_mask	|15	|2,58E-04	|0,6470046351|
+|Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,9864110063	|0,9929413808	|0,1007233152	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,4393293661|
 
-O resultado atual do nosso treinamento é apresentado na figura abaixo. Nota-se que a saída do gerador ainda está distante do esperado e precisa ser aprimorada.
 
-![Fatia original, fatia segmentada, saída do gerador e saída do discriminador.](figs/resultado_parcial_e2.jpeg?raw=true)
-
-*Figura 13: Fatia original, fatia segmentada, saída do gerador e saída do discriminador.*
-
-Ademais outros problemas que estamos enfrentando durante a etapa do treinamento tratam do tamanho da nossa base de dados, que é bem grande e resulta em um processamento demorado, e o uso de recursos em GPU.
+### Resultados com 60 mil dados de treinamento da GAN
 
 ## Conclusão
 > TODO: Atualizar com dados da E3
