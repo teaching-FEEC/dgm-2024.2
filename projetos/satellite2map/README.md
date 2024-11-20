@@ -86,6 +86,8 @@ $$ PA = \frac{1}{N} \sum_{i=1}^N (|y_i - \hat{y}_i| < \delta) $$
       
 onde $\delta$ é o limite de tolerância que define se um pixel é correto ou não.  Nesta métrica os resultados variam entre 0 e 1, e quanto maior o valor, melhor é a acurácia da imagem gerada em relação à imagem de referência.
 
+**Obs:** Para o cálculo de todas as métricas as imagens foram normalizadas para o intervalo [0,1].
+
 ## Bases de Dados e Evolução
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
@@ -112,24 +114,17 @@ Exemplos de pares de imagens da base de dados:
 
 ![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
 
-
   -- Evolução da Loss do Discriminador:
 
 ![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
-
-
 
   -- Resultado Parcial da Época 10:
 
 ![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
 
-
-
   -- Resultado Parcial da Época 50:
 
 ![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
-
-
 
   -- Resultado Parcial da Época 90:
 
@@ -142,19 +137,13 @@ Exemplos de pares de imagens da base de dados:
 
 ![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
 
-
-
   -- Resultado Parcial da Época 10:
 
 ![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
 
-
-
   -- Resultado Parcial da Época 50:
 
 ![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
-
-
 
   -- Resultado Parcial da Época 90:
 
@@ -166,14 +155,10 @@ Abaixo se encontram os valores obtidos para as métricas propostas para cada um 
 
 > | | MSE | PSNR| SSIM | PA |
 > |--|--|--|--|--|
-> | Pix2pix | 0.0 | 0.0 | 0.0 | 0.0 |
-> | CGAN  | 0.0 | 0.0 | 0.0 | 0.0 |
+> | Pix2pix | **0.003559** | **72.61** | **0.5703** | **0.5414** |
+> | CGAN  | 0.005664 | 70.60 | 0.4312 | 0.4437 |
 
-De forma geral, destaca-se que o Pix2Pix apresentou um desempenho melhor em todas as métricas avaliadas, conforme visualizado na tabela acima.
-
-Um dos motivos que explica este desempenho inferior da CGAN se deve ao fato deste modelo ser mais complexo, e como consequência demandar um período de treinamento maior do que o adotado neste trabalho.
-
-
+A partir dos resultados da tabela acima, é possível observar que o Pix2Pix apresentou um desempenho melhor que a CycleGAN em todas as métricas avaliadas. Isso se deve ao fato de que o mesmo modelo foi utilizado para os dois métodos, diferenciando-se apenas no treinamento. Dado que o treinamento do Pix2pix é supervisionado, é de se esperar que o desempenho desse método fosse melhor do que o do método não supervisionado. Vale ressaltar que a principal vantagem da CycleGAN frente ao Pix2pix é a capacidade de aprender mapeamentos a partir de base de dados não pareadas. Em casos onde há acesso a dados pareados, é possível inferir que o Pix2pix apresenta resultados melhores através de um método mais simples.
 
 ## Conclusão
 

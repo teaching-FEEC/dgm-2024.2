@@ -16,6 +16,10 @@ def MSE(batch_pred, batch_true):
     :param batch_true: Tensor de referência com forma (32, 3, 256, 256).
     :return: MSE médio para o batch.
     """
+    # scaling the images to [0, 1]
+    batch_pred = batch_pred * 0.5 + 0.5
+    batch_true = batch_true * 0.5 + 0.5
+
     mse = F.mse_loss(batch_pred, batch_true, reduction='mean')
     return mse.item()
 
@@ -28,6 +32,10 @@ def PSNR(batch_pred, batch_true):
     :param batch_true: Tensor de referência com forma (32, 3, 256, 256).
     :return: PSNR médio para o batch.
     """
+    # scaling the images to [0, 1]
+    batch_pred = batch_pred * 0.5 + 0.5
+    batch_true = batch_true * 0.5 + 0.5
+
     mse = F.mse_loss(batch_pred, batch_true, reduction='mean')
     # Converta o mse para um tensor antes de aplicar torch.log10
     psnr = 20 * torch.log10(255/mse.sqrt())
@@ -42,6 +50,10 @@ def SSIM(batch_pred, batch_true):
     :param batch_true: Tensor de referência com forma (32, 3, 256, 256).
     :return: SSIM médio para o batch.
     """
+    # scaling the images to [0, 1]
+    batch_pred = batch_pred * 0.5 + 0.5
+    batch_true = batch_true * 0.5 + 0.5
+    
     batch_size = batch_pred.size(0)
     ssim_values = []
 
