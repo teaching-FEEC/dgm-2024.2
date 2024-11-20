@@ -4,8 +4,10 @@ from gretel_synthetics.timeseries_dgan.dgan import DGAN
 from gretel_synthetics.timeseries_dgan.config import DGANConfig, OutputType
 import os
 import torch
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"  # ou ":16:8"
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 class DCGANGenerator:
@@ -44,9 +46,11 @@ class DCGANGenerator:
                 sample_len=self.config["parameters"]["sample_len"],
                 batch_size=self.config["parameters"]["batch_size"],
                 epochs=self.config["parameters"]["epochs"],
+                cuda=device
             )
         )
-
+        
+        
         # Treina o modelo
         history = self.model.train_numpy(
             attributes=attributes, features=train_data, attribute_types=[OutputType.DISCRETE]

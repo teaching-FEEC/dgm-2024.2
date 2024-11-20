@@ -172,12 +172,6 @@ class RealSyntheticComparator:
         x_synthetic = self.df_synthetic[self.time_cols].values
         combined_data = np.concatenate((x_real, x_synthetic))
         combined_data = StandardScaler().fit_transform(combined_data)
-        #X_real = StandardScaler().fit_transform(self.df_real[self.time_cols].values)
-        #X_synthetic = StandardScaler().fit_transform(self.df_synthetic[self.time_cols].values)
-        
-        # Aplicar t-SNE em ambos
-        #X_real_tsne = tsne.fit_transform(X_real)
-        #X_synthetic_tsne = tsne.fit_transform(X_synthetic)
         X_all_tsne = tsne.fit_transform(combined_data)
         
         # Criar DataFrames para visualização
@@ -514,3 +508,4 @@ class RealSyntheticComparator:
         plt.close(fig)  # Fechar a figura após salvar
         return fig
 
+ 

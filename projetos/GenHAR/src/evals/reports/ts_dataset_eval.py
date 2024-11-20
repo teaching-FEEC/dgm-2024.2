@@ -10,7 +10,7 @@ import plotly.express as px
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 
-class TimeSeriesDatasetEvaluator:
+class TSDatasetEval:
     def __init__(self, df, label_col, label_names):
         """
         Classe para avaliar o dataset de séries temporais.

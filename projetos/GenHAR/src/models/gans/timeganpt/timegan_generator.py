@@ -12,9 +12,11 @@ from models.gans.timeganpt.utils import MinMaxScaler
 from models.gans.timeganpt.utils import MinMaxUnscaler
 
 from models.gans.timeganpt.modules_and_training import TimeGAN
-import tsgm
+
 import pandas as pd
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 class TimeGANGenerator:
     def __init__(self, m_config):
@@ -115,7 +117,7 @@ class TimeGANGenerator:
         self.model = [self.Generator, self.Embedder, self.Supervisor, self.Recovery, self.Discriminator]
 
     def train_tsgm(self, X_train, y_train):
-
+        import tsgm
         self.model = {}
         self.scaler = {}
 

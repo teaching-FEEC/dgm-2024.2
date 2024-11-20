@@ -6,15 +6,17 @@ from sklearn.metrics import classification_report
 from matplotlib.backends.backend_pdf import PdfPages
 from PyPDF2 import PdfReader, PdfWriter
 from typing import Dict
-from io import BytesIO
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from typing import List, Dict
 
 class ModelEvaluator:
-    def __init__(self, classifiers: Dict[str, any], 
+    def __init__(self, classifiers: List[str], 
                  df_train: pd.DataFrame, df_test: pd.DataFrame, 
                  df_val: pd.DataFrame, df_synthetic: pd.DataFrame,
                  label: str, generator_name: str, dataset_name: str, 
                  transformation_name: str):
-        self.classifiers = classifiers
+        self.classifiers = self.get_classifiers(classifiers)
         self.df_train = df_train
         self.df_test = df_test
         self.df_val = df_val
@@ -42,12 +44,30 @@ class ModelEvaluator:
         self.model_dir = os.path.join(self.dataset_dir, self.generator_name)
         os.makedirs(self.model_dir, exist_ok=True)
 
+    def get_classifiers(self,classifier_names: List[str]) -> Dict[str, object]:
+        """
+        Retorna um dicionário de instâncias de classificadores com base nos nomes fornecidos.
+        
+        :param classifier_names: Lista de nomes de classificadores a serem instanciados
+        :return: Dicionário onde as chaves são os nomes dos classificadores e os valores são as instâncias
+        """
+        CLASSIFIER_MAPPING = {
+            "Random Forest": RandomForestClassifier,
+            "SVM": SVC
+        }
+        classifiers = {}
+        for name in classifier_names:
+            if name in CLASSIFIER_MAPPING:
+                classifiers[name] = CLASSIFIER_MAPPING[name]()  # Instancia o classificador
+            else:
+                print(f"Classificador '{name}' não encontrado no mapeamento.")
+        return classifiers
     def evaluate_model(self, X_train: np.ndarray, y_train: np.ndarray, 
                        X_test: np.ndarray, y_test: np.ndarray, classifier: any) -> Dict[str, float]:
         clf = classifier
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
-        report = classification_report(y_test, y_pred, output_dict=True)
+        report = classification_report(y_test, y_pred, output_dict=True, zero_division=0)
         return {
             'accuracy': report['accuracy'],
             'precision': report['1']['precision'],
@@ -55,7 +75,7 @@ class ModelEvaluator:
             'f1-score': report['1']['f1-score']
         }
 
-    def evaluate_all_models(self) -> Dict[str, Dict[str, Dict[str, float]]]:
+    def evaluate_all_classifiers_models(self) -> Dict[str, Dict[str, Dict[str, float]]]:
         metrics = {}
         for name, clf in self.classifiers.items():
             metrics[name] = {
@@ -219,3 +239,4 @@ class ModelEvaluator:
 
 
 
+    

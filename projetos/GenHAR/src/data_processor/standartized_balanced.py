@@ -61,7 +61,7 @@ class StandardizedViewDataset:
         for dataset_name in dataset_names:
             df = self.load_dataset(dataset_name, sensors)
             # Adiciona uma coluna para identificar a origem do dataset
-            df['source'] = dataset_name
+            #df['source'] = dataset_name
             # Concatena os DataFrames
             combined_df = pd.concat([combined_df, df], ignore_index=True)
         
