@@ -30,7 +30,7 @@ def PSNR(batch_pred, batch_true):
     """
     mse = F.mse_loss(batch_pred, batch_true, reduction='mean')
     # Converta o mse para um tensor antes de aplicar torch.log10
-    psnr = 20 * torch.log10(torch.tensor(1.0)) - 10 * torch.log10(mse)
+    psnr = 20 * torch.log10(255/mse.sqrt())
     return psnr.item()
 
 # Função para SSIM
