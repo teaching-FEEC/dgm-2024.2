@@ -37,9 +37,9 @@ trained_gen_path = str(config['model']['trained_gen_path'])
 freeze_layers = bool(config['model'].get('freeze_layers', True))
 
 #models
-unet = FACTORY_DICT["model_unet"]["Unet"]().to(device)
+unet = FACTORY_DICT["model_unet"]["Unet"](use_as_unet=True).to(device)
 if fine_tunning is True:
-    unet.load_state_dict(torch.load(trained_gen_path, weights_only=False, map_location=torch.device(device)))
+    unet.load_state_dict(torch.load(trained_gen_path, weights_only=True, map_location=torch.device(device)))
     unet.to(device)
     unet.eval()
 
