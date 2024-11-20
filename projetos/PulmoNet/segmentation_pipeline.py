@@ -63,10 +63,12 @@ if fine_tunning is True:
             param.requires_grad = False
 
 #data
-processed_data_folder = str(config['data'].get('processed_data_folder',))
-dataset_type = str(config['data'].get('dataset',
-                                    'processedCTData'))
+processed_data_folder = str(config['data']['processed_data_folder'])
+print(processed_data_folder)
+dataset_type = str(config['data']['dataset'])
+print(dataset_type)
 start_point_train_data = int(config['data']['start_point_train_data'])
+print(start_point_train_data)
 end_point_train_data = int(config['data']['end_point_train_data'])
 start_point_validation_data = int(config['data']['start_point_validation_data'])
 end_point_validation_data = int(config['data']['end_point_validation_data'])
