@@ -1,6 +1,6 @@
 model:
-  name_model: "sweep_64"
-  use_best_version: True
+  name_model: "model_sweep10_aspretrained"
+  use_best_version: False
 
 data:
   processed_data_folder: "/mnt/shared/divided_data"
@@ -9,10 +9,10 @@ data:
   transformations: 
     transform: "AddGaussianNoise"
     info:
-      lung_area: True
-      intensity: 0.8185145299699786
-      mean: 0.5597838196435154
-      std: 0.2229110594696566
+      lung_area: False
+      intensity: 0.3157719473254114
+      mean: 0.7469069764183585
+      std: 0.17845815118827982
 
 evaluation:
   bQualitativa: True
