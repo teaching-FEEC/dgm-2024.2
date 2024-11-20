@@ -1,26 +1,26 @@
 model:
-  name_model: "gen_dice_loss_freeze_example"
-  dir_save_results: "./gen_dice_loss_freeze_example/"
+  name_model: "gen_sweep412"
+  dir_save_results: "./gen_sweep412/"
   new_model: True
-  path_to_saved_model: "./gen_dice_loss_freeze_example/models/gen_dice_loss_freeze_example_best.pt"
   fine_tunning: True
   freeze_layers: True
-  trained_gen_path: "C:/Users/julia/OneDrive/Dados_escolinha/sweep_10_gen_best.pt"
+  trained_gen_path: "/home/leticia/Documentos/PulmoNet/model_sweep412_aspretrained/models/model_sweep412_aspretrained_gen_trained.pt"
 
 
 data:
-  processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"
+  processed_data_folder: "/mnt/shared/divided_data/"
   train_dataset: "seg_train"
   val_dataset: "seg_val"
   start_point_train_data: 0
-  end_point_train_data: 100
+  end_point_train_data: 4600
   start_point_validation_data: 0
-  end_point_validation_data: 10
+  end_point_validation_data: 2000
+
 
 training:
   batch_size_train: 20
   batch_size_validation: 8
-  n_epochs: 50
+  n_epochs: 30
 
 loss: 
   criterion: 
