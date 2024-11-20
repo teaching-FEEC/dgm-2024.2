@@ -5,8 +5,8 @@ import os
 
 
 from constants import *
-from metrics import my_fid_pipeline, my_ssim_pipeline
-from utils import read_yaml, plt_save_example_synth_during_test, save_quantitative_results
+from metrics import my_fid_pipeline, my_ssim_pipeline, dice_coefficient_score_calculation
+from utils import read_yaml, plt_save_example_synth_during_test, save_quantitative_results, plt_save_example_airways_img, save_quantitative_results_unet
 
 
 # Definição da função para avaliação dos resultados
@@ -91,7 +91,43 @@ def evaluate(gen,
                             struct_sim_center=struct_similarity_center,
                             save_path=path_to_save_metrics)
     print("Evaluation done!")
-    
+
+
+# Definição da função para avaliação dos resultados
+def evaluate_seg_net(model, data_loader_test, dir_save_test):
+    dir_to_save_gen_imgs = dir_save_test+'generated_imgs/'
+    path_to_save_metrics = dir_save_test+'quantitative_metrics.json'
+    os.makedirs(dir_to_save_gen_imgs, exist_ok=True)
+
+    gen.eval()
+
+    print('Generating examples for qualitative analysis...')
+    with torch.no_grad():
+        for batch in data_loader_test:
+            input_img_batch = batch[0]
+            input_airway_batch = batch[1]
+            
+            input_img = input_img_batch[:1,:,:,:].to(device)
+            input_airway = input_airway_batch[:1,:,:].to(device)
+            
+            gen_seg = model(input_img)
+            break
+
+        plt_save_example_airways_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 
+                                    input_airway_ref=input_airway[0,:,:].detach().cpu().numpy(), 
+                                    gen_seg_ref=gen_seg[0,0,:,:].detach().cpu().numpy(), 
+                                    epoch=0, 
+                                    save_dir=dir_save_test)
+        
+        print('Calculating DICE...')
+        dice =  dice_coefficient_score_calculation(pred=input_airway.detach().cpu().numpy(), label=input_img.detach().cpu().numpy())
+        print(dice)
+
+    # Salva os resultados
+    save_quantitative_results_unet(dice = dice, save_path=path_to_save_metrics)
+    print("Evaluation done!")
+
+
 config_path = input("Enter path for YAML file with evaluation description: ")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 config = read_yaml(file=config_path)
@@ -122,15 +158,23 @@ bQualitativa = bool(config['evaluation']['bQualitativa'])
 bFID = bool(config['evaluation']['bFID'])
 bSSIM = bool(config['evaluation']['bSSIM'])
 
+bDice = bool(config['evaluation']['bDice'])
+
 
 ##--------------------Preparing Objects for Evaluation--------------------
 
 # Definição dos caminhos para localização do modelo e onde dados serão armazenados
 trained_gen_dir = './' + model_gen_name + '/'
-if use_best_version is True:
-    trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_best.pt'
+if bDice is False:
+    if use_best_version is True:
+        trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_best.pt'
+    else:
+        trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_trained.pt'
 else:
-    trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_trained.pt'
+    if use_best_version is True:
+        trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_unet_best.pt'
+    else:
+        trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_unet_trained.pt'
 
 # Define gerador
 gen = FACTORY_DICT["model_gen"]["Generator"]()
@@ -160,7 +204,5 @@ evaluate(gen=gen,
         bFID=bFID, 
         bSSIM=bSSIM)
 
-
-
-
-
+if bDice is True:
+    evaluate_seg_net(model=gen, data_loader_test=data_loader_test, dir_save_test=trained_gen_dir)

@@ -258,3 +258,15 @@ def my_ssim(img1, img2, C1, C2, C3):
     # print(f"contrast: {c:.2f}")
     # print(f"structure_similarity: {s:.2f}")
     return l * c * s, l, c, s
+
+
+# DICE -------------------------------------------------------------------
+def dice_coefficient_score_calculation(pred, label, smooth=1e-5):
+    '''
+    From: https://github.com/EndoluminalSurgicalVision-IMR/ATM-22-Related-Work/blob/main/evaluation/evaluation_atm_22.py
+    '''
+    pred = pred.flatten()
+    label = label.flatten()
+    intersection = np.sum(pred * label)
+    dice_coefficient_score = round(((2.0 * intersection + smooth) / (np.sum(pred) + np.sum(label) + smooth)) * 100, 2)
+    return dice_coefficient_score

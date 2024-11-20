@@ -178,6 +178,15 @@ def save_quantitative_results(fid, ssim_complete, luminance_complete, contrast_c
         outfile.write(json.dumps(dict_qnttive_metrics, indent=4))
 
 
+def save_quantitative_results_unet(dice, save_path):
+
+    dict_qnttive_metrics = {
+        'dice': float(dice)
+    }
+    with open(save_path, "w") as outfile:
+        outfile.write(json.dumps(dict_qnttive_metrics, indent=4))
+
+
 def read_yaml(file: str) -> yaml.loader.FullLoader:
     # credits: Gabriel Dias (g172441@dac.unicamp.br), Mateus Oliveira (m203656@dac.unicamp.br)
     # from Github repo: https://github.com/MICLab-Unicamp/Spectro-ViT
@@ -205,11 +214,11 @@ def plot_training_evolution(path, mean_loss_train_gen_list, mean_loss_validation
 
 def plot_training_evolution_unet(path, mean_loss_train_unet_list, mean_loss_validation_unet_list):
     fig, ax = plt.subplots(1, 1, figsize=(14, 4))
-    ax[0].plot(mean_loss_train_unet_list, label='Train')
-    ax[0].plot(mean_loss_validation_unet_list, label='Validation')
-    ax[0].legend(loc='upper right')
-    ax[0].set_title('U-Net')
-    ax[0].set_xlabel('Epochs')
+    ax.plot(mean_loss_train_unet_list, label='Train')
+    ax.plot(mean_loss_validation_unet_list, label='Validation')
+    ax.legend(loc='upper right')
+    ax.set_title('U-Net')
+    ax.set_xlabel('Epochs')
     plt.savefig(path+'losses_evolution.png')
 
 

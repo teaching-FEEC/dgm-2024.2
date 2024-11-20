@@ -32,8 +32,35 @@ dir_save_example = dir_save_results+'examples/'
 dir_save_test = dir_save_results+'test/'
 new_model = bool(config['model'].get('new_model', True))
 
+fine_tunning = bool(config['model'].get('fine_tunning', True))
+trained_gen_path = str(config['model']['trained_gen_path'])
+freeze_layers = bool(config['model'].get('freeze_layers', True))
+
 #models
 unet = FACTORY_DICT["model_unet"]["Unet"]().to(device)
+if fine_tunning is True:
+    unet.load_state_dict(torch.load(trained_gen_path, weights_only=False, map_location=torch.device(device)))
+    unet.to(device)
+    unet.eval()
+
+    if freeze_layers is True:
+        # Freeze the encoder layers
+        for param in unet.conv1.parameters():
+            param.requires_grad = False
+        for param in unet.conv2.parameters():
+            param.requires_grad = False
+        for param in unet.conv3.parameters():
+            param.requires_grad = False
+        for param in unet.conv4.parameters():
+            param.requires_grad = False
+        for param in unet.conv5.parameters():
+            param.requires_grad = False
+        for param in unet.conv6.parameters():
+            param.requires_grad = False
+        for param in unet.conv7.parameters():
+            param.requires_grad = False
+        for param in unet.conv8.parameters():
+            param.requires_grad = False
 
 #data
 processed_data_folder = str(config['data'].get('processed_data_folder',))
@@ -157,7 +184,8 @@ for epoch in range(n_epochs):
                         unet_optimizer=unet_opt,
                         current_lr=current_lr)
     if (epoch % step_to_safe_save_models == 0) or (epoch == n_epochs-1):
-        save_training_losses(mean_loss_train_unet_list=mean_loss_train_unet_list)
+        save_training_losses(mean_loss_train_unet_list=mean_loss_train_unet_list,
+                             mean_loss_validation_unet_list=mean_loss_validation_unet_list)
     
     if save_best_model is True:
         best_model(current_score=loss_validation_unet, 
