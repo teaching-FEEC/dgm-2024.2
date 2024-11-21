@@ -145,7 +145,7 @@ Exemplos de pares de imagens da base de dados:
 
 ![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
 
-  -- Resultado Parcial da Época 90:
+  -- Resultado Parcial da Época 100:
 
 ![image](https://raw.githubusercontent.com/cosmerodolfo/dgm-2024.2/refs/heads/main/projetos/satellite2map/reports/figures/pix2pix/output_epoch100.png)
 
