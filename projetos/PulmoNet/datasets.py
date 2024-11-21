@@ -173,7 +173,8 @@ class processedCTData(Dataset):
                  mode: str = 'train',
                  start: Optional[int] = None,
                  end: Optional[int] = None,
-                 transform: Optional[Callable] = None):
+                 transform: Optional[Callable] = None,
+                 **kwargs):
         super().__init__()
         if start is not None and end is not None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
@@ -184,7 +185,7 @@ class processedCTData(Dataset):
                                                     mode,
                                                     "labels",
                                                     "*.npz")))[start:end]
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
                                                    "lungs",
                                                    "*.npz")))[start:end]
@@ -197,7 +198,7 @@ class processedCTData(Dataset):
                                                     mode,
                                                     "labels",
                                                     "*.npz")))[start:]
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
                                                    "lungs",
                                                    "*.npz")))[start:]
@@ -210,7 +211,7 @@ class processedCTData(Dataset):
                                                     mode,
                                                     "labels",
                                                     "*.npz")))[:end]
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
                                                    "lungs",
                                                    "*.npz")))[:end]
@@ -223,12 +224,13 @@ class processedCTData(Dataset):
                                                     mode,
                                                     "labels",
                                                     "*.npz")))
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
                                                    "lungs",
                                                    "*.npz")))
-        self.transform = transform
-        assert len(self.cts) == len(self.labels)
+        self.transform = transform(**kwargs) if transform is not None else None
+        assert len(self.cts) == len(self.lungs)
+        assert len(self.cts) == len(self.airways)
 
     def __len__(self):
         return len(self.cts)
@@ -238,13 +240,13 @@ class processedCTData(Dataset):
         Carregar, transformar e retornar o item 'i' do dataset
         '''
         ct_path = self.cts[idx]
-        ct_labels_path = self.labels[idx]
+        ct_lungs_path = self.lungs[idx]
         ct_airways_path = self.airways[idx]
 
         # Ler os .npz salvos no pre processamento
         # print(f'Reading {ct_path} and {ct_labels_path}.......')
         image_npz = np.load(ct_path)
-        lung_npz = np.load(ct_labels_path)
+        lung_npz = np.load(ct_lungs_path)
         airway_npz = np.load(ct_airways_path)
 
         ct = image_npz['arr_0']
@@ -252,11 +254,11 @@ class processedCTData(Dataset):
         airway = airway_npz['arr_0']
         ct = torch.tensor(ct).to(torch.float32)
         ct = ct.unsqueeze(0)
-        airway = torch.tensor(airway.astype(float)).to(torch.float32)
+        airway = torch.tensor(airway.astype(float)).to(torch.float32).unsqueeze(0)
         lung = torch.tensor(lung).to(torch.float32).unsqueeze(0)
 
         # Se uma função de transformada foi passada para o dataset, aplicá-la
         if self.transform is not None:
-            ct = self.transform(ct)
+            lung = self.transform(lung)
         # Retornar a imagem e metadados
         return ct, airway, lung

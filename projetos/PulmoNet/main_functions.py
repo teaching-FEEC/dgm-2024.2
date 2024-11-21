@@ -223,13 +223,13 @@ def valid_on_the_fly_unet(unet, data_loader,epoch,save_dir,device):
             input_airway_batch = batch[1]
             
             input_img = input_img_batch[:1,:,:,:].to(device)
-            input_airway = input_airway_batch[:1,:,:].to(device)
+            input_airway = input_airway_batch[:1,:,:,:].to(device)
            
             gen_seg = unet(input_img)
             break
 
         plt_save_example_airways_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 
-                                    input_airway_ref=input_airway[0,:,:].detach().cpu().numpy(), 
+                                    input_airway_ref=input_airway[0,0,:,:].detach().cpu().numpy(), 
                                     gen_seg_ref=gen_seg[0,0,:,:].detach().cpu().numpy(), 
                                     epoch=epoch+1, 
                                     save_dir=save_dir)
