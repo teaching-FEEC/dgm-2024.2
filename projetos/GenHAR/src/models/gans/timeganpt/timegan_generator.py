@@ -57,10 +57,12 @@ class TimeGANGenerator:
         return test_recovery
 
     def train(self, X_train, y_train):
+        self.losses = {}
         if self.use_tsgm:
             self.train_tsgm(X_train, y_train)
         else:
             self.train_pt_impl(X_train, y_train)
+        return self.model, self.losses
 
     def train_pt_impl(self, X_train, y_train):
         # output_size = 20
@@ -104,7 +106,7 @@ class TimeGANGenerator:
             data = torch.Tensor(data[: (data.shape[0] // 128) * 128])
             print(data.shape)
 
-            Generator, Embedder, Supervisor, Recovery, Discriminator, checkpoints = TimeGAN(
+            Generator, Embedder, Supervisor, Recovery, Discriminator, checkpoints, loss = TimeGAN(
                 data, self.parameters
             )
             self.Generator[class_label] = Generator
@@ -113,6 +115,7 @@ class TimeGANGenerator:
             self.Recovery[class_label] = Recovery
             self.Discriminator[class_label] = Discriminator
             self.checkpoints[class_label] = checkpoints
+            self.losses[class_label] = loss
             self.data[class_label] = data
         self.model = [self.Generator, self.Embedder, self.Supervisor, self.Recovery, self.Discriminator]
 
@@ -141,6 +144,8 @@ class TimeGANGenerator:
                 batch_size=self.parameters["batch_size"],
             )
             self.model[class_label].fit(data, self.parameters["epoch"])
+            loss_hist = self.model[class_label].training_losses_history
+            self.losses[class_label] = {"discriminator": loss_hist["discriminator"], "generator": loss_hist["generator"]}
 
     def generate(self, num_samples_per_class):
         if self.use_tsgm:

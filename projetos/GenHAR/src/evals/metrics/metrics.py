@@ -103,12 +103,14 @@ class Metrics:
         for dataset in datasets:            
             df_train,df_test,df_val=self.read_datasets(dataset)
             csvs_synth = [f for f in os.listdir(f'{self.dataset_folder}/{dataset}') if f.endswith('.csv') and 'synth' in f]      
-            original_tensor = torch.tensor(df_train.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 60, 6)
+            original_tensor = torch.tensor(df_train.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 6, 60).transpose(1,2)
+            assert original_tensor.shape[1:] == (60, 6)
             for idx, csv_file in enumerate(csvs_synth):
                 file_path = os.path.join(self.dataset_folder, dataset, csv_file)
                 df_synthetic_ = pd.read_csv(file_path)
                 
-                synthetic_tensor = torch.tensor(df_synthetic_.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 60, 6)
+                synthetic_tensor = torch.tensor(df_synthetic_.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 6, 60).transpose(1,2)
+                assert synthetic_tensor.shape[1:] == (60, 6)
                 
                 data = {
                                 'MDD': fbm.calculate_mdd(original_tensor, synthetic_tensor),  # Usamos .get() para evitar KeyError
@@ -132,20 +134,59 @@ class Metrics:
         for dataset in datasets:            
             df_train,df_test,df_val=self.read_datasets(dataset)
             csvs_synth = [f for f in os.listdir(f'{self.dataset_folder}/{dataset}') if f.endswith('.csv') and 'synth' in f]      
-            original_tensor = torch.tensor(df_train.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 60, 6)
+            original_tensor = torch.tensor(df_train.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 6, 60).transpose(1,2)
+            #Randomize train data sequence
+            indexes = torch.randperm(original_tensor.shape[0])
+            original_tensor = original_tensor[indexes]
+            assert original_tensor.shape[1:] == (60,6)
+            #Calculate Real-2-Real similaruty
+            split_idx = original_tensor.shape[0] // 2
+            original_r2r_ed, _ = dbm.calculate_ed(original_tensor[:split_idx], original_tensor[split_idx:])
+            original_r2r_dtw, _ = dbm.calculate_dtw(original_tensor[:split_idx], original_tensor[split_idx:])
+            original_r2r_cos, _ = dbm.calculate_cosine(original_tensor[:split_idx], original_tensor[split_idx:])
+            original_r2r_min, _ = dbm.calculate_minkowski(original_tensor[:split_idx], original_tensor[split_idx:], p=3)
+            original_r2r_man, _ = dbm.calculate_manhattan(original_tensor[:split_idx], original_tensor[split_idx:])
+            original_r2r_per, _ = dbm.calculate_pearson(original_tensor[:split_idx], original_tensor[split_idx:])
+
             for idx, csv_file in enumerate(csvs_synth):
                 file_path = os.path.join(self.dataset_folder, dataset, csv_file)
                 df_synthetic_ = pd.read_csv(file_path)
                 print(f"eval: {csv_file}")
                 
-                synthetic_tensor = torch.tensor(df_synthetic_.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 60, 6)
+                synthetic_tensor = torch.tensor(df_synthetic_.iloc[:, :-1].values, dtype=torch.float32).reshape(-1, 6, 60).transpose(1,2)
+                assert synthetic_tensor.shape[1:] == (60,6)
+                ed_s2r, ed_max_s2r = dbm.calculate_ed(original_tensor, synthetic_tensor)
+                dtw_s2r, dtw_max_s2r = dbm.calculate_dtw(original_tensor, synthetic_tensor)
+                min_s2r, min_max_s2r = dbm.calculate_minkowski(original_tensor, synthetic_tensor, p=3)
+                man_s2r, man_max_s2r = dbm.calculate_manhattan(original_tensor, synthetic_tensor)
+                cos_s2r, cos_max_s2r = dbm.calculate_cosine(original_tensor, synthetic_tensor)
+                per_s2r, per_max_s2r = dbm.calculate_pearson(original_tensor, synthetic_tensor)
+                split_idx = synthetic_tensor.shape[0] // 2
                 data = {
-                    'ED': dbm.calculate_ed(original_tensor, synthetic_tensor),
-                    'DTW': dbm.calculate_dtw(original_tensor, synthetic_tensor),
-                    'Minkowski': dbm.calculate_minkowski(original_tensor, synthetic_tensor, p=3),  # Pode ajustar o valor de 'p'
-                    'Manhattan': dbm.calculate_manhattan(original_tensor, synthetic_tensor),
-                    'Cosine': dbm.calculate_cosine(original_tensor, synthetic_tensor),
-                    'Pearson': dbm.calculate_pearson(original_tensor, synthetic_tensor),                    
+                    'ED-R2R': original_r2r_ed,
+                    'ED-S2R': ed_s2r,
+                    'ED-S2S': dbm.calculate_ed(synthetic_tensor[:split_idx], synthetic_tensor[split_idx:])[0],
+                    'ED-MaxR2S': ed_max_s2r,
+                    'DTW-R2R': original_r2r_dtw,
+                    'DTW-S2R': dtw_s2r,
+                    'DTW-S2S': dbm.calculate_dtw(synthetic_tensor[:split_idx], synthetic_tensor[split_idx:])[0],
+                    'DTW-MaxR2S': dtw_max_s2r,
+                    'Minkowski-R2R': original_r2r_min,
+                    'Minkowski-S2R': min_s2r,
+                    'Minkowski-S2S': dbm.calculate_minkowski(synthetic_tensor[:split_idx], synthetic_tensor[split_idx:], p=3)[0],
+                    'Minkowski-MaxR2S': min_max_s2r,
+                    'Manhattam-R2R': original_r2r_man,
+                    'Manhattam-S2R': man_s2r,
+                    'Manhattam-S2S': dbm.calculate_manhattan(synthetic_tensor[:split_idx], synthetic_tensor[split_idx:])[0],
+                    'Manhattam-MaxR2S': man_max_s2r,
+                    'Cosine-R2R': original_r2r_cos,
+                    'Cosine-S2R': cos_s2r,
+                    'Cosine-S2S': dbm.calculate_cosine(synthetic_tensor[:split_idx], synthetic_tensor[split_idx:])[0],
+                    'Cosine-MaxR2S': cos_max_s2r,
+                    'Pearson-R2R': original_r2r_per,
+                    'Pearson-S2R': per_s2r,
+                    'Pearson-S2S': dbm.calculate_pearson(synthetic_tensor[:split_idx], synthetic_tensor[split_idx:])[0],
+                    'Pearson-MaxR2S': per_max_s2r,
                     'dataset': dataset,
                     'generator': csvs_synth[idx].split(".")[0]  # Asegure-se de que 'csvs_synth' e 'idx' estejam definidos corretamente
                     }

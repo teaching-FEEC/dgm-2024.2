@@ -104,6 +104,7 @@ def TimeGAN(data, parameters):
     gamma = 1
 
     checkpoints = {}
+    losses = {"discriminator": [], "generator": []}
 
     # instantiating every module we're going to train
     Embedder = Time_GAN_module(
@@ -441,6 +442,8 @@ def TimeGAN(data, parameters):
             + ", E_loss_t0: "
             + str(np.sqrt(E_loss0.detach().numpy()))
         )
+        losses["discriminator"].append(D_loss.detach().item())
+        losses["generator"].append(G_loss.detach().item())
 
         # random_test = random_generator(1, dim, extract_time(data)[0], extract_time(data)[1])
         # test_sample = Generator(
@@ -466,4 +469,4 @@ def TimeGAN(data, parameters):
 
     print("Finish Joint Training")
 
-    return Generator, Embedder, Supervisor, Recovery, Discriminator, checkpoints
+    return Generator, Embedder, Supervisor, Recovery, Discriminator, checkpoints, losses

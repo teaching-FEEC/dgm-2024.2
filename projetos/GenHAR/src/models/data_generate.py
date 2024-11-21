@@ -9,6 +9,8 @@ import os
 class DataGenerate:
     def __init__(self, m_config, dataset, transformation):
         self.m_config = m_config
+        self.losses = {}
+
 
         if self.m_config["name"] == "timeganpt":
             self.generator = TimeGANGenerator(m_config)
@@ -16,7 +18,7 @@ class DataGenerate:
         elif self.m_config["name"] == "Doppelgangerger":
             self.generator = DCGANGenerator(m_config)
 
-        elif self.m_config["name"] == "diffusion_unet1d":
+        elif self.m_config["name"] in ["cond_diffusion_unet1d", "uncond_diffusion_unet1d"]:
             self.generator = DiffusionGenerator(m_config)
 
         self.n_gen_samples = m_config["n_gen_samples"]
@@ -25,7 +27,8 @@ class DataGenerate:
         #try:
             X_train_ = X_train.copy()
             log.print_debug(f"-----train----{self.m_config['name']}")
-            self.model = self.generator.train(X_train_, y_train)
+            self.model, loss_hist = self.generator.train(X_train_, y_train)
+            self.losses = loss_hist
         #except Exception as e:
         #    log.print_err(f"Error in trainning synthetic data: {e}")
 

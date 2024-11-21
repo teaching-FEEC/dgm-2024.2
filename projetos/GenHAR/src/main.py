@@ -4,6 +4,7 @@ from data_processor.data_transform import Transform
 from data_processor.data_read import DataRead
 from utils import log, setup
 from evals.metrics.efficience import EfficiencyMonitor
+import matplotlib.pyplot as plt
 
 setup.set_seeds()
 REPO_ROOT_DIR = "../"
@@ -77,6 +78,20 @@ def generate(config):
 
                 # Salvar dados sintéticos
                 save_dataset(folder_save, f"{generative_model_config['name']}_synth.csv", synthetic_df)
+                loss_hist = data_generate.losses
+                if len(loss_hist) > 0:
+                    if type(loss_hist) is dict:
+                        fig, axs = plt.subplots(len(loss_hist), 1)
+                        fig.set_size_inches(10, 50)
+                        for class_label, i in enumerate(loss_hist.keys()):
+                            if type(loss_hist[class_label]) is dict:
+                                axs[i].plot(loss_hist[class_label]["discriminator"], label="Discriminator")
+                                axs[i].plot(loss_hist[class_label]["generator"], label="Generator")
+                                axs[i].legend()
+                            else:
+                                axs[i].plot(loss_hist[class_label])
+                        fig.savefig(folder_save+f"/{generative_model_config['name']}_losses.png")
+
 
                 # Exibir métricas no log
                 log.print_debug(f"Métricas de Treinamento - {generative_model_config['name']}: {training_metrics}")

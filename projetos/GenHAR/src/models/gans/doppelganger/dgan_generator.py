@@ -32,7 +32,7 @@ class DCGANGenerator:
         # Configura o modelo DGAN
         self.model = DGAN(
             DGANConfig(
-                attribute_noise_dim=2,
+                attribute_noise_dim=3,
                 feature_noise_dim=2,
                 attribute_num_units=10,
                 feature_num_layers=2,
@@ -56,6 +56,7 @@ class DCGANGenerator:
             attributes=attributes, features=train_data, attribute_types=[OutputType.DISCRETE]
         )
         print("DGAN model training complete.")
+        return self.model, []
 
     def generate(self, n_samples):
         if self.model is None:
