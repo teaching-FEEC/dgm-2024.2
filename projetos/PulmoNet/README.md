@@ -38,8 +38,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 8. [Referências Bibliográficas](#referências-bibliográficas)
 
 **ANEXOS**:
-1. [Varredura dos parâmetros da GAN para 10 mil dados]()
-2. [Testes adicionais com outras arquiteturas]()
+1. [Varredura dos parâmetros da GAN para 10 mil dados](#varredura-dos-parâmetros-da-gan-para-10-mil-dados)
+2. [Testes adicionais com outras arquiteturas](#testes-adicionais-com-outras-arquiteturas)
 3. [Como rodar os modelos](#how-to-run)
 
 ## Links Importantes
@@ -321,27 +321,93 @@ Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado e
 > TODO: Atualizar com dados da E3
 
 ### Resultados preliminares com 10 mil dados de treinamento da GAN
+A PulmoNet - o modelo de GAN proposto em nosso projeto - passou por uma etapa de busca pelas configurações e hiperparâmetros de treinamentos ótimos, a fim de encontrar uma combinação que gerasse tomografias pulmonares mais realistas.
+Para isto, testou-se quinze configurações distinta, com uma parcela dos dados selecionados para o treinamento da GAN.
+O resultado desta busca está resumido na tabela abaixo.
 
-|Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão|	Intensidade	|Média Ruído	|Desvio Ruído	|Criterion	|Regularizador	|Nível Regularização	|Learning Rate	|Beta|
-| ----- | ----- | -----   | ----- | -----       | -----         | -----         |   -----  | ----- | -----| -----   |   -----       |
-|Sweep10|	4/2	|Gaussiano|	Falso |	0,3157719473|	0,7469069764|	0,1784581512|	BCELoss|	MSE|	8|	3,11E-04|	0,4597517629|
-|Sweep205|	3/1	|Gaussiano|	Verdadeiro|	0,5566831094|	0,5120044953|	0,3903814624|	MSELoss|	MAE|	10|	2,85E-04|	0,7555202559|
-|Sweep412|	1/1| Gaussiano|	Falso| 0,757255249|	0,5250495573|	0,4755411392|	MSELoss|	MAE|	4	|1,70E-04	|0,8811316699|
-|Sweep64	|1/2	|Gaussiano	|Verdadeiro	|0,81851453	|0,5597838196	|0,2229110595	|MSELoss	|MAE	|3	|3,75E-04	|0,8659691523|
-|Sweep123	|2/1	|Gaussiano	|Verdadeiro	|0,3320755603	|0,652635058	|0,3347731658	|MSELoss	|MAE	|4	|1,55E-04	|0,6252443893|
-|Sweep284	|1/2	|Gaussiano	|Verdadeiro	|0,4882098594	|0,872090533	|0,4466720449	|MSELoss	|MSE	|4	|2,24E-04	|0,6781061686|
-|Sweep394	|2/1	|Gaussiano	|Falso	|0,3715918515	|0,6996284578	|0,2871496533	|BCELoss	|MAE	|1	|3,40E-04	|0,4792751887|
-|Sweep497	|1/1	|Gaussiano	|Verdadeiro	|0,3039449554	|0,8749711247	|0,2897599163	|MSELoss	|MSE	|15	|1,32E-04	|0,840671948|
-|Sweep522	|4/2	|Gaussiano	|Falso	|0,8766142328	|0,6935412609	|0,3790460335	|MSELoss	|MSE_mask	|13	|3,40E-04	|0,5728743005|
-|Sweep71	|2/1	|Gaussiano	|Verdadeiro	|0,8172635438	|0,548984276	|0,3265456309	|BCELoss	|MSE_mask	|1	|2,82E-04	|0,52631016|
-|Sweep185	|4/1	|Uniforme	|Verdadeiro	|0,3563791549|	0,5899638112|	0,2158650277|	MSELoss|	MAE_mask|	5|	2,82E-04|	0,4240341338|
-|Sweep186	|2/1	|Uniforme	|Verdadeiro	|0,9795390854|	0,5310213915	|0,2623582226	|BCELoss	|MAE_mask	|4	|1,87E-04	|0,6069949071|
-|Sweep256	|1/2	|Gaussiano	|Verdadeiro	|0,3085178607	|0,6810390549	|0,1347611367	|MSELoss	|MAE_mask	|8	|3,16E-04	|0,4703302188|
-|Sweeo279	|4/2	|Gaussiano	|Falso	|0,6821396703	|0,9681958035	|0,1024100341	|MSELoss	|MAE_mask	|15	|2,58E-04	|0,6470046351|
-|Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,9864110063	|0,9929413808	|0,1007233152	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,4393293661|
+|Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão|	Intensidade	|Média Ruído	|Desvio Ruído	|Criterion	|Regularizador	|Nível Regularização	|Learning Rate	|Beta| Melhor época | Análise Qualitativa |
+| ----- | ----- | -----   | ----- | -----       | -----         | -----         |   -----  | ----- | -----| -----   |   -----       | -----| -----   |
+|Sweep10|	4/2	|Gaussiano|	Falso |	0,3157719473|	0,7469069764|	0,1784581512|	BCELoss|	MSE|	8|	3,11E-04|	0,4597517629| 17 | (Médio + Bom + Bom) = Bom |
+|Sweep205|	3/1	|Gaussiano|	Verdadeiro|	0,5566831094|	0,5120044953|	0,3903814624|	MSELoss|	MAE|	10|	2,85E-04|	0,7555202559| 11 | (Bom + Bom + Bom) = Bom |
+|Sweep412|	1/1| Gaussiano|	Falso| 0,757255249|	0,5250495573|	0,4755411392|	MSELoss|	MAE|	4	|1,70E-04	|0,8811316699| 6 | (Médio + Bom + Médio) = Bom |
+|Sweep64	|1/2	|Gaussiano	|Verdadeiro	|0,81851453	|0,5597838196	|0,2229110595	|MSELoss	|MAE	|3	|3,75E-04	|0,8659691523| 10 | (Médio + Médio + Médio) = Médio |
+|Sweep123	|2/1	|Gaussiano	|Verdadeiro	|0,3320755603	|0,652635058	|0,3347731658	|MSELoss	|MAE	|4	|1,55E-04	|0,6252443893| 6 | (Médio + Médio + Bom) = Médio |
+|Sweep284	|1/2	|Gaussiano	|Verdadeiro	|0,4882098594	|0,872090533	|0,4466720449	|MSELoss	|MSE	|4	|2,24E-04	|0,6781061686| 9 | (Médio + Médio + Médio) = Médio |
+|Sweep394	|2/1	|Gaussiano	|Falso	|0,3715918515	|0,6996284578	|0,2871496533	|BCELoss	|MAE	|1	|3,40E-04	|0,4792751887| 34 | (Ruim + Médio + Médio) = Médio |
+|Sweep497	|1/1	|Gaussiano	|Verdadeiro	|0,3039449554	|0,8749711247	|0,2897599163	|MSELoss	|MSE	|15	|1,32E-04	|0,840671948| 6 | (Médio + Médio + Médio) = Médio |
+|Sweep522	|4/2	|Gaussiano	|Falso	|0,8766142328	|0,6935412609	|0,3790460335	|MSELoss	|MSE_mask	|13	|3,40E-04	|0,5728743005| 29 | (Médio + Ruim + Médio) = Médio |
+|Sweep71	|2/1	|Gaussiano	|Verdadeiro	|0,8172635438	|0,548984276	|0,3265456309	|BCELoss	|MSE_mask	|1	|2,82E-04	|0,52631016| 32 | (Ruim + Ruim + Ruim) = Ruim |
+|Sweep185	|4/1	|Uniforme	|Verdadeiro	|0,3563791549|	0,5899638112|	0,2158650277|	MSELoss|	MAE_mask|	5|	2,82E-04|	0,4240341338| 38 | (Ruim + Ruim + Ruim) = Ruim |
+|Sweep186	|2/1	|Uniforme	|Verdadeiro	|0,9795390854|	0,5310213915	|0,2623582226	|BCELoss	|MAE_mask	|4	|1,87E-04	|0,6069949071| 40 | (Ruim + Ruim + Ruim) = Ruim |
+|Sweep256	|1/2	|Gaussiano	|Verdadeiro	|0,3085178607	|0,6810390549	|0,1347611367	|MSELoss	|MAE_mask	|8	|3,16E-04	|0,4703302188| 1 | (Ruim + Ruim + Ruim) = Ruim |
+|Sweeo279	|4/2	|Gaussiano	|Falso	|0,6821396703	|0,9681958035	|0,1024100341	|MSELoss	|MAE_mask	|15	|2,58E-04	|0,6470046351| 1 | (Ruim + Ruim + Ruim) = Ruim |
+|Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,9864110063	|0,9929413808	|0,1007233152	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,4393293661| 38 | (Ruim + Ruim + Ruim) = Ruim |
 
+Nesta tabela, apresenta-se tanto as configurações de cada modelo avaliado nesta varredura quanto métricas qualitativas e quantitativas obtidas.
+Com relação à análise qualitativa, cada um dos três membros deste projeto examinaram algumas imagens sintéticas e classificaram o modelo entre três categorias: "Bom", "Médio" e "Ruim".
+Nesta análise qualitativa, considerou-se a definição das bordas e da região externa ao pulmão, além do preenchimento na região com as vias aéreas.
+Alguns exemplos destas imagens são apresentados em anexo, em [Varredura dos parâmetros da GAN para 10 mil dados](#varredura-dos-parâmetros-da-gan-para-10-mil-dados).
+
+Considerando a média das avaliações qualitativas, apenas um modelo recebeu três votos "Bom" (Sweep 205), um modelo recebeu dois votos "Bom" (Sweep 10) e dois modelos receberam apenas um voto "Bom" (Sweep 412 e 123), de modo que filtramos 4 dos 15 modelos.
+Destes dois modelos com apenas um voto "Bom", comparou-se o FID e o SSIM para selecionar a configuração que prosseguiria com o treinamento. Em função destas métricas, considerou-se que o Sweep 412 tinha mais potencial para aprimorar e gerar boas imagens sintéticas.
+Assim, foram escolhidas as configurações **Sweep 205, Sweep 10 e Sweep 412** para a realização do treinamento com toda a base de dados disponível.
+
+Ainda sobre a análise qualitativa dos resultados, é pertinente observar que todos os modelos que foram treinados com regularização apenas na região do pulmão (interior da máscara binária) não tiveram bons resultados.
+
+Ressalta-se também que esta etapa preliminar de seleção e varredura da combinação de parâmetros da treinamento do modelo é primordial para potencializar bons resultados. Além disso, esta estratégia também economiza tempo e recursos, já que previne que o treinamento completo do modelo seja alocado em uma configuração potencialmente ruim.
 
 ### Resultados com 60 mil dados de treinamento da GAN
+
+**Análise Qualitativa**
+> Colocar figuras e gráficos + comentar
+
+**Análise Quantitativa**
+
+| Modelo | FID (10k) | FID (60k) | SSIM completo (10k) | SSIM completo (60k) | SSIM central (10k) | SSIM central (60k) | Correlação estrutural completa (10k) | Correlação estrutural completa (60k) |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| Sweep10 | $335.2427761838304$ | $293.994238421036$ | $0.6254112471415655 \pm 0.24085973511049694$ | $0.6824532200521825 \pm 0.2379720225297553$ | $0.7065009961027625 \pm 0.21001197291512$ | $0.7728551928415837 \pm 0.1802642799563599$ | $0.8668365623247514$ | $0.8803608040163259$ |
+| Sweep205 | $327.52689178408133$ | $311.54110516417313$ | $0.6430093517319526 \pm 0.23893143933984787$ | $0.6352922878176526 \pm 0.23498065222278722$ | $0.7408941452705249 \pm 0.19407037910322725$ | $0.7254140055600942 \pm 0.18445858921111588$ | $0.874886884710851$ | $0.859104974492586$ |
+| Sweep412 | $320.07174504683894$ | $304.826262102015$ | $0.6932878879454677 \pm 0.2317557196412487$ | $0.6161909340086005 \pm 0.23712984568136655$ | $0.7859251088659772 \pm 0.17404220837041773$ | $0.7086681423114665 \pm 0.19055641930566072$ | $0.8961127511813266$ | $0.8555982899610189$ |
+
+Métricas do artigo de referência:
+
+| Modelo | $FID_{InceptionV3}$ |
+| ------- | ------- |
+| $Sweep10$ | 293.994 |
+| $Sweep205$ | 311.541 |
+| $Sweep412$ | 304.826 |
+| $P2P_{𝐿𝐼𝐷𝐶}$ (Mendes et al., 2023) | 12.82 |
+| $P2P_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | 11.56 |
+| $cCGAN_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | 10.82 |
+| $P2P_{𝐹𝑎𝑐𝑎𝑑𝑒𝑠}$ (DeVries et al., 2019) | 104 |
+| $P2P_{𝑀𝑎𝑝𝑠}$ (DeVries et al., 2019) | 106.8 |
+| $P2P_{𝐸𝑑𝑔𝑒𝑠2𝑆ℎ𝑜𝑒𝑠}$ (DeVries et al., 2019) | 74.2 |
+| $P2P_{𝐸𝑑𝑔𝑒𝑠2𝐻𝑎𝑛𝑑𝑏𝑎𝑔𝑠}$ (DeVries et al., 2019) | 95.6 |
+| $DCGAN_{𝑀𝑅𝐼}$ (Haarburger et al., 2019) | 20.23 |
+| $CT-SGAN_{𝐶𝑇}$ (Pesaranghader et al., 2021) | 145.18 |
+
+
+SSIM results for entire 512 × 512 image and with a central crop of 256 × 256.
+| Modelo | $ SSIM_{512} $ | $ SSIM_{256} $ |
+| ------- | ------- | ------- |
+| | $𝜇 \pm 𝜎$ | $𝜇 \pm 𝜎$ |
+| $Sweep10$ | $0.682 \pm 0.238$ |$0.773 \pm 0.180$ |
+| $Sweep205$ | $0.635 \pm 0.235$ | $0.725 \pm 0.184$ |
+| $Sweep412$ | $0.616 \pm 0.237$ | $0.709 \pm 0.1912$ |
+| $P2P_{𝐿𝐼𝐷𝐶}$ (Mendes et al., 2023) | $0.803 \pm 0.122$ | $0.651 \pm 0.083$ |
+| $P2P_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | $0.841 \pm 0.057$ | $0.687 \pm 0.065$ |
+| $cCGAN_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | $0.846 \pm 0.057$ | $0.696  \pm0.064$ |
+
+
+Comentários:
+- Métricas melhoraram com mais dados!!! (FID diminuiu = mais qualidade; SSIM diminuiu = mais diversidade)
+- apesar de um FID bem maior, temos o diferencial de que geramos toda a estrutura presente em uma imagem de tomografia pulmonar. Isto é, não ficamos restritos apenas à região interna, como no artigo de referência
+- Nossa similaridade estrtural ser melhor para a região focada no centro da imagem (será que é porque não teve tanto preenchimento desta área?)
+- SSIM geral foi menor do que a referência --> poderia ser indicativo de maior criatividade?
+
+**Teste de Utilidade**
+> Resultados da U-Net
+
 
 ## Conclusão
 > TODO: Atualizar com dados da E3
@@ -381,7 +447,18 @@ Os próximos passos do projeto tratam da finalização do treinamento do modelo,
 
 Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
 
-# How To Run
+
+# Anexos
+
+## Varredura dos parâmetros da GAN para 10 mil dados
+> TODO
+
+## Testes adicionais com outras arquiteturas
+> TODO
+
+## How To Run
+> TODO: Fix / Update
+
 Como uma observação adicional, incluimos uma descrição de como executar as funções propostas neste projeto.
 
 **Processamento da base de dados:**
