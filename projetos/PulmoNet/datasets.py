@@ -74,7 +74,7 @@ class lungCTData(Dataset):
                                                     mode,
                                                     "images",
                                                     "*.npz")))[start:end]
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
                                                     "lungs",
                                                     "*.npz")))[start:end]
@@ -82,7 +82,7 @@ class lungCTData(Dataset):
                 self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                     "images",
                                                     "*.npz")))[start:end]
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     "lungs",
                                                     "*.npz")))[start:end]
         elif start is not None and end is None:
@@ -91,7 +91,7 @@ class lungCTData(Dataset):
                                                     mode,
                                                     "images",
                                                     "*.npz")))[start:]
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
                                                     "lungs",
                                                     "*.npz")))[start:]
@@ -99,7 +99,7 @@ class lungCTData(Dataset):
                 self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                     "images",
                                                     "*.npz")))[start:]
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     "lungs",
                                                     "*.npz")))[start:]
         elif start is None and end is not None:
@@ -108,7 +108,7 @@ class lungCTData(Dataset):
                                                     mode,
                                                     "images",
                                                     "*.npz")))[:end]
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
                                                     "lungs",
                                                     "*.npz")))[:end]
@@ -116,7 +116,7 @@ class lungCTData(Dataset):
                 self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                     "images",
                                                     "*.npz")))[:end]
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     "lungs",
                                                     "*.npz")))[:end]
         else:
@@ -125,7 +125,7 @@ class lungCTData(Dataset):
                                                     mode,
                                                     "images",
                                                     "*.npz")))
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
                                                     "lungs",
                                                     "*.npz")))
@@ -133,11 +133,11 @@ class lungCTData(Dataset):
                 self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                     "images",
                                                     "*.npz")))
-                self.labels = sorted(glob(os.path.join(processed_data_folder,
+                self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                     "lungs",
                                                     "*.npz")))
         self.transform = transform(**kwargs) if transform is not None else None
-        assert len(self.cts) == len(self.labels)
+        assert len(self.cts) == len(self.lungs)
 
     def __len__(self):
         return len(self.cts)
@@ -147,13 +147,13 @@ class lungCTData(Dataset):
         Carregar, transformar e retornar o item 'i' do dataset
         '''
         ct_path = self.cts[idx]
-        ct_labels_path = self.labels[idx]
+        ct_lungs_path = self.lungs[idx]
 
         # Ler imagem usando a biblioteca SimpleITK
         # O objeto image contêm tambem metadados
         # print(f'Reading {ct_path} and {ct_labels_path}.......')
         image_npz = np.load(ct_path)
-        lung_npz = np.load(ct_labels_path)
+        lung_npz = np.load(ct_lungs_path)
 
         ct = image_npz['arr_0']
         lung = lung_npz['arr_0']
@@ -173,62 +173,64 @@ class processedCTData(Dataset):
                  mode: str = 'train',
                  start: Optional[int] = None,
                  end: Optional[int] = None,
-                 transform: Optional[Callable] = None):
+                 transform: Optional[Callable] = None,
+                 **kwargs):
         super().__init__()
         if start is not None and end is not None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))[start:end]
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))[start:end]
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))[start:end]
         elif start is not None and end is None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))[start:]
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))[start:]
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))[start:]
         elif start is None and end is not None:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))[:end]
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))[:end]
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))[:end]
         else:
             self.cts = sorted(glob(os.path.join(processed_data_folder,
                                                 mode,
-                                                "imagesTr",
+                                                "images",
                                                 "*.npz")))
             self.airways = sorted(glob(os.path.join(processed_data_folder,
                                                     mode,
-                                                    "labelsTr",
+                                                    "labels",
                                                     "*.npz")))
-            self.labels = sorted(glob(os.path.join(processed_data_folder,
+            self.lungs = sorted(glob(os.path.join(processed_data_folder,
                                                    mode,
-                                                   "lungsTr",
+                                                   "lungs",
                                                    "*.npz")))
-        self.transform = transform
-        assert len(self.cts) == len(self.labels)
+        self.transform = transform(**kwargs) if transform is not None else None
+        assert len(self.cts) == len(self.lungs)
+        assert len(self.cts) == len(self.airways)
 
     def __len__(self):
         return len(self.cts)
@@ -238,13 +240,13 @@ class processedCTData(Dataset):
         Carregar, transformar e retornar o item 'i' do dataset
         '''
         ct_path = self.cts[idx]
-        ct_labels_path = self.labels[idx]
+        ct_lungs_path = self.lungs[idx]
         ct_airways_path = self.airways[idx]
 
         # Ler os .npz salvos no pre processamento
         # print(f'Reading {ct_path} and {ct_labels_path}.......')
         image_npz = np.load(ct_path)
-        lung_npz = np.load(ct_labels_path)
+        lung_npz = np.load(ct_lungs_path)
         airway_npz = np.load(ct_airways_path)
 
         ct = image_npz['arr_0']
@@ -252,11 +254,11 @@ class processedCTData(Dataset):
         airway = airway_npz['arr_0']
         ct = torch.tensor(ct).to(torch.float32)
         ct = ct.unsqueeze(0)
-        airway = torch.tensor(airway).to(torch.float32)
+        airway = torch.tensor(airway.astype(float)).to(torch.float32).unsqueeze(0)
         lung = torch.tensor(lung).to(torch.float32).unsqueeze(0)
 
         # Se uma função de transformada foi passada para o dataset, aplicá-la
         if self.transform is not None:
-            ct = self.transform(ct)
+            lung = self.transform(lung)
         # Retornar a imagem e metadados
         return ct, airway, lung

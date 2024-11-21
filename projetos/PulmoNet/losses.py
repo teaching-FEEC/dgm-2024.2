@@ -77,3 +77,38 @@ def get_gen_loss(gen, disc, criterion, input_mask, input_img, device, regularize
                                      input_img=input_img, gen_img=gen_img, device=device)
         loss += regularization
     return loss
+
+def get_disc_loss_airwaygen(gen, disc, criterion, input_mask, input_img, input_airway):
+    gen_img = gen(input_mask).detach()
+    ans_gen = disc(input_mask,gen_img)
+    gt_gen = torch.zeros_like(ans_gen)
+    ans_real = disc(input_mask,torch.cat([input_img, input_airway], dim=1))
+    gt_real = torch.ones_like(ans_real)
+    ##old implementation
+    # Concatenando os vetores do output do discriminador das reais com as geradas
+    #x = torch.cat((ans_real.reshape(-1), ans_gen.reshape(-1)))
+    # Concatenando os vetores dos labels reais das images reais com as geradas
+    #y = torch.cat((gt_real.reshape(-1), gt_gen.reshape(-1)))
+    #loss = criterion(x, y)
+
+    loss_fake = criterion(ans_gen,gt_gen)
+    loss_real = criterion(ans_real,gt_real)
+    loss = (loss_fake+loss_real)*0.5
+    # The regularization (l1 norm) is not important here: is independent of D
+    return loss
+
+def get_gen_loss_airwaygen(gen, disc, criterion, input_mask, input_img, input_airway, device, regularizer=None, regularization_level=None):
+    gen_img = gen(input_mask)
+    ans_gen = disc(input_mask,gen_img)
+    # we want ans_gen close to 1: to trick the disc
+    gt_gen = torch.ones_like(ans_gen)
+    loss = criterion(ans_gen, gt_gen).mean()
+    if regularizer is not None:
+        input_to_reg = torch.cat([input_img, input_airway], dim=1)
+        input_mask_aux = torch.cat([input_mask, input_mask], dim=1)
+        regularization = regularizer(regularization_level=regularization_level, input_mask=input_mask_aux, 
+                                     input_img=input_to_reg, gen_img=gen_img, device=device)
+        loss += regularization
+    return loss
+
+

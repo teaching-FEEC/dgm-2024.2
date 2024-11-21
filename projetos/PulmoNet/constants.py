@@ -1,5 +1,5 @@
 from model import Generator, Discriminator
-from datasets import lungCTData
+from datasets import lungCTData, processedCTData
 from transforms import AddGaussianNoise, AddUniformNoise
 import torch
 from save_models_and_training import SaveBestModel, SaveTrainingLosses
@@ -14,6 +14,7 @@ FACTORY_DICT = {
     },
     "dataset": {
         "lungCTData": lungCTData,
+        "processedCTData": processedCTData,
     },
     "optimizer": {
         "Adam": torch.optim.Adam,

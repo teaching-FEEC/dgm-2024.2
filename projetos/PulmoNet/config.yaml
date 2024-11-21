@@ -1,14 +1,17 @@
 model:
-  name_model: "model_sweep412_aspretrained_lungmask"
-  dir_save_results: "./model_sweep412_aspretrained_lungmask/"
+  name_model: "model_sweep412_inspired_generateAirway"
+  dir_save_results: "./model_sweep412_inspired_generateAirway/"
   new_model: True
-  use_pretrained_model: True
-  path_to_saved_model_gen: "./model_sweep412_aspretrained/models/model_sweep412_aspretrained_gen_trained.pt"
-  path_to_saved_model_disc: "./model_sweep412_aspretrained/models/model_sweep412_aspretrained_disc_trained.pt"
+  use_pretrained_model: False
+  generate_airway_segmentation: True
+  path_to_saved_model_gen: ""
+  path_to_saved_model_disc: ""
 
 data:
-  processed_data_folder: "/mnt/shared/labelmaskdata/"
-  dataset: "lungCTData"
+  processed_data_folder: "/mnt/shared/divided_data/"
+  dataset: "processedCTData"
+  start_point_train_data: 0
+  end_point_train_data: 10000
   start_point_validation_data: 0
   end_point_validation_data: 800
 
@@ -16,7 +19,7 @@ data:
 training:
   batch_size_train: 15
   batch_size_validation: 8
-  n_epochs: 50
+  n_epochs: 6
   steps_to_complete_bfr_upd_disc: 1
   steps_to_complete_bfr_upd_gen: 1
   transformations: 
@@ -60,4 +63,4 @@ save_models_and_results:
   save_best_model: True
 
 wandb:
-  activate: True
+  activate: False
