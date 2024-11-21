@@ -7,7 +7,7 @@ class DistanceBasedMeasures:
     def __init__(self, file_dbm_metrics, app):
         # Carregar os dados e configurar métricas
         self.data = pd.read_csv(file_dbm_metrics)
-        self.metrics = ['ED', 'DTW', 'Minkowski', 'Manhattan', 'Cosine', 'Pearson']
+        self.metrics = ['ED-S2R', 'DTW-S2R', 'Minkowski-S2R', 'Manhattan-S2R', 'Cosine-S2R', 'Pearson-S2R']
         
         # Opções para dropdowns
         self.dataset_options = [{'label': ds, 'value': ds} for ds in self.data['dataset'].unique()]
