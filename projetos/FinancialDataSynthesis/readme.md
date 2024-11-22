@@ -19,7 +19,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente sobre índices que medem o desempenho de mercados (e.g. Ibovespa) ou sobre o preço de ações. Esses dados são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto, como na otimização de portfólios.
 
-O projeto lida com séries temporais do tipo:
+O projeto lida com séries temporais da forma:
 
 $$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
 
@@ -30,6 +30,7 @@ Atráves da incorporação de features relevantes, também representados por sé
 $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
 
 Tal que:
+
 $$
 X^{s}_{N+1:N+K} \approx X_{N+1:N+K}
 $$
