@@ -20,17 +20,16 @@ Link para os [slides](https://docs.google.com/presentation/d/1wfFYGmEwGVK_7xQVmF
 
 ## Resumo
 Com a finalidade de estudar os principais métodos da área de *image-to-image translation* (I2IT), o objetivo deste projeto é explorar o problema da extração de mapas a partir de imagens de  satélite utilizando duas abordagens diferentes: uma supervisionada (Pix2Pix) e outra não supervisionada (CycleGAN).
-Os modelos foram implementados e treinados com a base de dados fornecida em seus próprios artigos (ambos usam o mesmo _dataset_). Os resultados obtidos foram imagens coerentes porém distorcidas e com perdas de alguns elementos relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e alucinações com áreas verdes não existentes.
+Os modelos foram implementados e treinados com a base de dados fornecida em seus próprios artigos (ambos usam o mesmo _dataset_). Os resultados obtidos foram imagens coerentes porém distorcidas e com perda de alguns elementos relevantes para esse tipo de tarefa, como consistência de ruas, preservação de rotas e alucinações com áreas verdes não existentes.
 
  ## Descrição do Problema/Motivação
  Uma das subáreas de IA generativa que obteve alguns dos mais impressionantes resultados dos últimos anos tem sido a área de *image-to-image translation* (I2IT) [[1]](#1). Dentro dessa subárea, um problema frequentemente abordado é a obtenção de mapas a partir de imagens de satélite, e vice-versa, devido às suas inúmeras aplicações, por exemplo, ajudando governos a tomarem medidas rapidamente em casos de desastres naturais [[2]](#2).
  A motivação pelo estudo desse problema é avaliar aplicações menos convencionais de modelos generativos, visto que a síntese de dados já é estudada com frequência. Além disso, mapas são um tipo de dado muito rico em informações diversas, sendo relevantes para problemas distintos, desde criação de rotas até segmentação semântica de vegetações. 
  O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como presença corpos d'àgua, parques, etc.
- Durante as etapas de treino, validação, testes e inferências, serão utilizados Datasets de imagens de Nova Iorque. Por fim, o modelo será testado com dados novos e desconhecidos, a partir de imagens de satelite da UNICAMP, para avaliação do seu desempenho.
+ Durante as etapas de treino, validação, testes e inferências, serão utilizados Datasets de imagens de Nova Iorque. 
 
 ## Objetivo
-O objetivo final principal será extrair o mapa de uma localidade a partir de sua foto de satélite e, como objetivo extra, testar a generalização do modelo tentando extrair o mesmo mapa a partir de uma imagem da UNICAMP.
-Outros objetivos incluem:
+O objetivo final principal é explorar os modelos de extração de mapas a partir de sua foto de satélite. Outros objetivos incluem:
 - Familiarização com aplicações menos convencionais de GANs.
 - Estudo da avaliação quantitativa e qualitativa de modelos generativos.
 - Aprender as etapas do processo de pesquisa na área de modelos generativos.
@@ -44,7 +43,10 @@ Outros objetivos incluem:
 - **Ferramentas**: As ferramentas utilizadas estão entre as mais utilizadas na comunidade de Deep Learning atualmente:
     - Criação e treinamento dos modelos: PyTorch
     - Monitoramento de métricas: WandB
-- **Resultados esperados**: Devido à quantidade limitada de dados disponíveis e aos dados utilizados não corresponderem a paisagens brasileiras ou próximas das paisagens da Unicamp, é de se esperar um enviesamento do modelo à cidade de Nova Iorque. Esse enviesamento provavelmente será refletido até mesmo em aplicações do modelo a paisagens rurais ou litorâneas. No entanto, espera-se que o modelo consiga extrair mapas qualitativamente bons ainda que apresentem algumas distorções, principalmente em áreas mais rurais.
+- **Resultados esperados**: É esperado que ambos os modelos possam apresentar resultados de tradução de imagens relativamente bons, considerando as limitações no processamento de imagens e diversificação de dados.
+Adicionalmente, devido ao modelo CGAN ser não supervisionado, e como consequência, necessitar de um maior tempo de convergência do modelo, é esperado que seu desempenho seja inferior ao modelo Pix2Pix supervisionado.
+Por fim, é esperado que as métricas escolhidas possam traduzir esta percepção inicial, de que o Pix2Pix é superior ao CGGAN ao considerar especialmente a limitaçao no treinamento dos modelos (100 épocas).
+
 
 ## Avaliação de resultados
 As métricas de avaliação quantitativa que serão utilizadas serão:
@@ -161,7 +163,7 @@ Exemplos de pares de imagens da base de dados:
 
 ![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
 
-  -- Resultado Parcial da Época 90:
+  -- Resultado Parcial da Época 100:
 
 ![image](https://raw.githubusercontent.com/cosmerodolfo/dgm-2024.2/refs/heads/main/projetos/satellite2map/reports/figures/pix2pix/output_epoch100.png)
 
