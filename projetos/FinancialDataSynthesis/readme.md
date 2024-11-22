@@ -35,7 +35,7 @@ $$ X^{s}_{N+1:N+K}  \approx X\_{N+1:N+K}   $$
 
 
 
-Por exemplo, se $X_{1:N}$ representa o índice Ibovespa de janeiro até fevereiro, $X^{s}_{N+1:N+K}$ poderia representar valores plausíveis de fevereiro até março.
+Por exemplo, se $X_{1:N}$ representa o Ibovespa de janeiro até fevereiro, $X^{s}_{N+1:N+K}$ poderia representar valores plausíveis de fevereiro até março.
 
 Essas representações realistas são importantes para modelos de otimização de portfólios, pois podemos gerar diversos cenários possíveis e escolher a estratégia que se sai melhor, considerando todas as possibilidades geradas. Dessa forma, o modelo de otimização é robusto e consegue bom desempenho nas mais diversas situações.
 
