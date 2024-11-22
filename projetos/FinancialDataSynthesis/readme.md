@@ -97,9 +97,9 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
    
    Após isso, normalizamos os valores de cada série temporal para facilitar o treinamento, utilizando as suas respectivas médias e desvios padrões. A normalização adotada foi:
 
-$$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}} \text{para todo i}$$
+$$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}}$$
 
-- $x_{n}(i)$: representa o valor de uma série temporal (preço ou algum feature) no instante i normalizado.
+- $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
 -
 
 
