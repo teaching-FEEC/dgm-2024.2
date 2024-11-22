@@ -13,6 +13,35 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > | Thiago Belina Silva Ramos  | 203975  | Eng. Eletricista|
 > 
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texto Formatado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        p {
+            text-align: justify;
+            text-indent: 2em; /* Define o recuo da primeira linha */
+            margin: 0 0 1em; /* Espaço entre os parágrafos */
+        }
+    </style>
+</head>
+<body>
+    <p>
+        Este é um exemplo de texto formatado com parágrafos justificados e recuo da primeira linha. 
+        O uso de estilos CSS permite criar layouts elegantes e fáceis de ler.
+    </p>
+    <p>
+        Cada parágrafo é tratado individualmente, e o recuo da primeira linha ajuda a destacar o início 
+        de um novo parágrafo. Além disso, a justificação melhora a apresentação em blocos de texto longos.
+    </p>
+</body>
+</html>
 
 ## Descrição do Problema e Motivação
 
