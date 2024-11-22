@@ -209,3 +209,27 @@ Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image qualit
 
 <!-- <a id="7">[7]</a>
 Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine. -->
+
+## Apêndice 1 - Mais resultados Pix2pix
+
+![image](reports/figures/pix2pix/results1.png)
+
+![image](reports/figures/pix2pix/results2.png)
+
+![image](reports/figures/pix2pix/results3.png)
+
+![image](reports/figures/pix2pix/results4.png)
+
+![image](reports/figures/pix2pix/results5.png)
+
+## Apêndice 2 - Mais resultados CycleGAN
+
+![image](reports/figures/cyclegan/results1.png)
+
+![image](reports/figures/cyclegan/results2.png)
+
+![image](reports/figures/cyclegan/results3.png)
+
+![image](reports/figures/cyclegan/results4.png)
+
+![image](reports/figures/cyclegan/results5.png)
