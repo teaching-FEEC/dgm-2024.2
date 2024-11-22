@@ -95,9 +95,20 @@ Para realização desse processo, as informações do dataset são dívidas em c
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/DATA2.png" alt="Figura 9: Dataset dividido em cenas" width="300"/>
+    <img src="/projetos/HTF/images/DATA2.png" alt="Figura 9: Dataset dividido em cenas" width="600"/>
     <br><em>Figura 9: Dataset dividido em cenas.</em>
 </p>
+
+<div style="text-align: center;">
+    <!-- Primeira linha de 3 imagens -->
+    <img src="../HTF/images/trajetoriaSP6.gif" alt="Imagem 1" width="320"/>
+    <img src="../HTF/images/trajetoriaSP8.gif" alt="Imagem 2" width="320"/>
+    <br>
+    <!-- Segunda linha de 3 imagens -->
+    <img src="../HTF/images/trajetoriaSP7.gif" alt="Imagem 4" width="320"/>
+    <img src="../HTF/images/trajetoriaSP5.gif" alt="Imagem 5" width="320"/>
+    <p><em>Figura 10: Exemplos de predições comparadas aos dados reais </em></p>
+</div>
 
 ## Workflow
 
