@@ -75,7 +75,7 @@ A base de dados BIWI Walking Pedestrian é composta por duas cenas denominadas E
 </p>
 
 
-Após tratados, o formato dos datasets será como o disposto na Figura 6, em que a primeira coluna indica o frame do video, a segunda a identificação do pedestre e a terceira e quarta suas coordenadas x e y respectivamente. 
+Após tratados , o formato tabular dos datasets será conforme disposto na Figura 6, em que a primeira coluna indica o frame do video, a segunda a identificação do pedestre e a terceira e quarta suas coordenadas x e y respectivamente. 
 
 <p align="center">
     <img src="/projetos/HTF/images/datazara.png" alt="Figura 6: Estrutura dos dados tratados" width="600"/>
