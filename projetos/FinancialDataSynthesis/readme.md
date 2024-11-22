@@ -88,8 +88,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
    Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
 
    ![Preços_Vale](Valores_Vale.png "Vale")
-   
-*Figure 1: Preços das ações da Vale.*
+   *Figure 1: Preços das ações da Vale.*
 
 3. **Extração de Features:**
 
