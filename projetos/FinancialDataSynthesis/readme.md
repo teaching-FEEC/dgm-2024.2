@@ -27,7 +27,7 @@ Em que cada elemento $$x(i)$$ representa o preço da ação (ou valor do índice
 
 Atráves da incorporação de features relevantes, também representados por séries temporais alinhadas à $$X_{1:N}$$, buscamos gerar dados sintéticos realistas que representam a continuação de $$X_{1:N}$$, isso é, uma série temporal do tipo:
 
-$$ Xp_{N+1:N+K}  = [{ xp(N), xp(N+1), ..., xp(N+K) }]  $$
+$$ X\overline_{N+1:N+K}  = [{ xp(N), xp(N+1), ..., xp(N+K) }]  $$
 
 Tal que:
 
