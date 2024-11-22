@@ -25,7 +25,7 @@ $$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
 
 Em que cada elemento $x(i)$ representa o preço da ação (ou valor do índice) no instante $i$.
 
-Atráves da incorporação de features relevantes, também representados por séries temporais alinhadas à $X_{1:N}$, buscamos gerar dados sintéticos realistas que representam a continuação de $X_{1:N}$, isso é, uma série temporal do tipo:
+Atráves da incorporação de features relevantes, também representados por séries temporais alinhadas à $X_{1:N}$, buscamos gerar dados sintéticos que representam uma continuação realista de $X_{1:N}$, isso é, uma série temporal do tipo:
 
 $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
 
