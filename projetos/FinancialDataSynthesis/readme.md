@@ -27,11 +27,15 @@ Em que cada elemento $$x(i)$$ representa o preço da ação (ou valor do índice
 
 Atráves da incorporação de features relevantes, também representados por séries temporais alinhadas à $$X_{1:N}$$, buscamos gerar dados sintéticos realistas que representam a continuação de $$X_{1:N}$$, isso é, uma série temporal do tipo:
 
-$$ X^{p}_{N+1:N+K}  = [{ x^{p}(N), x^{p}(N+1), ..., x^{p}(N+K) }]  $$
+$$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
 
 Tal que:
 
-$$ Xp_{N+1:N+K} \approx X_{N+1:N+K} $$
+$$ X^{s}_{N+1:N+K} \approx X_{N+1:N+K} $$
+
+Ou seja, $$X^{s}_{N+1:N+K}$$ representa uma continuação plausível de $$X_{1:N}$$.
+
+Por exemplo, se $$X_{1:N}$$ representa o índice Ibovespa de janeiro até fevereiro, $$X^{s}_{N+1:N+K}$$ poderia representar valores plausíveis de fevereiro até março. 
 ## Descrição do Problema/Motivação
 O desenvolvimento de modelos precisos que utilizam dados financeiros é consideravelmente desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos [5].
 
