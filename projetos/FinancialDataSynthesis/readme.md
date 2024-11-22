@@ -97,7 +97,7 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
    
    Após isso, normalizamos os valores para facilitar o treinamento. A normalização adotada foi:
 
-$$ \bar{x}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}} $$
+$$ x^{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}} $$
 
 
    
