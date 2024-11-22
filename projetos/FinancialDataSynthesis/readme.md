@@ -64,9 +64,8 @@ Para o projeto, escolhemos três ativos financeiros distintos:
 - **Ações da VALE S.A**: terceira maior empresa brasileira, com ações negociadas na NYSE e B3;
 
 Além disso, adotamos duas abordagens distintas para geração dos dados:
--Baseada na arquitetura de redes generativas adversarias **(GANs)**;
-Baseada na arquitetura **Transformers**;
-
+- Baseada na arquitetura de redes generativas adversarias **(GANs)**;
+- Baseada na arquitetura **Transformers**;
 
 Temos como missão, dado a série temporal desses ativos em determinado período, gerar séries temporais sintéticas plausíveis que representam a continuação das séries originais.
 
