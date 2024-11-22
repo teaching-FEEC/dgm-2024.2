@@ -31,7 +31,7 @@ $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
 
 Tal que:
 
-$$ X^{s}_{N+1:N+K} \approx X_{N+1:N+K} $$
+$$ X^{s}_{N+1:N+K}\approx X_{N+1:N+K} $$
 
 Ou seja, $$X^{s}_{N+1:N+K}$$ representa uma continuação plausível de $$X_{1:N}$$.
 
