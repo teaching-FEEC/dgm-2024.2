@@ -95,9 +95,12 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
 
    Após a coleta dos dados e extração dos features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe: $D=[X\_{1:N}, F\_{1:N} ]$.
    
-   Após isso, normalizamos os valores para facilitar o treinamento. A normalização adotada foi:
+   Após isso, normalizamos os valores de cada série temporal para facilitar o treinamento, utilizando as suas respectivas médias e desvios padrões. A normalização adotada foi:
 
-$$ x^{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}} $$
+$$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}} \text{para todo i}$$
+
+- $x_{n}(i)$: representa o valor de uma série temporal (preço ou algum feature) no instante i normalizado.
+-
 
 
    
