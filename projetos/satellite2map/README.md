@@ -40,7 +40,7 @@ Outros objetivos incluem:
 
 - **Abordagens escolhidas**: As duas abordagens escolhidas são baseadas em métodos consolidados na área de I2IT e até hoje são usados como *benchmarks* para novos trabalhos:
     1. Pix2Pix (2016)[[3]](#3): Possivelmente o framework mais amplamente adotado em problemas de I2IT, o modelo consiste em uma GAN condicionada à imagem de entrada. 
-    2. Cycle-GAN (2017)[[4]](#2): proposta pelos mesmos criadores do Pix2Pix, também é uma arquitetura muito utilizada em I2IT e tem um processo de treinamento diferente, buscando otimizar uma loss de "consistência de ciclo" que procura garantir que a imagem original seja a mais próxima possível da imagem obtida pelo mapeamento inverso da imagem traduzida.
+    2. Cycle-GAN (2017)[[4]](#4): proposta pelos mesmos criadores do Pix2Pix, também é uma arquitetura muito utilizada em I2IT e tem um processo de treinamento diferente, buscando otimizar uma loss de "consistência de ciclo" que procura garantir que a imagem original seja a mais próxima possível da imagem obtida pelo mapeamento inverso da imagem traduzida.
 - **Ferramentas**: As ferramentas utilizadas estão entre as mais utilizadas na comunidade de Deep Learning atualmente:
     - Criação e treinamento dos modelos: PyTorch
     - Monitoramento de métricas: WandB
@@ -70,7 +70,7 @@ onde $MAX_I$ é o valor máximo possível para um pixel (255 para imagens de 8bi
 
 **3. Índice de Similaridade Estrutural (SSIM)**
 
-O SSIM baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. Essa métrica é baseada em luminância, contraste e mudanças na informação estrutural e tem como hipótese a ideia de que um pixel é altamente correlacionado aos pixels vizinhos. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
+O SSIM[[6]](#6) baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. Essa métrica é baseada em luminância, contraste e mudanças na informação estrutural e tem como hipótese a ideia de que um pixel é altamente correlacionado aos pixels vizinhos. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
 
 $$ SSIM(y, \hat{y}) = \frac{(2 \mu_y \mu_{\hat{y}}  + C_1) (2 \sigma_{y \hat{y}} + C_2)}{(2 \mu^2_y + \mu^2_{\hat{y}}  + C_1)(\sigma^2_{y} + \sigma^2_{\hat{y}} + C_2)}$$
       
@@ -102,9 +102,27 @@ Exemplos de pares de imagens da base de dados:
 
 ![data](reports/figures/data.png)
 
-## Workflow Pix2pix
+## Workflows
 
-![workflow_pix2pix](reports/figures/workflow_pix2pix.png)
+- **Workflow de dados**
+
+![workflow_data](reports/figures/workflows/data_workflow.png)
+
+- **Arquitetura do gerador (U-net)**
+
+![arquitetura_g](reports/figures/workflows/Unet_workflow.png)
+
+- **Arquitetura do discriminador**
+
+![arquitetura_d](reports/figures/workflows/discriminator_workflow.png)
+
+- **Treinamento Pix2pix**
+
+![pix2pix_train](reports/figures/workflows/pix2pix_trainworkflow.png)
+
+- **Treinamento CycleGAN**
+
+![cyclegan_train](reports/figures/workflows/workflow_cycleGAN.png)
 
 ## Treinamento e Validação:
 
@@ -129,8 +147,6 @@ Exemplos de pares de imagens da base de dados:
   -- Resultado Parcial da Época 90:
 
 ![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
-
-
 
 - **Pix2Pix**:
   -- Evolução da Loss (Gerador e Discriminador):
@@ -162,11 +178,11 @@ A partir dos resultados da tabela acima, é possível observar que o Pix2Pix apr
 
 ## Conclusão
 
-Apesar dos resultados obtidos não possuírem um nivél qualitativamente bom, pode-se dizer que o Pix2pix conseguiu sim capturar a distribuição de probabilidade condicional desejada. Os resultados obtidos são limitados principalmente pela falta de conjuntos de dados mais diversificados e por limitações do próprio modelo, visto que o Pix2pix deixou de ser o estado-da-arte a muitos anos. Ainda assim, pode-se dizer que o Pix2pix atingiu o objetivo que seus autores propõem: de ser um framework de I2IT simples, leve e generalista.
+Apesar dos resultados obtidos não possuírem um nivél qualitativamente bom, pode-se dizer que os modelos utilizados conseguiram sim capturar a distribuição de probabilidade condicional desejada. Os resultados obtidos são limitados principalmente pela falta de hardware adequado para busca de melhores hiperparâmetros e por limitações dos próprio métodos, visto que foram utilizadas as implementações _vanilla_ de ambos as técnicas. Muita pesquisa já foi desenvolvida em cima desses modelos, inclusive uma implementação da CycleGAN otimizada para o problema de extração da mapas a partir de imagens de satélite é proposta em [[2]](#2) e uma abordagem com um discriminador que usa camadas de atenção é apresentada em [[5]](#5).
 
-No entanto, para nosso projeto, desejamos resultados quantitativa e qualitativamente melhores. Para isso, o primeiro passo será testar o Pix2pix quantitativamente com as métricas propostas e, se houver tempo o suficiente, monitorar as métricas ao longo do treinamento. O segundo passo será repetir todo o processo realizado nessa entrega com a CycleGAN, uma abordagem mais moderna dos próprios criadores do Pix2pix (no entanto, também não é o estado-da-arte e nem apresenta competitividade perto dos modelos atuais.)
+Tanto o Pix2pix quanto a CycleGAN deixaram de ser o estado-da-arte a muitos anos. Ainda assim, pode-se dizer que foram capazes de alcançar seus objetivos visto que seus autores os propuseram com frameworks de I2IT simples, leve e generalistas.
 
-Finalmente, podemos dizer que até agora foi possível adquirir muito conhecimento sobre o pipeline de pesquisa com modelos generativos, aumentar a familiaridade com conceitos chave da área como arquiteturas de redes neurais, datasets, métricas quantitativas, etc. e também foi possível desenvolver habilidades práticas como monitoramento de métricas, desenvolver visualizações dos resultados, armazenamento de checkpoints, etc.
+Finalmente, podemos dizer que durante o desenvolvimento desse projeto foi possível adquirir muito conhecimento sobre o pipeline de pesquisa com modelos generativos, aumentar a familiaridade com conceitos chave da área como arquiteturas de redes neurais, datasets, métricas quantitativas, etc. e também foi possível desenvolver habilidades práticas como monitoramento de métricas, desenvolver visualizações dos resultados, armazenamento de checkpoints, etc.
 
 ## Referências Bibliográficas
 <a id="1">[1]</a>
@@ -189,11 +205,5 @@ Song, J.; Li, J.; Chen, H.; Wu J. RSMT: A Remote Sensing Image-to-Map Translatio
 <a id="6">[6]</a>
 Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image quality assessment: From error visibility to structural similarity." IEEE Transactions on Image Processing.
 
-<a id="7">[7]</a>
-Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine.
-
-<a id="8">[8]</a>
-Zhang, Z. et al. (2012). "A survey of image denoising methods." Proceedings of the IEEE.
-
-<a id="9">[9]</a>
-Shapiro, J. (2001). "Embedded Image Coding using the Coder/Decoder." IEEE Transactions on Image Processing.
+<!-- <a id="7">[7]</a>
+Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine. -->
