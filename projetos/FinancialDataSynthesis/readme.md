@@ -31,7 +31,7 @@ $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
 
 Tal que:
 
-$$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
+$$ X^{s}_{N+1:N+K}  \approx X_{N+1:N+K}  $$
 
 Por exemplo, se $$X_{1:N}$$ representa o índice Ibovespa de janeiro até fevereiro, $$X^{s}_{N+1:N+K}$$ poderia representar valores plausíveis de fevereiro até março. Essas representações realistas são importantes para modelos de otimização de portfólios, pois podemos gerar diversos cenários possíveis e escolher a estratégia que se sai melhor dado todas as possibilidades geradas. Dessa forma, o modelo de otimização é robusto e consegue bom desempenho nas mais diversas situações.
 
