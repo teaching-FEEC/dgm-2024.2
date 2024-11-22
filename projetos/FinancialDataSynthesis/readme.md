@@ -86,6 +86,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 1. **Coleta de Dados via API do Yahoo Finance:**
    
    Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
+   
    O período de amostragem de 2 minutos foi escolhido pois é o menor que o API disponibiliza. Optamos por realizar uma análise em alta frequência, pois as variações não são tão abruptas comparadas à de um período maior (e.g. valores diários). Dessa forma, o modelo consegue gerar dados dentro de uma faixa razoável de valores. A figura abaixo ilustra um exemplo.
    
 <div align="center">
