@@ -88,7 +88,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
    Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
 <div align="center">
     <img src="Valores_Vale.png" alt="Preços_Vale" title="Vale" />
-    <p><em>Figure 1: Preços das ações da Vale.</em></p>
+    <p><em>Figura 1: Preços das ações da Vale com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
 3. **Extração de Features:**
@@ -100,7 +100,12 @@ Os features que se mostraram úteis na geração dos dados sintéticos foram:
    - Volume de ações negociada;
    - Índices técnicos: Moving Average Convergence Divergence (MACD), Stochastic Oscillator (SO), Commodity Channel Index (CCI), Money Flow Index (MFI);
   
-Os índices técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, além do volume de ações negociadas. Esses índices técnicas buscam capturar as tendências no movimento dos preços.
+Os índices técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, além do volume de ações negociadas. Esses índices técnicas buscam capturar as tendências no movimento dos preços. A figura abaixo ilustra o exemplo de um feature:
+
+<div align="center">
+    <img src="Volume_Vale.png" alt="Volume_Vale" title="Vale" />
+    <p><em>Figura 2: Volume de ações da Vale negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+</div>
 
 3. **Normalização dos Dados:**
 
