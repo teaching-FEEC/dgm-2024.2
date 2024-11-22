@@ -71,7 +71,7 @@ Temos como missão, dado a série temporal desses ativos em determinado período
 
 Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste Kolmogorov-Smirnov (KS), distância de Jensen-Shannon, distância de Wasserstein, além de gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos.
 
-### Bases de Dados e Evolução
+### Bases de Dados
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
