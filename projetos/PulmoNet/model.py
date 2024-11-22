@@ -70,7 +70,7 @@ class Generator(nn.Module):
         dec3 = torch.cat([dec3,enc2],dim=1) # 256 x 128 x 128
         dec2 = self.deconv2(dec3) # 64 x 256 x 256
         dec2 = torch.cat([dec2,enc1],dim=1) # 128 x 256 x 256
-        dec1 = self.deconv1(dec2) # 1 x 512 x 512 or 2 x 512 x 512 if segment is True
+        dec1 = self.deconv1(dec2) # 1 x 512 x 512 or 2 x 512 x 512 if generate_airway_segmentation is True
         return dec1
 
     def get_gen(self):

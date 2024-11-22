@@ -1,14 +1,17 @@
 model:
-  name_model: "model_sweep10_aspretrained"
-  dir_save_results: "./model_sweep10_aspretrained/"
+  name_model: "model_sweep412_inspired_generateAirway"
+  dir_save_results: "./model_sweep412_inspired_generateAirway/"
   new_model: True
-  use_pretrained_model: True
-  path_to_saved_model_gen: "./sweep_10/models/sweep_10_gen_best.pt"
-  path_to_saved_model_disc: "./sweep_10/models/sweep_10_disc_best.pt"
+  use_pretrained_model: False
+  generate_airway_segmentation: True
+  path_to_saved_model_gen: ""
+  path_to_saved_model_disc: ""
 
 data:
   processed_data_folder: "/mnt/shared/divided_data/"
-  dataset: "lungCTData"
+  dataset: "processedCTData"
+  start_point_train_data: 0
+  end_point_train_data: 10000
   start_point_validation_data: 0
   end_point_validation_data: 800
 
@@ -16,31 +19,31 @@ data:
 training:
   batch_size_train: 15
   batch_size_validation: 8
-  n_epochs: 50
-  steps_to_complete_bfr_upd_disc: 4
-  steps_to_complete_bfr_upd_gen: 2
+  n_epochs: 6
+  steps_to_complete_bfr_upd_disc: 1
+  steps_to_complete_bfr_upd_gen: 1
   transformations: 
     transform: "AddGaussianNoise"
     info:
       lung_area: False
-      intensity: 0.3157719473254114
-      mean: 0.7469069764183585
-      std: 0.17845815118827982
+      intensity: 0.7572552489767528
+      mean: 0.525049557342425
+      std: 0.4755411392298655
 
 loss: 
   criterion: 
-    name: "BCELoss"
+    name: "MSELoss"
   regularizer:
     type:
-      - "MSE"
+      - "MAE"
     regularization:
-      - 8
+      - 4
   
 optimizer:
   type: "Adam"
   lr: 0.0002
   info:
-    betas: [0.4597517629105646, 0.999]
+    betas: [0.8811316699367162, 0.999]
   path_to_saved_gen_optimizer: ""
   path_to_saved_disc_optimizer: ""
 
@@ -60,4 +63,4 @@ save_models_and_results:
   save_best_model: True
 
 wandb:
-  activate: True
+  activate: False

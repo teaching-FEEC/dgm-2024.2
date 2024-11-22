@@ -136,6 +136,23 @@ def plt_save_example_synth_img(input_img_ref, input_mask_ref, gen_img_ref, disc_
     fig.colorbar(im, ax=ax[3])
     plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
 
+def plt_save_example_synth_img_with_airway(input_img_ref, input_mask_ref, input_airway_ref, gen_img_ref, gen_airway_ref, disc_ans, epoch, save_dir): 
+    fig, ax = plt.subplots(2, 3, figsize=(18, 10))
+    ax[0,0].imshow(input_mask_ref, cmap='gray')
+    ax[0,1].imshow(input_img_ref, cmap='gray')
+    ax[0,2].imshow(input_airway_ref, cmap='gray')
+    im = ax[1,0].imshow(disc_ans, cmap='gray')
+    fig.colorbar(im, ax=ax[1,0])
+    ax[1,1].imshow(gen_img_ref, cmap='gray')
+    ax[1,2].imshow(gen_airway_ref, cmap='gray')
+    ax[0,0].set_title('Mask')
+    ax[0,1].set_title('Original')
+    ax[0,2].set_title('Original Airway')
+    ax[1,0].set_title('Disc Output')
+    ax[1,1].set_title('Generated')
+    ax[1,2].set_title('Genereated Airway')
+    plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+
 
 def plt_save_example_synth_during_test(input_img_ref,  gen_img_ref, save_dir, img_idx):
     fig, ax = plt.subplots(1, 2, figsize=(12, 4))

@@ -25,14 +25,15 @@ dir_save_models = dir_save_results+'models/'
 dir_save_example = dir_save_results+'examples/'
 new_model = bool(config['model'].get('new_model', True))
 use_pretrained_model= bool(config['model'].get('use_pretrained_model', False))
+generate_airway_segmentation = bool(config['model'].get('generate_airway_segmentation', False))
 
 #models
-gen = FACTORY_DICT["model_gen"]["Generator"]().to(device)
-disc = FACTORY_DICT["model_disc"]["Discriminator"]().to(device)
+gen = FACTORY_DICT["model_gen"]["Generator"](generate_airway_segmentation=generate_airway_segmentation).to(device)
+disc = FACTORY_DICT["model_disc"]["Discriminator"](generate_airway_segmentation=generate_airway_segmentation).to(device)
 
 #data
 processed_data_folder = str(config['data'].get('processed_data_folder',
-                                               '/mnt/shared/ctdata_thr25'))
+                                               '/mnt/shared/divided_data'))
 dataset_type = str(config['data'].get('dataset',
                                     'lungCTData'))
 start_point_train_data = config['data'].get('start_point_train_data',None)
@@ -122,9 +123,11 @@ if use_wandb is True:
             "optimizer": optimizer_type,
             "initial_lr": initial_lr,
             "scheduler": scheduler_type,
-            "epoch_to_switch_to_lr_scheduler": epoch_to_switch_to_lr_scheduler
+            "epoch_to_switch_to_lr_scheduler": epoch_to_switch_to_lr_scheduler,
+            "model_generate_airway": generate_airway_segmentation
         }
     )
+
 
 ####----------------------Preparing objects-----------------------------------
 
@@ -193,7 +196,8 @@ for epoch in range(n_epochs):
                                                       device=device,
                                                       use_wandb=use_wandb,
                                                       regularizer=regularizer,
-                                                      regularization_level=regularization_level)
+                                                      regularization_level=regularization_level,
+                                                      generate_airway_segmentation=generate_airway_segmentation)
     mean_loss_train_gen_list.append(loss_train_gen)
     mean_loss_train_disc_list.append(loss_train_disc)
 
@@ -205,7 +209,8 @@ for epoch in range(n_epochs):
                                                                      device=device,
                                                                      use_wandb=use_wandb,
                                                                      regularizer=regularizer,
-                                                                     regularization_level=regularization_level)
+                                                                     regularization_level=regularization_level,
+                                                                     generate_airway_segmentation=generate_airway_segmentation)
     mean_loss_validation_gen_list.append(loss_validation_gen)
     mean_loss_validation_disc_list.append(loss_validation_disc)
 
@@ -213,7 +218,13 @@ for epoch in range(n_epochs):
         epoch_to_appear_for_ref = epoch
     else:
         epoch_to_appear_for_ref = epoch+epoch_resumed_from
-    valid_on_the_fly(gen=gen, disc=disc, data_loader=data_loader_validation, epoch=epoch_to_appear_for_ref, save_dir=dir_save_example,device=device)
+    valid_on_the_fly(gen=gen, 
+                     disc=disc, 
+                     data_loader=data_loader_validation, 
+                     epoch=epoch_to_appear_for_ref, 
+                     save_dir=dir_save_example,
+                     device=device, 
+                     generate_airway_segmentation=generate_airway_segmentation)
 
     ###------------------------------------------savings----------------------------------
     if epoch % step_to_safe_save_models == 0:
