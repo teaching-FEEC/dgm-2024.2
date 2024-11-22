@@ -73,10 +73,28 @@ Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste
 
 ## Metodologia e Workflow
 **CASO 1: TRANSFORMERS**
+
 A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
 
 1. **Coleta de Dados via API do Yahoo Finance:**
-   Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal, $$ X_{1:N} $$. 
+   
+   Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal, $X\_{1:N}$.
+
+2. **Extração de Features:**
+
+   Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar os dados. Esses features também são séries temporais com o mesmo número de amostras da série temporal de preços, $F\_{1:N}$. Os features que se mostraram úteis na geração dos dados sintéticos foram os seguintes:
+
+   - Volume de ações negociada;
+   - Índices técnicos: Moving Average Convergence Divergence (MACD), Stochastic Oscillator, Commodity Channel Index (CCI), Money Flow Index (MFI);
+  
+Os índices técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, além do volume de ações negociadas. Esse índices buscam capturar as tendências no movimento dos preços.
+
+3. **Normalização dos Dados:**
+
+   Após a coleta dos dados e extração dos features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe $D=[X\_{1:N}, F\_{1:N} ]$, e normalizamos os valores para facilitar o treinamento. A normalização adotada foi:
+
+   $$ x^{n}(i) = (x(i) - média) / desvio padrão $$
+   
 
 
 
