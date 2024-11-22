@@ -87,7 +87,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
    
    Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
    
-   O período de amostragem de 2 minutos foi escolhido pois é o menor que o API disponibiliza. Optamos por realizar uma análise em alta frequência, pois as variações não são tão abruptas comparadas à de um período maior (e.g. valores diários). Dessa forma, o modelo consegue gerar dados dentro de uma faixa razoável de valores. A figura abaixo ilustra um exemplo.
+   O período de amostragem de 2 minutos foi escolhido pois é o menor que o API disponibiliza. Optamos por realizar uma análise em alta frequência, pois as variações nos preços não são tão abruptas comparadas à de uma frequência menor (e.g. valores diários). Dessa forma, o modelo consegue gerar dados dentro de uma faixa razoável de valores. A figura abaixo ilustra um exemplo.
    
 <div align="center">
     <img src="Valores_Vale.png" alt="Preços_Vale" title="Vale" />
@@ -103,7 +103,7 @@ Os features que se mostraram úteis na geração dos dados sintéticos foram:
    - Volume de ações negociada;
    - Índices técnicos: Moving Average Convergence Divergence (MACD), Stochastic Oscillator (SO), Commodity Channel Index (CCI), Money Flow Index (MFI);
   
-Os índices técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, além do volume de ações negociadas. Esses índices técnicas buscam capturar as tendências no movimento dos preços. A figura abaixo ilustra o exemplo de um feature:
+Os índices técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, além do volume de ações negociadas. Esses índices técnicos buscam capturar as tendências de movimentação dos preços. A figura abaixo ilustra o exemplo de um feature utilizado:
 
 <div align="center">
     <img src="Volume_Vale.png" alt="Volume_Vale" title="Vale" />
