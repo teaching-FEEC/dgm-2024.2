@@ -86,9 +86,10 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 1. **Coleta de Dados via API do Yahoo Finance:**
    
    Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
-
-   ![Preços_Vale](Valores_Vale.png "Vale")
-   *\center{Figure 1: Preços das ações da Vale.}*
+<div align="center">
+    <img src="Valores_Vale.png" alt="Preços_Vale" title="Vale" />
+    <p><em>Figure 1: Preços das ações da Vale.</em></p>
+</div>
 
 3. **Extração de Features:**
 
