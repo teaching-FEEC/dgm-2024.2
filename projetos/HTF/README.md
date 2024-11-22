@@ -42,7 +42,7 @@ As avaliações qualitativas serão realizadas por observações gráficas que c
 
 ## Datasets
 
-No projeto serão consideradas duas bases de dados principais conforme tabelas abaixo, constituidas por vídeos de trajetórias humanas em espaços populados, cujos cenários reais são ricos em interações. O primeiro dataset é o BIWI Walking Pedestrians e oa segundo a UCY Crowd, cuja combinação é amplamente conhecida por ETH-UCY dataset. Ambos foram convertidos para coordenadas do mundo real em metros, interpolados para obter valores a cada 0,4 segundos.
+No projeto serão consideradas duas bases de dados principais conforme tabelas abaixo, constituidas por vídeos de trajetórias humanas em espaços populados, cujos cenários são repletos em interações. O primeiro dataset é o BIWI Walking Pedestrians e oa segundo a UCY Crowd, cuja combinação é amplamente conhecida por ETH-UCY dataset. Ambos foram convertidos para dados tabulares com coordenadas do mundo real em metros que foram interpolados para obter valores a cada 0,4 segundos, tempo este correspondente ao de um frame.
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
