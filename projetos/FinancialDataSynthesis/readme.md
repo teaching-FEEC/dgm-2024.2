@@ -1,7 +1,7 @@
-# `Síntese de Dados Financeiros para Otimização de Portfólio`
+# `Síntese de Dados Financeiros`
 ==============================
 
-# `Financial Data Synthesis for Portfolio Optimization`
+# `Financial Data Synthesis`
 ==============================
 ## Link dos slides:
 https://docs.google.com/presentation/d/1eOmgRpkQeXU1htM_7Gq66HRcn2CPZ7iB/edit?pli=1#slide=id.p1
@@ -17,10 +17,19 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 ## Resumo (Abstract)
 
-Nosso projeto foca na geração de dados financeiros sintéticos, especificamente sobre índices que medem o desempenho de mercados, como o índice Bovespa. Esses dados são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto, como na otimização de portfólios.
+Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente sobre índices que medem o desempenho de mercados (e.g. Ibovespa) ou sobre o preço de ações. Esses dados são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto, como na otimização de portfólios.
 
-Nossa abordagem inclui o uso de informações contextuais, como a taxa de juros, para explicar as variações dos índices. Como esses índices variam conforme o período econômico, usaremos técnicas de clusterização para identificar diferentes regimes de mercado. Assim, geraremos dados sintéticos usando GANs condicionadas aos períodos econômicos. Por exemplo, podemos criar uma série temporal com tuplas (r(t), j(t)), sendo r(t) o valor do índice e j(t) a taxa de juros, considerando um período de alta.
+O projeto lida com séries temporais do tipo:
 
+$$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
+
+Em que cada elemento x(i) representa o preço da ação (ou valor do índice) no instante i. Atráves da incorporação de features relevantes, também representados por séries temporais alinhadas à X{1:N}, buscamos gerar valores sintéticos realistas dos próximos pontos de X, isso é, buscamos gerar:
+
+$$ Xp_{N+1:N+K}  = [{ xp(N), xp(N+1), ..., xp(N+K) }]  $$
+
+Tal que:
+
+$$ Xp_{N+1:N+K} \approx X{N+1:N+K} $$
 ## Descrição do Problema/Motivação
 O desenvolvimento de modelos precisos que utilizam dados financeiros é consideravelmente desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos [5].
 
