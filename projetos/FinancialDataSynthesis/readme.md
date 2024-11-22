@@ -54,7 +54,7 @@ Neste trabalho, focamos na geração de dados sintéticos de ativos listados em 
 
 ## Objetivos
 
-O projeto tem como objetivo principal:
+O projeto tem como  \textbf{objetivo principal} :
 
 - Gerar séries temporais sintéticas realistas de ativos financeiros.
 
