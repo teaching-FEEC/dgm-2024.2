@@ -37,7 +37,7 @@ $$ X^{s}_{N+1:N+K}  \approx X\_{N+1:N+K}   $$
 
 Por exemplo, se $X_{1:N}$ representa o índice Ibovespa de janeiro até fevereiro, $X^{s}_{N+1:N+K}$ poderia representar valores plausíveis de fevereiro até março.
 
-Essas representações realistas são importantes para modelos de otimização de portfólios, pois podemos gerar diversos cenários possíveis e escolher a estratégia que se sai melhor dado todas as possibilidades geradas. Dessa forma, o modelo de otimização é robusto e consegue bom desempenho nas mais diversas situações.
+Essas representações realistas são importantes para modelos de otimização de portfólios, pois podemos gerar diversos cenários possíveis e escolher a estratégia que se sai melhor, considerando todas as possibilidades geradas. Dessa forma, o modelo de otimização é robusto e consegue bom desempenho nas mais diversas situações.
 
 ## Descrição do Problema/Motivação
 O desenvolvimento de modelos precisos que utilizam dados financeiros é consideravelmente desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos [5].
