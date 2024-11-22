@@ -75,7 +75,7 @@ A base de dados BIWI Walking Pedestrian é composta por duas cenas denominadas E
 </p>
 
 
-Após tratados, o formato tabular dos datasets será conforme disposto na Figura 6, em que a primeira coluna indica o frame do vídeo, a segunda a identificação do pedestre e a terceira e quarta suas coordenadas x e y respectivamente. Cada vídeo terá o seu arquivo de dado tabular correspondente, os quais ainda necessitam de tratamento para servirem de entrada do modelo. O processo de treinamento de cada modelo utiliza todas as tabelas de dados disponíveis, com exceção da qual deseja-se prever a trajetória, ou seja, supondo que se deseja prever a trajetórias da cena ETH, esta amostra será reservada para realização de testes. As demais amostras, que são Hotel, Zara01, Zara02, Zara03, Students001, Students003 e Univ, serão concatenadas e dívidas em amostras de treinamento e validação. Tal estrutura pode ser observada na figura 7. 
+Após tratados, o formato tabular dos datasets será conforme disposto na Figura 6, em que a primeira coluna indica o frame do vídeo, a segunda a identificação do pedestre e a terceira e quarta suas coordenadas x e y respectivamente. Cada vídeo terá o seu arquivo de dado tabular correspondente, os quais ainda necessitam de tratamento para servirem de entrada do modelo. O processo de treinamento de cada modelo utiliza todas as tabelas de dados disponíveis, com exceção da qual deseja-se prever a trajetória, ou seja, supondo que se deseja prever a trajetórias da cena ETH, esta amostra será reservada para realização de testes. As demais amostras, que são Hotel, Zara01, Zara02, Zara03, Students001, Students003 e Univ, serão dívidas em amostras de treinamento e validação. Tal estrutura pode ser observada na figura 7. 
 
 <p align="center">
     <img src="/projetos/HTF/images/TABRAWDATA.png" alt="Figura 6: Estrutura dos dados tabulares brutos" width="600"/>
@@ -87,7 +87,17 @@ Após tratados, o formato tabular dos datasets será conforme disposto na Figura
     <br><em>Figura 7: Estrutura dos dados para treinamento, teste e validação.</em>
 </p>
 
-Para realização desse processo, as informações do dataset são dívidas em cenas, conforme parâmetros que são o tamanho do vetor de observação e do vetor de predição, que é equivalente ao tamanho do vetor real, que corresponde a trajetória realizada pelo pedestre a qual é utilizada pelo discriminador da rede S-GAN para verificar se a gerada está de acordo com os acordos sociais implícitos durante o treinamento.
+Para realização desse processo, as informações do dataset são dívidas em cenas, conforme parâmetros que são o tamanho do vetor de observação e do vetor de predição, que é equivalente ao tamanho do vetor real, que corresponde a trajetória realizada pelo pedestre a qual é utilizada pelo discriminador da rede S-GAN para verificar se a gerada está de acordo com os acordos sociais implícitos durante o treinamento. As informações relevantes são num primeiro momento organizadas em tensores, conforme apresentado na figura 8 e em seguida dividas em sequencias que observação e de predição, conforme exemplo da figura 9, em que se considera quatro amostras de cada uma.
+
+<p align="center">
+    <img src="/projetos/HTF/images/DATA1.png" alt="Figura 8: Tensor estruturado de dados  width="300"/>
+    <br><em>Figura 8: Tensor estruturado de dados.</em>
+</p>
+
+<p align="center">
+    <img src="/projetos/HTF/images/DATA2.png" alt="Figura 9: Dataset dividido em cenas" width="300"/>
+    <br><em>Figura 9: Dataset dividido em cenas.</em>
+</p>
 
 ## Workflow
 
