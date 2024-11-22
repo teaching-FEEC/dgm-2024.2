@@ -23,7 +23,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 
 ## Resumo (Abstract)
-Este projeto investiga o uso de redes Generative Adversarial Imitation Learning (GAIL), uma abordagem generativa avançada, para a geração de trajetórias válidas e seguras no manipulador robótico Kinova Gen3. Com foco em tarefas assistivas, como vestir autonomamente um jaleco cirúrgico em um paciente, o modelo GAIL combina aprendizado por imitação e aprendizado adversarial para replicar trajetórias especialistas a partir de demonstrações capturadas via teleoperação em um ambiente simulado (RCareWorld).
+Este projeto investiga o uso de redes Generative Adversarial Imitation Learning (GAIL), uma abordagem generativa avançada, para a geração de trajetórias válidas e seguras no contexto de manipulação robótica, nesse trabalho será utilizado um manipulador de 7 graus de liberdade - Kinova Gen3 7DoF. As trajetórias geradas, possuem o foco em tarefas assistivas, como vestir de forma autônoma um jaleco cirúrgico em um paciente, o modelo GAIL combina aprendizado por imitação e aprendizado adversarial para replicar trajetórias especialistas a partir de demonstrações capturadas via teleoperação em um ambiente de simulação (RCareWorld).
 
 O modelo gerador foi projetado para aprender padrões temporais utilizando uma técnica de janela deslizante, enquanto o discriminador avalia a fidelidade das trajetórias geradas. Os resultados destacam a capacidade do GAIL de capturar dinâmicas complexas e gerar movimentos naturais, especialmente após o incremento no volume de dados de treinamento. No entanto, o desempenho inicial evidenciou limitações associadas a conjuntos de dados reduzidos, reforçando a necessidade de dados robustos para aprendizado por imitação. Como próximos passos, o projeto busca explorar cenários mais complexos, incorporar variações no ambiente e transitar do ambiente simulado para o mundo real, ampliando o potencial de aplicação das redes GAIL em robótica assistiva.
 
@@ -49,9 +49,9 @@ O objetivo deste projeto é desenvolver um sistema baseado em redes GAIL (Genera
 - Criar um modelo de aprendizado por imitação capaz de gerar trajetórias eficientes, seguras e realizáveis para o manipulador robótico Kinova Gen3 (com 7 graus de liberdade) realizar a tarefa específica de vestir um jaleco cirúrgico em um paciente, respeitando a pose fixa do paciente e a configuração predefinida do jaleco.
 
 ### Objetivos Específicos
-1. **Coleta de Dados de Teleoperação:** 
+1. **Coleta de Dados Especialistas por meio de Teleoperação:** 
    - Realizar a coleta de dados de trajetórias realizadas por meio de teleoperação em um ambiente simulado.
-   - Capturar as posições angulares das juntas, a posição cartesiana da garra e sua orientação (roll, pitch, yaw), garantindo a precisão dos dados para o treinamento.
+   - Capturar as posições angulares de cada junta do manipulador robótico, a posição cartesiana da garra e sua orientação (roll, pitch, yaw), garantindo a precisão dos dados para o treinamento.
 
 2. **Organização e Pré-processamento dos Dados:** 
    - Consolidar os dados coletados em um formato unificado para facilitar o treinamento da rede.
@@ -76,30 +76,25 @@ A metodologia proposta neste projeto foi elaborada para alcançar os objetivos d
 
 ### Conceitos Fundamentais
 
-#### **Manipulador Robótico Kinova Gen3:**
-   - O Kinova Gen3 é um manipulador robótico avançado, com 7 graus de liberdade (DoF), que oferece alta precisão e flexibilidade em tarefas complexas. 
-   - *Graus de Liberdade (DoF)* referem-se à quantidade de movimentos independentes que o robô pode realizar. No caso do Kinova Gen3, os 7 DoFs correspondem às rotações e deslocamentos possíveis em suas juntas.
-   - Uma imagem ilustrativa do Kinova Gen3 é apresentada abaixo para familiarizar o leitor com o equipamento:
 
-      ![Kinova Gen3](img/Kinova%20Gen3.png)
+#### **Aprendizado por Reforço e Aprendizado por Imitação**:
 
-
-#### **Aprendizado por Imitação e Aprendizado por Reforço**:
-
-- *Aprendizado por Imitação (Imitation Learning)* é uma abordagem onde um agente aprende a realizar tarefas observando demonstrações de um especialista. Em vez de depender de uma função de recompensa explícita, o agente tenta replicar as ações observadas em trajetórias fornecidas. Essa técnica é amplamente usada em robótica para tarefas complexas, pois reduz a necessidade de modelar explicitamente o ambiente ou a recompensa.
 
 - *Aprendizado por Reforço (Reinforcement Learning)* é uma técnica onde o agente aprende a realizar ações em um ambiente para maximizar uma função de recompensa acumulada. O agente explora o ambiente, avalia as recompensas obtidas e ajusta suas estratégias. Apesar de poderoso, o aprendizado por reforço pode ser desafiador em cenários com recompensas esparsas ou complexas.
 
+- *Aprendizado por Imitação (Imitation Learning)* é uma abordagem que utiliza como base os conceitos do aprendizado por reforço, onde um agente aprende a realizar tarefas observando demonstrações de um especialista. Em vez de depender de uma função de recompensa explícita, o agente tenta replicar as ações observadas em trajetórias fornecidas. Essa técnica é amplamente usada em robótica para tarefas complexas, visto que reduz a necessidade de modelar explicitamente o ambiente ou a recompensa.
+
+
 #### **Generative Adversarial Imitation Learning (GAIL)**:
 
-O GAIL combina o aprendizado por imitação e o aprendizado por reforço, oferecendo uma solução poderosa para replicar comportamentos complexos sem necessidade de definir uma função de recompensa explícita. Inspirado por Redes Adversariais Generativas (GANs), o GAIL utiliza dois componentes principais:
+A técnica GAIL, combina o aprendizado por imitação com a abordagem de redes generativas, oferecendo uma solução poderosa para replicar comportamentos complexos sem necessidade de definir uma função de recompensa explícita. Essa técnica utiliza a arquitetura tradicional das GANs, tendo como diferença a inclusão de dados especialistas:
 
 1. **Gerador (Generator)**: Representa a política do agente que, dado um estado, gera ações para simular trajetórias. A política é ajustada para gerar comportamentos que se aproximem das demonstrações de especialistas.
 
 2. **Discriminador (Discriminator)**: Um modelo que avalia se uma trajetória é gerada pelo especialista ou pelo agente. Ele fornece um sinal de "recompensa" que orienta o gerador no aprendizado.
 
 ##### **Funcionamento**:
-- O GAIL aprende ao alternar entre otimizar o gerador e o discriminador. O discriminador tenta distinguir trajetórias geradas das demonstradas, enquanto o gerador tenta enganar o discriminador, produzindo trajetórias mais realistas.
+- Uma rede do tipo GAIL aprende ao alternar entre otimizar o gerador e o discriminador. O discriminador tenta distinguir trajetórias geradas das demonstradas, enquanto o gerador tenta enganar o discriminador, produzindo trajetórias mais realistas.
 - A principal métrica usada no GAIL é a divergência de Jensen-Shannon entre as distribuições de ocupação (state-action pairs) do agente e do especialista. Isso garante que o modelo aprenda políticas que imitam os padrões observados nas demonstrações especialistas.
 
 ![GANxGAIL](img/GANxGAIL.png)
@@ -122,7 +117,7 @@ O GAIL combina o aprendizado por imitação e o aprendizado por reforço, oferec
   - Captura a continuidade das trajetórias, preservando informações temporais cruciais.
   - Reduz a dimensionalidade dos dados observados em comparação com técnicas que consideram toda a sequência histórica.
   - Melhora a capacidade do modelo de prever ações suaves e realistas, fundamentais para tarefas assistivas como manipulação de objetos deformáveis.
-- A janela deslizante utilizada neste projeto possui tamanho 4, garantindo um equilíbrio entre informações passadas relevantes e eficiência computacional.
+- A janela deslizante utilizada neste projeto possui tamanho 3, garantindo um equilíbrio entre informações passadas relevantes e eficiência computacional.
 
 Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos do manipulador robótico, resultando em trajetórias mais precisas e adaptadas às demonstrações fornecidas.
 
@@ -130,9 +125,9 @@ Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos d
 ### Etapas Metodológicas
 
 1. **Coleta de Dados de Teleoperação:**
-   - A coleta de dados foi realizada através da teleoperação do manipulador robótico em um ambiente de simulação, utilizando um joystick para controlar os movimentos do braço robótico.
+   - A coleta de dados foi realizada através da teleoperação do manipulador robótico no ambiente de simulação, utilizando um joystick para controlar os movimentos do braço robótico.
    - Dados coletados:
-     - **Posições angulares das juntas:** valores que representam o estado de cada junta do robô (como temos 7 juntas são 7 dados gerados).
+     - **Posições angulares das juntas:** valores que representam o estado de cada junta do robô (como temos 7 juntas são coletados 7 dados).
      - **Posição cartesiana da garra:** coordenadas (x, y, z) no espaço tridimensional.
      - **Orientação da garra:** representada por roll, pitch e yaw.
    - Os dados foram armazenados em múltiplos arquivos JSON, posteriormente unificados para simplificar o treinamento do modelo.
@@ -140,15 +135,12 @@ Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos d
 2. **Organização e Pré-processamento dos Dados:**
    - Unificação de múltiplos arquivos JSON em um único dataset consolidado.
    - Normalização de valores como ângulos para evitar inconsistências (ex.: ângulos maiores que 360°).
-   - Geração de anotações no formato de observações (estados com 13 dados, 7 posiç~eos angulares das juntas, 3 posições cartesianas da garra, 3 orientação da garra) e ações (diferenças entre estados consecutivos).
+   - Geração de anotações no formato de observações (estados com 13 dados, 7 posições angulares das juntas, 3 posições cartesianas da garra, 3 orientação da garra) e ações (diferenças entre estados consecutivos).
 
 3. **Implementação do Ambiente de Simulação:**
    - Para este projeto, foi utilizado o **RCareWorld**, um ambiente de simulação baseado no Unity, desenvolvido especificamente para testar algoritmos de robótica assistiva em cenários realistas.
    - O RCareWorld foi configurado para integrar o modelo GAIL ao manipulador robótico Kinova Gen3, permitindo a interação em tempo real e a validação de trajetórias.
    - Sua interface flexível facilitou a coleta de dados, o treinamento do modelo e a validação das trajetórias geradas, garantindo um ambiente seguro para experimentação e refinamento.
-   - Ferramentas adicionais:
-     - **Unity Physics Engine**: para simulação precisa de interações físicas entre o manipulador e o ambiente.
-     - **Sensores Virtuais**: integrados ao simulador, fornecendo dados como posições e orientações necessárias para o treinamento.
 
 4. **Implementação e Treinamento do Modelo GAIL:**
 
@@ -177,8 +169,8 @@ Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos d
 - **Hiperparâmetros:**
   - Taxa de aprendizado: 0.0001
   - Número de épocas: 1000
-  - Dimensões do estado e ação: state_dim=13, action_dim = 6
-  - Dimensão oculta das redes: hidden_dim=64
+  - Dimensões do estado e ação: state_dim = 13, action_dim = 13
+  - Dimensão oculta das redes: hidden_dim = 64
 
 
 5. **Validação e Avaliação das Trajetórias:**
@@ -222,98 +214,11 @@ Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos d
         - **3 orientações da garra** (roll, pitch, yaw), indicando sua rotação no espaço.
 
     - **Ações:**
-      - Cada ação é um vetor com 6 valores que descrevem as mudanças ocorridas entre dois estados consecutivos:
+      - Cada ação é um vetor com 13 valores que descrevem as mudanças ocorridas entre os estados consecutivos:
+        - **Variações nas posições angulares de cada junta do manipulador**.
         - **3 variações nas coordenadas cartesianas** (Δx, Δy, Δz) da posição da garra.
         - **3 variações nas orientações da garra** (Δroll, Δpitch, Δyaw).
 
-- **Tamanho e Quantidade de Dados:**
-  - O dataset completo contém:
-    - **16.051 observações**, distribuídas em múltiplas trajetórias capturadas durante a teleoperação.
-    - **16.051 ações**, calculadas com base nas diferenças entre estados consecutivos.
-
-- **Transformações e Tratamentos:**
-  - Os dados foram inicialmente coletados em múltiplos arquivos JSON e posteriormente unificados em um único arquivo para simplificar o treinamento e a validação do modelo.
-  - Processos de normalização foram aplicados, incluindo:
-    - Ajustes em valores de ângulos para mantê-los dentro de intervalos consistentes (0° a 360°).
-    - Verificação de consistência entre observações e ações para evitar discrepâncias.
-
-#### Sumário com Estatísticas Descritivas da Base de Estudo
-
-##### Estatísticas das Posições Angulares das Juntas
-
-| Estatística | joint_1    | joint_2    | joint_3    | joint_4    | joint_5    | joint_6    | joint_7    |
-|-------------|------------|------------|------------|------------|------------|------------|------------|
-| count       | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 | 16051.0000 |
-| mean        | 216.9260   | 244.5008   | 155.2496   | 160.6793   | 153.4203   | 163.3758   | 141.0073   |
-| std         | 112.8747   | 133.0374   | 123.9732   | 132.8272   | 145.7203   | 80.5145    | 111.4131   |
-| min         | 0.0974     | 0.0061     | 0.0048     | 0.0091     | 0.0030     | 33.6910    | 0.0283     |
-| 25%         | 99.8671    | 286.0129   | 53.0035    | 46.4387    | 15.2208    | 77.8979    | 57.9813    |
-| 50%         | 290.8084   | 297.0499   | 96.9260    | 68.6351    | 78.9634    | 127.7249   | 72.2764    |
-| 75%         | 308.5260   | 330.3035   | 312.3682   | 301.6214   | 343.1981   | 243.2315   | 246.2258   |
-| max         | 359.7806   | 359.9976   | 359.9915   | 359.9679   | 359.9981   | 348.0733   | 359.9999   |
-
-![distribuicoes_angulares](https://github.com/user-attachments/assets/41d1405f-1809-40f6-b323-0c4290bb5e42)
-
-##### Estatísticas das Posições da Garra
-
-| Estatística | gripper_x   | gripper_y   | gripper_z   |
-|-------------|-------------|-------------|-------------|
-| count       | 16051.0000  | 16051.0000  | 16051.0000  |
-| mean        | 1.3223      | 1.8376      | 0.6307      |
-| std         | 0.4224      | 0.0823      | 0.1922      |
-| min         | 0.7617      | 1.5202      | 0.1754      |
-| 25%         | 0.9824      | 1.7740      | 0.5554      |
-| 50%         | 1.0688      | 1.8232      | 0.6301      |
-| 75%         | 1.8875      | 1.8843      | 0.7168      |
-| max         | 1.9766      | 2.2050      | 1.1005      |
-
-##### Estatísticas das Rotações da Garra
-
-| Estatística | gripper_pitch | gripper_yaw | gripper_roll |
-|-------------|---------------|--------------|--------------|
-| count       | 16051.0000    | 16051.0000   | 16051.0000   |
-| mean        | 107.9481      | 201.8668     | 161.1637     |
-| std         | 144.1107      | 50.9297      | 35.6482      |
-| min         | 0.0032        | 0.0454       | 0.0585       |
-| 25%         | 5.0705        | 174.3852     | 130.1401     |
-| 50%         | 37.0476       | 207.8905     | 174.4622     |
-| 75%         | 294.0989      | 225.9177     | 180.7627     |
-| max         | 359.9729      | 359.0083     | 359.9722     |
-
-##### Estatísticas das Ações da Garra
-
-| Estatística | delta_gripper_x | delta_gripper_y | delta_gripper_z | delta_gripper_pitch | delta_gripper_yaw | delta_gripper_roll |
-|-------------|------------------|------------------|------------------|----------------------|--------------------|---------------------|
-| count       | 16051.0000       | 16051.0000       | 16051.0000       | 16051.0000           | 16051.0000         | 16051.0000          |
-| mean        | -0.0006          | 0.0000           | -0.0000          | 0.1051               | 0.0251             | 0.0385              |
-| std         | 0.0066           | 0.0066           | 0.0089           | 19.9207              | 6.5096             | 6.4767              |
-| min         | -0.1018          | -0.1503          | -0.2055          | -359.8785            | -358.9630          | -359.8317           |
-| 25%         | -0.0002          | -0.0001          | -0.0003          | -0.0124              | -0.0372            | -0.0130             |
-| 50%         | 0.0000           | 0.0000           | 0.0000           | -0.0000              | 0.0000             | 0.0000              |
-| 75%         | 0.0001           | 0.0001           | 0.0003           | 0.0121               | 0.0470             | 0.0123              |
-| max         | 0.0980           | 0.1940           | 0.1729           | 359.8557             | 355.2020           | 359.8180            |
-
-
-#### Exemplos de Estrutura dos Dados:
-
-- **Exemplo de Observação:**
-  ```json
-  [
-    -19.196691513061523, -63.626163482666016, 58.71779251098633, 
-    49.132484436035156, 72.03478240966797, 72.8636245727539, 
-    57.877281188964844, 1.7873706817626953, 1.758441686630249, 
-    0.316080242395401, 38.07461929321289, 203.99948120117188, 
-    130.9566650390625
-  ]
-  ```
-
-- **Exemplo de Ação:**
-  ```json
-  [
-    0.013942599296569824, -0.005357503890991211, 0.0038062334060668945, 
-    -0.5021171569824219, -0.0680694580078125, 0.4828643798828125
-  ]
-  ```
 
 #### Conclusão sobre a Base de Dados
   O GAIL_Dataset oferece uma base robusta e bem estruturada para treinar modelos de aprendizado por imitação. A organização detalhada e a qualidade das anotações garantem que o modelo possa capturar as complexidades do movimento do manipulador e replicá-las com alta fidelidade.
