@@ -96,7 +96,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 
 3. **Extração de Features:**
 
-   Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar o comportamento dos preços. Esses features também são séries temporais, dados por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
+   Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar o comportamento dos preços. Esses features também são séries temporais, dados (cada um) por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
 
 Os features que se mostraram úteis na geração dos dados sintéticos foram:
 
