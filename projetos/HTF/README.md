@@ -101,13 +101,13 @@ Para realização desse processo, as informações do dataset são dívidas em c
 
 <div style="text-align: center;">
     <!-- Primeira linha de 3 imagens -->
-    <img src="../HTF/images/trajetoriaSP6.gif" alt="Imagem 1" width="320"/>
-    <img src="../HTF/images/trajetoriaSP8.gif" alt="Imagem 2" width="320"/>
+    <img src="../HTF/images/trajetoriaSP6.gif" alt="Imagem 1" width="500"/>
+    <img src="../HTF/images/trajetoriaSP8.gif" alt="Imagem 2" width="500"/>
     <br>
     <!-- Segunda linha de 3 imagens -->
-    <img src="../HTF/images/trajetoriaSP7.gif" alt="Imagem 4" width="320"/>
-    <img src="../HTF/images/trajetoriaSP5.gif" alt="Imagem 5" width="320"/>
-    <p><em>Figura 10: Exemplos de predições comparadas aos dados reais </em></p>
+    <img src="../HTF/images/trajetoriaSP7.gif" alt="Imagem 4" width="500"/>
+    <img src="../HTF/images/trajetoriaSP5.gif" alt="Imagem 5" width="500"/>
+    <p><em>Figura 10: Exemplos de cenas de observação e caminho real percorrido</em></p>
 </div>
 
 ## Workflow
