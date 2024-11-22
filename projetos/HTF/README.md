@@ -83,17 +83,18 @@ Após tratados, o formato tabular dos datasets será conforme disposto na Figura
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/.png" alt="Figura 7: Estrutura dos dados para treinamento, teste e validação" width="600"/>
+    <img src="/projetos/HTF/images/ED.png" alt="Figura 7: Estrutura dos dados para treinamento, teste e validação" width="300"/>
     <br><em>Figura 7: Estrutura dos dados para treinamento, teste e validação.</em>
 </p>
 
+Para realização desse processo, as informações do dataset são dívidas em cenas, conforme parâmetros que são o tamanho do vetor de observação e do vetor de predição, que é equivalente ao tamanho do vetor real, que corresponde a trajetória realizada pelo pedestre a qual é utilizada pelo discriminador da rede S-GAN para verificar se a gerada está de acordo com os acordos sociais implícitos durante o treinamento.
 
 ## Workflow
 
 O workflow definido para o projeto e entregável 2, como uma visão de desenvolvimento, se dará conforme estabelecido graficamente na figura 7.
 
 <p align="center">
-    <img src="/projetos/HTF/images/Workflow.png" alt="Figura 7: Workflow do projeto" width="600"/>
+    <img src="/projetos/HTF/images/Workflow.png" alt="Figura 7: Workflow do projeto" width="300"/>
     <br><em>Figura 7: Workflow do projeto.</em>
 </p>
 
