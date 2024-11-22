@@ -13,39 +13,17 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > | Thiago Belina Silva Ramos  | 203975  | Eng. Eletricista|
 > 
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Texto Formatado</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-        }
-        p {
-            text-align: justify;
-            text-indent: 2em; /* Define o recuo da primeira linha */
-            margin: 0 0 1em; /* Espaço entre os parágrafos */
-        }
-    </style>
-</head>
-<body>
-    <p>
-        Este é um exemplo de texto formatado com parágrafos justificados e recuo da primeira linha. 
-        O uso de estilos CSS permite criar layouts elegantes e fáceis de ler.
-    </p>
-    <p>
-        Cada parágrafo é tratado individualmente, e o recuo da primeira linha ajuda a destacar o início 
-        de um novo parágrafo. Além disso, a justificação melhora a apresentação em blocos de texto longos.
-    </p>
-</body>
-</html>
 
+<p style="text-align: justify;">
+    Este é um exemplo de texto justificado. O GitHub suporta apenas HTML básico, então algumas formatações como recuo na primeira linha podem não funcionar aqui.
+</p>
 ## Descrição do Problema e Motivação
 
+<p style="text-align: justify;">
+
 A predição de trajetórias humanas em ambientes densamente populados é uma aplicação em potencial para soluções futurísticas,como sistemas autônomos em veículos e robôs sociais, possibilitando a interação com pessoas e com o meio externo social de forma segura, eficiente e socialmente aceita. A princípio, os modelos devem ter a capacidade de avaliar o ambiente e prever, com um alto grau de confiabilidade e precisão, as trajetórias futuras de pedestres e veículos de todo tipo a fim de evitar colisões ou acidentes envolvendo pessoas. Entretanto, modelar um comportamento socialmente compatível é uma tarefa complexa pois leva em conta uma série de desafios que devem ser sintetizados a fim de que modelos profundos possam compreender o processo implícito das interações sociais que existem entre os seres humanos e que são completamente desconhecidas, análogo à uma distribuição desconhecida ***p'(x)*** que modela o comportamento humano em interações sociais.
+
+</p>
 
 Nesse contexto, a literatura técnica tem mostrado que as Redes Adversariais Generativas Sociais (S-GANs) surgem como uma solução de modelagem do comportamento humano em predição de trajetória de pedestres com a capacidade de capturar as incertezas do movimento, gerar múltiplos cenários a partir de amostras multimodais, e gerar amostras sintéticas socialmente aceitáveis que predizem como se dará a interação entre diversas pessoas em um espaço populado. Portanto, a fim de extrair as nuanças da distribuição desconhecida das interações humanas em espaços populados, nas S-GANs, introduziram-se diversos mecanismos de redes neurais profundas que possibilitam modelar as dinâmicas do comportamento social, com a introdução de embeddings e subestruturas de *variational autoencoders* (VAEs), que resultam na estrutura conhecida por S-GAN.
 
