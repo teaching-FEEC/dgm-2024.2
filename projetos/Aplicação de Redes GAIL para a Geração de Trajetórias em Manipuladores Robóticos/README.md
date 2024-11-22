@@ -29,7 +29,9 @@ O modelo gerador foi projetado para aprender padrões temporais utilizando uma t
 
 <div align="center">
   <img src="img/GAIL.png" alt="GAIL">
+  <p>Figura 1: Modelo GAIL.</p>
 </div>
+
 
 ## Descrição do Problema/Motivação
 
@@ -44,6 +46,7 @@ A motivação para este projeto surgiu da insatisfação com resultados obtidos 
 
 <div align="center">
   <img src="img/objetivo.gif" alt="Trajetória a ser Gerada">
+  <p>Figura 2: Exemplo de trajetória a ser gerada.</p>
 </div>
 
 
@@ -103,8 +106,10 @@ A técnica GAIL, combina o aprendizado por imitação com a abordagem de redes g
 - Uma rede do tipo GAIL aprende ao alternar entre otimizar o gerador e o discriminador. O discriminador tenta distinguir trajetórias geradas das demonstradas, enquanto o gerador tenta enganar o discriminador, produzindo trajetórias mais realistas.
 - A principal métrica usada no GAIL é a divergência de Jensen-Shannon entre as distribuições de ocupação (state-action pairs) do agente e do especialista. Isso garante que o modelo aprenda políticas que imitam os padrões observados nas demonstrações especialistas.
 
-![GANxGAIL](img/GANxGAIL.png)
-
+<div align="center">
+  <img src="img/GANXGAIL.png" alt="GAIL">
+  <p>Figura 3: Diferença entre as arquiteturas de uma GAN tradicional e de uma rede GAIL.</p>
+</div>
 
 
 #### **Ambiente de Simulação RCareWorld:**
