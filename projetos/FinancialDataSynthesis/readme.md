@@ -86,6 +86,8 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 1. **Coleta de Dados via API do Yahoo Finance:**
    
    Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
+   O período de amostragem de 2 minutos foi escolhido pois é o menor que o API disponibiliza. Optamos por realizar uma análise em alta frequência, pois as variações não são tão abruptas comparadas à de um período maior (e.g. valores diários). Dessa forma, o modelo consegue gerar dados dentro de uma faixa razoável de valores. A figura abaixo ilustra um exemplo.
+   
 <div align="center">
     <img src="Valores_Vale.png" alt="Preços_Vale" title="Vale" />
     <p><em>Figura 1: Preços das ações da Vale com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
@@ -93,7 +95,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 
 3. **Extração de Features:**
 
-   Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar os dados. Esses features também são séries temporais, dados por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
+   Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar o comportamento dos preços. Esses features também são séries temporais, dados por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
 
 Os features que se mostraram úteis na geração dos dados sintéticos foram:
 
@@ -117,7 +119,8 @@ $$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}}$$
 
 - $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
    
-
+4. **Construção do Modelo Transformer:**
+   
 
 
 
