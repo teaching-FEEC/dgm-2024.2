@@ -37,7 +37,7 @@ def evaluate(autoencoder, phi, seg, dataloader):
         s_test = batch['s'].to(DEVICE)
         with torch.no_grad():
             if C_MODE == 2:
-                x_hat = autoencoder(x_test, s_test)
+                x_hat = autoencoder(x_test, s_test.float() / 255.)
             else:
                 x_hat = autoencoder(x_test)
             x_test = x_test * 0.5 + 0.5
