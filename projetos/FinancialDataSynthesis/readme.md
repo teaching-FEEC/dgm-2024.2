@@ -64,115 +64,18 @@ Para o projeto, escolhemos três ativos financeiros distintos:
 - **Ações da VALE S.A**: terceira maior empresa brasileira, com ações negociadas na NYSE e B3;
 
 Além disso, adotamos duas abordagens distintas para geração dos dados:
-- Baseada na arquitetura de redes generativas adversarias **(GANs)**;
-- Baseada na arquitetura **Transformers**;
+1. Baseada na arquitetura **Transformers**;
+2. Baseada na arquitetura de redes generativas adversarias **(GANs)**;
 
 Temos como missão, dado a série temporal desses ativos em determinado período, gerar séries temporais sintéticas plausíveis que representam a continuação das séries originais.
 
 Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste Kolmogorov-Smirnov (KS), distância de Jensen-Shannon, distância de Wasserstein, além de gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos.
 
+## Metodologia e Workflow
+**Caso 1: Transformers**
 
 
 
-
-
-<!-- Gerar dados financeiros sintéticos realistas utilizando redes neurais adversárias (GANs). No caso, computaremos os retornos de índices financeiros nacionais e internacionais (e.g. índice Bovespa ou índice S&P 500). Esses índices representam o desempenho de um conjunto representativo de ativos (em geral, ações). O retorno r(t) para um período t é dado pela equação (1):
-
-$$ r(t) =\frac{x(t) - x(t-1)}{x(t-1)}\quad\quad (1)  $$
-
-Sendo x(t) o valor do índice no período t.
-
-**Objetivos Específicos:**
-
-Neste projeto, temos três objetivos específicos.
-
-**1. Garantir que os dados financeiros sintéticos (retornos) reproduzam as propriedades estatísticas conhecidas como fatos estilizados.**
-
-Os fatos estilizados são propriedades estatísticas comuns, observadas empiricamente, entre diversos ativos financeiros em diferentes mercados e períodos [4]. Os principais fatos estilizados são:
-
-- **Heavy tails:** a probabilidade de retornos extremos (ganhos ou perdas extremas) é maior do que visto em distribuições normais. Logo, as extremidades da 
-  distribuição de retornos tende a ser mais "grossas" do que as observadas em uma curva normal.
-
-- **Assimetria entre ganhos e perdas:** perdas extremas tendem a serem mais prováveis do que ganhos extremos, logo a distribuição de retornos tende a ser 
-  assimétrica.
-
-- **Agrupamento de volatilidade:** a volatilidade mostra autocorrelação, ou seja, períodos de alta volatilidade tendem a ser seguidos por outros de alta    
-  volatilidade, e o mesmo ocorre com períodos de baixa volatilidade.
-
-- **Curva Gaussiana:** conforme aumentamos o horizonte do tempo, a distribuição de retornos tende a aproximar da curva Gaussiana. 
-
-- **Ausência de autocorrelação nos retornos:** os retornos geralmente apresentam pouca ou nenhuma autocorrelação linear. Por exemplo, o fato do retorno r(t-1) ter sido positivo tem pouca influência no retorno r(t).
-
-Podemos avaliar se a distribuição possui "heavy tails" através da métrica kurtosis (K) que mede a tendência da distribuição apresentar valores extremos. E podemos avaliar se a distribuição possui assimetria entre ganhos e perdas através da métrica skewness (S) que mede a assimetria da distribuição em relação à média.
-Por exemplo, verificamos os retornos do Índice Bovespa no período entre 2002 e 2024, e temos o seguinte histograma:
-
-![Histograma](reports/figures/histograma.png "Histograma")
-
-Observamos que o Skewness (S) é negativo, indicando que há uma assimetria entre ganhos e perdas, no caso há uma probabilidade maior de perdas extremas do que ganhos extremos. Enquanto o Kurtosis (K) de 7.28 indica que a probabilidade de retornos extremos é maior do que uma distribuição normal sugere (K>3 já garante isso). Portanto, os fatos estilizados a) e b) são verificadas com este histograma. Os outros fatos também podem ser verificados através de métricas adequadas. Dessa forma, para averiguar se um dado sintético é realista, podemos analisar se ele possui tal propriedades.
-
-**2. Condicionar a geração de dados sintéticos financeiros à diferentes períodos econômicos.**
-
-Conforme mencionado por Peña et al. [3], o comportamento dos ativos pode variar de acordo com o período econômico, também conhecidos como regimes de mercado, em que se encontram. Por exemplo, os ativos em geral se tornam mais voláteis em períodos de crise comparado à tempos de estabilidade. 
-
-Dessa forma, pretendemos separar os períodos econômicos em categorias, como: período de alta, de baixa, de normalidade, e condicionar a geração de dados de acordo com cada categoria, obtendo assim, dados sintéticos mais realistas para cada regime de mercado.
-
-Para tal, podemos utilizar técnicas de clusterização nas séries temporais estudadas, agrupando dados que apresentam comportamentos semelhantes e atribuindo variáveis categóricas para cada cluster. Ao final, geramos os dados utilizando as CTGANs (Conditional Tabular Generative Adversarial Networks) que produzem os dados sintéticos de acordo com o regime de mercado, descrito através da variável categórica.
-
-O diagrama abaixo ilustra um exemplo, em que temos a série temporal de retornos (retornos dos índices em cada instante t, conforme indicado na equação 1):
-
-$$ R_{1:N}  = [{ r(1), r(2), ..., r(N) }]  $$
-
-O processo de clusterização irá separar os retornos que apresentam comportamenho semelhante, categorizando os regimes de mercado. No exemplo, isso gera três séries temporais C1, C2 e C3 que são subséries da original:
-
-$$ \left(C1_{1:n}\right) \\ U \\ \left(C2_{1:m}\right) \\ U \\ \left(C3_{1:o}\right) = R_{1:N} $$ 
-
-![Diagrama](Diagrama_Cluster.png "Diagrama")
-
-**3. Incorporação de informações contextuais (features) na geração dos dados sintéticos.**
-
-Ao invés de treinar o modelo apenas utilizado as informações dos retornos dos índices, podemos incorporar aos dados de treinamento, e consequentemente aos dados sintéticos gerados, informações contextuais que ajudam a melhorar o realismo dos dados gerados.
-
-Conforme explicado por Pagnocelli et al.[5], a taxa de juros é um bom indicador do comportamento dos índices de ações. Visto que, de maneira simplificada, uma taxa mais elevada tende a atrair investidores a aplicar em títulos de renda fixa, refletindo numa queda do mercado de ações e o contrário também acontece.
-
-Dessa forma, os dados de treinamento são séries temporais, em que a informação para cada instante t é representado por uma tupla:
-
-$$ \left(r(t), i(t) \right) $$
-
-Sendo:
-
-r(t): retorno do índice no instante t.
-
-i(t): taxa de juros no instante t.-->
-
-
-
-## Metodologia Proposta
-
-<!-- A metodologia proposta consiste nos seguintes passos:
-
-**1.** Coletar os retornos de um determinado índice em um determinado período (e.g. retornos do Ibovespa de 2002 até 2024) descritos pela série temporal:
-
-$$ R_{1:N} = [ r(1), r(2), ..., r(N) ] $$
-
-**2.** Coletar os valores da taxa de juros (e/ou outros features relevantes) para o mesmo período:
-
-$$ I_{1:N} = [i(1), i(2), ..., i(N)] $$
-
-**3.** Aplicar técnicas de clusterização no conjunto:
-
-$$ D = [ R_{1:N}, I_{1:N} ] $$
-
-De forma a identificar as tuplas ( r(t), i(t) ) que exibem características e similares e agrupá-las em dois ou três conjuntos que representam regimes de mercado (períodos econômicos) distintos.
-
-**4.** Associar uma variável categórica a cada conjunto, ou seja, a cada regime de mercado.
-
-**5.** Gerar amostras sintéticas (Ds) condicionadas à cada conjunto através da CTGANs:
-
-$$ D^s = [R^s_{1:m}, I^s_{1:m}] $$
-
-**6.** Verificar se as amostras sintéticas são realistas através da observação dos fatos estilizados e outras métricas.
-
-**7.** Caso os dados não fiquem suficientemente realistas, realizar ajustes na CTGAN e/ou no processo de clusterização. -->
 
 ### Bases de Dados e Evolução
 
