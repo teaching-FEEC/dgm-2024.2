@@ -31,7 +31,8 @@ $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
 
 Tal que:
 
-$$ X^{s}_{N+1:N+K}  = $$X_{1:N}$$ $$
+$$ X^{s}_{N+1:N+K} \approx X_{N+1:N+K} $$
+
 
 Por exemplo, se $$X_{1:N}$$ representa o índice Ibovespa de janeiro até fevereiro, $$X^{s}_{N+1:N+K}$$ poderia representar valores plausíveis de fevereiro até março.
 
