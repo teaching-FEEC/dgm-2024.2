@@ -14,7 +14,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > | Vinicius Ventura Andreossi  | 195125  | Eng. de Computação|
 > | Cosme Rodolfo Roque dos Santos  | 042687  | Doutorado Eng. Elétrica|
 
-Link para os [slides](https://docs.google.com/presentation/d/1wfFYGmEwGVK_7xQVmFo_O_I16TSq4QnFY-srznNGeVQ/edit?usp=sharing)
+Link para os [slides](https://docs.google.com/presentation/d/18XwLWld7ohCpPfSSIJcnvKr4fydOenq4/edit?usp=sharing&ouid=105403349377020117206&rtpof=true&sd=true)
 
 
 
@@ -25,7 +25,7 @@ Os modelos foram implementados e treinados com a base de dados fornecida em seus
  ## Descrição do Problema/Motivação
  Uma das subáreas de IA generativa que obteve alguns dos mais impressionantes resultados dos últimos anos tem sido a área de *image-to-image translation* (I2IT) [[1]](#1). Dentro dessa subárea, um problema frequentemente abordado é a obtenção de mapas a partir de imagens de satélite, e vice-versa, devido às suas inúmeras aplicações, por exemplo, ajudando governos a tomarem medidas rapidamente em casos de desastres naturais [[2]](#2).
  A motivação pelo estudo desse problema é avaliar aplicações menos convencionais de modelos generativos, visto que a síntese de dados já é estudada com frequência. Além disso, mapas são um tipo de dado muito rico em informações diversas, sendo relevantes para problemas distintos, desde criação de rotas até segmentação semântica de vegetações. 
- O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como presença corpos d'àgua, parques, etc.
+ O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como presença de corpos d'àgua, parques, etc.
  Durante as etapas de treino, validação, testes e inferências, serão utilizados Datasets de imagens de Nova Iorque. 
 
 ## Objetivo
@@ -180,9 +180,9 @@ A partir dos resultados da tabela acima, é possível observar que o Pix2Pix apr
 
 ## Conclusão
 
-Apesar dos resultados obtidos não possuírem um nivél qualitativamente bom, pode-se dizer que os modelos utilizados conseguiram sim capturar a distribuição de probabilidade condicional desejada. Os resultados obtidos são limitados principalmente pela falta de hardware adequado para busca de melhores hiperparâmetros e por limitações dos próprio métodos, visto que foram utilizadas as implementações _vanilla_ de ambos as técnicas. Muita pesquisa já foi desenvolvida em cima desses modelos, inclusive uma implementação da CycleGAN otimizada para o problema de extração da mapas a partir de imagens de satélite é proposta em [[2]](#2) e uma abordagem com um discriminador que usa camadas de atenção é apresentada em [[5]](#5).
+Apesar dos resultados obtidos não possuírem um nivél qualitativamente bom, pode-se dizer que os modelos utilizados conseguiram sim capturar a distribuição de probabilidade condicional desejada. Os resultados obtidos são limitados principalmente pela falta de hardware adequado para busca de melhores hiperparâmetros e por limitações dos próprios métodos, visto que foram utilizadas as implementações _vanilla_ de ambas as técnicas. Muita pesquisa já foi desenvolvida em cima desses modelos, inclusive uma implementação da CycleGAN otimizada para o problema de extração da mapas a partir de imagens de satélite é proposta em [[2]](#2) e uma abordagem com um discriminador que usa camadas de atenção é apresentada em [[5]](#5).
 
-Tanto o Pix2pix quanto a CycleGAN deixaram de ser o estado-da-arte a muitos anos. Ainda assim, pode-se dizer que foram capazes de alcançar seus objetivos visto que seus autores os propuseram com frameworks de I2IT simples, leve e generalistas.
+Tanto o Pix2pix quanto a CycleGAN deixaram de ser o estado-da-arte a muitos anos. Ainda assim, pode-se dizer que foram capazes de alcançar seus objetivos visto que seus autores os propuseram com frameworks de I2IT simples, leves e generalistas.
 
 Finalmente, podemos dizer que durante o desenvolvimento desse projeto foi possível adquirir muito conhecimento sobre o pipeline de pesquisa com modelos generativos, aumentar a familiaridade com conceitos chave da área como arquiteturas de redes neurais, datasets, métricas quantitativas, etc. e também foi possível desenvolver habilidades práticas como monitoramento de métricas, desenvolver visualizações dos resultados, armazenamento de checkpoints, etc.
 
