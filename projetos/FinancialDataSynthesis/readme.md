@@ -17,7 +17,8 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 ## Resumo (Abstract)
 
-Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente sobre índices que medem o desempenho de mercados (e.g. Ibovespa) ou sobre o preço de ações. Esses dados são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto, como na otimização de portfólios.
+Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente sobre índices que medem o desempenho de mercados (e.g. Ibovespa) ou sobre o preço de ações através de duas abordagens: baseadas em GANS e Transformers.
+Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto, como na otimização de portfólios.
 
 O projeto lida com séries temporais da forma:
 
@@ -53,10 +54,26 @@ Neste trabalho, focamos na geração de dados sintéticos de ativos listados em 
 
 ## Objetivos
 
-O projeto tem como objetivo:
+O projeto tem como objetivo principal:
 
-- Objetivo 1
-- Objetivo 2
+- Gerar séries temporais sintéticas realistas de ativos financeiros.
+
+Para o projeto, escolhemos três ativos financeiros distintos:
+
+-1. Índice Bovespa: pontuação que mede o desempenho das ações das maiores empresas listadas na bolsa de ações brasileira (B3);
+-2. Índice S&P 500: pontuação que mede o desempenho das 500 maiores ações listadas na bolsa de ações de Nova York (NYSE).
+-3. Ações da VALE S.A: terceira maior empresa brasileira, com ações negociadas na NYSE e B3;
+
+Além disso, adotamos duas abordagens distintas para geração dos dados:
+-1. Baseada na arquitetura de redes generativas adversarias (GANs);
+-2. Baseada na arquitetura Transformers;
+
+
+Temos como missão, dado a série temporal desses ativos em determinado período, gerar séries temporais sintéticas plausíveis que representam a continuação das séries originais.
+
+Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste Kolmogorov-Smirnov (KS), distância de Jensen-Shannon, distância de Wasserstein, além de gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos.
+
+
 
 
 
