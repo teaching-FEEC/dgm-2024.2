@@ -50,7 +50,7 @@ No projeto serão consideradas duas bases de dados principais conforme tabelas a
 |UCY Crowd Data | https://graphics.cs.ucy.ac.cy/research/downloads/crowd-data | Conjunto de dados contendo pessoas em movimento em meio a multidões.|
 >Tabela 1:Datasets utilizados.
 
-Esta base de dados é composta por duas cenas, a ETH e a Hotel, cujas imagens podem ser observadas nas figuras 2 e 3 respectiviamente.
+A base de dados BIWI Walking Pedestrian é composta por duas cenas denominadas ETH e a Hotel, cujas imagens exemplos podem ser observadas nas figuras 2 e 3 respectiviamente. Já a UCY Crowd é composta por seis cenas denominadas Zara01, Zara02, Zara03, Students001, Students003 e Univ. Exemplos de imagens do Zara01 e Students003 podem ser observadas nas figuras 4 e 5 respectiviamente.
 
 <p align="center">
     <img src="/projetos/HTF/images/biwi_eth.png" alt="Figura 02: Imagem do dataset ETH" width="600"/>
@@ -63,12 +63,6 @@ Esta base de dados é composta por duas cenas, a ETH e a Hotel, cujas imagens po
     <br>
     <em>Figura 3: Imagem do dataset Biwi Hotel.</em>
 </p>
-
-|Base de Dados | Endereço na Web | Resumo descritivo|
-|----- | ----- | -----|
-|UCY Crowd Data | https://graphics.cs.ucy.ac.cy/research/downloads/crowd-data | Conjunto de dados contendo pessoas em movimento em meio a multidões.|
-
-Esta base de dados é composta por seis cenas que são Zara01, Zara02, Zara03, Students001, Students003 e Univ. Exemplos de imagens do Zara01 e Students003  podem ser observadas nas figuras 4 e 5 respectiviamente.
 
 <p align="center">
     <img src="/projetos/HTF/images/crowds_zara01.jpg" alt="Figura 4: Imagem do dataset UCY Zara 01" width="600"/>
