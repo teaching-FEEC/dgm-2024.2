@@ -59,9 +59,9 @@ O projeto tem como **objetivo principal** :
 - Gerar séries temporais sintéticas realistas de ativos financeiros.
 
 Para o projeto, escolhemos três ativos financeiros distintos:
-1.Índice Bovespa: pontuação que mede o desempenho das ações das maiores empresas listadas na bolsa de ações brasileira (B3); 
-2.Índice S&P 500: pontuação que mede o desempenho das 500 maiores ações listadas na bolsa de ações de Nova York (NYSE);
-3.Ações da VALE S.A: terceira maior empresa brasileira, com ações negociadas na NYSE e B3;
+1. Índice Bovespa: pontuação que mede o desempenho das ações das maiores empresas listadas na bolsa de ações brasileira (B3); 
+2. Índice S&P 500: pontuação que mede o desempenho das 500 maiores ações listadas na bolsa de ações de Nova York (NYSE);
+3. Ações da VALE S.A: terceira maior empresa brasileira, com ações negociadas na NYSE e B3;
 
 Além disso, adotamos duas abordagens distintas para geração dos dados:
 -1. Baseada na arquitetura de redes generativas adversarias (GANs);
