@@ -72,7 +72,11 @@ Temos como missão, dado a série temporal desses ativos em determinado período
 Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste Kolmogorov-Smirnov (KS), distância de Jensen-Shannon, distância de Wasserstein, além de gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos.
 
 ## Metodologia e Workflow
-**Caso 1: Transformers**
+**CASO 1: TRANSFORMERS**
+A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
+
+1. **Coleta de Dados via API do Yahoo Finance:**
+   Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal, $$ X_{1:N} $$. 
 
 
 
