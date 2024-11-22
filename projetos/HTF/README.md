@@ -83,8 +83,8 @@ Após tratados, o formato tabular dos datasets será conforme disposto na Figura
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/.png" alt="Figura 6: Estrutura dos dados tabulares brutos" width="600"/>
-    <br><em>Figura 6: Estrutura dos dados tabulares brutos.</em>
+    <img src="/projetos/HTF/images/.png" alt="Figura 7: Estrutura dos dados para treinamento, teste e validação" width="600"/>
+    <br><em>Figura 7: Estrutura dos dados para treinamento, teste e validação.</em>
 </p>
 
 
