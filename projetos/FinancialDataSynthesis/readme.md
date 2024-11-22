@@ -108,9 +108,6 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
 $$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}}$$
 
 - $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
--
-
-
    
 
 
