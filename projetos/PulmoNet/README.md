@@ -278,13 +278,11 @@ No caso do cálculo do SSIM, como o foco do projeto está associado com uma boa 
 #### Análise de Utilidade
 Dado que o objetivo do projeto é gerar imagens sintéticas (2D) de CTs pulmonares realistas, avalia-se nesta etapa duas perspectivas. A primeira delas trata da segmentação das fatias sintéticas por meio da biblioteca *lungmask* e comparação desta saída com a máscara binária original que gerou esta imagem sintética. Isto é feito para avaliar se o gerador conseguiu manter o formato do pulmão original ou algo próximo a isso. Utiliza-se o SSIM para comparação destas duas fatias pulmonares segmentadas.
 
-Já a segunda perspectiva trata da utilidade do gerador, em termos de **feature extraction**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza as *features* extraídas pelo nosso gerador. Esta comparação será avaliada ao comparar as saídas com a própria segmentação presente na base de dados ATM'22, feita por especialistas. Além disso, será calculado o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2), e considera-se também calcular o tempo de processamento das redes U-Net e U-Net com *features* extraídos pela nossa Pix2Pix, a fim de verificar se também há uma otimização neste quesito.
+Já a segunda perspectiva trata da utilidade do gerador, em termos de **feature extraction**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza as *features* extraídas pelo nosso gerador. Esta comparação será avaliada ao comparar as saídas com a própria segmentação presente na base de dados ATM'22, feita por especialistas. Além disso, será calculado o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2), e considera-se também calcular o tempo de processamento das redes U-Net inicializada com pesos aleatórios e a U-Net com *features* extraídos pela nossa Pix2Pix, a fim de verificar se também há uma otimização neste quesito.
 
-Ressalta-se que foram escolhidas duas funções de *loss* para esta tarefa: BCEWithLogitsLoss e DICELoss, tipicamente utilizadas em tarefas de segmentação de imagens médicas.
-Além disso, para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, são feitas três variações no processo de *fine-tunning*:
-1. Retreina-se todos os pesos da arquitetura, utilizando o conhecimento adquirido pela GAN apenas como uma inicialização não aleatória para o treinamento da rede de segmentação;
-2. Congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador;
-3. Congela-se todas as camadas do gerador, com excessão da última camada.
+Ressalta-se que foi escolhida como função de *loss* para esta tarefa a DICELoss, tipicamente utilizadas em tarefas de segmentação de imagens médicas [[12]](#12).
+Além disso, para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *fine-tunning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador. Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
+
 
 Por fim, é importante destacar o caminho a ser seguido para a avaliação da rede generativa para as saídas em 3D, caso seja possível implementá-las dentro do prazo do projeto. Para esta aplicação, geraríamos um volume sintético e passaríamos esta saída pela rede de segmentação *medpseg* [[10]](#10). Feito isso, compararíamos as vias aéreas segmentadas com o *ground-truth* estabelecido na própria base de dados ATM'22.
 
@@ -444,6 +442,8 @@ Os próximos passos do projeto tratam da finalização do treinamento do modelo,
 <a id="10">[10]</a> : Carmo, D. S., “MEDPSeg: Hierarchical polymorphic multitask learning for the segmentation of ground-glass opacities, consolidation, and pulmonary structures on computed tomography”, <i>arXiv e-prints</i>, Art. no. arXiv:2312.02365, 2023. doi:10.48550/arXiv.2312.02365.
 
 <a id="11">[11]</a> : Goodfellow, I. J., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., Courville, A., Bengio, Y., “Generative Adversarial Networks”, arXiv e-prints, Art. no. arXiv:1406.2661, 2014. doi:10.48550/arXiv.1406.2661.
+
+<a id="12">[12]</a> : A. Keshavarzi and E. Angelini, "Few-Shot Airway-Tree Modeling Using Data-Driven Sparse Priors," 2024 IEEE International Symposium on Biomedical Imaging (ISBI), Athens, Greece, 2024, pp. 1-5, doi: 10.1109/ISBI56570.2024.10635527.
 
 Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
 
