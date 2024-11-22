@@ -55,8 +55,8 @@ Neste trabalho, focamos na geração de dados sintéticos de ativos listados em 
 
 **Objetivo Geral:**
 
-<!-- teraewt -->
-Gerar dados financeiros sintéticos realistas utilizando redes neurais adversárias (GANs). No caso, computaremos os retornos de índices financeiros nacionais e internacionais (e.g. índice Bovespa ou índice S&P 500). Esses índices representam o desempenho de um conjunto representativo de ativos (em geral, ações). O retorno r(t) para um período t é dado pela equação (1):
+
+<!-- Gerar dados financeiros sintéticos realistas utilizando redes neurais adversárias (GANs). No caso, computaremos os retornos de índices financeiros nacionais e internacionais (e.g. índice Bovespa ou índice S&P 500). Esses índices representam o desempenho de um conjunto representativo de ativos (em geral, ações). O retorno r(t) para um período t é dado pela equação (1):
 
 $$ r(t) =\frac{x(t) - x(t-1)}{x(t-1)}\quad\quad (1)  $$
 
@@ -122,7 +122,7 @@ Sendo:
 
 r(t): retorno do índice no instante t.
 
-i(t): taxa de juros no instante t.
+i(t): taxa de juros no instante t.-->
 
 
 
