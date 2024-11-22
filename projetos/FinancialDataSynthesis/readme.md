@@ -75,8 +75,7 @@ Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
-|API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações em tempo real e histórico de preços.|
-| Bloomberg Dataset|https://github.com/chuma9615/ctgan-portfolio-research/blob/main/src/data/asset_prices.csv| Inclui dados financeiros detalhados e será útil para o estudo de alocação de ativos e geração de cenários sintéticos de retornos. Neste dataset, temos o retorno histórico dos principais índices do mundo, como S&P 500, Nasdaq 100, Total Stock Market, etc.| 
+|API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações, volume negociado, preço de fechamento, preço máximo e mínimo.|
 
 
 ## Metodologia e Workflow
@@ -88,7 +87,9 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
    
    Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
 
-2. **Extração de Features:**
+   ![Preços_VALE](Valores VALE.png "Preços da VALE")
+
+3. **Extração de Features:**
 
    Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar os dados. Esses features também são séries temporais, dados por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
 
