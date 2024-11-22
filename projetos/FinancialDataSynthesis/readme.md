@@ -93,10 +93,11 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
 
 3. **Normalização dos Dados:**
 
-   Após a coleta dos dados e extração dos features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe: $D=[X\_{1:N}, F\_{1:N} ]$
+   Após a coleta dos dados e extração dos features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe: $D=[X\_{1:N}, F\_{1:N} ]$.
+   
    Após isso, normalizamos os valores para facilitar o treinamento. A normalização adotada foi:
 
-   $$ x^{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}} $$
+$$ x(i) = \frac{1}{2} $$
 
 
    
