@@ -130,4 +130,32 @@ Output2=LayerNormalization(Output1+FFN Output)
 
 Iteração: O processo acima é repetido para cada bloco Transformer (num_layers vezes), atualizando o input a cada iteração.
 
+7. **Global Average Pooling:**
 
+Após passar pelos blocos Transformer, reduzimos a dimensionalidade para preparar os dados para a camada de saída (output layer).
+
+- Função: reduzir a dimensão sequencial calculando a média das representações ao longo do tempo.
+  
+- Operação:
+  
+Aplicação de média global na dimensão temporal: 
+
+Pooled Output=GlobalAveragePooling1D(Output2)
+
+Resultado: um vetor de dimensão (model_dim). 
+
+8. **Output Layer:**
+   A camada de saída produz a previsão final do modelo.
+
+- Função: mapear as representações aprendidas para a dimensão do target desejado.
+  
+- Valores Utilizados:
+    - output_dim = 1: Dimensão da saída, correspondente à previsão do retorno.
+
+- Operação:
+
+Aplicação de uma camada densa sem função de ativação:
+
+Predição = Dense(𝑜𝑢𝑡𝑝𝑢𝑡_𝑑𝑖𝑚)(Pooled Output)
+
+Resultado: um valor escalar que representa a previsão do retorno no próximo período.
