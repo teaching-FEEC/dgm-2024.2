@@ -116,12 +116,18 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
    
    Após isso, normalizamos os valores de cada série temporal para facilitar o treinamento, utilizando as suas respectivas médias e desvios padrões. A normalização adotada foi:
 
-$$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}}$$
+$$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 
 - $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
+-  $x(i)$: representa o valor antes da normalização (preço ou algum feature) no instante $i$.
+- média[x], desvio padrão [x] : representam a média e o desvio padrão associado à série temporal dos elementos de x(i)  
    
 4. **Construção da Rede Neural:**
-   A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra a arquitetura de maneira simplificada atráves de blocos:
+   A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
+   <div align="center">
+    <img src="Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
+    <p><em>Figura 3: Modelo baseado na arquitetura Transformer simplificado</em></p>
+</div>
    
 
    
