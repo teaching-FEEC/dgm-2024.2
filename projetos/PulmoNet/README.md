@@ -38,9 +38,8 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 8. [Referências Bibliográficas](#referências-bibliográficas)
 
 **ANEXOS**:
-1. [Varredura dos parâmetros da GAN para 10 mil dados](#varredura-dos-parâmetros-da-gan-para-10-mil-dados)
-2. [Testes adicionais com outras arquiteturas](#testes-adicionais-com-outras-arquiteturas)
-3. [Como rodar os modelos](#how-to-run)
+1. [Testes adicionais com outras arquiteturas](#testes-adicionais-com-outras-arquiteturas)
+2. [Como rodar os modelos](#how-to-run)
 
 ## Links Importantes
 Links para apresentações de slides e vídeos para entregas E1, E2 e E3 para a disciplina:
@@ -51,7 +50,7 @@ Links para apresentações de slides e vídeos para entregas E1, E2 e E3 para a 
 
 [Link para a apresentação de slides E2](https://docs.google.com/presentation/d/1QH5_WpeTp7kQPSVB78ukK7msn-Tx09pZoM_3dWmeqC4/edit?usp=sharing)
 
-> TODO: link E3
+[Link para a apresentação de slides E3](https://docs.google.com/presentation/d/1YcYpWPjaEHAoT9k7YVTDgA9t4VoGU5SL2fJ26_SG3ok/edit?usp=sharing)
 
 ## Resumo (Abstract)
 
@@ -215,6 +214,12 @@ A figura abaixo exemplifica as diferentes entradas no gerador a depender do ruí
 
 *Figura 11: Exemplos de entradas com diferentes tipos e níveis de ruídos.*
 
+Outro ponto interessante que merece ser mencionado é a variação dos passos de atualização do gerador e do discriminador.
+Um problema típico de treinamento de GANs é a velocidade de aprendizado em diferentes ritmos do gerador e do discriminador, isto é, uma destas redes pode aprender mais rápido do que a outra, resultando em uma baixa qualidade na tarefa de síntese.
+Uma estratégia para tentar solucionar este problema é a variação na taxa de atualização dos pesos neurais, por exemplo: o gerador é atualizado a cada iteração ao passo que o discriminador é atualizado a cada três iterações.
+
+Ademais, ressalta-se que a variação do *learning rate* diz respeito apenas ao valor inicial, dado que este parâmetro é ajustado linearmente após 10 épocas de treinamento.
+
 Esta varredura inicial é feita com apenas 10 mil dados e analisada no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM).
 A partir desta análise inicial, seleciona-se três modelos para prosseguir com o treinamento com todos os dados disponíveis.
 Ressalta-se que, dadas as restrições de tempo e capacidade computacional, não foram testadas todas as combinações de parâmetros da tabela acima. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros em quinze modelos, conforme será apresentado na seção [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan).
@@ -278,11 +283,21 @@ No caso do cálculo do SSIM, como o foco do projeto está associado com uma boa 
 #### Análise de Utilidade
 Dado que o objetivo do projeto é gerar imagens sintéticas (2D) de CTs pulmonares realistas, avalia-se nesta etapa duas perspectivas. A primeira delas trata da segmentação das fatias sintéticas por meio da biblioteca *lungmask* e comparação desta saída com a máscara binária original que gerou esta imagem sintética. Isto é feito para avaliar se o gerador conseguiu manter o formato do pulmão original ou algo próximo a isso. Utiliza-se o SSIM para comparação destas duas fatias pulmonares segmentadas.
 
-Já a segunda perspectiva trata da utilidade do gerador, em termos de **feature extraction**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza as *features* extraídas pelo nosso gerador. Esta comparação será avaliada ao comparar as saídas com a própria segmentação presente na base de dados ATM'22, feita por especialistas. Além disso, será calculado o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2), e considera-se também calcular o tempo de processamento das redes U-Net inicializada com pesos aleatórios e a U-Net com *features* extraídos pela nossa Pix2Pix, a fim de verificar se também há uma otimização neste quesito.
+Já a segunda perspectiva trata da utilidade do gerador, em termos de **transfer learning**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma rede similar à U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza o aprendizado do nosso gerador.
+Para isto, coloca-se na entrada da rede de segmentação imagens completas de pulmões e compara-se as saídas geradas pela U-Net com a própria segmentação presente na base de dados ATM'22 feita por especialistas, conforme ilustrado no fluxograma abaixo.
+A seleção entre o tipo de modelo (inicialização aleatória ou pesos transferidos do nosso gerador) é definida em um arquivo YAML, bem como outros parâmetros de configuração.
+Para a avaliação de desempenho destas redes, calcula-se o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2).
 
-Ressalta-se que foi escolhida como função de *loss* para esta tarefa a DICELoss, tipicamente utilizadas em tarefas de segmentação de imagens médicas [[12]](#12).
-Além disso, para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *fine-tunning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador. Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
+![Fluxo para treinamento da rede de segmentação de vias aérea para o teste de utilidade.](figs/workflow_unet.png?raw=true)
 
+*Figura 13: Fluxo para treinamento da rede de segmentação de vias aérea para o teste de utilidade.*
+
+Ressalta-se que foi escolhida como função de *loss* para esta tarefa a DiceLoss, tipicamente utilizadas em tarefas de segmentação de imagens médicas [[12]](#12).
+Além disso, para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *transfer learning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador (ilustração desta aquitetura na figura abaixo). Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
+
+![Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.](figs/UNET_ARQUITETURA.png?raw=true)
+
+*Figura 14: Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.*
 
 Por fim, é importante destacar o caminho a ser seguido para a avaliação da rede generativa para as saídas em 3D, caso seja possível implementá-las dentro do prazo do projeto. Para esta aplicação, geraríamos um volume sintético e passaríamos esta saída pela rede de segmentação *medpseg* [[10]](#10). Feito isso, compararíamos as vias aéreas segmentadas com o *ground-truth* estabelecido na própria base de dados ATM'22.
 
@@ -291,7 +306,7 @@ O projeto será implementado seguindo o seguinte fluxo lógico:
 
 ![Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.](figs/fluxo_logico.png?raw=true)
 
-*Figura 13: Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.*
+*Figura 15: Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.*
 
 Dado este fluxo, estipulamos o seguinte cronograma para desenvolvimento do projeto:
 
