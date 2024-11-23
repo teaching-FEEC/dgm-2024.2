@@ -156,7 +156,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
    - Layer MultiHead Attention: permite que o modelo se concentre em diferentes partes da sequência para realizar a predição
    - Conexão Residual e Normalização: adiciona a entrada do bloco à saída do layer MultiHead Attention e normaliza os valores. Isso ajuda na estabilização de treinamento.
    - Rede Feed-Forward: duas camadas densas com função de ativação ReLU na primeira.
-   - 
+     
 9. **Global Average Pooling:**
     
    Reduz a saída dos blocos transformers para um vetor de tamanho fixo através do cálculo da média dos valores.
@@ -165,7 +165,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 
     Camada densa que gera o valor predito. No nosso modelo, predizemos apenas um único valor por vez.
 
-
+Os detalhes de cada bloco pode ser visto nesta seção: 
 
 
 
