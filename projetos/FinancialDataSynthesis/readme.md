@@ -120,8 +120,8 @@ $$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}}$$
 
 - $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
    
-4. **Construção do Modelo Transformer:**
-   
+4. **Construção da Rede Neural:**
+   A rede neural utilizada é um modelo baseado na arquitetura Transformer, utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas.
 
 
 
