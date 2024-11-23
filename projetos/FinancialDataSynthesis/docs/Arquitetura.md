@@ -79,7 +79,7 @@ Os blocos Transformer são o núcleo do modelo, permitindo que ele aprenda rela�
 - Função: processar as sequências posicionais através de mecanismos de atenção e redes feed-forward para capturar dependências temporais.
 
 - Valores Utilizados:
-- 
+  
   - num_layers = 2: Número de blocos Transformer empilhados.
   - num_heads = 8: Número de cabeças no mecanismo de atenção múltipla.
   - ff_dim = 128: Dimensão da rede feed-forward interna.
