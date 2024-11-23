@@ -94,7 +94,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
     <p><em>Figura 1: Preços das ações da Vale com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
-3. **Extração de Features:**
+2. **Extração de Features:**
 
    Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar o comportamento dos preços. Esses features também são séries temporais, dados (cada um) por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
 
@@ -121,7 +121,10 @@ $$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}}$$
 - $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
    
 4. **Construção da Rede Neural:**
-   A rede neural utilizada é um modelo baseado na arquitetura Transformer, utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas.
+   O modelo empregado é baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra a arquitetura, em blocos, a rede utilizada:
+
+   
+   
 
 
 
