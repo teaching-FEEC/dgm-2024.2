@@ -31,3 +31,27 @@ Cada sequência possui um target, valor qual devemos predizer. Para o nosso caso
 $$ Targets = [x(25)] , [x(26)], ..., [x(N)] $$
 
 Por exemplo, o target da sequência $[{x(1), x(2), ..., x(24)}]$ é $x(25)$.
+
+3. **Layer de Input:**
+
+Representa a entrada da rede neural. No nosso exemplo, são sequencias com 24 elementos, para cada feature, além dos targets.
+
+4. **Embedding Layer:**
+
+A Embedding Layer é uma camda densa responsável por projetar as sequências de entrada em um espaço de dimensão superior. Isso permite que o modelo capture características mais complexas dos dados.
+
+- Função:
+  
+   Transformar as sequências de entrada de dimensão (tam_seq, nº de features) para (tam_seq, model_dim).
+  
+- Valores Utilizados:
+
+  model_dim = 64: Dimensão interna usada nas representações do modelo.
+  
+- Operação:
+- 
+  Aplicação de uma camada densa sem função de ativação: Embeddings= Dense(𝑚𝑜𝑑𝑒𝑙_𝑑𝑖𝑚)(Sequências de Entrada)
+  
+  Embeddings=Dense(model_dim)(Sequências de Entrada)
+
+  Resultado: um tensor de dimensão (tam_seq, model_dim).
