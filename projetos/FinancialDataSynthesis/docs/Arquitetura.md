@@ -49,7 +49,7 @@ A Embedding Layer é uma camda densa responsável por projetar as sequências de
   model_dim = 64: Dimensão interna usada nas representações do modelo.
   
 - Operação:
-- 
+ 
   Aplicação de uma camada densa sem função de ativação: Embeddings= Dense(𝑚𝑜𝑑𝑒𝑙_𝑑𝑖𝑚)(Sequências de Entrada)
   
   Embeddings=Dense(model_dim)(Sequências de Entrada)
