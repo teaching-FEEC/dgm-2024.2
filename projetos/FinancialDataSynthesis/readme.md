@@ -121,7 +121,8 @@ $$ x_{n}(i) = \frac{x(i) - \text{média}}{\text{desvio padrão}}$$
 - $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
    
 4. **Construção da Rede Neural:**
-   O modelo empregado é baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra a arquitetura, em blocos, a rede utilizada:
+   A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra a arquitetura de maneira simplificada atráves de blocos:
+   
 
    
    
