@@ -92,7 +92,7 @@ Operações em Cada Bloco Transformer:
 - Função: permite que o modelo preste atenção a diferentes posições na sequência simultaneamente.
  
 - Operação:
-- 
+  
 Attention Output=MultiHeadAttention(num_heads,key_dim=model_dim)(Input,Input)
 
 Aplicação de dropout na saída de atenção.
