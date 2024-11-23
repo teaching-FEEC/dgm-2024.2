@@ -16,4 +16,6 @@ E as séries temporais dos features, que por simplicidade, consideramos apenas u
 
 $$ F_{1:N} = [f(1), f(2), ..., f(N)] $$
 
-Essas séries são agrupadas em um mesmo dataframe.
+Essas séries são agrupadas em um mesmo dataframe, dado por:
+
+$$ D = [X_{1:N},F_{1:N}] $$ 
