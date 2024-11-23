@@ -40,9 +40,7 @@ Representa a entrada da rede neural. No nosso exemplo, são sequencias com 24 el
 
 A Embedding Layer é uma camada densa responsável por projetar as sequências de entrada em um espaço de dimensão superior. Isso permite que o modelo capture características mais complexas dos dados.
 
-- Função:
-  
-   Transformar as sequências de entrada de dimensão (tam_seq, nº de features) para (tam_seq, model_dim).
+- Função: transformar as sequências de entrada de dimensão (tam_seq, nº de features) para (tam_seq, model_dim).
   
 - Valores Utilizados:
   
@@ -62,9 +60,7 @@ A Embedding Layer é uma camada densa responsável por projetar as sequências d
 
    Como o Transformer não possui mecanismos recorrentes ou convolucionais, é necessário adicionar informações de posição para que o modelo entenda a ordem sequencial dos dados.
 
-- Função:
-
- Incorporar informações de posição aos embeddings para que a sequência temporal seja considerada pelo modelo.
+- Função: incorporar informações de posição aos embeddings para que a sequência temporal seja considerada pelo modelo.
  
 - Operação:
 
@@ -74,15 +70,13 @@ PosEnc=Função Positional Encoding(𝑡𝑎𝑚_𝑠𝑒𝑞,𝑚𝑜𝑑𝑒
 
 Adição das codificações posicionais aos embeddings:
 
-Embeddings Posicionais =Embeddings + PosEnc
+Embeddings Posicionais = Embeddings + PosEnc
 
 6. **Blocos Transformers:**
 
 Os blocos Transformer são o núcleo do modelo, permitindo que ele aprenda relações complexas dentro das sequências.
 
-- Função:
-
-Processar as sequências posicionais através de mecanismos de atenção e redes feed-forward para capturar dependências temporais.
+- Função: processar as sequências posicionais através de mecanismos de atenção e redes feed-forward para capturar dependências temporais.
 
 - Valores Utilizados:
 - 
@@ -95,9 +89,7 @@ Operações em Cada Bloco Transformer:
 
 **Multi-Head Attention:**
 
-- Função:
-  
- Permite que o modelo preste atenção a diferentes posições na sequência simultaneamente.
+- Função: permite que o modelo preste atenção a diferentes posições na sequência simultaneamente.
  
 - Operação:
 
@@ -110,9 +102,7 @@ Aplicação de dropout na saída de atenção.
 
 **Conexão Residual e Normalização**:
 
-- Função:
-
-Facilitar o fluxo de gradientes e estabilizar o treinamento.
+- Função: facilitar o fluxo de gradientes e estabilizar o treinamento.
 
 - Operação: 
 
@@ -121,15 +111,11 @@ Output1=LayerNormalization(Input+Attention Output)
 
 **Feed-Forward Network (FFN):**
 
-- Função:
-
-Processar as representações aprendidas para capturar padrões não lineares.
+- Função: processar as representações aprendidas para capturar padrões não lineares.
 
 - Operações:
   
 Primeira camada densa com ativação ReLU e regularização L2:
-
-FFN Output = Dense(𝑓𝑓_𝑑𝑖𝑚,activation=′𝑟𝑒𝑙𝑢′,kernel_regularizer=𝐿2)(Output1)
 
 FFN Output=Dense(ff_dim,activation= ′relu ′,kernel_regularizer=L2)(Output1)
 
