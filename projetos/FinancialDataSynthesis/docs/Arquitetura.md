@@ -46,9 +46,9 @@ A Embedding Layer é uma camda densa responsável por projetar as sequências de
   
 - Valores Utilizados:
 
-  tam_seq = 24  (tamanho das sequências).
-  model_dim = 64 (dimensão interna usada nas representações do modelo).
-  nº de features = 7 (Moving Average Convergence Divergence (MACD), Relative Strength Index (RSI), Stochastic Oscillator, Commodity Channel Index, Volume, MACD histogram, Money Flow Index)
+  -tam_seq = 24  (tamanho das sequências).
+  -model_dim = 64 (dimensão interna usada nas representações do modelo).
+  -nº de features = 7 (Moving Average Convergence Divergence (MACD), Relative Strength Index (RSI), Stochastic Oscillator, Commodity Channel Index, Volume, MACD histogram, Money Flow Index)
   
 - Operação:
  
