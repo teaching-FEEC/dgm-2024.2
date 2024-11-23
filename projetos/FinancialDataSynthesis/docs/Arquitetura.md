@@ -92,9 +92,7 @@ Operações em Cada Bloco Transformer:
 - Função: permite que o modelo preste atenção a diferentes posições na sequência simultaneamente.
  
 - Operação:
-
-Attention Output = MultiHeadAttention(𝑛𝑢𝑚_ℎ𝑒𝑎𝑑𝑠,key_dim=𝑚𝑜𝑑𝑒𝑙_𝑑𝑖𝑚)(Input,Input)
-
+- 
 Attention Output=MultiHeadAttention(num_heads,key_dim=model_dim)(Input,Input)
 
 Aplicação de dropout na saída de atenção.
@@ -107,7 +105,6 @@ Aplicação de dropout na saída de atenção.
 - Operação: 
 
 Output1 = LayerNormalization(Input+Attention Output)
-Output1=LayerNormalization(Input+Attention Output)
 
 **Feed-Forward Network (FFN):**
 
@@ -122,6 +119,7 @@ FFN Output=Dense(ff_dim,activation= ′relu ′,kernel_regularizer=L2)(Output1)
 Segunda camada densa que retorna à dimensão model_dim:
 
 FFN Output=Dense(model_dim,kernel_regularizer=L2)(FFN Output)
+
 Aplicação de dropout na saída da FFN.
 
 Conexão Residual e Normalização (2º Vez):
