@@ -126,7 +126,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
    A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
    <div align="center">
     <img src="Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
-    <p><em>Figura 3: Modelo baseado na arquitetura Transformer simplificado</em></p>
+    <p><em>Figura 3: Estrutura simplificada do modelo baseado na arquitetura Transformer. </em></p>
 </div>
 
 - **Input:**
