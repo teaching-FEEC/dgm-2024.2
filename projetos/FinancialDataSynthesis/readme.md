@@ -131,7 +131,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 
 1. **Input:**
    
-   A entrada é um dataframe D contendo a série temporal do preço $$X_{1:N}%% e dos features %%F_{1:N}%%.
+   A entrada é um dataframe D contendo a série temporal do preço $$X\_{1:N}%% e dos features %%F\_{1:N}%%.
    
 2. **Sequenciador das Séries Temporais:**
    
@@ -158,9 +158,11 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
    - Rede Feed-Forward: duas camadas densas com função de ativação ReLU na primeira.
    - 
 9. **Global Average Pooling:**
+    
    Reduz a saída dos blocos transformers para um vetor de tamanho fixo através do cálculo da média dos valores.
 
 10. **Output Layer**:
+
     Camada densa que gera o valor predito. No nosso modelo, predizemos apenas um único valor por vez.
 
 
