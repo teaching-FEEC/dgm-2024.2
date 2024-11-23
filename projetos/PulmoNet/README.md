@@ -102,22 +102,23 @@ Apesar de inspirar-se no artigo [[1]](#1), o desenvolvimento deste projeto utili
 |----- | ----- | -----|
 |ATM'22 | https://zenodo.org/records/6590774 e https://zenodo.org/records/6590775  | Esta base contém 500 volumes CTs pulmonares, nos quais as vias aéreas estão completamente anotadas, i.e., delimitadas. Tais volumes serão fatiados em imagens 2-D, segmentados e transformados. Esta base de dados foi utilizada para um desafio de segmentação [[2]](#2).|
 
-Os dados desta base são arquivos com extensão `*.nii.gz`, em um formato característico de imagens médicas, e contêm todo o volume pulmonar obtido durante um exame de tomografia. Cada arquivo com um volume pulmonar é acompanhado por um outro arquivo de mesma extensão contendo as anotações feitas por especialistas.
-Tais dados são lidos com auxílio da biblioteca `SimpleITK`, conforme feito pelas classes em `datasets.py` neste repositório.
+Os dados desta base são arquivos com extensão `*.nii.gz`, um formato característico de imagens médicas, e contêm todo o volume pulmonar obtido durante um exame de tomografia. Cada arquivo com um volume pulmonar é acompanhado por um outro arquivo de mesma extensão contendo as anotações das vias aéreas feitas por especialistas. Tais dados são lidos com auxílio da biblioteca `SimpleITK`, conforme feito pelas classes em `datasets.py` neste repositório.
 
-Dado que este trabalho centrará-se na geração de imagens sintéticas em duas dimensões de CTs pulmonares, estes volumes pulmonares serão fatiados no eixo transversal, assim como ilustrado na imagem abaixo. Como resultado, fatiaremos os 500 volumes pulmores em uma quantidade muito maior de imagens 2D, aumentando o tamanho dos conjuntos de dados disponíveis para treinamento, validação e testes.
+Dado que este trabalho centra-se na geração de imagens sintéticas em duas dimensões de CTs pulmonares, estes volumes pulmonares são fatiados no eixo transversal, assim como ilustrado na imagem abaixo. Como resultado, fatia-se os 500 volumes pulmores em uma quantidade muito maior de imagens 2D, aumentando o tamanho dos conjuntos de dados disponíveis para treinamento, validação e testes.
 
 ![Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.](figs/dataset_exemplo_fatia.png?raw=true)
 
 *Figura 3: Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.*
 
-A quantia exata de dados que serão utilizados depende da configuração da fatia obtida. Isto é, não serão utilizadas todas as fatias do volume pulmonar, mas sim apenas as imagens que apresentarem o pulmão completo e cercado por tecidos. A partir desta condição, as fatias serão selecionadas e utilizadas como entrada da rede geradora. Ressalta-se que esta seleção é necessária, uma vez que é uma restrição da biblioteca em Python `lungmask` [[7]](#7), utilizada para segmentação automática de CTs pulmonares.
+Como a entrada da rede geradora são máscaras pulmonares, apenas fatias contendo uma quantidade significativa de pulmão são selecionadas para o desenvolvimento deste projeto. Para fazer essa seleção, utiliza-se a biblioteca em Python `lungmask` [[7]](#7), que realiza a  segmentação automática de CTs pulmonares. 
+
+A quantia exata de dados utilizados depende da configuração da fatia obtida. Isto é, não serão utilizadas todas as fatias do volume pulmonar, mas sim apenas as imagens que apresentarem o pulmão completo e cercado por tecidos. A partir desta condição, as fatias serão selecionadas e utilizadas como entrada da rede geradora. Ressalta-se que esta seleção é necessária, uma vez que é uma restrição da biblioteca em Python `lungmask` [[7]](#7), utilizada para segmentação automática de CTs pulmonares.
 Também é pertinente destacar que esta segmentação é uma etapa essencial do workflow, posto que os dados de entrada da rede geradora da GAN serão máscaras pulmonares, tal como feito em [[1]](#1).
 
 O gráfico abaixo ilustra o histograma da base de dados após a seleção das fatias. Para a construção deste histograma, calculou-se a quantidade de pixels de cada imagem que descrevem a região pulmonar (a parte em branco após a máscara de segmentação). Nota-se que temos muitas imagens com até 2 mil pixels para compor o pulmão, depois temos uma queda nesta quantidade de imagens até algo em torno de 20 mil pixels, seguido por uma nova região de máximo - temos a maior concentração das imagens usadas pela rede generativa com o pulmão ocupando entre 30 e 40 mil pixels. Depois disso, a quantidade exemplares com mais pixels vai diminuindo gradualmente até pouco mais de 100 mil pixels.
 Um ponto importante a ser mencionado é que apesar do histograma começar em zero, a menor quantia de pixels no conjunto após segmentação é de 100 pixels. Ademais, dado que são imagens com dimensão 512 x 512 e, portanto, têm mais de 260 mil pixels, as imagens com a maior quantidade de pixels para a região do pulmão não ocupam nem metade de todos os pixels disponíveis.
 
-![Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.](figs/histograma_fatias.png?raw=true)
+![Histrograma da quantidade de pixels das fatias selecionadas após segmentação das CTS pulmonares da base de dados ATM'22.](figs/histograma_fatias.png?raw=true)
 
 *Figura 4: Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.*
 
