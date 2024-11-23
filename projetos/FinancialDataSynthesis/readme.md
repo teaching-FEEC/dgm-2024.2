@@ -129,27 +129,27 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
     <p><em>Figura 3: Modelo baseado na arquitetura Transformer simplificado</em></p>
 </div>
 
-1. **Input:**
+- **Input:**
    
    A entrada é um dataframe D contendo a série temporal do preço $$X\_{1:N}%% e dos features %%F\_{1:N}%%.
    
-2. **Sequenciador das Séries Temporais:**
+- **Sequenciador das Séries Temporais:**
    
    As séries temporais são repartidas em sequências de tamanho fixo (tam_seq) para o processamento nos blocos Transformers.
    
-3. **Layer de Input:**
+- **Layer de Input:**
    
    A entrada da rede é um vetor multidimensional que contém todas as sequências de tamanho tam_seq para todos os features.
    
-4. **Embedding Layer:**
+- **Embedding Layer:**
 
    A embedding layer é uma camada densa que transforma os dados em um espaço dimensional maior. É útil para que o modelo aprenda relações mais complexas nos dados.
 
-6. **Positional Encoding:**
+- **Positional Encoding:**
 
    Adiciona informações sobre a posição de cada elemento da sequência, visto que o Transformer não conhece a ordem temporal dos dados. Isso permite que o modelo saiba a ordem temporal dos dados.
 
-8. **Blocos Transformers:**
+- **Blocos Transformers:**
 
    Sequências de blocos da arquitetura Transformer, cada bloco possui os seguintes elementos:
 
@@ -157,11 +157,11 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
    - Conexão Residual e Normalização: adiciona a entrada do bloco à saída do layer MultiHead Attention e normaliza os valores. Isso ajuda na estabilização de treinamento.
    - Rede Feed-Forward: duas camadas densas com função de ativação ReLU na primeira.
      
-9. **Global Average Pooling:**
+- **Global Average Pooling:**
     
    Reduz a saída dos blocos transformers para um vetor de tamanho fixo através do cálculo da média dos valores.
 
-10. **Output Layer**:
+- **Output Layer**:
 
     Camada densa que gera o valor predito. No nosso modelo, predizemos apenas um único valor por vez.
 
