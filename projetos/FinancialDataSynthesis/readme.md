@@ -131,7 +131,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 
 - **Input:**
    
-   A entrada é um dataframe D contendo a série temporal do preço $$X\_{1:N}%% e dos features %%F\_{1:N}%%.
+   A entrada é um dataframe D contendo a série temporal do preço $X_{1:N}$ e dos features $F\_{1:N}$.
    
 - **Sequenciador das Séries Temporais:**
    
