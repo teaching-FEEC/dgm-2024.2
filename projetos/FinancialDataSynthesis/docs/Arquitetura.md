@@ -38,7 +38,7 @@ Representa a entrada da rede neural. No nosso exemplo, são sequencias com 24 el
 
 4. **Embedding Layer:**
 
-A Embedding Layer é uma camda densa responsável por projetar as sequências de entrada em um espaço de dimensão superior. Isso permite que o modelo capture características mais complexas dos dados.
+A Embedding Layer é uma camada densa responsável por projetar as sequências de entrada em um espaço de dimensão superior. Isso permite que o modelo capture características mais complexas dos dados.
 
 - Função:
   
