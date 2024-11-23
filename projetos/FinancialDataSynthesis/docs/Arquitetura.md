@@ -122,7 +122,7 @@ FFN Output=Dense(model_dim,kernel_regularizer=L2)(FFN Output)
 
 Aplicação de dropout na saída da FFN.
 
-Conexão Residual e Normalização (2º Vez):
+**Conexão Residual e Normalização (2º Vez):**
 
 - Operação:
 
