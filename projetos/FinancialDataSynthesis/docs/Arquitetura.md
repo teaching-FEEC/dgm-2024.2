@@ -1,6 +1,6 @@
 # Detalhes da Arquitetura ##
 ==============================
 <div align="center">
-    <img docs="projetos/FinancialDataSynthesis/Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
-    <p><em>Figura 3: Modelo baseado na arquitetura Transformer simplificado</em></p>
+    <img src="../src/Arquitetura_Blocos.png" alt="Arquitetura em Blocos" title="Arquitetura em Blocos" />
+    <p><em>Figure 1: Arquitetura em Blocos.</em></p>
 </div>
