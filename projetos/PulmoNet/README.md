@@ -121,32 +121,29 @@ Como a entrada da rede geradora são máscaras pulmonares, apenas fatias contend
 
 *Figura 5: Exemplos de fatias das CTS pulmonares da base de dados ATM'22 segmentadas.*
 
-Essas 90 mil imagens foram dividas em conjuntos de treinamento, validação e testes. Para permitir uma comparação justa com os resultados quantitativos obtidos em [[1]](#1), opta-se por utilizar a mesma quantidade de dados de teste que o artigo de referência: 7 mil imagens. Além disso, deseja-se realizar um teste de utilidade do modelo, o qual envolve o treinamento e avaliação de uma rede de segmentação (detalhes em [Métricas de Avaliação](#Métricas de Avaliação)). Desse modo, define-se 14 mil dados para o treino da rede de segmentação, e 2 mil dados para sua validação. O conjunto de teste da rede de segmentação é o mesmo proposto para a obtenção das métricas quantitativas da GAN. O restante dos dados são dividos em 60 mil para treino da GAN e 7 mil para validação da mesma. 
-
-Em resumo, dois terços (cerca de 66,7%) da base de dados é destinada ao treinamento da GAN, 7,8% para a validação da GAN e 25,6% para todos os testes (incluíndo a análise qualitativa, análise quantitativa e o teste de utilidade) (Fig. 6). Desconsiderando os testes de utilidade e focando apenas nos testes qualitativos e quantitativos, tem-se uma proporção de treinamento-validação-teste próxima a 80-10-10, uma das mais clássicas na literatura para treinamento de redes neurais (Fig.7). Finalmente, considerando apenas o teste de utilidade, tem-se uma proporção de treinamento-validação-teste próxima a 60-10-30, o que também é bem comum na literatura e é a proporção utilizada no desafio de segmentação da base ATM'22 [[2]](#2) (Fig.8).
-
+Essas 90 mil imagens foram dividas em conjuntos de treinamento, validação e testes. Para permitir uma comparação justa com os resultados quantitativos obtidos em [[1]](#1) (FID e SSIM), opta-se por utilizar a mesma quantidade de dados de teste que o artigo de referência: 7 mil imagens. Além disso, deseja-se realizar um teste de utilidade do modelo, o qual envolve o treinamento e avaliação de uma rede de segmentação (detalhes em [Métricas de Avaliação](#métricas-de-avaliação)). Desse modo, define-se 14 mil dados para o treino da rede de segmentação, e 2 mil dados para sua validação. Considerando que o conjunto de testes da GAN para as outras métricas não tem relação com os dados da rede de segmentação, reaproveita-se este conjunto para obtenção das métricas do teste de utilidade (DICE), assim o conjunto de teste da rede de segmentação é o mesmo proposto para a obtenção das métricas quantitativas da GAN. O restante dos dados são dividos em 60 mil para treino da GAN e 7 mil para validação da mesma. Com isso, em uma visão geral, separa-se dois terços (cerca de 66,7%) da base de dados completa para o treinamento da GAN, 7,8% para a validação da GAN e 25,6% para todos os testes (incluíndo a análise qualitativa, análise quantitativa e o teste de utilidade) (Fig. 6). Nota-se que, devido ao reaproveitamento do conjunto de testes entre a GAN e a rede de segmentação, tem-se ao final cinco (5) conjuntos na saída desta etapa (Fig. 9).
 
 ![Separação da base de dados completa em conjuntos de treinamento, validação e testes. Visão geral desta separação, em porcentagem.](figs/Dados_porcentagem.png?raw=true)
 
 *Figura 6: Separação da base de dados completa em conjuntos de treinamento, validação e testes. Visão geral desta separação, em pocentagem.*
 
+![Separação da base de dados completa em conjuntos de treinamento, validação e testes. Visão geral desta separação.](figs/Dados_visao_geral.png?raw=true)
+
+*Figura 9: Separação da base de dados completa em conjuntos de treinamento, validação e testes. Visão geral desta separação.*
+
+Desconsiderando os testes de utilidade e focando apenas nos testes qualitativos e quantitativos, tem-se 60 mil dados para treinamento da GAN, 7 mil para validação e 7 mil para testes. Isso representa um proporção próxima a 80-10-10, uma das mais clássicas na literatura para treinamento de redes neurais (Fig. 7). 
+
 ![Separação da base de dados em conjuntos de treinamento, validação e testes, considerando apenas os testes qualitativos e quantitativos para avaliação da GAN.](figs/Dados_GAN.png?raw=true)
 
 *Figura 7: Separação da base de dados em conjuntos de treinamento, validação e testes, considerando apenas os testes qualitativos e quantitativos para avaliação da GAN.*
 
+Por sua vez, para a rede de segmentação, tem-se uma proporção de conjuntos de treino-validação-teste de 60-10-30, o que também é bem comum na literatura e é a proporção utilizada no desafio de segmentação da base ATM'22 [[2]](#2) (Fig.8).
 
 ![Separação da base de dados em conjuntos de treinamento, validação e testes, considerando apenas o teste de utilidade (rede neural para segmentação das vias aéreas pulmonares).](figs/Dados_seg.png?raw=true)
 
 *Figura 8: Separação da base de dados em conjuntos de treinamento, validação e testes, considerando apenas o teste de utilidade (rede neural para segmentação das vias aéreas pulmonares).*
 
-Em suma, a separação da base de dados completa em conjuntos de treinamento para GAN, validação da GAN, treinamento da rede de segmentação, validação da rede de segmentação e testes da GAN e da rede de segmentação está ilustrada na figura abaixo. Nota-se que, devido ao reaproveitamento do conjunto de testes entre a GAN e a rede de segmentação, temos ao final cinco (5) conjuntos na saída desta etapa.
-
-![Separação da base de dados completa em conjuntos de treinamento, validação e testes. Visão geral desta separação.](figs/Dados_visao_geral.png?raw=true)
-
-*Figura 9: Separação da base de dados completa em conjuntos de treinamento, validação e testes. Visão geral desta separação.*
-
-Por fim, ressalta-se que além da segmentação dos dados e seleção das fatias, a base de dados também passa pelas etapas de normalização e de transformação para `numpy arrays`, antes de ser utilizada pelas GANs implementadas neste projeto.
-A figura abaixo resume esta etapa de tratamento dos dados por completo.
+Por fim, ressalta-se que além da segmentação dos dados e seleção das fatias, a base de dados também passa pelas etapas de normalização e de transformação para `numpy arrays`, antes de ser utilizada pelas GANs implementadas neste projeto (Fig. 10).
 
 ![Fluxograma para processamento da base de dados.](figs/Fluxo_proc_dados.png?raw=true)
 
