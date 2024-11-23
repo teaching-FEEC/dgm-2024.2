@@ -155,30 +155,28 @@ Em uma perspectiva geral do projeto, a metodologia se divide em três grandes es
 2. Treinamento e fine-tunning de modelos de síntese;
 3. Avaliação dos modelos gerados.
 
-No que diz respeito à preparação da base de dados, aplica-se o fluxo descrito na Figura 10, da seção anterior, na qual os dados são obtidos de uma fonte pública, processados e separados em conjuntos de treinamento, validação cruzada e testes. A saída desta etapa são 90 mil trios (fatia da CT pulmonar, segmentação feita por especialistas e máscara binária da região do pulmão), com dimensão 1 x 512 x 512 cada.
+No que diz respeito à preparação da base de dados, aplica-se o fluxo descrito na Figura 10, da seção anterior, na qual os dados são obtidos de uma fonte pública, processados e separados em conjuntos de treinamento, validação e testes. A saída desta etapa são 90 mil trios (fatia da CT pulmonar, segmentação feita por especialistas e máscara binária da região do pulmão), com dimensão 1 x 512 x 512 cada.
 
-Quanto a segunda etapa, implementa-se a arquitetura de uma GAN, descrita na seção [Modelo Proposto](#modelo-proposto), que foi concebida tomando como base o artigo [[1]](#1). Sob esta arquitetura, realiza-se uma busca pelos parâmetros ótimos de treinamento da rede conforme a tabela abaixo, a fim de encontrar a melhor combinação para gerar imagens sintéticas de CTs pulmonares mais realistas.
-A configuração destes parâmetros é feita em um arquivo YAML.
+Quanto a segunda etapa, implementa-se a arquitetura de uma GAN, descrita na seção [Modelo Proposto](#modelo-proposto), que foi concebida tomando como base o artigo [[1]](#1). Para o treinamento da GAN, existem diversos hiper-parâmetros que impactam na performance da rede. Um dos maiores problemas das GANs é a instabilidade do treinamento das mesmas, o que releva uma sensibilidade aos hiper-parâmetros de treinamento. Para guiar o desenvolvimento deste projeto, alguns destes hiper-parâmetros foram mantidos fixos (otimizador, tamanho dos batches), enquanto outros foram variados segundo a Tabela 2, de forma a encontrar a melhor combinação para gerar imagens sintéticas de CTs pulmonares mais realistas.
 
+*Tabela 2: Identificação e variação de hiper-parâmetros de treino.*
 |Parâmetros | Possibilidades |
 |----- | ----- |
 |Passos de atualização do discriminador | 1 a 4 |
 |Passos de atualização do gerador | 1 a 4 |
 |Tipo de ruído | [Uniforme, Gaussiano] |
 |Localização do ruído | Na imagem completa ou apenas na região do pulmão|
-|Média da distribuição do ruído | 0.5 a 1 |
-|Desvio-padrão da distribuição do ruído | 0.1 a 0.5 |
-|Intensidade | 0.3 a 1 |
+|Intensidade do ruído | 0.3 a 1 |
+|Média para ruído Gaussiano | 0.5 a 1 |
+|Desvio-padrão para ruído Gaussiano | 0.1 a 0.5 |
 |Loss | BCE ou MSE |
 |Regularizador | MAE ou MSE |
 |Nível de regularização | 1 a 15 |
 |Região de regularização | Imagem completa, dentro do pulmão ou fora do pulmão |
-|Learning Rate do otimizador | $1.3 \times 10^{-4}$ a $3.75 \times 10^{-4}$ |
+|Learning Rate do otimizador | $1 \times 10^{-4}$ a $4 \times 10^{-4}$ |
 |Parâmetro beta do otimizador |0.4 a 0.9 |
 
-Um ponto importante a ser destacado com relação a esta varredura é a diferença do tipo e nível de ruído aplicado na máscara de entrada do gerador. Como é possível observar na tabela acima, duas distribuições foram testadas: uniforme e gaussiana. Mais ainda, o nível e a localização do ruído também foram variados.
-Tais mudanças impactam na entrada recebida pelo gerador e, portanto, podem interferir no desempenho e qualidade do processo de síntese.
-A figura abaixo exemplifica as diferentes entradas no gerador a depender do ruído aplicado.
+Um ponto importante a ser destacado com relação a esta varredura é a diferença do tipo e nível de ruído aplicado na máscara de entrada do gerador. Como é possível observar na tabela acima, duas distribuições foram testadas: uniforme e Gaussiana. Mais ainda, o nível e a localização do ruído também foram variados. Tais mudanças impactam na entrada recebida pelo gerador e, portanto, podem interferir no desempenho e qualidade do processo de síntese (Fig. 11).
 
 ![Exemplos de entradas com diferentes tipos e níveis de ruídos.](figs/imagem_ruidos.png?raw=true)
 
@@ -188,16 +186,11 @@ Outro ponto interessante que merece ser mencionado é a variação dos passos de
 Um problema típico de treinamento de GANs é a velocidade de aprendizado em diferentes ritmos do gerador e do discriminador, isto é, uma destas redes pode aprender mais rápido do que a outra, resultando em uma baixa qualidade na tarefa de síntese.
 Uma estratégia para tentar solucionar este problema é a variação na taxa de atualização dos pesos neurais, por exemplo: o gerador é atualizado a cada iteração ao passo que o discriminador é atualizado a cada três iterações.
 
-Ademais, ressalta-se que a variação do *learning rate* diz respeito apenas ao valor inicial, dado que este parâmetro é ajustado linearmente após 10 épocas de treinamento.
+Por limitações de tempo e de *hardware*, esta varredura inicial é feita com apenas 10 mil dados e considerando apenas 40 épocas de treino com *learning rate* fixa. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros para obter quinze modelos. Durante o treinamento, avalia-se em cada época a evolução da *loss* do gerador do dicscriminador, de forma que, ao final do treino retém-se o modelo da última época e o modelo que levou ao menor valor da *loss* do gerador no conjunto de validação. Para cada um dos quinze modelos, esse último é analisado no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM) (resultados em [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan). 
 
-Esta varredura inicial é feita com apenas 10 mil dados e analisada no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM).
-A partir desta análise inicial, seleciona-se três modelos para prosseguir com o treinamento com todos os dados disponíveis.
-Ressalta-se que, dadas as restrições de tempo e capacidade computacional, não foram testadas todas as combinações de parâmetros da tabela acima. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros em quinze modelos, conforme será apresentado na seção [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan).
+A partir desta análise inicial, seleciona-se três modelos para prosseguir com o treinamento com todos os dados disponíveis (60 mil). Os três melhores modelos são treinados mantendo os hiper-parâmetros que lhes foram atribuídos na primeira etapa, com exceção da *learning rate* cujo valor inicial é fixado em 0,0002. Partindo dos modelos obtidos no treinamento inicial, cada modelo é treinado por mais 50 épocas, com uma *learning rate* que descresce linearmente a partir da época 10. Os modelos obtidos na última época desse treino adicional são então avaliados de forma quantitativa e qualitativa. Devido a limitações de hardware, apenas um dos três melhores modelos segue para o teste de utilidade. Tais testes serão descritos em mais detalhes na seção [Métricas de Avaliação](#métricas-de-avaliação).
 
-Após esta etapa, passa-se os três melhores modelos para a etapa de avaliação de desempenho e qualidade dos resultados. Gera-se imagens sintéticas a partir de máscaras binárias de CTs pulmonares com ruído e realiza-se três testes: qualitativo, quantitativo e de utilidade. Tais testes serão descritos em mais detalhes na seção [Métricas de Avaliação](#métricas-de-avaliação).
-
-
-Em suma, o fluxo de trabalho proposto por este projeto, ilustrado na figura a seguir, inicia-se com a obtenção da base de dados ATM'22 e seu devido tratamento, conforme detalhado na seção anterior.
+Em suma, o fluxo de trabalho proposto por este projeto, ilustrado na Figura 12. Inicia-se com a obtenção da base de dados ATM'22 e seu devido tratamento, conforme detalhado na seção anterior.
 Utilizando estes dados, alimenta-se a rede generativa com as fatias segmentadas (máscaras binárias). Já a rede discriminadora recebe os dados reais (sem segmentação) e os dados sintéticos, devendo classificar cada um como "real" ou "falso".
 Após o treinamento, avalia-se os dados sintéticos a partir de três perspectivas: análise qualitativa, análise quantitativa e análise de utilidade, as quais serão descritas em detalhes nas próximas seções deste relatório.
 
@@ -205,14 +198,10 @@ Após o treinamento, avalia-se os dados sintéticos a partir de três perspectiv
 
 *Figura 12: Fluxo para treinamento da PulmoNet.*
 
-Destaca-se que, em operação (após a fase treinamento), espera-se que o modelo receba máscaras binárias com o formato do pulmão somadas a um ruído, retonando o preenchimento da área interna do pulmão.
-Uma mesma máscara binária poderá gerar imagens sintéticas distintas, devido ao ruído aleatório adicionado na entrada do modelo.
-Os dados sintéticos deverão ser bons o suficiente para ajudarem no treinamento de modelo de segmentação das vias aéreas e potencialmente substituir o uso de dados reais, para a preservação da privacidade dos pacientes.
+Destaca-se que, em operação (após a fase treinamento), espera-se que o modelo receba máscaras binárias com o formato do pulmão somadas a um ruído, retornando imagens CT que preencham a região pulmonar, bem como seu entorno. Uma mesma máscara binária pode gerar imagens sintéticas distintas, devido ao ruído aleatório adicionado na entrada do modelo. Os dados sintéticos devem ser bons o suficiente para ajudarem no treinamento de modelo de segmentação das vias aéreas (teste de utilidade) e potencialmente substituir o uso de dados reais, para a preservação da privacidade dos pacientes.
 
 ### Ferramentas Relevantes
-A ferramenta escolhida para o desenvolvimento da arquitetura dos modelos e de treinamento é o **PyTorch**, em função de sua relevância na área e familiaridade por parte dos integrantes do grupo.
-Ademais, para o desenvolvimento inicial e colaborativo dos modelos entre os estudantes, opta-se pela ferramenta de programação **Google Collaboratory**.
-Já para o versionamento dos modelos e para ajustar seus hiperparâmetros, decidiu-se pela ferramenta **Weights & Biases (Wandb AI)** dentre as opções disponíveis no mercado. E, além disso, a ferramenta do **GitHub** também auxiliará no versionamento dos algoritmos desenvolvidos.
+A ferramenta escolhida para o desenvolvimento da arquitetura dos modelos e de treinamento é o **PyTorch**, em função de sua relevância na área e familiaridade por parte dos integrantes do grupo. Para o versionamento dos modelos e para ajustar seus hiperparâmetros, decidiu-se pela ferramenta **Weights & Biases (Wandb AI)** dentre as opções disponíveis no mercado. E, além disso, a ferramenta do **GitHub** também auxilia no versionamento dos algoritmos desenvolvidos.
 
 ### Métricas de Avaliação
 Para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõe-se três tipos de avaliação: análise qualitativa, análise quantitativa e análise de utilidade.
