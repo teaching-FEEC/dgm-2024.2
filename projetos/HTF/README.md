@@ -23,8 +23,12 @@ Portanto, a motivação para realização deste trabalho surge do desejo de comp
 
  A figura 1 mostra de forma simplificada e ilustrativa como se dá o processo de predição da trajetória humana em espaços populados, cujas linhas sólidas (azul, vermelha e verde) são a representação do caminho real percorrido pelo pedestre e as linhas tracejadas são a representação de amostras sintéticas multimodais (espaço-tempo) geradas a partir do modelo profundo livres de colisão.
 
-![objetivo](/projetos/HTF/images/FIG01.png)
->Figura 1: Exemplo de predição de trajetória humana em ambientes populados. Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting (Parth Kothari and Alexandre Alahi, 2023)* [1].
+
+<p align="center">
+    <img src="/projetos/HTF/images/FIG01.png" alt="Figura 01: Exemplo de predição de trajetória humana em ambientes populados. Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting (Parth Kothari and Alexandre Alahi, 2023)* [1]." width="400"/>
+    <br>
+    <em>Figura 1:Exemplo de predição de trajetória humana em ambientes populados. Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting (Parth Kothari and Alexandre Alahi, 2023)* [1]..</em>
+</p>
 
 > A seguir consta o link para a apresentação em slides do entregável 2.
 > [Link da Apresentação](https://docs.google.com/presentation/d/1tbUlirsQ-t3RHzTGaomvGAdto6cgHa2D/edit?usp=sharing&ouid=101073047652792710630&rtpof=true&sd=true)
@@ -53,24 +57,24 @@ No projeto serão consideradas duas bases de dados principais conforme tabelas a
 A base de dados BIWI Walking Pedestrian é composta por duas cenas denominadas ETH e a Hotel, cujas imagens exemplos podem ser observadas nas figuras 2 e 3 respectiviamente. Já a UCY Crowd é composta por seis cenas denominadas Zara01, Zara02, Zara03, Students001, Students003 e Univ. Exemplos de imagens do Zara01 e Students003 podem ser observadas nas figuras 4 e 5 respectiviamente.
 
 <p align="center">
-    <img src="/projetos/HTF/images/biwi_eth.png" alt="Figura 02: Imagem do dataset ETH" width="600"/>
+    <img src="/projetos/HTF/images/biwi_eth.png" alt="Figura 02: Imagem do dataset ETH" width="400"/>
     <br>
     <em>Figura 2: Imagem do dataset Biwi ETH.</em>
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/biwi_hotel.png" alt="Figura 03: Imagem do dataset HOTEL" width="600"/>
+    <img src="/projetos/HTF/images/biwi_hotel.png" alt="Figura 03: Imagem do dataset HOTEL" width="400"/>
     <br>
     <em>Figura 3: Imagem do dataset Biwi Hotel.</em>
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/crowds_zara01.jpg" alt="Figura 4: Imagem do dataset UCY Zara 01" width="600"/>
+    <img src="/projetos/HTF/images/crowds_zara01.jpg" alt="Figura 4: Imagem do dataset UCY Zara 01" width="400"/>
     <br><em>Figura 4: Imagem do dataset UCY Zara 01.</em>
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/students_003.jpg" alt="Figura 5: Imagem do dataset UCY Students 03" width="600"/>
+    <img src="/projetos/HTF/images/students_003.jpg" alt="Figura 5: Imagem do dataset UCY Students 03" width="400"/>
     <br><em>Figura 5: Imagem do dataset UCY Students 03.</em>
 </p>
 
@@ -78,7 +82,7 @@ A base de dados BIWI Walking Pedestrian é composta por duas cenas denominadas E
 Após tratados, o formato tabular dos datasets será conforme disposto na Figura 6, em que a primeira coluna indica o frame do vídeo, a segunda a identificação do pedestre e a terceira e quarta suas coordenadas x e y respectivamente. Cada vídeo terá o seu arquivo de dado tabular correspondente, os quais ainda necessitam de tratamento para servirem de entrada do modelo. O processo de treinamento de cada modelo utiliza todas as tabelas de dados disponíveis, com exceção da qual deseja-se prever a trajetória, ou seja, supondo que se deseja prever a trajetórias da cena ETH, esta amostra será reservada para realização de testes. As demais amostras, que são Hotel, Zara01, Zara02, Zara03, Students001, Students003 e Univ, serão dívidas em amostras de treinamento e validação. Tal estrutura pode ser observada na figura 7. 
 
 <p align="center">
-    <img src="/projetos/HTF/images/TABRAWDATA.png" alt="Figura 6: Estrutura dos dados tabulares brutos" width="600"/>
+    <img src="/projetos/HTF/images/TABRAWDATA.png" alt="Figura 6: Estrutura dos dados tabulares brutos" width="400"/>
     <br><em>Figura 6: Estrutura dos dados tabulares brutos.</em>
 </p>
 
@@ -87,8 +91,7 @@ Após tratados, o formato tabular dos datasets será conforme disposto na Figura
     <br><em>Figura 7: Estrutura dos dados para treinamento, teste e validação.</em>
 </p>
 
-Para realização desse processo, as informações do dataset são dívidas em cenas, conforme parâmetros que são o tamanho do vetor de observação e do vetor de predição, que é equivalente ao tamanho do vetor real, que corresponde a trajetória realizada pelo pedestre a qual é utilizada pelo discriminador da rede S-GAN para verificar se a gerada está de acordo com os acordos sociais implícitos durante o treinamento. As informações relevantes são num primeiro momento organizadas em tensores, conforme apresentado na figura 8 e em seguida dividas em sequencias que observação e de predição, conforme exemplo da figura 9, em que se considera quatro amostras de cada uma.
-
+Para realização desse processo, as informações do dataset são dívidas em cenas, conforme parâmetros que são o tamanho do vetor de observação e do vetor de predição, o qual é equivalente ao tamanho do vetor real, que corresponde a trajetória realizada pelo pedestre que é utilizada pelo discriminador da rede S-GAN para verificar se a gerada está de acordo com os acordos sociais implícitos durante o treinamento. As informações relevantes são num primeiro momento organizadas em tensores, conforme apresentado na figura 8 e em seguida dividas em sequencias de observação e predição, conforme exemplo da figura 9, em que se considera quatro amostras de cada uma, e tem n cenas de observação. Cada "Frame" F contém identificação dos pedestres presentes, e para cada um, a posição absoluta, a posição relativa, toma como referência a posição absoluta do frame anterior, além de informações vinculadas a validade dos dados e linearidade do movimento.
 <p align="center">
     <img src="/projetos/HTF/images/DATA1.png" alt="Figura 8: Tensor estruturado de dados  width="300"/>
     <br><em>Figura 8: Tensor estruturado de dados.</em>
@@ -99,15 +102,16 @@ Para realização desse processo, as informações do dataset são dívidas em c
     <br><em>Figura 9: Dataset dividido em cenas.</em>
 </p>
 
+Tomando algumas cenas como exemplo, conforme disposto na figura 10, é possível compreender de forma mais clara qual a transformação realizada nos dados, em que as imagens de vídeo são transformadas em cenas com passos de observação e predição pré-definidos. O objetivo dos modelos treinados é, a partir da avaliação das informações contidas nas amostras de observação, indicadas em azul na figura 10, criar trajetórias socialmente aceitáveis e livres de colisão que se aproximem às trajetórias reais indicadas em vermelho.
+
 <div style="text-align: center;">
-    <!-- Primeira linha de 3 imagens -->
-    <img src="../HTF/images/trajetoriaSP6.gif" alt="Imagem 1" width="500"/>
-    <img src="../HTF/images/trajetoriaSP8.gif" alt="Imagem 2" width="500"/>
+    <p align="center">
+    <img src="../HTF/images/trajetoriaSP6.gif" alt="Imagem 1" width="400"/>
+    <img src="../HTF/images/trajetoriaSP8.gif" alt="Imagem 2" width="400"/>
     <br>
-    <!-- Segunda linha de 3 imagens -->
-    <img src="../HTF/images/trajetoriaSP7.gif" alt="Imagem 4" width="500"/>
-    <img src="../HTF/images/trajetoriaSP5.gif" alt="Imagem 5" width="500"/>
-    <p><em>Figura 10: Exemplos de cenas de observação e caminho real percorrido</em></p>
+    <img src="../HTF/images/trajetoriaSP7.gif" alt="Imagem 4" width="400"/>
+    <img src="../HTF/images/trajetoriaSP5.gif" alt="Imagem 5" width="400"/>
+    <p align="center"><em>Figura 10: Exemplos de cenas de observação e caminho real percorrido</em></p>
 </div>
 
 ## Workflow
