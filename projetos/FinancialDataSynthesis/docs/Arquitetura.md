@@ -6,13 +6,15 @@
 </div>
 
 
-1.**Input:**
+1.**Entrada (Input):**
 
-A entrada são as séries temporais do preço:
+As entradas do modelo são as séries temporais de preços e as séries temporais dos features.
+
+A série temporal dos preços é dada por:
 
 $$ X_{1:N} = [x(1), x(2), ..., x(N)] $$
 
-E as séries temporais dos features, que por simplicidade, consideramos apenas uma série temporal, dada por:
+As séries temporais de cada feature são representadas como:
 
 $$ F_{1:N} = [f(1), f(2), ..., f(N)] $$
 
@@ -22,9 +24,11 @@ $$ D = [X_{1:N},F_{1:N}] $$
 
 2.**Sequenciador das Séries Temporais:**
 
-Para que os dados possam ser processados pelos blocos Transformers, geramos sequências de tamanho fixo. No nosso caso, observamos que as sequências de tamanho 24 (tam_seq = 24) geraram os melhores resultados. Portanto, as séries temporais são separadas em sequências. Por exemplo, sequências da série temporal de preços são geradas como:
+Para que os dados possam ser processados pelo modelo Transformer, geramos sequências de tamanho fixo a partir das séries temporais. No nosso caso, utilizamos sequências de tamanho tam_seq= 24, que apresentaram os melhores resultados. As sequências dos preços são descritas como:
 
 $$ Sequências = [{x(1), x(2), ..., x(24)}] , [{x(2), x(3), ..., x(25)}], ..., [{x(N-24), x(N-23), ..., x(N-1)}] $$
+
+O mesmo procedimento é realizado para os features, ao final, juntamos as duas.
 
 Cada sequência possui um target, valor qual devemos predizer. Para o nosso caso, como cada sequência tem 24 preços, devemos predizer o 25º elemento (25º preço), logo os targets de cada sequência são dados por:
 
@@ -32,9 +36,12 @@ $$ Targets = [x(25)] , [x(26)], ..., [x(N)] $$
 
 Por exemplo, o target da sequência $[{x(1), x(2), ..., x(24)}]$ é $x(25)$.
 
-3. **Layer de Input:**
+3. **Input Layer:**
 
-Representa a entrada da rede neural. No nosso exemplo, são sequencias com 24 elementos, para cada feature, além dos targets.
+A camada de entrada da rede neural recebe as sequências de entrada. Cada sequência tem dimensão (tam_seq, nº de features), em que:
+
+ - tam_seq = 24  (tamanho das sequências).
+ - nº de features = 7 (Moving Average Convergence Divergence (MACD), Relative Strength Index (RSI), Stochastic Oscillator, Commodity Channel Index, Volume, MACD histogram, Money Flow Index)
 
 4. **Embedding Layer:**
 
@@ -42,11 +49,9 @@ A Embedding Layer é uma camada densa responsável por projetar as sequências d
 
 - Função: transformar as sequências de entrada de dimensão (tam_seq, nº de features) para (tam_seq, model_dim).
   
-- Valores Utilizados:
+- Valor Utilizado:
   
-  - tam_seq = 24  (tamanho das sequências).
   - model_dim = 64 (dimensão interna usada nas representações do modelo).
-  - nº de features = 7 (Moving Average Convergence Divergence (MACD), Relative Strength Index (RSI), Stochastic Oscillator, Commodity Channel Index, Volume, MACD histogram, Money Flow Index)
   
 - Operação:
  
