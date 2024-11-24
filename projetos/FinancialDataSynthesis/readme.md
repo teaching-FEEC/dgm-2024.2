@@ -18,9 +18,10 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  |Byron Alejandro Acuña Acurio  | 209428  | Eng. Elétrica |
 
 ## Resumo (Abstract)
-
+<p align="justify">
 Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente sobre o preço da ação da empressa Apple através de duas abordagens: baseadas em GANS e Transformers.
 Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto. Neste trabalho os experimentos foram realizados antes e depois do Covid-19, para verificar a robustez de nossos modelos generativos frente a eventos extremos.
+</p>
 
 O projeto lida com séries temporais da forma:
 
@@ -28,7 +29,9 @@ $$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
 
 Em que cada elemento $x(i)$ representa o preço da ação da empressa Apple no instante $i$.
 
+<p align="justify">
 A continuação se apresenta a serie temporal dos preços da ação da empressa Apple, a usada data usada dos dados foi desde 2010-07-01 até 2020-06-30, para fazer experimentos antes e depois do Covid-19 (evento extremo)
+</p>
 
 ![Time Series Visualization](img_readme/Serie_temporal.png)
 
@@ -47,8 +50,7 @@ Por exemplo, se $X_{1:N}$ representa os preços da ação da empressa Apple jane
 
 <!-- Essas representações realistas são importantes para modelos de otimização de portfólios, pois podemos gerar diversos cenários possíveis e escolher a estratégia que se sai melhor, considerando todas as possibilidades geradas. Dessa forma, o modelo de otimização é robusto e consegue bom desempenho nas mais diversas situações. -->
 ## Descrição do Problema/Motivação
-No setor financeiro, o acesso a dados do mundo real para análise e treinamento de modelos é limitado devido a questões de privacidade e segurança. Assim os dados sintéticos podem ajudar a fornecer uma alternativa segura para dispoinibilizar esses dados para diversas organizações.
-O desenvolvimento de modelos com capacidade de preveer o preço da ação de forma precisa é desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos [5]. Especialmente em eventos extremos quando no historico de dados nunca se teve um registro de um evento similar.
+No setor financeiro, o acesso a dados do mundo real para análise e treinamento de modelos é limitado devido a questões de privacidade e segurança. Assim os dados sintéticos podem ajudar a fornecer uma alternativa segura para disponibilizar esses dados para diversas organizações. O desenvolvimento de modelos com capacidade de prever o preço da ação de forma precisa é desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos. Especialmente em eventos extremos quando no histórico de dados nunca se teve um registro de um evento similar.
 
 Há um movimento crescente entre pesquisadores para otimizar modelos de machine learning através da incorporação de dados financeiros sintéticos [4]. A geração de dados sintéticos permite melhorar o desempenho de métodos que, até então, apresentavam resultados insatisfatórios ou eram inviáveis na prática devido à falta de dados, além de possibilitar a simulação de eventos raros ou extremos. 
 
