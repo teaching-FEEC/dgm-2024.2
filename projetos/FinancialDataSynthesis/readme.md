@@ -135,7 +135,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
    
 - **Sequenciador das Séries Temporais:**
    
-   As séries temporais são repartidas em sequências de tamanho fixo (tam_seq) para o processamento nos blocos Transformers.
+   As séries temporais são repartidas em sequências de tamanho fixo (tam_seq) para o processamento nos blocos Transformers. Além disso, associamos a cada sequência um target, que representa o valor que desejamos prever (rótulo). Para o treinamento, a rede recebe um conjunto de sequências e os rótulos correspondentes.
    
 - **Layer de Input:**
    
@@ -167,6 +167,31 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 
 Os detalhes específicos da constituição de cada bloco estão descritos neste link: [Detalhes_Arquitetura](docs/Arquitetura.md)
 
+5. **Treinamento:**
+
+Após a construção do modelo, partimos para a etapa de treinamento. Nesta etapa, o nossos dados de entrada $D = [X_{1:N}, F_{1:N}]$ são separados em conjunto de treinamento, validação e teste:
+
+- Conjunto de treinamento: Os 70% primeiros elementos do dataset de entrada
+- Conjunto de validação:      20% dos elementos do dataset
+- Conjunto de teste:       Os 10% últimos elementos do dataset de entrada
+
+Por exemplo, se o dataset de entrada são séries temporais com 1000 elementos, então os 700 primeiros elementos são utilizados para treinamento, os 200 elementos seguintes para validação, e os últimos 100 para teste.
+
+Conforme explicado no bloco de sequenciamento das séries temporais, os dados são transformados em sequências de tamanho fixo. No nosso caso, observamos que sequências com 24 instantes de tempo consecutivos apresentaram os melhores resultados. Logo, o modelo recebe como entrada sequências com 24 elementos consecutivos e o rótulo associado, que no caso, seria o 25º elemento.
+
+Ou seja, dado os últimos 24 preços (e features), o modelo tentará prever o 25º preço, e a verificação da qualidade da solução será dado pela comparação com o valor do rótulo que é o valor real do 25º preço.
+
+Para o treinamento, foi utilizado os seguintes hiperparâmetros:
+- Otimizador: Adaptative Moment Estimator (Adam);
+- Função de perda: Mean Absolute Error;
+-  Batch size: 128;
+-  Número de épocas: 200 (com early stopping);
+
+  A escolha dos melhores parâmetros foi baseado na perda observada para o conjunto de validação.
+
+  6. **Inferência:**
+
+Após o treinamento, utilizamos o modelo para prever os pontos do conjunto de teste e comparamos com os respectivos rótulos associados.
 
 
 
