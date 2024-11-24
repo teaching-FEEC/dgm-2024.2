@@ -18,7 +18,7 @@ As séries temporais de cada feature são representadas como:
 
 $$ F_{1:N} = [f(1), f(2), ..., f(N)] $$
 
-Essas séries são agrupadas em um mesmo dataframe, dado por:
+Essas séries são agrupadas em um mesmo dataframe, constituindo a entrada do modelo, dado por:
 
 $$ D = [X_{1:N},F_{1:N}] $$ 
 
