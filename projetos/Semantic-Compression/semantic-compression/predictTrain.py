@@ -75,7 +75,16 @@ def compute_metrics(x_test, s_test, x_hat, s_hat):
         ious.append(iou(s0, s))
     return psnr(x_test, x_hat), d(x_test, x_hat), ious, psi(x_hat)
 
-def predict(model, test_loader, epoch):
+def predict(test_loader, epoch):
+
+    model = CGAN(FILTERS, N_BLOCKS, CHANNELS, N_CONVS, SIGMA, LEVELS, L_MIN, L_MAX,
+                 LAMBDA_D, GAN_LOSS, OPTIMIZER_BETAS, AE_LR, DC_LR, DEVICE,
+                 DROPOUT, REAL_LABEL, FAKE_LABEL, INPUT_NOISE, C_MODE, RUN_ID)
+    ae_checkpoint = torch.load(os.path.join(PATH_MODELS, f"ae_{RUN_ID}_{epoch}.pth"))
+    dc_checkpoint = torch.load(os.path.join(PATH_MODELS, f"dc_{RUN_ID}_{epoch}.pth"))
+    model = model.to(DEVICE)
+    model.autoencoder.load_state_dict(ae_checkpoint)
+    model.discriminator.load_state_dict(dc_checkpoint)
   
     model.eval()
     # load segmentation network
