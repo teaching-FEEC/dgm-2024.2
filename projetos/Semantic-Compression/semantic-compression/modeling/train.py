@@ -43,7 +43,7 @@ def fine_tune(model, dataloader, dataloader2):
             model.train()
         if (epoch+1) % SAVE_EVERY == 0:
             model.save_models(PT_EPOCHS+epoch+1, PATH_MODELS)
-            predict(model, dataloader2, epoch+1)
+            predict(dataloader2, epoch+1)
     return model, ae_losses, dc_losses
 
 
