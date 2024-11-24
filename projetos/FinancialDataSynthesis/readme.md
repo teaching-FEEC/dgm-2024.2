@@ -196,7 +196,7 @@ Após o treinamento, utilizamos o modelo para prever os pontos do conjunto de te
 A figura abaixo ilustra o workflow:
 
  <div align="center">
-    <img src="Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
+    <img src="Workflow.png" alt="Workflow" title="Workflow" />
     <p><em>Figura 4: Workflow contemplando o processo de treinamento e inferência. </em></p>
 </div>
 
