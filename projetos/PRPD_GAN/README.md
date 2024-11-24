@@ -118,6 +118,10 @@ Apartir da extração de características de cada imagen, se utilizaram técnica
 
 ![GLCM&Contours-tSNE](./reports/figures/tSNE_texture_contours.png)
 
+### Implementação da InfoGAN
+
+### Implementação da Diffusion Model
+
 ### Implementação da ACWGAN
 
 Se implementou uma variação da rede generativa condicional conhecida como Auxilliary Classifier Generative Adversarial Network (ACGAN), neste caso se utilizou a penalidade de gradiente de Wasserstein para melhorar a estabilidade de treinamento, assim mesmo, se adiciou normalização espectral nas camadas convolucionais do discriminador.
@@ -168,6 +172,52 @@ Os hiperparâmetros usados nesta iteração inícial foram os seguintes:
 
 **Número total de parâmetros treináveis:** 1,081,348
 
+Explicar sobre o Ablation Study...
+
+#### Penalizaçao por Wasserstein
+
+#### Ruído Gaussiano no Discriminador
+
+![gaussian_noise](./reports/figures/t_SNE_Visualization___With_post_processing___Without_Gaussian_Noise.png)
+
+![gaussian_noise_ind](./reports/figures/t-SNE_Visualization_per_Class-Without_Gaussian_Noise.png)
+
+|    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
+| Train   | 143.241.037 | 0.086224 | (0.2832,0.0013) | 183.954.051 | 180.917.254 | 163.615.821 | 0.144840 | 0.113382 | 0.124975 | (0.3607,0.0000) | (0.2751,0.0000) | (0.1617,0.0000) |      |
+| Val     | 168.473.768 | 0.084379 | (0.6250,0.0118) | 216.852.641 | 217.768.535 | 194.649.687 | 0.165530 | 0.099961 | 0.118446 | (0.9648,0.0000) | (0.7679,0.0000) | (0.6377,0.0000) |      |
+| Test    | 192.640.402 | 0.134054 | (0.0127,0.0000) | 284.380.472 | 248.441.158 | 212.888.935 | 0.369825 | 0.205304 | 0.214673 | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
+
+
+#### Ruído Gaussiano no Gerador
+
+#### Normalizaçao Espectral
+
+![norm_spectral](./reports/figures/t_SNE_Visualization___With_post_processing___Without_Spectral_Norm.png)
+
+![norm_spectral_ind](reports/figures/t-SNE_Visualization_per_Class-Without_Spectral_Norm.png)
+
+|  | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | 
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|
+| Train   | 170.996.605 | 0,102736 | (0.2812,0.0000) | 293.775.102 | 232.025.363 | 245.501.314 | 0,362067 | 0,203655 | 0,273549 | (0.0000,0.0000) | (0.0031,0.0000) | (0.0000,0.0000) |      
+| Val     | 191.818.868 | 0,100242 | (0.4736,0.0000) | 212.507.233 | 228.128.554 | 238.886.100 | 0,168298 | 0,119335 | 0,175691 | (0.7160,0.0000) | (0.8696,0.0000) | (0.4636,0.0000) |      
+| Test    | 208.008.298 | 0,150208 | (0.0020,0.0000) | 185.499.858 | 201.195.731 | 216.606.640 | 0,153220 | 0,139393 | 0,178365 | (0.5136,0.0000) | (0.2453,0.0000) | (0.0054,0.0000) |      
+
+##### Resultados do Defeito de Coroa
+
+Citar a grande quantidade de imagens pretas
+
+![corona_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png)
+
+##### Resultados do Defeito Interno
+![internal_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png)
+
+##### Resultados do Defeito de Superfície
+
+![surface_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png)
+
+#####
+
 #### Resultados parciais
 
 Se utilizaram as curvas de perdas, acurácias e exemplos de imagens sinteticas para avaliar esta implementação preliminar da ACWGAN.
@@ -181,6 +231,8 @@ Se utilizaram as curvas de perdas, acurácias e exemplos de imagens sinteticas p
 ##### Exemplos de imagens sintéticas geradas pela ACWGAN
 
 ![GLCM&Contours-tSNE](./reports/figures/out_ACWGAN.png)
+
+### Pegadas de Carbono
 
 ## Conclusão
 
