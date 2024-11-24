@@ -253,7 +253,7 @@ Além disso, optou-se pela DiceLoss como função de *loss*, dado que é tipicam
 
 Para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *transfer learning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador (Fig. 14). Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
 
-![Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.](figs/UNET_ARQUITETURA.png?raw=true)
+![Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.](figs/arquitetura_unet.png?raw=true)
 
 *Figura 14: Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.*
 
