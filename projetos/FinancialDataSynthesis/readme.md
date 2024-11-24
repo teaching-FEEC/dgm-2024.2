@@ -18,7 +18,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 ## Resumo (Abstract)
 
 Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente sobre o preço da ação da empressa Apple através de duas abordagens: baseadas em GANS e Transformers.
-Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto, como na otimização de portfólios.
+Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto. Neste trabalho os experimentos foram realizados antes e depois do Covid-19, para verificar a robustez de nossos modelos generativos frente a eventos extremos.
 
 O projeto lida com séries temporais da forma:
 
