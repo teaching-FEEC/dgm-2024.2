@@ -175,7 +175,7 @@ Após a construção do modelo, partimos para a etapa de treinamento. Nesta etap
 - Conjunto de validação:      20% dos elementos do dataset
 - Conjunto de teste:       Os 10% últimos elementos do dataset de entrada
 
-Por exemplo, se o dataset de entrada são séries temporais com 1000 elementos, então os 700 primeiros elementos são utilizados para treinamento, os 200 elementos seguintes para validação, e os últimos 100 para teste.
+Por exemplo, se o dataset de entrada são séries temporais com 1000 elementos, então os 700 primeiros elementos são utilizados para treinamento, os 200 elementos seguintes para validação, e os últimos 100 para teste. Foi importante garantir que os dados estejam ordenados, pois apresentam dependências temporais.
 
 Conforme explicado no bloco de sequenciamento das séries temporais, os dados são transformados em sequências de tamanho fixo. No nosso caso, observamos que sequências com 24 instantes de tempo consecutivos apresentaram os melhores resultados. Logo, o modelo recebe como entrada sequências com 24 elementos consecutivos e o rótulo associado, que no caso, seria o 25º elemento.
 
