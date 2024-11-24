@@ -41,7 +41,7 @@ unet = FACTORY_DICT["model_unet"]["Unet"](use_as_unet=True).to(device)
 if fine_tunning is True:
     unet.load_state_dict(torch.load(trained_gen_path, weights_only=True, map_location=torch.device(device)))
     unet.to(device)
-    unet.eval()
+    unet.train() # Set the model to training mode
 
     if freeze_layers is True:
         # Freeze the encoder layers
