@@ -200,6 +200,9 @@ A figura abaixo ilustra o workflow:
     <p><em>Figura 4: Workflow contemplando o processo de treinamento e inferência. </em></p>
 </div>
 
+## Experimentos, Resultados e Discussão dos Resultados
+
+
 
 
 ### Artigos de Referência
@@ -223,24 +226,6 @@ Existem diversas bibliotecas Python disponíveis para geração de dados sintét
 - **Colab** para colaboração e execução de experimentos em ambientes com suporte a GPU.
   
 - **Pandas** e **NumPy** para manipulação de dados tabulares.
-
-### Workflow
-O workflow se baseia nos passos descritos na metodologia.
-
-![Workflow](Diagrama2.png "Workflow")
-
-## Experimentos, Resultados e Discussão dos Resultados
-
-Como experimento inicial, resolvemos gerar dados financeiros sintéticos utilizando técnicas tradicionais de estatística, no caso, modelamos os dados através de uma Gaussiana Multivariável. A figura abaixo apresenta uma comparação entre os dados gerados e os reais.
-
-![PairPlot](reports/figures/Baseline/PairPlot.png "Pair Plot")
-
-Os ativos foram retirados do Bloomberg Dataset, e representam diferentes índices de ações e títulos de renda fixa. Podemos observar que uma Gaussiana Multivariavel não possui a capacidade para capturar todas as correlações necessárias, visto que os dados gerados ficam concentrados na média, sendo incapaz de gerar dados mais dispersos.
-
-Ao final, temos que o principal resultado esperado é:
-
-- Um conjunto de dados sintéticos gerado para complementação das bases financeiras históricas, capaz de capturar variações de retorno plausíveis que não foram observadas nos dados originais.
-
 
 ### Proposta de Avaliação
 Para a avaliação da qualidade dos nossos geradores de dados sintéticos, além dos fatos estilizados, vamos considerar várias outras métricas utilizando amostras reais e sintéticas. As métricas de avaliação que pretendemos utilizar são:
