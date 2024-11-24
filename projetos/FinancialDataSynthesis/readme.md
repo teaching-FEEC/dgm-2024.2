@@ -26,6 +26,11 @@ $$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
 
 Em que cada elemento $x(i)$ representa o preço da ação da empressa Apple no instante $i$.
 
+A continuação se apresenta a serie temporal dos preços da ação da empressa Apple, a usada data usada dos dados foi desde 2010-07-01 até 2020-06-30, para fazer experimentos antes e depois do Covid-19 (evento extremo)
+
+![Time Series Visualization](img_readme/Serie_temporal.png)
+
+
 Atráves da incorporação de features relevantes, também representados por séries temporais (alinhadas à $X_{1:N}$), buscamos gerar dados sintéticos que representam uma continuação realista de $X_{1:N}$, isso é, uma série temporal do tipo:
 
 $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
