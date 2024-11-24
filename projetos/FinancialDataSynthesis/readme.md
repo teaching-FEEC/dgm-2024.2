@@ -165,7 +165,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 
     Camada densa que gera o valor predito. No nosso modelo, predizemos apenas um único valor por vez.
 
-Os detalhes da constituição de cada bloco pode ser visto neste link: 
+Os detalhes específicos da constituição de cada bloco estão descritos neste link: [Arquitetura.md](docs/Arquitetura.md)
 
 
 
