@@ -83,9 +83,7 @@ O projeto tem como **objetivo principal** :
 -  Estudar e desenvolver dois modelos generativos (uma baseadas em GANs e outra em Transformers.) para gerar séries temporais sintéticas realistas de ativos financeiros, retendo o máximo de informações estatísticas.
 
 Para o projeto, escolhemos três ativos financeiros distintos:
-- **Índice Bovespa**: pontuação que mede o desempenho das ações das maiores empresas listadas na bolsa de ações brasileira (B3);
-- **Índice S&P 500**: pontuação que mede o desempenho das 500 maiores ações listadas na bolsa de ações de Nova York (NYSE);
-- **Ações da VALE S.A**: terceira maior empresa brasileira, com ações negociadas na NYSE e B3;
+- **Historico de dados dos preços da ação da empressa Apple**: preço em dolares da ação de Apple desde o 1º de julho de 2010 até 30 de junho de 2020 .
 
 Além disso, adotamos duas abordagens distintas para geração dos dados:
 1. Baseada na arquitetura **Transformers**;
