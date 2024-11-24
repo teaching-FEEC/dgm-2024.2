@@ -75,7 +75,7 @@ Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
-|API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem cotações de ações, volume negociado, preço de fechamento, preço máximo e mínimo.|
+|API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem preços de fechamento, preços máximos, mínimos, volume negociado. Além disso, é possível coletar os dados considerando diferentes períodos de amostragem: 2 minutos, 5 minutos, 15 minutos, 1 hora, 1 dia.|
 
 
 ## Metodologia e Workflow
