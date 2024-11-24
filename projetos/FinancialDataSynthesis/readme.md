@@ -19,6 +19,11 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 ## Resumo (Abstract)
 <p align="justify">
+Neste trabalho a gente testou a capacidade de dois modelos generativos baseadas em GANS e Transformers na previsão do preço da ação da empresa Apple, considerando uma
+condição de evento extremo neste caso o Covid19 no ano 2020. A Rede Adversarial Generativa (GAN) foi desenvolvida usando Unidades Recorrentes Fechadas (GRU) como um gerador que insere o preço histórico das ações e gera a previsão do preço futuro (no día seguente) das ações e uma Rede Neural Convolucional (CNN) como um discriminador para discriminar entre o preço real das ações e o preço das ações gerado. Para estimar o preço da ação foi usada 36 características como índice S&P 500, índice NASDAQ Composite, índice U.S. Índice do dólar, etc. Comparamos os resultados do nosso modelo GAN e Transformer com modelos de aprendizado profundo baseados em LSTM e GRU. O modelo generativo apresenta um melhor desempenho em eventos extremos.
+ </p>
+## Introdução
+<p align="justify">
 Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente sobre o preço da ação da empressa Apple através de duas abordagens: baseadas em GANS e Transformers.
 Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto. Neste trabalho os experimentos foram realizados antes e depois do Covid-19, para verificar a robustez de nossos modelos generativos frente a eventos extremos.
 </p>
