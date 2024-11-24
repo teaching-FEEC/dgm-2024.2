@@ -1,9 +1,9 @@
 model:
-  name_model: "model_sweep10_aspretrained"
-  use_best_version: False
+  name_model: "sweep_10"
+  use_best_version: True
 
 data:
-  processed_data_folder: "/mnt/shared/divided_data"
+  processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"
   dataset: "lungCTData"
   batch_size: 10
   transformations: 
@@ -18,3 +18,4 @@ evaluation:
   bQualitativa: True
   bFID: True
   bSSIM: True
+  bDice: False

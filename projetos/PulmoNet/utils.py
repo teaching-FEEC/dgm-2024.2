@@ -154,17 +154,19 @@ def plt_save_example_synth_img_with_airway(input_img_ref, input_mask_ref, input_
     plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
 
 
-def plt_save_example_synth_during_test(input_img_ref,  gen_img_ref, save_dir, img_idx):
-    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+def plt_save_example_synth_during_test(input_img_ref, input_mask_ref, gen_img_ref, save_dir, img_idx):
+    fig, ax = plt.subplots(1, 3, figsize=(12, 4))
     ax.flat[0].imshow(input_img_ref, cmap='gray')
-    ax.flat[1].imshow(gen_img_ref, cmap='gray')
+    ax.flat[1].imshow(input_mask_ref, cmap='gray')
+    ax.flat[2].imshow(gen_img_ref, cmap='gray')
     ax.flat[0].set_title('Original')
-    ax.flat[1].set_title('Generated')
+    ax.flat[1].set_title('Mask')
+    ax.flat[2].set_title('Generated')
     plt.savefig(save_dir+'test_'+str(img_idx)+'.png')
     plt.close()
 
 
-def plt_save_example_airways_img(input_img_ref, input_airway_ref, gen_seg_ref, epoch, save_dir): 
+def plt_save_example_airways_img(input_img_ref, input_airway_ref, gen_seg_ref, save_dir, img_idx): 
     fig, ax = plt.subplots(1, 3, figsize=(18, 4))
     ax.flat[0].imshow(input_img_ref, cmap='gray')
     ax.flat[1].imshow(input_airway_ref, cmap='gray')
@@ -172,7 +174,7 @@ def plt_save_example_airways_img(input_img_ref, input_airway_ref, gen_seg_ref, e
     ax.flat[0].set_title('Original Input')
     ax.flat[1].set_title('Expected Airway')
     ax.flat[2].set_title('Generated Airway')
-    plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+    plt.savefig(save_dir+'example_generated_epoch_'+str(img_idx)+'.png')
 
 
 def save_quantitative_results(fid, ssim_complete, luminance_complete, contrast_complete, struct_sim_complete,

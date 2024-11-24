@@ -1,18 +1,12 @@
 model:
-  name_model: "gen_dice_loss_freeze_example"
+  name_model: "unet_dice"
   use_best_version: True
 
 data:
   processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"
   dataset: "processedCTData"
   batch_size: 10
-  transformations: 
-    #transform: "AddGaussianNoise"
-    #info:
-      #lung_area: True
-      #intensity: 0.8185145299699786
-      #mean: 0.5597838196435154
-      #std: 0.2229110594696566
+  transformations:
 
 evaluation:
   bQualitativa: False

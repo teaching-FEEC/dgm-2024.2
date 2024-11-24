@@ -20,10 +20,13 @@ def evaluate(gen,
              bFID=True, 
              bSSIM=True):
 
+    # Diretorios onde imagens geradas serao armazenadas
     dir_to_save_gen_imgs = trained_gen_dir+'generated_imgs/'
+    # Arquivo JSON com as metricas quantitativas
     path_to_save_metrics = trained_gen_dir+'quantitative_metrics.json'
     os.makedirs(dir_to_save_gen_imgs, exist_ok=True)
 
+    # Coloca o modelo no modo de avaliação
     gen.eval()
 
     # Gera dados sintéticos para análise qualitativa (visual e subjetiva)
@@ -45,6 +48,7 @@ def evaluate(gen,
                         counter=counter+1
 
                         plt_save_example_synth_during_test(input_img_ref=np.squeeze(input_img.detach().cpu().numpy())[0, :, :],
+                                                           input_mask_ref=np.squeeze(input_mask.detach().cpu().numpy())[0, :, :],
                                                         gen_img_ref=np.squeeze(gen_img.detach().cpu().numpy())[0, :, :],
                                                         save_dir=dir_to_save_gen_imgs,
                                                         img_idx=counter)
@@ -108,22 +112,31 @@ def evaluate_seg_net(model, data_loader_test, dir_save_test):
     gen.eval()
 
     print('Generating examples for qualitative analysis...')
+    counter = 0
+    skip = 20
     with torch.no_grad():
         for batch in data_loader_test:
-            input_img_batch = batch[0]
-            input_airway_batch = batch[1]
-            
-            input_img = input_img_batch[:1,:,:,:].to(device)
-            input_airway = input_airway_batch[:1,:,:].to(device)
-            
-            gen_seg = model(input_img)
-            break
+            if counter <= 20: 
+                if skip == 20:
 
-        plt_save_example_airways_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 
-                                    input_airway_ref=input_airway[0,:,:].detach().cpu().numpy(), 
-                                    gen_seg_ref=gen_seg[0,0,:,:].detach().cpu().numpy(), 
-                                    epoch=0, 
-                                    save_dir=dir_save_test)
+                    input_img_batch = batch[0]
+                    input_airway_batch = batch[1]
+                    
+                    input_img = input_img_batch.to(device)
+                    input_airway = input_airway_batch.to(device)
+                    
+                    gen_seg = model(input_img)
+                    counter += 1
+
+                    plt_save_example_airways_img(input_img_ref=np.squeeze(input_img.detach().cpu().numpy())[0, :, :],
+                                                input_airway_ref=np.squeeze(input_airway.detach().cpu().numpy())[0, :, :],
+                                                gen_seg_ref=np.squeeze(gen_seg.detach().cpu().numpy())[0, :, :],
+                                                save_dir=dir_to_save_gen_imgs,
+                                                img_idx=counter)
+                else:
+                    skip = skip - 1
+                if skip == 0:
+                    skip=20
         
         print('Calculating DICE...')
         dice =  dice_coefficient_score_calculation(pred=input_airway.detach().cpu().numpy(), label=input_img.detach().cpu().numpy())
@@ -184,7 +197,7 @@ else:
 
 # Define gerador
 gen = FACTORY_DICT["model_gen"]["Generator"]()
-gen.load_state_dict(torch.load(trained_gen_path, weights_only=True))
+gen.load_state_dict(torch.load(trained_gen_path, weights_only=True, map_location=torch.device(device)))
 gen.to(device)
 
 # Obtenção dos dados de teste
