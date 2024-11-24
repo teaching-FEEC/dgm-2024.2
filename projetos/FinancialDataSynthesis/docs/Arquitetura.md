@@ -24,11 +24,13 @@ $$ D = [X_{1:N},F_{1:N}] $$
 
 2.**Sequenciador das Séries Temporais:**
 
-Para que os dados possam ser processados pelo modelo Transformer, geramos sequências de tamanho fixo a partir das séries temporais. No nosso caso, utilizamos sequências de tamanho tam_seq= 24, que apresentaram os melhores resultados. As sequências dos preços são descritas como:
+Para que os dados possam ser processados pelo modelo Transformer, geramos sequências de tamanho fixo a partir das séries temporais. No nosso caso, utilizamos sequências de tamanho tam_seq= 24, pois o modelo apresentou melhores resultados com este tamanho. 
+
+As sequências dos preços são descritas como:
 
 $$ Sequências = [{x(1), x(2), ..., x(24)}] , [{x(2), x(3), ..., x(25)}], ..., [{x(N-24), x(N-23), ..., x(N-1)}] $$
 
-O mesmo procedimento é realizado para os features, ao final, juntamos as duas.
+O mesmo procedimento é realizado para os features, ao final, juntamos as sequências de preço e features.
 
 Cada sequência possui um target, valor qual devemos predizer. Para o nosso caso, como cada sequência tem 24 preços, devemos predizer o 25º elemento (25º preço), logo os targets de cada sequência são dados por:
 
@@ -38,16 +40,16 @@ Por exemplo, o target da sequência $[{x(1), x(2), ..., x(24)}]$ é $x(25)$.
 
 3. **Input Layer:**
 
-A camada de entrada da rede neural recebe as sequências de entrada. Cada sequência tem dimensão (tam_seq, nº de features), em que:
+A camada de entrada da rede neural recebe as sequências de entrada. Cada sequência tem dimensão (tam_seq, n_features), em que:
 
  - tam_seq = 24  (tamanho das sequências).
- - nº de features = 7 (Moving Average Convergence Divergence (MACD), Relative Strength Index (RSI), Stochastic Oscillator, Commodity Channel Index, Volume, MACD histogram, Money Flow Index)
+ - n_features = 7 (número de features, sendo eles: Moving Average Convergence Divergence (MACD), Relative Strength Index (RSI), Stochastic Oscillator, Commodity Channel Index, Volume, MACD histogram, Money Flow Index)
 
 4. **Embedding Layer:**
 
 A Embedding Layer é uma camada densa responsável por projetar as sequências de entrada em um espaço de dimensão superior. Isso permite que o modelo capture características mais complexas dos dados.
 
-- Função: transformar as sequências de entrada de dimensão (tam_seq, nº de features) para (tam_seq, model_dim).
+- Função: transformar as sequências de entrada de dimensão (tam_seq, n_features) para (tam_seq, model_dim).
   
 - Valor Utilizado:
   
@@ -107,7 +109,7 @@ Aplicação de dropout na saída de atenção.
 
 - Função: facilitar o fluxo de gradientes e estabilizar o treinamento.
 
-- Operação: 
+- Operação: Adição da entrada do bloco Transformer (Input) à saída do Layer Multi-Head Attention (Attention Output) e Normalização.
 
 Output1 = LayerNormalization(Input+Attention Output)
 
@@ -133,7 +135,7 @@ Aplicação de dropout na saída da FFN.
 
 Output2=LayerNormalization(Output1+FFN Output)
 
-Iteração: O processo acima é repetido para cada bloco Transformer (num_layers vezes), atualizando o input a cada iteração.
+**Iteração:** O processo é repetido para cada bloco Transformer (num_layers vezes), atualizando o input a cada iteração.
 
 7. **Global Average Pooling:**
 
@@ -145,7 +147,7 @@ Após passar pelos blocos Transformer, reduzimos a dimensionalidade para prepara
   
 Aplicação de média global na dimensão temporal: 
 
-Pooled Output=GlobalAveragePooling1D(Output2)
+Pooled_Output=GlobalAveragePooling1D(Output2)
 
 Resultado: um vetor de dimensão (model_dim). 
 
@@ -161,6 +163,6 @@ Resultado: um vetor de dimensão (model_dim).
 
 Aplicação de uma camada densa sem função de ativação:
 
-Predição = Dense(𝑜𝑢𝑡𝑝𝑢𝑡_𝑑𝑖𝑚)(Pooled Output)
+Predição = Dense(𝑜𝑢𝑡𝑝𝑢𝑡_𝑑𝑖𝑚)(Pooled_Output)
 
 Resultado: um valor escalar que representa a previsão do retorno no próximo período.
