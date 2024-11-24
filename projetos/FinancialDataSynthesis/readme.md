@@ -193,6 +193,13 @@ Para o treinamento, foi utilizado os seguintes hiperparâmetros:
 
 Após o treinamento, utilizamos o modelo para prever os pontos do conjunto de teste e comparamos com os respectivos rótulos associados.
 
+A figura abaixo ilustra o workflow:
+
+ <div align="center">
+    <img src="Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
+    <p><em>Figura 4: Workflow contemplando o processo de treinamento e inferência. </em></p>
+</div>
+
 
 
 ### Artigos de Referência
