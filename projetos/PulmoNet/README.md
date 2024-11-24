@@ -96,6 +96,8 @@ onde $x$ corresponde a máscara pulmonar, $z$ corresponde ao ruído (aplicado a 
 
 No trabalho em questão, considera-se variações da *loss* apresentada acima. Tais variações incluem: regularização por MSE (*Mean Squared Error*) ao invés de MAE, regularização apenas na região da máscara que representa o interior do pulmão e regularização apenas na região da máscara que representa o exterior do pulmão. As variações da *loss* foram testadas durante o processo de busca pelos hiperparâmetros da rede, como será abordado na seção [Workflow](#workflow). Idealmente, neste trabalho, busca-se uma *loss* que permita a sintetização de imagens onde tanto as estruturas externas ao pulmão (músculos torácicos e a coluna vertebral), como as internas ao mesmo (vias aéreas) sejam bem representadas. 
 
+Ao modelo proposto e desenvolvido, da-se o nome de PulmoNet.
+
 ### Bases de Dados e Evolução
 Apesar de inspirar-se no artigo [[1]](#1), o desenvolvimento deste projeto utilizará a base de dados ATM'22 (Tab. 1). Tal base de dados não foi usada no desenvolvimento do projeto em [[1]](#1), mas foi escolhida no presente projeto devido a sua amplitude, a presença de dados volumétricos e em razão das imagens possuírem a delimitação das vias aéreas obtidas através de especialistas. Os volumes da base ATM'22 foram adquiridos em diferentes clínicas e considerando diferentes contextos clínicos. Construída para a realização de um desafio de segmentação automática de vias aéria utilizando IA, a base de dados está dividida em 300 volumes para treino, 50 para validação e 150 para teste.
 
@@ -208,13 +210,13 @@ A ferramenta escolhida para o desenvolvimento da arquitetura dos modelos e de tr
 Para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõe-se três tipos de avaliação: análise qualitativa, análise quantitativa e análise de utilidade.
 
 #### Análise Qualitativa
-Esta estratégia será utilizada apenas nas etapas iniciais do desenvolvimento do projeto, na qual os próprios estudantes irão observar os resultados sintéticos, sejam eles imagens e/ou  volumes, e compararão com os dados reais esperados. Com isto, faz-se uma avaliação se a imagem gerada estaria muito distante de uma CT pulmonar ou se o modelo já estaria se encaminhando para bons resultados. Após esta etapa, as avaliações do modelo serão feitas por meio das análises quantitativa e de utiliddade.
+Esta estratégia consiste na própria observação e avaliação dos dados sintéticos por meio dos estudantes. Os dados sintéticos são comparados aos reais, avaliando se eles se mostram muito distantes de uma CT pulmonar ou se o modelo está se encaminhando para bons resultados. Uma vez que os estudantes não possuem conhecimento clínico para julgar imagens sintéticas muito próximas das reais, essa etapa faz sentido num momento inicial, onde as diferenças são facilmente percebidas. Em uma fase posterior, em que as amostras reais e sintéticas são difíceis de serem distinguidas por leigos, a simples avaliação dos estudantes não se torna relevante, e é preciso buscar conhecimento especializado. 
 
 #### Análise Quantitativa
-A análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos **Fréchet Inception Distance (FID)** e **Structural Similarity Index (SSIM)**, os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite uma avaliação dos nossos resultados frente a esta outra pesquisa.
+A análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos **Fréchet Inception Distance (FID)** e **Structural Similarity Index (SSIM)**, os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite comparações entre os resultados produzidos no projeto proposto frente a esta outro trabalho apresentado em [[1]](#1).
 
-Entrando em mais detalhes, a métrica FID avalia o desempenho da rede generativa e será calculada utilizando uma rede neural pré-treinada *InceptionV3*, que extrairá *features* das fatias pulmonares geradas e das fatias originais. Com isso, as distribuições dos dados sintéticos e dos dados reais, obtidas pelo encoder desta rede, são usadas para calcular a FID e, assim, avaliar a qualidade da imagem gerada.
-A expressão matemática que descreve o cálculo da FID entre duas distribuições gaussianas criadas pelas *features* da última camada de *pooling* do modelo *Inception-v3* é dada por:
+A métrica FID avalia o desempenho da rede generativa e é calculada utilizando uma rede neural pré-treinada *InceptionV3*, que extrai *features* das fatias pulmonares geradas e das fatias originais. Com isso, as distribuições dos dados sintéticos e dos dados reais, obtidas pelo encoder desta rede, são usadas para calcular a FID e, assim, avaliar a qualidade da imagem gerada.
+A expressão matemática que descreve o cálculo da FID entre duas distribuições Gaussianas criadas pelas *features* da última camada de *pooling* do modelo *Inception-v3* é dada por:
 
 $$FID = ‖𝜇_{𝑟} − 𝜇_{𝑔}‖^{2} + Tr(\sum_{𝑟} + \sum_{𝑔} − 2(\sum_{𝑟}\sum_{𝑔})^{1∕2})$$
 
@@ -251,7 +253,7 @@ Além disso, optou-se pela DiceLoss como função de *loss*, dado que é tipicam
 
 *Figura 13: Fluxo para treinamento da rede de segmentação de vias aérea para o teste de utilidade.*
 
-Para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *transfer learning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador (Fig. 14). Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
+Para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *transfer learning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador (Fig. 14), utilizando apenas 60% dos dados separados para esse propósito. Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
 
 ![Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.](figs/arquitetura_unet.png?raw=true)
 
@@ -292,26 +294,26 @@ Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado e
 
 ### Resultados preliminares com 10 mil dados de treinamento da GAN
 A PulmoNet - o modelo de GAN proposto em nosso projeto - passou por uma etapa de busca pelas configurações e hiperparâmetros de treinamentos ótimos, a fim de encontrar uma combinação que gerasse tomografias pulmonares mais realistas.
-Para isto, testou-se quinze configurações distinta, com uma parcela dos dados selecionados para o treinamento da GAN.
+Para isto, testou-se quinze configurações distintas, com uma parcela dos dados selecionados para o treinamento da GAN.
 O resultado desta busca está resumido na tabela abaixo.
 
-|Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão|	Intensidade	|Média Ruído	|Desvio Ruído	|Criterion	|Regularizador	|Nível Regularização	|Learning Rate	|Beta| Melhor época | Análise Qualitativa |
+| Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão |	Intensidade do Ruído	|Média Ruído para Gaussianp |Desvio Ruído para Gaussiano	| Critério	| Regularizador	| Nível Regularização	| Learning Rate	| Beta | Época de menor *loss* de validação | Análise Qualitativa |
 | ----- | ----- | -----   | ----- | -----       | -----         | -----         |   -----  | ----- | -----| -----   |   -----       | -----| -----   |
-|Sweep10|	4/2	|Gaussiano|	Falso |	0,3157719473|	0,7469069764|	0,1784581512|	BCELoss|	MSE|	8|	3,11E-04|	0,4597517629| 17 | (Médio + Bom + Bom) = Bom |
-|Sweep205|	3/1	|Gaussiano|	Verdadeiro|	0,5566831094|	0,5120044953|	0,3903814624|	MSELoss|	MAE|	10|	2,85E-04|	0,7555202559| 11 | (Bom + Bom + Bom) = Bom |
-|Sweep412|	1/1| Gaussiano|	Falso| 0,757255249|	0,5250495573|	0,4755411392|	MSELoss|	MAE|	4	|1,70E-04	|0,8811316699| 6 | (Médio + Bom + Médio) = Bom |
-|Sweep64	|1/2	|Gaussiano	|Verdadeiro	|0,81851453	|0,5597838196	|0,2229110595	|MSELoss	|MAE	|3	|3,75E-04	|0,8659691523| 10 | (Médio + Médio + Médio) = Médio |
-|Sweep123	|2/1	|Gaussiano	|Verdadeiro	|0,3320755603	|0,652635058	|0,3347731658	|MSELoss	|MAE	|4	|1,55E-04	|0,6252443893| 6 | (Médio + Médio + Bom) = Médio |
-|Sweep284	|1/2	|Gaussiano	|Verdadeiro	|0,4882098594	|0,872090533	|0,4466720449	|MSELoss	|MSE	|4	|2,24E-04	|0,6781061686| 9 | (Médio + Médio + Médio) = Médio |
-|Sweep394	|2/1	|Gaussiano	|Falso	|0,3715918515	|0,6996284578	|0,2871496533	|BCELoss	|MAE	|1	|3,40E-04	|0,4792751887| 34 | (Ruim + Médio + Médio) = Médio |
-|Sweep497	|1/1	|Gaussiano	|Verdadeiro	|0,3039449554	|0,8749711247	|0,2897599163	|MSELoss	|MSE	|15	|1,32E-04	|0,840671948| 6 | (Médio + Médio + Médio) = Médio |
-|Sweep522	|4/2	|Gaussiano	|Falso	|0,8766142328	|0,6935412609	|0,3790460335	|MSELoss	|MSE_mask	|13	|3,40E-04	|0,5728743005| 29 | (Médio + Ruim + Médio) = Médio |
-|Sweep71	|2/1	|Gaussiano	|Verdadeiro	|0,8172635438	|0,548984276	|0,3265456309	|BCELoss	|MSE_mask	|1	|2,82E-04	|0,52631016| 32 | (Ruim + Ruim + Ruim) = Ruim |
-|Sweep185	|4/1	|Uniforme	|Verdadeiro	|0,3563791549|	0,5899638112|	0,2158650277|	MSELoss|	MAE_mask|	5|	2,82E-04|	0,4240341338| 38 | (Ruim + Ruim + Ruim) = Ruim |
-|Sweep186	|2/1	|Uniforme	|Verdadeiro	|0,9795390854|	0,5310213915	|0,2623582226	|BCELoss	|MAE_mask	|4	|1,87E-04	|0,6069949071| 40 | (Ruim + Ruim + Ruim) = Ruim |
-|Sweep256	|1/2	|Gaussiano	|Verdadeiro	|0,3085178607	|0,6810390549	|0,1347611367	|MSELoss	|MAE_mask	|8	|3,16E-04	|0,4703302188| 1 | (Ruim + Ruim + Ruim) = Ruim |
-|Sweeo279	|4/2	|Gaussiano	|Falso	|0,6821396703	|0,9681958035	|0,1024100341	|MSELoss	|MAE_mask	|15	|2,58E-04	|0,6470046351| 1 | (Ruim + Ruim + Ruim) = Ruim |
-|Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,9864110063	|0,9929413808	|0,1007233152	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,4393293661| 38 | (Ruim + Ruim + Ruim) = Ruim |
+|Sweep10|	4/2	|Gaussiano|	Falso |	0,316 |	0,747 |	0,178 |	BCELoss|	MSE|	8|	3,11E-04|	0,460| 17 | Bom |
+|Sweep205|	3/1	|Gaussiano|	Verdadeiro|	0,557 |	0,512 |	0,390|	MSELoss|	MAE|	10|	2,85E-04|	0,755| 11 | Bom |
+|Sweep412|	1/1| Gaussiano|	Falso| 0,757 |	0,525 |	0,475|	MSELoss|	MAE|	4	|1,70E-04	|0,881| 6 | Bom |
+|Sweep64	|1/2	|Gaussiano	|Verdadeiro	|0,818	|0,560	|0,223	|MSELoss	|MAE	|3	|3,75E-04	|0,866| 10 | Médio |
+|Sweep123	|2/1	|Gaussiano	|Verdadeiro	|0,332	|0,653	|0,335 |MSELoss	|MAE	|4	|1,55E-04	|0,625| 6 | Médio |
+|Sweep284	|1/2	|Gaussiano	|Verdadeiro	|0,488	|0,872	|0,447 |MSELoss	|MSE	|4	|2,24E-04	|0,678| 9 | Médio |
+|Sweep394	|2/1	|Gaussiano	|Falso	|0,371	|0,700 |0,287	|BCELoss	|MAE	|1	|3,40E-04	|0,479| 34 | Médio |
+|Sweep497	|1/1	|Gaussiano	|Verdadeiro	|0,304	|0,875	|0,290	|MSELoss	|MSE	|15	|1,32E-04	|0,841| 6 | Médio |
+|Sweep522	|4/2	|Gaussiano	|Falso	|0,877	|0,693	|0,379|MSELoss	|MSE_mask	|13	|3,40E-04	|0,573| 29 | Médio |
+|Sweep71	|2/1	|Gaussiano	|Verdadeiro	|0,817	|0,549	|0,326	|BCELoss	|MSE_mask	|1	|2,82E-04	|0,526| 32 | Ruim |
+|Sweep185	|4/1	|Uniforme	|Verdadeiro	|0,356 |	0,590 |	0,216|	MSELoss|	MAE_mask|	5|	2,82E-04|	0,424| 38 | Ruim |
+|Sweep186	|2/1	|Uniforme	|Verdadeiro	|0,979 |	0,531	|0,262	|BCELoss	|MAE_mask	|4	|1,87E-04	|0,607| 40 | Ruim |
+|Sweep256	|1/2	|Gaussiano	|Verdadeiro	|0,308|0,681	|0,135	|MSELoss	|MAE_mask	|8	|3,16E-04	|0,470| 1 | Ruim |
+|Sweeo279	|4/2	|Gaussiano	|Falso	|0,682	|0,968 |0,102	|MSELoss	|MAE_mask	|15	|2,58E-04	|0,647| 1 | Ruim |
+|Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,986	|0,993	|0,101	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,439| 38 | Ruim |
 
 Nesta tabela, apresenta-se tanto as configurações de cada modelo avaliado nesta varredura quanto métricas qualitativas e quantitativas obtidas.
 Com relação à análise qualitativa, cada um dos três membros deste projeto examinaram algumas imagens sintéticas e classificaram o modelo entre três categorias: "Bom", "Médio" e "Ruim".
