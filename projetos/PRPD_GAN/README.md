@@ -58,6 +58,15 @@ Foi realizada a divisão por tipo de motor anotado. Dessa forma, a representaç�
 
 ![motor_and_defect](./reports/figures/dataset_distribution_by_motor_and_defect.png)
 
+Adicionalmente, se realizou uma análise de variabilidade intra-classe e inter-classe por meio da métrica MS-SSIM para entender a complexidade do dataset
+
+|            | Corona                | Internal         | Surface       |
+|------------|-----------------------|------------------|----------------
+| Corona     | 0.584                 | 0.495            | 0.393               |
+| Internal   | 0.495                 | 0.444            | 0.404|
+| Surface    | 0.393                 | 0.404            | 0.390|
+
+
 ### Separação de dados
 O dataset será separado em três grupos: treino, validação e teste. O primeiro conjunto será utilizado para treinar as arquiteturas escolhidas, o segundo para otimizar os hiperparâmetros, e o terceiro para avaliar o desempenho dos modelos treinados.
 
@@ -72,107 +81,63 @@ O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de m
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-### Exploração estatística do Dataset
+### InfoGAN
 
-Se realizou uma exploração estatística para entender o dataset, especificamente o desafío que poderia aparecer para as redes generativas.
+### Difussion Model
 
-#### Análise por Textura
+### ACWGAN-SN
 
-Se utilizou a matriz de *Gray Level Co-Occurrence Matrix* (GLCM), conhecida por seu uso no contexto de extração de características de textura de imagens, utiliza images em escala de cinza, e se extrairam as seguintes características globais de cada imagen:
+O modelo que consiguiu obter resultados satisfatórios foi uma versão da ACGAN com penalidade de gradiente de Wasserstein no Discriminador e normalização espectral no Gerador.
 
-- Contraste: Mede a intensidade da variação entre pixels em uma imagem. Um contraste alto indica uma grande diferença entre os valores dos pixels adjacentes, enquanto um contraste baixo sugere que os pixels têm valores mais semelhantes.
-- Correlação: Avalia a intensidade da relação entre os valores de pixels em uma imagem. Uma correlação alta indica que pixels próximos tendem a ter valores semelhantes, enquanto uma correlação baixa sugere uma distribuição mais aleatória dos valores.
-- Energia: Refere-se à uniformidade da distribuição dos valores de pixel. Uma alta energia indica que a imagem possui áreas de intensidade semelhante, enquanto uma baixa energia indica uma distribuição mais variada de intensidades.
-- Dissimilaridade: Mede a diferença entre os valores dos pixels adjacentes. Uma alta dissimilaridade indica uma grande diferença entre os valores dos pixels, sugerindo uma imagem mais complexa, enquanto uma baixa dissimilaridade sugere que os pixels adjacentes são mais semelhantes.
+#### Modelo Original
 
-#### Análise por Contornos
+##### Gerador
+| Component       | Details                                                                                                 |
+|------------------|--------------------------------------------------------------------------------------------------------|
+| Embedding       | Sequential: Embedding(3, 10), GaussianNoise()                                                          |
+| FC Embedding    | Linear(in_features=10, out_features=256, bias=False)                                                   |
+| FC Latent       | Sequential: GaussianNoise(), Linear(in_features=256, out_features=400, bias=False)                     |
+| Block C1        | spectral_norm<br>ConvTranspose2d(400, 256, kernel_size=(4, 4), stride=(4, 4), bias=False)<br>BatchNorm2d(256)<br>ReLU()  |
+| Block C2        | spectral_norm<br>ConvTranspose2d(256, 128, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>BatchNorm2d(128)<br>ReLU() |
+| Block C3        | spectral_norm<br>ConvTranspose2d(128, 64, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>BatchNorm2d(64)<br>ReLU()  |
+| Block C4        | spectral_norm<br>ConvTranspose2d(64, 32, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>BatchNorm2d(32)<br>ReLU()  |
+| Block C5        | spectral_norm<br>ConvTranspose2d(32, 3, kernel_size=(4, 3), stride=(2, 3), padding=(1, 26))<br>Tanh()                   |
+| Parameters      | **4399713**                       
 
-Se utilizou uma binarização com o algoritmo de Otsu para extrair os contornos principais das nubes de descargas parciais que apareceram em cada imagen. A continuação, se pode ver um exemplo do processo para cada tipo de defeito.
+##### Discriminador
 
-![Contours-example](./reports/figures/contours_prpd.png)
+| Component       | Details                                                                                                 |
+|------------------|--------------------------------------------------------------------------------------------------------|
+| Block C1        | GaussianNoise()<br>Conv2d(3, 32, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C2        | GaussianNoise()<br>Conv2d(32, 64, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C3        | GaussianNoise()<br>Conv2d(64, 128, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C4        | GaussianNoise()<br>Conv2d(128, 256, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C5        | GaussianNoise()<br>Conv2d(256, 512, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block Dis       | GaussianNoise()<br>Linear(in_features=2048, out_features=1, bias=True)                                 |
+| Block Aux       | GaussianNoise()<br>Linear(in_features=2048, out_features=3, bias=True)                                 |
+| Parameters      | **2897924**                                                                                            |
 
-Posteriormente se extrairam as seguintes caracteristicas de cada nube:
-
-- Área: Mede a superfície ocupada pela forma, fornecendo uma indicação do tamanho da mesma.
-- Perímetro: Refere-se à soma das distâncias ao longo da borda da forma. Um perímetro maior pode indicar uma forma mais complexa.
-- Razão de aspecto: É a relação entre a largura e a altura da forma. Ajuda a descrever a orientação e a forma da estrutura.
-- Extensão: Representa a proporção da área da forma em relação à área da caixa delimitadora (bounding box). Um valor próximo de 1 indica que a forma ocupa a maior parte da caixa.
-- Solidez: Mede a relação entre a área da forma e a área da sua convexa. Indica o quão "compacta" é a forma; formas mais "oco" têm uma solidez menor.
-- Diâmetro equivalente: É o diâmetro de um círculo que teria a mesma área que a forma. Ajuda a entender o tamanho de uma forma em relação a um círculo.
-- Compactação: Refere-se à relação entre a área da forma e o quadrado do perímetro. Um valor maior indica uma forma mais compacta, enquanto valores mais baixos sugerem formas mais alongadas.
-- Excentricidade: Mede a elongação da forma, com valores que variam de 0 a 1. Um valor de 0 indica uma forma circular, enquanto valores próximos a 1 indicam formas mais alongadas ou elípticas.
-
-#### Visualização
-
-Apartir da extração de características de cada imagen, se utilizaram técnicas de redução de características e visualização para observar se existem clusters claramente definidos. De tal maneira, a continuação se pode olhar as figuras que foram mais representativas.
-
-##### Clusterização por Características de Textura
-
-![GLCM-UMAP](./reports/figures/UMAP_texture.png)
-
-##### Clusterização por Características dos Contornos
-
-![Contours-tSNE](./reports/figures/tSNE_contours.png)
-
-##### Clusterização por Características de Textura e Contornos
-
-![GLCM&Contours-tSNE](./reports/figures/tSNE_texture_contours.png)
-
-### Implementação da InfoGAN
-
-### Implementação da Diffusion Model
-
-### Implementação da ACWGAN
-
-Se implementou uma variação da rede generativa condicional conhecida como Auxilliary Classifier Generative Adversarial Network (ACGAN), neste caso se utilizou a penalidade de gradiente de Wasserstein para melhorar a estabilidade de treinamento, assim mesmo, se adiciou normalização espectral nas camadas convolucionais do discriminador.
 
 #### Hiperparâmetros
 
-Os hiperparâmetros usados nesta iteração inícial foram os seguintes:
+Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
-- z_dim = 128
-- n_embedding = 64
-- epochs = 600
-- Gaussian noise std = 0.1
-- Gaussian noise decay = 0.995
-- Batch size = 32
-- Learning rate = 1e-4
 - (&beta;<sub>1</sub>, &beta;<sub>2</sub>) = (0, 0.999)
-- &lambda; = 20
+- batch size = 64
+- epochs = 3000
+- &lambda; = 10
+- $\lambda_{cls}$ = 20 
+- lr = 0.0002
+- n embedding = 10
+- z dimm = 256
+- Gaussian Noise std = 0.1
+- noise decay = 0.995
 - Dropout rate = 0.5
 - Leaky ReLU slope = 0.2
-- Tamanho das imagens = (128, 165, 3)
+- Batch size = 64
+- Tamanho das imagens = (256, 332, 3)
 
-#### Arquiteturas
-
-##### Generator
-
-| Layer                                             | Parameters                           |
-|---------------------------------------------------|--------------------------------------|
-| Embedding / GaussianNoise                          | 3, 128                           |
-| Linear (fc_latent)                                | 128, 400                             |
-| ConvTranspose2d / BatchNorm2d / ReLU | 400, 256, (4, 4), (4, 4) |
-| ConvTranspose2d  / BatchNorm2d  / ReLU  | 256, 128, (8, 8), (4, 4), (2, 2)|
-| ConvTranspose2d / BatchNorm2d / ReLU (block_c3) | 128, 64, (8, 8), (4, 4), (2, 2)|
-| ConvTranspose2d / Tanh     | 64, 3, (4, 4), (2, 3), (1, 14) |
-
-**Número total de parâmetros treináveis:** 4,315,395
-
----
-
-##### Discriminator
-
-| Layer                                              | Parameters                           |
-|---------------------------------------------------|--------------------------------------|
-| GaussianNoise  / Conv2d  / LeakyReLU  / Dropout | 3, 64, (8, 8), (4, 4), (2, 2) |
-| GaussianNoise  / Conv2d  / LeakyReLU / Dropout  | 64, 128, (8, 8), (4, 4), (2, 2) |
-| GaussianNoise  / Conv2d  / LeakyReLU / Dropout  | 128, 256, (4, 4), (2, 2), (1, 1) |
-| GaussianNoise  / Linear  / Sigmoid | 5120, 1                      |
-| GaussianNoise  / Linear / Softmax | 5120, 3                    |
-
-**Número total de parâmetros treináveis:** 1,081,348
-
-Explicar sobre o Ablation Study...
+#### Ablation Study
 
 #### Penalizaçao por Wasserstein
 
@@ -189,7 +154,7 @@ Explicar sobre o Ablation Study...
 | Test    | 192.640.402 | 0.134054 | (0.0127,0.0000) | 284.380.472 | 248.441.158 | 212.888.935 | 0.369825 | 0.205304 | 0.214673 | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
 
 
-#### Ruído Gaussiano no Gerador
+#### Ruído Gaussiano no Gerador
 
 #### Normalizaçao Espectral
 
@@ -216,23 +181,9 @@ Citar a grande quantidade de imagens pretas
 
 ![surface_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png)
 
-#####
-
-#### Resultados parciais
-
-Se utilizaram as curvas de perdas, acurácias e exemplos de imagens sinteticas para avaliar esta implementação preliminar da ACWGAN.
-
-##### Curvas de perdas e acurácias
-
-![losses](./reports/figures/losses_ACWGAN.png)
-
-![accuracies](./reports/figures/accuracies_ACWGAN.png)
-
-##### Exemplos de imagens sintéticas geradas pela ACWGAN
-
-![GLCM&Contours-tSNE](./reports/figures/out_ACWGAN.png)
 
 ### Pegadas de Carbono
+
 
 ## Conclusão
 
