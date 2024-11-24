@@ -71,7 +71,7 @@ Neste trabalho, nos focamos na geração de dados financeiros sintéticos realis
 
 O projeto tem como **objetivo principal** :
 
-- Gerar séries temporais sintéticas realistas de ativos financeiros.
+-  Estudar e desenvolver dois modelos generativos (uma baseadas em GANs e outra em Transformers.) para gerar séries temporais sintéticas realistas de ativos financeiros, retendo o máximo de informações estatísticas.
 
 Para o projeto, escolhemos três ativos financeiros distintos:
 - **Índice Bovespa**: pontuação que mede o desempenho das ações das maiores empresas listadas na bolsa de ações brasileira (B3);
