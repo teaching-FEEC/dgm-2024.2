@@ -1,6 +1,6 @@
 model:
-  name_model: "unet_dice"
-  use_best_version: True
+  name_model: "sweep_segm_125"
+  use_best_version: False
 
 data:
   processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"

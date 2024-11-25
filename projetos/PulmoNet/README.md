@@ -34,7 +34,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
     1. [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan)
     2. [Resultados com 60 mil dados de treinamento da GAN](#resultados-com-60-mil-dados-de-treinamento-da-gan)
 7. [Conclusão](#conclusão)
-    1. [Próximos Passos](#próximos-passos)
+    1. [Perspectivas Futuras](#perspectivas-futuras)
 8. [Referências Bibliográficas](#referências-bibliográficas)
 
 **ANEXOS**:
@@ -74,7 +74,8 @@ O trabalho desenvolvido em [[1]](#1), propõe duas arquiteturas baseadas em GANs
 ### Modelo Proposto
 Trabalhos correlatos ao nosso projeto indicam que a estratégia predominante para a síntese de CTs pulmonares e conversão imagem para imagem corresponde a aplicação de GANs (redes adversárias generativas). A estrutura de uma GAN é composta por uma rede neural "geradora", responsável por sintetizar as distribuições de entrada e retornar saídas similares aos dados reais, e uma rede neural "discriminadora", que deve ser capaz de classificar corretamente suas entradas como "reais" ou "falsas". Com isso, uma boa rede generativa deve ser capaz de enganar o discriminador, ao passo que um bom discriminador deve identificar corretamente os dados sintéticos em meio aos dados reais [[11]](#11). Idealmente, o gerador e o discriminador jogam um jogo, no qual o primeiro miniza um critério, enquanto o segundo o maximiza. Com o treinamento, espera-se obter um "equilíbrio de Nash", onde cada estrutura tem 50% de chance de ganhar. 
 
-Este projeto se inspira no trabalho desenvolvido em [[1]](#1). Das duas arquiteturas propostas no artigo de referência, inspira-se na arquitetura Pix2Pix, na qual o gerador é composto de um *encoder* que aumenta a profundidade da imagem enquanto diminui suas dimensões, seguido de um *decoder* que realiza o processo oposto. Tal arquitetura também utiliza conexões residuais (*skip connections*), que concatenam camadas da rede codificadora com a decodificadora (Fig. 1). Além disso, na arquitetura proposta, o discriminador segue a arquitetura 30 × 30 PatchGAN, sendo composto por cinco camadas convolucionais, onde as quatro primeiras são seguidas por uma camada de ativação *LeakyReLu*, enquanto a última é seguida de uma função *sigmoide* (Fig. 2). 
+Este projeto se inspira no trabalho desenvolvido em [[1]](#1). Das duas arquiteturas propostas no artigo de referência, inspira-se na arquitetura Pix2Pix, na qual o gerador é composto de um *encoder* que aumenta a profundidade da imagem enquanto diminui suas dimensões, seguido de um *decoder* que realiza o processo oposto. Tal arquitetura também utiliza conexões residuais (*skip connections*), que concatenam camadas da rede codificadora com a decodificadora (Fig. 1). Além disso, na arquitetura proposta, o discriminador segue a arquitetura 30 × 30 PatchGAN, sendo composto por cinco camadas convolucionais, onde as quatro primeiras são seguidas por uma camada de ativação *LeakyReLu*, enquanto a última é seguida de uma função *sigmoide* (Fig. 2).
+Nesta configuração, cada pixel da imagem de saída do discriminador - uma imagem 1 x 62 x 62 - está associado a um patch de pixels da imagem de entrada, assumindo um valor binário (0 ou 1) correspondente à classificação em "real" ou "falso" do patch associado.
 
 Em [[1]](#1), a entrada do gerador corresponde a uma máscara binária com o formato de um pulmão, e, sua saída corresponde a uma imagem onde o pulmão está preenchido conforme seria em uma CT. Neste trabalho, a entrada do gerador é a mesma da proposta pela referência, no entanto, ao invés de simplesmente obter o preenchimento do pulmão na saída, deseja-se que a saída contenha tanto o interior do pulmão quanto os elementos ao seu entorno, i.e., uma imagem de saída equivalente a que se tem em uma CT real. Ainda em [[1]](#1), a rede considerada é uma *conditional GAN*, na qual o discriminador recebe a imagem CT (real ou sintética) quanto a máscara binária de segmentação do pulmão. Ambas estruturas foram inicialmente recomendadas por [[8]](#8).
 As duas imagens abaixo ilustram as arquiteturas do gerador e discriminador, respectivamente.
@@ -93,7 +94,9 @@ $$arg\ min_{𝐺}\ max_{𝐷}\ E_{𝑥,𝑦}[log 𝐷(𝑥, 𝑦)] + E_{𝑥,�
 
 onde $x$ corresponde a máscara pulmonar, $z$ corresponde ao ruído (aplicado a $x$ ou imposto pelo gerador $G$ pelo uso de *dropout*) [[8]](#8), e $y$, a imagem CT real. Nota-se que a regularização se aplica apenas ao gerador. 
 
-No trabalho em questão, considera-se variações da *loss* apresentada acima. Tais variações incluem: regularização por MSE (*Mean Squared Error*) ao invés de MAE, regularização apenas na região da máscara que representa o interior do pulmão e regularização apenas na região da máscara que representa o exterior do pulmão. As variações da *loss* foram testadas durante o processo de busca pelos hiperparâmetros da rede, como será abordado na seção [Workflow](#workflow). Idealmente, neste trabalho, busca-se uma *loss* que permita a sintetização de imagens onde tanto as estruturas externas ao pulmão (músculos torácicos e a coluna vertebral), como as internas ao mesmo (vias aéreas) sejam bem representadas. 
+No trabalho em questão, considera-se variações da *loss* apresentada acima. Tais variações incluem: regularização por MSE (*Mean Squared Error*) ao invés de MAE, regularização apenas na região da máscara que representa o interior do pulmão e regularização apenas na região da máscara que representa o exterior do pulmão. As variações da *loss* foram testadas durante o processo de busca pelos hiperparâmetros da rede, como será abordado na seção [Workflow](#workflow). Idealmente, neste trabalho, busca-se uma *loss* que permita a sintetização de imagens onde tanto as estruturas externas ao pulmão (músculos torácicos e a coluna vertebral), como as internas ao mesmo (vias aéreas) sejam bem representadas.
+
+Ao modelo proposto e desenvolvido, da-se o nome de PulmoNet.
 
 ### Bases de Dados e Evolução
 Apesar da metodologia ser baseada no artigo [[1]](#1), o desenvolvimento deste projeto utiliza a base de dados fornecida pelo Desafio ATM'22 (Tab. 1)[[2]](#2). 
@@ -190,7 +193,7 @@ Outro ponto interessante que merece ser mencionado é a variação dos passos de
 Um problema típico de treinamento de GANs é a velocidade de aprendizado em diferentes ritmos do gerador e do discriminador, isto é, uma destas redes pode aprender mais rápido do que a outra, resultando em uma baixa qualidade na tarefa de síntese.
 Uma estratégia para tentar solucionar este problema é a variação na taxa de atualização dos pesos neurais, por exemplo: o gerador é atualizado a cada iteração ao passo que o discriminador é atualizado a cada três iterações.
 
-Por limitações de tempo e de *hardware*, esta varredura inicial é feita com apenas 10 mil dados e considerando apenas 40 épocas de treino com *learning rate* fixa. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros para obter quinze modelos. Durante o treinamento, avalia-se em cada época a evolução da *loss* do gerador do dicscriminador, de forma que, ao final do treino retém-se o modelo da última época e o modelo que levou ao menor valor da *loss* do gerador no conjunto de validação. Para cada um dos quinze modelos, esse último é analisado no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM) (resultados em [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan). 
+Por limitações de tempo e de *hardware*, esta varredura inicial é feita com apenas 10 mil dados e considerando apenas 40 épocas de treino com *learning rate* fixa. Com apoio da ferramenta Weights & Biases, combinou-se aleatoriamente estes parâmetros para obter quinze modelos. Durante o treinamento, avalia-se em cada época a evolução da *loss* do gerador do dicscriminador, de forma que, ao final do treino retém-se o modelo da última época e o modelo que levou ao menor valor da *loss* do gerador no conjunto de validação. Para cada um dos quinze modelos, esse último é analisado no conjunto de testes de maneira qualitativa (análise subjetiva dos alunos quanto aos resultados) e quantitativa (cálculo das métricas FID e SSIM) (resultados em [Resultados preliminares com 10 mil dados de treinamento da GAN](#resultados-preliminares-com-10-mil-dados-de-treinamento-da-gan)). 
 
 A partir desta análise inicial, seleciona-se três modelos para prosseguir com o treinamento com todos os dados disponíveis (60 mil). Os três melhores modelos são treinados mantendo os hiper-parâmetros que lhes foram atribuídos na primeira etapa, com exceção da *learning rate* cujo valor inicial é fixado em 0,0002. Partindo dos modelos obtidos no treinamento inicial, cada modelo é treinado por mais 50 épocas, com uma *learning rate* que descresce linearmente a partir da época 10. Os modelos obtidos na última época desse treino adicional são então avaliados de forma quantitativa e qualitativa. Devido a limitações de hardware, apenas um dos três melhores modelos segue para o teste de utilidade. Tais testes serão descritos em mais detalhes na seção [Métricas de Avaliação](#métricas-de-avaliação).
 
@@ -214,10 +217,10 @@ Para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõ
 Esta estratégia consiste na própria observação e avaliação dos dados sintéticos por meio dos estudantes. Os dados sintéticos são comparados aos reais, avaliando se eles se mostram muito distantes de uma CT pulmonar ou se o modelo está se encaminhando para bons resultados. Uma vez que os estudantes não possuem conhecimento clínico para julgar imagens sintéticas muito próximas das reais, essa etapa faz sentido num momento inicial, onde as diferenças são facilmente percebidas. Em uma fase posterior, em que as amostras reais e sintéticas são difíceis de serem distinguidas por leigos, a simples avaliação dos estudantes não se torna relevante, e é preciso buscar conhecimento especializado. 
 
 #### Análise Quantitativa
-A análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos **Fréchet Inception Distance (FID)** e **Structural Similarity Index (SSIM)**, os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite uma avaliação dos nossos resultados frente a esta outra pesquisa.
+A análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos **Fréchet Inception Distance (FID)** e **Structural Similarity Index (SSIM)**, os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite comparações entre os resultados produzidos no projeto proposto frente a esta outro trabalho apresentado em [[1]](#1).
 
-Entrando em mais detalhes, a métrica FID avalia o desempenho da rede generativa e será calculada utilizando uma rede neural pré-treinada *InceptionV3*, que extrairá *features* das fatias pulmonares geradas e das fatias originais. Com isso, as distribuições dos dados sintéticos e dos dados reais, obtidas pelo encoder desta rede, são usadas para calcular a FID e, assim, avaliar a qualidade da imagem gerada.
-A expressão matemática que descreve o cálculo da FID entre duas distribuições gaussianas criadas pelas *features* da última camada de *pooling* do modelo *Inception-v3* é dada por:
+A métrica FID avalia o desempenho da rede generativa e é calculada utilizando uma rede neural pré-treinada *InceptionV3*, que extrai *features* das fatias pulmonares geradas e das fatias originais. Com isso, as distribuições dos dados sintéticos e dos dados reais, obtidas pelo encoder desta rede, são usadas para calcular a FID e, assim, avaliar a qualidade da imagem gerada.
+A expressão matemática que descreve o cálculo da FID entre duas distribuições Gaussianas criadas pelas *features* da última camada de *pooling* do modelo *Inception-v3* é dada por:
 
 $$FID = ‖𝜇_{𝑟} − 𝜇_{𝑔}‖^{2} + Tr(\sum_{𝑟} + \sum_{𝑔} − 2(\sum_{𝑟}\sum_{𝑔})^{1∕2})$$
 
@@ -244,33 +247,40 @@ onde $𝜇_{𝑥}$, $𝜇_{𝑦}$, $𝜎_{𝑥}$, $𝜎_{𝑦}$, e $𝜎_{𝑥�
 No caso do cálculo do SSIM, como o foco do projeto está associado com uma boa geração de vias aéreas pulmonares, esta métrica é calculada considerando tanto a saída completa (imagem 512 x 512) quanto apenas a região central (imagem 256 x 256).
 
 #### Análise de Utilidade
-Dado que o objetivo do projeto é gerar imagens sintéticas (2D) de CTs pulmonares realistas, avalia-se nesta etapa duas perspectivas. A primeira delas trata da segmentação das fatias sintéticas por meio da biblioteca *lungmask* e comparação desta saída com a máscara binária original que gerou esta imagem sintética. Isto é feito para avaliar se o gerador conseguiu manter o formato do pulmão original ou algo próximo a isso. Utiliza-se o SSIM para comparação destas duas fatias pulmonares segmentadas.
-
-Já a segunda perspectiva trata da utilidade do gerador, em termos de **transfer learning**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementaremos uma rede similar à U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compararemos o desempenho desta U-Net com uma outra rede que utiliza o aprendizado do nosso gerador.
-Para isto, coloca-se na entrada da rede de segmentação imagens completas de pulmões e compara-se as saídas geradas pela U-Net com a própria segmentação presente na base de dados ATM'22 feita por especialistas, conforme ilustrado no fluxograma abaixo.
+Nesta etapa, avalia-se a utilidade do gerador, em termos de **transfer learning**. Isto é, tomando como inspiração a abordagem explorada em [[9]](#9), implementa-se uma rede similar à U-Net, com a mesma estrutura da rede geradora Pix2Pix da PulmoNet, para realizar a segmentação das vias aéreas e compara-se o desempenho desta U-Net com uma outra rede que utiliza o aprendizado do nosso gerador.
+Para isto, coloca-se na entrada da rede de segmentação imagens completas de pulmões e compara-se as saídas geradas pela U-Net com a própria segmentação presente na base de dados ATM'22 feita por especialistas, conforme ilustrado no fluxograma abaixo (Fig. 13).
 A seleção entre o tipo de modelo (inicialização aleatória ou pesos transferidos do nosso gerador) é definida em um arquivo YAML, bem como outros parâmetros de configuração.
 Para a avaliação de desempenho destas redes, calcula-se o coeficiente DICE (obtido a partir da precisão e *recall* da predição), tomando como referência o artigo [[2]](#2).
+Além disso, optou-se pela DiceLoss como função de *loss*, dado que é tipicamente utilizada em tarefas de segmentação de imagens médicas [[12]](#12).
 
 ![Fluxo para treinamento da rede de segmentação de vias aérea para o teste de utilidade.](figs/workflow_unet.png?raw=true)
 
 *Figura 13: Fluxo para treinamento da rede de segmentação de vias aérea para o teste de utilidade.*
 
-Ressalta-se que foi escolhida como função de *loss* para esta tarefa a DiceLoss, tipicamente utilizadas em tarefas de segmentação de imagens médicas [[12]](#12).
-Além disso, para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *transfer learning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador (Fig. 14), utilizando apenas 60% dos dados separados para esse propósito. Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
+A métrica Dice varia entre 0 e 1, sendo que quanto maior for este resultado, melhor, e a função DiceLoss também varia entre 0 e 1, mas quanto menor for este valor, melhor, isto é, busca-se minimizar a DiceLoss. Elas são calculadas seguindo as seguintes expressões matemáticas:
 
+![Equação matemática para cálculo da métrica Dice.](figs/dice_metric.png?raw=true)
 
-![Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.](figs/UNET_ARQUITETURA.png?raw=true)
+*Figura 14: Equação matemática para cálculo da métrica Dice. Retirado de https://medium.com/@nghihuynh_37300/understanding-evaluation-metrics-in-medical-image-segmentation-d289a373a3f*
 
-*Figura 14: Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.*
+$$
+DiceLoss = 1 - Dice
+$$
+
+Para aproveitar os pesos iniciais da GAN para a tarefa de segmentação, realiza-se o seguinte processo de *transfer learning*: congela-se apenas a parte da rede codificadora do gerador, retreinando somente o decodificador (Fig. 15), utilizando apenas 60% dos dados separados para esse propósito. Com isso, espera-se demonstrar a capacidade de mapeamento da nossa GAN para um espaço latente adequado, que contenha informações acerca das vias aéreas e que tais informações ajudem a aprimorar esta tarefa.
+
+![Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.](figs/arquitetura_unet.png?raw=true)
+
+*Figura 15: Arquitetura da rede de segmentação das vias aéreas. Modelo do gerador da PulmoNet com camadas congeladas na rede codificadora para a aplicação do transfer learning.*
 
 Por fim, é importante destacar o caminho a ser seguido para a avaliação da rede generativa para as saídas em 3D, caso seja possível implementá-las dentro do prazo do projeto. Para esta aplicação, geraríamos um volume sintético e passaríamos esta saída pela rede de segmentação *medpseg* [[10]](#10). Feito isso, compararíamos as vias aéreas segmentadas com o *ground-truth* estabelecido na própria base de dados ATM'22.
 
 ### Cronograma
-O projeto será implementado seguindo o seguinte fluxo lógico:
+O projeto é implementado seguindo o seguinte fluxo lógico:
 
 ![Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.](figs/fluxo_logico.png?raw=true)
 
-*Figura 15: Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.*
+*Figura 16: Fluxo lógico das ativaidades para desenvolvimento da PulmoNet.*
 
 Dado este fluxo, estipulamos o seguinte cronograma para desenvolvimento do projeto:
 
@@ -295,7 +305,6 @@ Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado e
 
 
 ## Experimentos, Resultados e Discussão dos Resultados
-> TODO: Atualizar com dados da E3
 
 ### Resultados preliminares com 10 mil dados de treinamento da GAN
 A PulmoNet - o modelo de GAN proposto em nosso projeto - passou por uma etapa de busca pelas configurações e hiperparâmetros de treinamentos ótimos, a fim de encontrar uma combinação que gerasse tomografias pulmonares mais realistas. Para isto, testou-se quinze configurações distintas, com uma parcela dos dados selecionados para o treinamento da GAN. As  configurações de cada modelo avaliado nesta varredura quanto métricas qualitativas e quantitativas obtidas estão apresentadas na Tabela 3.
@@ -322,7 +331,7 @@ A PulmoNet - o modelo de GAN proposto em nosso projeto - passou por uma etapa de
 
 Com relação à análise qualitativa, cada um dos três membros deste projeto examinaram algumas imagens sintéticas e classificaram o modelo entre três categorias: "Bom", "Médio" e "Ruim".
 Nesta análise qualitativa, considerou-se a definição das bordas e da região externa ao pulmão, além do preenchimento na região com as vias aéreas.
-Alguns exemplos destas imagens são apresentados em anexo, em [Varredura dos parâmetros da GAN para 10 mil dados](#varredura-dos-parâmetros-da-gan-para-10-mil-dados).
+Alguns exemplos destas imagens são apresentados em anexo, em [Varredura dos parâmetros da GAN para 10 mil dados](docs/modelos_sweep.pdf?raw=true).
 
 Considerando a média das avaliações qualitativas, apenas um modelo recebeu três votos "Bom" (Sweep 205), um modelo recebeu dois votos "Bom" (Sweep 10) e dois modelos receberam apenas um voto "Bom" (Sweep 412 e 123), de modo que filtrou-se 4 dos 15 modelos. Destes dois modelos com apenas um voto "Bom", comparou-se o FID e o SSIM para selecionar a configuração que prosseguiria com o treinamento. Em função destas métricas, considerou-se que o Sweep 412 tinha mais potencial para aprimorar e gerar boas imagens sintéticas. Assim, foram escolhidas as configurações **Sweep 205, Sweep 10 e Sweep 412** para a realização do treinamento com toda a base de dados disponível.
 
@@ -340,15 +349,15 @@ Visualmente, dentre os três modelos considerados, o Sweep10 se mostra o modelo 
 
 ![Imagens geradas pelo modelo Sweep10 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.](figs/sweep10.png?raw=true)
 
-*Figura 15: Imagens geradas pelo modelo Sweep10 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.*
+*Figura 17: Imagens geradas pelo modelo Sweep10 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.*
 
 ![Imagens geradas pelo modelo Sweep205 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.](figs/sweep205.png?raw=true)
 
-*Figura 16: Imagens geradas pelo modelo Sweep205 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.*
+*Figura 18: Imagens geradas pelo modelo Sweep205 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.*
 
 ![Imagens geradas pelo modelo Sweep412 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.](figs/sweep412.png?raw=true)
 
-*Figura 17: Imagens geradas pelo modelo Sweep412 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.*
+*Figura 19: Imagens geradas pelo modelo Sweep412 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.*
 
 **Análise Quantitativa**
 
@@ -394,21 +403,56 @@ Comentários:
 - Nossa similaridade estrtural ser melhor para a região focada no centro da imagem (será que é porque não teve tanto preenchimento desta área?)
 - SSIM geral foi menor do que a referência --> poderia ser indicativo de maior criatividade?
 
+****
 **Teste de Utilidade**
-> Resultados da U-Net
 
+A arquitetura do gerador descrito na seção [Modelo Proposto](#modelo-proposto) é utilizada para a tarefa de segmentação de vias aéreas em duas etapas: inicialização aleatória dos pesos de aprendizado da rede neural e aplicação da técnica de *transfer learning* a partir da melhor versão da PulmoNet.
+Em ambas as estratégias, foram encontradas dificuldades em gerar segmentações de qualidade, de modo que frequemente os modelos passam a reproduzir imagens complemente pretas, não apresentando nenhuma via aérea.
+Apesar de testes não formais terem sido implementados para tentar aprimorar os parâmetros da nossa arquitetura, este comportamento já era esperado, dado que a tarefa de segmentação é extremamente complexa e seria necessário uma alocação de recursos e esforços mais dedicados na compreensão e busca de aprimoramento desta tarefa, do que simplesmente aplicar a arquitetura do gerador da PulmoNet.
+Ainda assim, foi possível treinar e testar modelos para a segmentação das vias aéreas, conforme será descrito nos próximos parágrafos.
+
+A rede treinada com pesos iniciais aleatórios atingiu uma *loss* de validação mínima de 0.9899 e teve mudanças na arquitetura original do gerador em termos de camadas de dropout (foram removidas).
+Nas figuras abaixo, apresenta-se alguns exemplos de vias aéreas segmentadas durante a etapa de testes deste modelo.
+Nota-se que parte das vias aéras está presente nas imagens geradas, mas também há uma região considerável de alucinação, isto é, a rede cria vias aéreas que não existem de fato.
+
+![Exemplos de saídas da rede de segmentação - from zero.](figs/unet_results/model_trained_from_zero/example_generated_epoch_1.png?raw=true)
+![Exemplos de saídas da rede de segmentação - from zero.](figs/unet_results/model_trained_from_zero/example_generated_epoch_3.png?raw=true)
+![Exemplos de saídas da rede de segmentação - from zero.](figs/unet_results/model_trained_from_zero/example_generated_epoch_5.png?raw=true)
+![Exemplos de saídas da rede de segmentação - from zero.](figs/unet_results/model_trained_from_zero/example_generated_epoch_9.png?raw=true)
+![Exemplos de saídas da rede de segmentação - from zero.](figs/unet_results/model_trained_from_zero/example_generated_epoch_15.png?raw=true)
+
+*Figura XXXXXX: Exemplos de saídas da rede de segmentação, treinada com pesos iniciais aleatórios.*
+
+Já a rede pré-treinada para a síntese de CTs pulmonares (modelo Sweep 412), passou pela etapa de transferência de aprendizado com uma quantidade reduzida de dados com relação ao treinamento da U-Net a partir do zero.
+Na arquitetura deste modelo, as camadas de dropout também foram removidas e os pesos da rede codificadora se mantiveram inalterados.
+Exemplos de figuras sintéticas geradas com este processo estão ilustradas abaixo.
+Nota-se que xxxx
+
+xxxx figuras xxxx
+
+Calculando a métrica DICE para ambos os modelos, tem-se os resultados da tabela abaixo.
+
+| Modelo | Melhor época | Dice |
+| ------ | ------------ | ---- |
+| Pesos inciais aleatórios | 1 | 0.02|
+| Sweep412: transfer learning | xxx | xxxx|
+
+Fica evidente que o método de *transfer learning* não teve impacto positivo significativo na tarefa de segmentação, retornando um Dice próximo à U-Net inicializada com pesos aleatórios.
+Este comportamento pode ter ocorrido devido ao baixo preenchimento da região interna pulmonar por parte da PulmoNet, conforme já comentado anteriormente neste relatório.
+Em outras palavras, como o gerador do nosso modelo não preencheu detalhadamente a área interna do pulmão, onde ficam as vias aéreas, é possível que a rede codificadora do gerador não tenha aprendido tão bem como codificar as vias aéreas e, portanto, não contribua com a tarefa de segmentação.
 
 ## Conclusão
-> TODO: Atualizar com dados da E3
+O projeto da PulmoNet busca a geração de fatias de CTs pulmonares a partir de máscaras binárias, em duas dimensões, baseada em GANs. Esta rede utiliza uma arquitetura Pix2Pix para o gerador e uma PatchGAN para o discriminador. São usados dados da base pública ATM'22, cujos dados correspondem a volumes pulmonares de tomografias e segmentações das vias aéreas feitas por especialistas. Para a avaliação da qualidade da rede, propõe-se métodos qualitativos, quantitativos e análises de utilidade.
 
-O projeto da rede PulmoNet busca a geração de fatias de CTs pulmonares a partir de máscaras binárias, em duas dimensões, baseada em GANs. Esta rede utiliza uma arquitetura Pix2Pix para o gerador e uma PatchGAN para o discriminador. São usados dados da base pública ATM'22, cujos dados correspondem a volumes pulmonares de tomografias e segmentações das vias aéreas feitas por especialistas. Para a avaliação da qualidade da rede, propõe-se métodos qualitativos, quantitativos e análises de utilidade.
+> Completar com dados da E3 + contribuições da nossa pesquisa
 
-Seguindo o cronograma do projeto, as etapas até a entrega E2 foram cumpridas, de maneira que estamos atualmente na fase de treinamento do modelo e implementação dos métodos de avaliação. No caso do treinamento, estamos enfrentando algumas dificuldades que estão afetando a qualidade das saídas da rede, principalmente no quesito da velocidade de aprendizado do discriminador frente a do gerador.
+### Perspectivas Futuras
+> TODO: Aprimorar / completar
 
-Os próximos passos do projeto tratam da finalização do treinamento do modelo, análise das métricas de avaliação e fine-tunning e aperfeiçoamento do modelo. Caso tenhamos tempo disponível, buscaremos a geração de volumes 3D de CTs pulmonares.
-
-### Próximos Passos
-> TODO
+Novos estudos poderão ser elaborados a partir da nossa pesquisa, tais como:
+- Aplicação de um método de fine-tunning do nosso melhor modelo, focado apenas na região interna do pulmão. Com isso, buscar-se-ia um modelo que realiza-se um preenchimento melhor desta região. Caso este novo modelo tenha sucesso nesta tarefa, espera-se que o teste de utilidade aplicado a ele seja melhor do que os resultados que obbtivemos nesta pesquisa.
+- Estudar arquiteturas alternativas para a tarefa de síntese de CTs pulmonares, tais como modelos de difusão.
+- Aprofundar este modelo para a geração de CTs pulmonares em três dimensões.
 
 ## Referências Bibliográficas
 
@@ -436,13 +480,11 @@ Os próximos passos do projeto tratam da finalização do treinamento do modelo,
 
 <a id="12">[12]</a> : A. Keshavarzi and E. Angelini, "Few-Shot Airway-Tree Modeling Using Data-Driven Sparse Priors," 2024 IEEE International Symposium on Biomedical Imaging (ISBI), Athens, Greece, 2024, pp. 1-5, doi: 10.1109/ISBI56570.2024.10635527.
 
+> TODO: Substituir por pdf ou remover? --->>>
 Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
 
 
 # Anexos
-
-## Varredura dos parâmetros da GAN para 10 mil dados
-> TODO
 
 ## Testes adicionais com outras arquiteturas
 > TODO
@@ -471,9 +513,9 @@ py training_pipeline.py
 
 3. Selecionar o arquivo YAML de configuração desejado:
 
-'''
+```
  config.yaml
-'''
+```
 
 **Obtenção das métricas da GAN:**
 
@@ -488,9 +530,47 @@ test_pipeline.py config_eval.yaml
 **Treinamento da rede de segmentação:**
 
 `1.` Configurar parâmetros do modelo no arquivo `config_segmentation.yaml` e a localização da pasta com os dados processados.
+- Caso queira continuar com um treinamento, deve-se atribuir `False` para o parâmetro `new_model`. Caso seja a primeira vez que está realizando este treinamento, deve atribuir `True` para este parâmetro.
+- Caso queira treinar um modelo de segmentação a partir do zero deve-se atribuir `False` para o parâmetro `fine_tunning`.
+- Caso queira reaproveitar os pesos iniciais de um gerador pré-treinado e queira treinar todas as camadas do modelo (isto é, não congelar os pesos do codificador), deve-se atribuir `False` para o parâmetro `freeze_layers`.
+- Na seção de configuração `data` é possível selecionar a quantidade de dados de treinamento e validação que deseja utilizar.
+- Deve-se direcionar o parâmetro `processed_data_folder` para o diretório de dados do projeto. Dentro deste diretório, deverá ter duas pastas (`seg_train` e `seg_val`), contendo os dados de treinamento e validação para a tarefa de segmentação.
+- Não mexer no parâmetro `dataset` deste arquivo.
+- É possível ajustar parâmetro de treinamento, critério da função de *loss* e parâmetros do otimizador neste arquivo.
+- Também é possível configurar a frequência de "check-points" de salvamentos intermediários do modelo durante o treinamento, com o parâmetro `step_to_safe_save_models`. Esse recurso ajuda a salvar o estado do modelo durante o treinamento, o qual poderá ser recuperado caso este processo seja interrompido.
 
 `2.` Executar comando em seu terminal:
 
 ```
-segmentation_pipeline.py config_segmentation.yaml
+py segmentation_pipeline.py
 ```
+
+`3.` Selecionar o arquivo YAML de configuração:
+
+```
+config_segmentation.yaml
+```
+
+`4.` Esta execução retorna uma pasta com o nome do seu modelo. Dentro deste diretório, haverá 2 arquivos com a evolução das *losses* (uma imagem e um JSON com os valores) e dois diretórios: *examples*, com algumas imagens geradas durante o treinamento do modelo, e *models*, com os modelos treinados (safesave, trained e best).
+
+**Teste da rede de segmentação:**
+
+`1.` Configurar parâmetros do modelo no arquivo `config_eval_seg.yaml` e a localização da pasta com os dados processados.
+- O nome do modelo (parâmetro `name_model`) deve ser o nome da pasta onde está o modelo que deseja avaliar. Este modelo deve estar no diretório *models* dentro desta pasta.
+- Caso o parâmetro `use_best_version` seja `True`, será avaliado o modelo `<name_model>_unet_best.pt`. Caso seja `False`, será avaliado o modelo `<name_model>_unet_trained.pt`.
+- Direcionar o parâmetro `processed_data_folder` para o diretório de dados do projeto. Dentro deste diretório, deverá ter uma pasta chamada `all_test`, contendo os dados de testes.
+- Não alterar os valores em `evaluation` e nem o parâmetro `dataset`.
+
+`2.` Executar comando em seu terminal:
+
+```
+py evaluate.py
+```
+
+`3.` Selecionar o arquivo YAML de configuração:
+
+```
+config_eval_seg.yaml
+```
+
+`4.` Esta execução retorna uma pasta *generated_images* dentro da pasta do modelo treinado, com algumas imagens de segmentação geradas com dados do conjunto de testes. Além disso, haverá um arquivo JSON com o resultado da métrica DICE.
