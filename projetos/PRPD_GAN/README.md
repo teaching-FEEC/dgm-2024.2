@@ -97,6 +97,15 @@ O modelo que consiguiu obter resultados satisfatórios foi uma versão da ACGAN 
 
 ![ACWGAN-SN](./reports/figures/ACGAN_schematic.png)
 
+As funções de perda para o gerador e o discriminador foram os seguintes:
+
+$L_{\text{CE}} = - \sum_{i=1}^{C} y_i \log(\hat{y}_i)$
+
+$L_{D}^{ACWGAN} = -\mathbb{E}_{x \sim p_{d}}[D(x)] + \mathbb{E}_{\hat{z} \sim p_{g}}[D(\hat{x})] + \lambda\mathbb{E}_{\hat{x} \sim p_{g}} \left[(\| \nabla D(\alpha{x} + (1-\alpha\hat{x}) \|_2 - 1)^2 \right] + \lambda_{cls}{L_{\text{CE}}{(D_{aux}(x),C))}} + {L_{\text{CE}}{(D_{aux}(\hat{x}),\hat{C}))}}$
+
+$L_{G}^{ACWGAN} = -\mathbb{E}_{\hat{z} \sim p_{g}}[D(\hat{x})] + {L_{\text{CE}}{(D_{aux}(\hat{x}),\hat{C}))}}$
+
+
 #### Modelo Original
 
 ##### Gerador
@@ -250,6 +259,13 @@ Métricas no conjunto de Teste
 | Sem Normalização Espectral    | 208.01 | 0,150 | (0.0020,0.0000) | **185.50** | **201.195731** | 216.606.640 | **0,153220** | **0,139393** | **0,178365** | (**0.5136**,0.0000) | (**0.2453**,0.0000) | (**0.0054**,0.0000) |      
 
 ### Pegadas de Carbono
+
+O Wandb foi usado como uma ferramenta de monitoramento para ter um controle sobre as métricas de treinamento e os recursos de computador usados. Para obter uma aproximação do uso total de energia da GPU, a média do uso de energia da GPU por execução de treinamento foi obtida e, em seguida, multiplicada pelo número total de horas de treinamento.
+
+- Uso total de energia da GPU: 5,7 kW
+- Tempo total de treinamento: 241,34 horas
+
+É importante levar em conta que algumas execuções de experimentos não mediram os recursos do computador, de modo que os recursos computacionais necessários mostrados estão na extremidade abaixo da medida real. Em iterações futuras, será dada mais atenção neste detalhe.  
 
 
 ## Conclusão
