@@ -300,7 +300,7 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
     <img src="../HTF/images/Transformer/KDE/TR10.png" alt="Imagem 10" width="320"/>
     <img src="../HTF/images/Transformer/KDE/TR11.png" alt="Imagem 11" width="320"/>
     <img src="../HTF/images/Transformer/KDE/TR12.png" alt="Imagem 12" width="320"/>
-     <p align="center"><p><em>Figura 18: Exemplos de distribuição de probabilidade de possiveis caminhos gerados para o modelo transformer.</em></p>
+    <p align="center"><p align="center"><p><em>Figura 18: Exemplos de distribuição de probabilidade de possiveis caminhos gerados para o modelo transformer.</em></p>
 </div>
 
 ## Conclusão
