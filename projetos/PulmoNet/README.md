@@ -503,7 +503,7 @@ Finalmente, outra alternativa explorada pelo grupo foi a modificação da arquit
 
 Considerando a abordagem descrita acima, propôs-se um treino com as mesmas configurações utilizadas para o Sweep412 (tipo e intensidade de ruído, *loss*, parâmetro do otimizador) partindo de pesos aleatórios e composto por 40 épocas com *learning rate* inicial de 0,0002, que decai linearmente após a época 10. Devido a limitações dos recursos computacionais, tal treino foi realizando usando apenas um terço dos daods disponíveis para o treino da GAN. Apesar de algumas variações terem sido testadas, os resultados dessa abordagem não foram animadores (Fig. A2), e, devido ao tempo, não pôde-se aprofundar nessa ideia e testar os limites das mudanças propostas. Tais mudanças estão disponíveis no código fornecido para que maiores explorações futuras possam ser feitas. 
 
-![Exemplo de imagens sintéticas geradas pelo modelo treinado para geração de imagens CT e da segmentação das vias aéreas simultâneamente.](figs/sweep_com_mask.png?raw=true)
+![Exemplo de imagens sintéticas geradas pelo modelo treinado para geração de imagens CT e da segmentação das vias aéreas simultâneamente.](figs/anexo_gen_segm.png?raw=true)
 *Figura A2: Exemplo de imagens sintéticas geradas pelo modelo treinado para geração de imagens CT e da segmentação das vias aéreas simultâneamente.*
 
 ## How To Run
