@@ -235,7 +235,7 @@ Este projeto adota um workflow bem definido para alcançar o objetivo de gerar t
 
 
 
-## Modelos Propostos, Resultados e Discussão dos Resultados
+## Modelos Propostos e Resultados 
 
 Neste trabalho, foram desenvolvidos e avaliados dois modelos de Rede GAIL. A seguir, são detalhadas as arquiteturas e os processos de treinamento de cada modelo. Em sequência, são apresentados e discutidos os resultados obtidos, destacando o desempenho e as implicações para a geração de trajetórias válidas em manipuladores robóticos.
 
@@ -476,7 +476,7 @@ Para a execução dos testes após o treinamento, os pesos do Gerador, obtidos d
 </div>
 
 
-### **Discussão dos Resultados e Conclusão**
+## **Discussão dos Resultados e Conclusão**
 
 Embora os resultados obtidos não tenham alcançado trajetórias totalmente fiéis aos dados especialistas, foi possível identificar um padrão consistente entre os modelos testados: todos geraram trajetórias que tendem a buscar o braço esquerdo da pessoa. Isso indica que os resultados fazem sentido dentro do contexto do problema, demonstrando que o modelo não produz saídas aleatórias.
 
