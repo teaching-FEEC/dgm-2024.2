@@ -148,7 +148,7 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
 
 3. **Normalização dos Dados:**
 
-Após a coleta dos preços $ X_{1:N}$ e features $F_{1:N}$, armazenamos as séries temporais em um mesmo dataframe: 
+Após a coleta dos preços $X_{1:N}$ e features $F_{1:N}$, armazenamos as séries temporais em um mesmo dataframe: 
 
 $$D = [X_{1:N}, F_{1:N}]$$
 
