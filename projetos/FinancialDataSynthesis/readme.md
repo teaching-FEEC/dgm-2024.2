@@ -112,7 +112,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando mode
 1. **Coleta de Dados:**
 
 <p align="justify">
-Para os modelos baseados em GAN, além dos preços históricos, coletamos dados adicionais que servem como features, como índices de mercado, preços de commodities e ações de grandes empresas do setor de tecnologia, como Amazon, Google e Microsoft.
+Para os modelos baseados em GAN, além dos preços históricos, coletamos dados adicionais que servem como features, como índices de mercado, preços de commodities e ações de outras grandes empresas do setor de tecnologia, como Amazon, Google e Microsoft.
 
 O período analisado inclui 2020, escolhido intencionalmente para testar os modelos em um cenário de alta volatilidade e incertezas causado pela pandemia de Covid-19.
 </p>
