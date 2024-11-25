@@ -124,7 +124,7 @@ O período analisado inclui 2020, escolhido intencionalmente para testar os mode
 </div>
 
 
-2. **Feature Engineering:**
+2. **Engenharia de Features:**
 
 <p align="justify">
 Depois de baixar os históricos de dados das séries temporais financeiras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, foram criadas features baseadas em transformadas de Fourier para extrair tendências de longo e curto prazo nos preços das ações.
@@ -148,18 +148,18 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
 
 3. **Normalização dos Dados:**
 
-Após a coleta dos dados e engenharia de features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe: 
+Após a coleta dos preços $ X_{1:N}$ e features $F_{1:N}$, armazenamos as séries temporais em um mesmo dataframe: 
 
 $$D = [X_{1:N}, F_{1:N}]$$
 
-Para facilitar o treinamento do modelo, os valores de cada série temporal foram normalizados utilizando a técnica de normalização min-max. A fórmula adotada foi:
+Para facilitar o treinamento do modelo, os valores, para cada série temporal, foram normalizados utilizando a técnica min-max. A fórmula adotada foi:
 
 $$
 x_{n}(i) = \frac{x(i) - \min(x)}{\max(x) - \min(x)}
 $$
 
-- $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
-- $x(i)$: representa o valor original da série temporal (preço ou algum feature) no instante $i$.
+- $x_{n}(i)$: representa o valor normalizado (preço ou feature) no instante $i$.
+- $x(i)$: representa o valor original (preço ou feature) no instante $i$.
 - $\min(x)$: representa o menor valor na série temporal $x$.
 - $\max(x)$: representa o maior valor na série temporal $x$.
 
