@@ -26,7 +26,7 @@ Utilizamos séries temporais de preços de ações e indicadores técnicos como 
 
 Observamos que, ao utilizar sequências de tamanho fixo, os modelos conseguiram extrair padrões de forma mais eficiente e gerar previsões mais precisas, em comparação com estratégias que consideram a série temporal completa como entrada.
 
-Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com modelos de aprendizado profundo tradicionais, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), utilizando a métrica RMSE (Root Mean Squared Error) para avaliar a precisão. Os resultados indicam que os modelos propostos oferecem vantagens significativas na previsão de preços de ações.
+Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com modelos de aprendizado profundo tradicionais, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), utilizando a métrica RMSE (Root Mean Squared Error) para avaliar a precisão. Os resultados indicam que os modelos propostos oferecem vantagens significativas na previsão de preços de ações. Também avaliamos a acurácia da direção dos modelos, medindo a % de previsões que acertaram a direção do preço, isso é, a % de previsões que eles previram que os preços iriam subir e realmente subiram (ou que iriam cair, e realmente cairam). Os resultados indicam que nenhum modelo foi capaz de determinar com precisão a direção dos preços.
 </p>
 
 ## Introdução
