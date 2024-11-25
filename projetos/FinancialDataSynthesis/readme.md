@@ -152,7 +152,12 @@ Essa abordagem garante que os valores da série temporal sejam escalados para o 
 4. **Construção da Rede Neural:**
 
 <p align="justify">
-A rede generativas adversarias (GAN) para predição de séries temporais, usa como função de perda a divergência de Kullback-Leibler (KL) e a divergência de Jensen-Shannon (JS), no processo de treinamento. Essas duas divergência são métricas matemáticas usadas para medir a semelhança entre duas distribuições de probabilidade. O modelo GAN usará perda de entropia cruzada para minimizar a diferença entre duas distribuições o que equivale a minimizar a divergência KL-JS.
+A rede generativas adversarias (GAN) para predição de séries temporais, usa como função de perda a divergência de Kullback-Leibler (KL) e a divergência de Jensen-Shannon (JS), no processo de treinamento. Essas duas divergência são métricas matemáticas usadas para medir a semelhança entre duas distribuições de probabilidade. O modelo GAN usa no Discriminador a função de perda baseada na divergência de Jensen-Shannon (JS), que se apresenta a continuação:
+
+$$
+-\frac{1}{m} \sum_{i=1}^m \log D\left(y^i\right)-\frac{1}{m} \sum_{i=1}^m\left(1-\log D\left(G\left(x^i\right)\right)\right)
+$$
+
 
 Neste projeto, treinamos o discriminador para maximizar sua função objetivo, a probabilidade de atribuir o rótulo correto às amostras, a função objetivo para o discriminador maximizar é definida como:
  
