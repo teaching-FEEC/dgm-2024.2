@@ -107,7 +107,7 @@ Utilizamos como métrica de avaliação o Root Mean Square Error (RMSE).
 ## Metodologia e Workflow
 **CASO 1: GANs**
 
-A metodologia para a geração das séries temporais sintéticas utilizando Redes Generativas Adversarias pode ser resumida no seguinte passo a passo:
+A metodologia para a geração das séries temporais sintéticas utilizando modelos baseados na arquitetura das Redes Generativas Adversarias pode ser resumida no seguinte passo a passo:
 
 1. **Coleta de Dados via API:**
 
@@ -118,7 +118,7 @@ O movimento do preço das ações é influenciado por muitos fatores. Então se 
 </p>
 <div align="center">
     <img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Banco de Dados" />
-    <p><em>Figura 1: Historico de series temporais usadas para preveer o preço da ação da Apple, usando redes generativas GANs.</em></p>
+    <p><em>Figura 1: Historico de séries temporais usadas para preveer o preço da ação da Apple, usando redes generativas GANs.</em></p>
 </div>
 
 
