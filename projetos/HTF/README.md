@@ -116,7 +116,7 @@ Tomando algumas cenas como exemplo, conforme disposto na figura 10, é possível
 
 ## Arquitetura
 
-A arquitetura da rede SGAN do modelo de referência, composta por um gerador e um discriminador LSTM, pode ser observada nas figuras 11 e 12. A figura 13 mostra a arquiteura do discriminador implementada com células transformers encoder-only. As posições relativas são encapsuladas em embeddings, que serão a entrada das células LSTM. Estas serão responsáveis por armazenar o histórico de movimento de cada pedestre e aprender seus estados implícitos, sendo ainda necessário um módulo capaz de combinar as informações de cada um e avaliar as interações sociais existentes. Essa é a função do módulo de pooling, que pode ser implementado de duas formas diferentes.
+A arquitetura da rede SGAN do modelo de referência, composta por um gerador e um discriminador LSTM, pode ser observada nas figuras 11 e 12. A figura 13 mostra a arquiteura do discriminador implementada com células transformer encoder-only. As posições relativas são encapsuladas em embeddings, que serão a entrada das células LSTM. Estas serão responsáveis por armazenar o histórico de movimento de cada pedestre e aprender seus estados implícitos, sendo ainda necessário um módulo capaz de combinar as informações de cada um e avaliar as interações sociais existentes. Essa é a função do módulo de pooling, que pode ser implementado de duas formas diferentes.
 
 <p align="center">
     <img src="/projetos/HTF/images/ARQ_GE.png" alt="Figura 11: Arquitetura do gerador LSTM" width="800"/>
