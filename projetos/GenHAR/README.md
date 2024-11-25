@@ -315,7 +315,7 @@ Os experimentos executados treinam um modelo de cada tipo para cada dataset. Os 
 
 ![](docs/figures/train_time.png)
 
-*Figura XX: Tempo de treinamento combinado dos modelos para todos datasets*
+*Figura 6: Tempo de treinamento combinado dos modelos para todos datasets*
 
 A seguir são apresentados os resultados obtidos nos experimentos. Todos os dados podem ser visualizados a partir de um dashboard para navegadores web. Após clonar o repósitório e intalar as depêndencias necessárias, conforme os passos 1. a 3. indicados anteriormente, pode-se inicializar o dashboard com o seguinte comando:
 ```shel
@@ -329,7 +329,7 @@ Abaixo são apresentadas as projeções em t-SNE dos dados reais e sintéticos d
 
 ![](./reports/results_all/images/compare/all_comp_none_tsne.png)
 
-*Figura XX: Projeção t-SNE de dados reais e sintéticos para cada modelo treinado por dataset.*
+*Figura 7: Projeção t-SNE de dados reais e sintéticos para cada modelo treinado por dataset.*
 
 Semelhantemente, foi realizada a projeção t-SNE dos dados sintéticos e reais para cada uma das classes dos datasets de forma independente. A tabela abaixo apresenta os gráficos obtidos para a classe ‘sentado’ em cada dataset e modelo.
 
@@ -351,55 +351,55 @@ Para cada conjunto de dados sintéticos gerados pelos modelos treinados, foram s
 
 ![](docs/figures/sample_uncond.png)
 
-*Figura XX: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Condicionado no dataset KuHAR*
+*Figura 8: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Condicionado no dataset KuHAR*
 
 ![](docs/figures/sample_cond.png)
 
-*Figura XX: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Não-condicionado no dataset KuHAR*
+*Figura 9: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Não-condicionado no dataset KuHAR*
 
 ![](docs/figures/sample_doppel.png)
 
-*Figura XX: Exemplos de amostras reais e sintéticas para o modelo DoppelGAN no dataset KuHAR*
+*Figura 10: Exemplos de amostras reais e sintéticas para o modelo DoppelGAN no dataset KuHAR*
 
 ![](docs/figures/sample_time.png)
 
-*Figura XX: Exemplos de amostras reais e sintéticas para o modelo TimeGAN no dataset KuHAR*
+*Figura 11: Exemplos de amostras reais e sintéticas para o modelo TimeGAN no dataset KuHAR*
 
 **Similaridade entre Distribuições**
 
-As Tabelas XX, XX, XX e XX apresentam os valores de similaridade R2R, R2S, S2S e Max-R2S para cada métrica e cada dataset obtidos entre os dados reais e os conjuntos de dados sintéticos obtidos pelos modelos BioDiffusion Não-condicionado, BioDiffusion Condicionado, DoppelGAN e TimeGAN respectivamente.
+As Tabelas 1, 2, 3 e 4 apresentam os valores de similaridade R2R, R2S, S2S e Max-R2S para cada métrica e cada dataset obtidos entre os dados reais e os conjuntos de dados sintéticos obtidos pelos modelos BioDiffusion Não-condicionado, BioDiffusion Condicionado, DoppelGAN e TimeGAN respectivamente.
 
 ![](./reports/figures/dist_uncond_diff.png)
 
-*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Não-condicionado.*
+*Tabela 1: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Não-condicionado.*
 
 ![](./reports/figures/dist_cond_diff.png)
 
-*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Condicionado.*
+*Tabela 2: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Condicionado.*
 
 ![](./reports/figures/dist_doppelgan.png)
 
-*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo DoppelGAN.*
+*Tabela 3: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo DoppelGAN.*
 
 ![](./reports/figures/dist_timegan.png)
 
-*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo TimeGAN.*
+*Tabela 4: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo TimeGAN.*
 
-A análise dos resultados nas tabelas acima mostram algumas características interessantes quanto às métricas e o desempenho dos modelos. Primeiramente, pode-se notar que a métrica de distância do cosseno não revela muita informação sobre a qualidade dos dados sintéticos, pois a diferença entre os valores de distância média real para real (R2R) e real para sintético (R2S) não variam muito, mesmo quando outras métricas de distância apresentam variações consideráveis. Por exemplo, na primeira linha da Tabela X4 para o modelo TimeGAN no dataset KuHAR, as variações dos valores R2R e R2S para as métricas de distância euclidiana, DTW e distância de Minkowski são de 40%, 34% e 39% respectivamente, enquanto a variação para a métrica de distância de cosseno é de somente 1.8%.
+A análise dos resultados nas tabelas acima mostram algumas características interessantes quanto às métricas e o desempenho dos modelos. Primeiramente, pode-se notar que a métrica de distância do cosseno não revela muita informação sobre a qualidade dos dados sintéticos, pois a diferença entre os valores de distância média real para real (R2R) e real para sintético (R2S) não variam muito, mesmo quando outras métricas de distância apresentam variações consideráveis. Por exemplo, na primeira linha da Tabela 4 para o modelo TimeGAN no dataset KuHAR, as variações dos valores R2R e R2S para as métricas de distância euclidiana, DTW e distância de Minkowski são de 40%, 34% e 39% respectivamente, enquanto a variação para a métrica de distância de cosseno é de somente 1.8%.
 
-De maneira geral, os modelos apresentam valores de distância R2R e R2S similares, indicando que o comportamento da variação dos dados são próximos e valores S2S levemente menores do que o R2R, mostrando que os dados sintéticos possuem variabilidade semelhantes aos dados reais e os modelos não colapsaram para a geração de dados repetidos. Contrário a esses resultados, destaca-se o modelo DoppelGAN, o qual apresenta valores de distância R2S maiores que as R2R em quase todos os datasetes e métricas de distância, indicando um afastamento dos dados sintéticos em relação aos dados reais, o que é reforçado pela visualização da projeção t-SNE dos dados mostrado na Figura XX.
+De maneira geral, os modelos apresentam valores de distância R2R e R2S similares, indicando que o comportamento da variação dos dados são próximos e valores S2S levemente menores do que o R2R, mostrando que os dados sintéticos possuem variabilidade semelhantes aos dados reais e os modelos não colapsaram para a geração de dados repetidos. Contrário a esses resultados, destaca-se o modelo DoppelGAN, o qual apresenta valores de distância R2S maiores que as R2R em quase todos os datasetes e métricas de distância, indicando um afastamento dos dados sintéticos em relação aos dados reais, o que é reforçado pela visualização da projeção t-SNE dos dados mostrado na Figura 7.
 
 **Análise de Usabilidade**
 
-Nas Tabelas XX e XX são apresentados os valores de f1-score para modelos Random Forest e SVM, respectivamente, treinados com dados reais (R), dados sintéticos (S) ou dados sintéticos e reais juntos (M) de cada dataset e conjunto de dados sintéticos. 
+Nas Tabelas 5 e 6 são apresentados os valores de f1-score para modelos Random Forest e SVM, respectivamente, treinados com dados reais (R), dados sintéticos (S) ou dados sintéticos e reais juntos (M) de cada dataset e conjunto de dados sintéticos. 
 
 ![](./reports/figures/RF_utility.png)
 
-*Tabela XX: Valores de f1 para modelos Random Forest treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
+*Tabela 5: Valores de f1 para modelos Random Forest treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
 
 ![](./reports/figures/SVM_utility.png)
 
-*Tabela XX: Valores de f1 para modelos SVM treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
+*Tabela 6: Valores de f1 para modelos SVM treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
 
 De forma geral, observa-se que os modelos BioDiffusion capturam melhor a diferença entre as categorias de dados presentes nos datasets, sendo que classificadores treinados em seus dados sintéticos possuem um desempenho próximo ou superior aos classificadores treinados com dados reais. O modelo DoppelGAN apresenta desempenho baixíssimo em todos os testes, porém os classificadores Random Forest com dados combinados apresentam pouca diferença de performance em comparação aos treinados somente com dados reais, mostrando que por devido aos dados sintéticos serem muito diferentes dos reais, o classificador consegue separar as regiões dos dados sintéticos ruidosos das regiões dos dados reais e manter o desempenho, porém o mesmo não ocorre de forma consistente com classificadores SVM.
 
