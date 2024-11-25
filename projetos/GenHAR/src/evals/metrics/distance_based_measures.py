@@ -20,7 +20,7 @@ def calculate_ed(ori_data, gen_data):
         ])
         distances.append(sample_distance)
     
-    return np.mean(distances), np.max(distances)
+    return np.mean(distances), np.min(distances)
 
 def calculate_dtw(ori_data, gen_data):
     if isinstance(ori_data, pd.DataFrame):
@@ -35,7 +35,7 @@ def calculate_dtw(ori_data, gen_data):
         distance, _ = fastdtw(ori_data[i], gen_data[i], dist=euclidean)
         distances.append(distance)
         
-    return np.mean(distances), np.max(distances)
+    return np.mean(distances), np.min(distances)
 
 def calculate_minkowski(ori_data, gen_data, p=3):
     if isinstance(ori_data, pd.DataFrame):
@@ -54,7 +54,7 @@ def calculate_minkowski(ori_data, gen_data, p=3):
         ])
         distances.append(sample_distance)
     
-    return np.mean(distances), np.max(distances)
+    return np.mean(distances), np.min(distances)
 
 def calculate_manhattan(ori_data, gen_data):
     if isinstance(ori_data, pd.DataFrame):
@@ -73,7 +73,7 @@ def calculate_manhattan(ori_data, gen_data):
         ])
         distances.append(sample_distance)
     
-    return np.mean(distances), np.max(distances)
+    return np.mean(distances), np.min(distances)
 
 def calculate_cosine(ori_data, gen_data):
     if isinstance(ori_data, pd.DataFrame):
@@ -92,7 +92,7 @@ def calculate_cosine(ori_data, gen_data):
         ])
         distances.append(sample_distance)
     
-    return np.mean(distances), np.max(distances)
+    return np.mean(distances), np.min(distances)
 
 def calculate_pearson(ori_data, gen_data):
     if isinstance(ori_data, pd.DataFrame):
@@ -111,4 +111,4 @@ def calculate_pearson(ori_data, gen_data):
         ])
         distances.append(sample_distance)
     
-    return np.mean(distances), np.max(distances)
+    return np.mean(distances), np.min(distances)
