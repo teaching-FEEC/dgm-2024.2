@@ -21,11 +21,11 @@ Diante disso, neste trabalho realizamos a adaptação e avaliação de modelos d
 
 ## Descrição do Problema/Motivação
 
-O projeto tem como tema a geração de dados sintéticos de sensores para utilização em tarefas de reconhecimento de atividades humanas (HAR). Esse trabalho surge no contexto do Hub de Inteligência Artificial e Arquiteturas Cognitivas (HIAAC) do qual os integrantes do grupo fazem parte. Um dos objetos de estudos do HIAAC tem sido a tarefa de reconhecimento de atividades a partir de sensores de smartphones e foi observado a discordância entre diferentes datasets e metodologias da área. Assim, foi identificado uma oportunidade de avanço da área na criação de novos datasets e métodos de geração de dados sintéticos para aprimorar o desempenho de modelos para HAR.
+O projeto tem como tema a geração de dados sintéticos de sensores para utilização em tarefas de reconhecimento de atividades humanas (HAR). Esse trabalho surge no contexto do Hub de Inteligência Artificial e Arquiteturas Cognitivas ([HIAAC](https://hiaac.unicamp.br/)) do qual os integrantes do grupo fazem parte. Um dos objetos de estudos do HIAAC tem sido a tarefa de reconhecimento de atividades a partir de sensores de smartphones e foi observado a discordância entre diferentes datasets e metodologias da área. Assim, foi identificado uma oportunidade de avanço da área na criação de novos datasets e métodos de geração de dados sintéticos para aprimorar o desempenho de modelos para HAR.
 
 Atualmente, há dois principais problemas relacionados aos dados existentes para o treinamento de modelos na tarefa HAR:
 
-- **Falta de Dados:** A escassez de dados relevantes e diversos é um desafio significativo para o treinamento e avaliação de modelos de HAR. A coleta desse tipo de dados requer a participação de diversas pessoas em diferentes cenários e atividades. Embora a janela de tempo de cada captura de dados seja relativamente pequena (cerca de 1 a 15 minutos) o tempo de preparo do participante e deslocamento entre os locais em que as atividades são realizadas pode ser grande. Além disso, deve-se garantir que todos os sensores funcionem corretamente durante o experimento e que os dados sejam coretamente sincronizados e anonimizados. Diferentemente de dados como imagens, áudios e textos que são abundantemente presentes na internet, dados de sensores são mais escassos.
+- **Falta de Dados:** A escassez de dados relevantes e diversos é um desafio significativo para o treinamento e avaliação de modelos de HAR. A coleta desse tipo de dados requer a participação de diversas pessoas em diferentes cenários e atividades. Embora a janela de tempo de cada captura de dados seja relativamente pequena (cerca de 1 a 15 minutos) o tempo de preparo do participante e deslocamento entre os locais em que as atividades são realizadas pode ser grande. Além disso, deve-se garantir que todos os sensores funcionam corretamente durante o experimento e que os dados sejam corretamente sincronizados e anonimizados. Diferentemente de dados como imagens, áudios e textos que são abundantemente presentes na internet, dados de sensores são mais escassos.
 - **Heterogeneidade:** A variabilidade nas classes de atividade, na posição dos sensores e nas características das pessoas cria dificuldades para criar um dataset representativo e generalizável. A quantidade de atividades que uma pessoa pode realizar é imensa (subir escadas, pular, nadar, andar, correr) e pode ser modulada por diferentes fatores externos (clima, elevação, angulação do chão). Além disso, as características físicas do participante (altura, idade, peso, etc.) influenciam o comportamento dos dados. Esses fatores tornam difícil a construção de um dataset com classes bem definidas e variedade de participantes de forma a ser representativo o suficiente para generalização de modelos de aprendizado.
 
 ## Objetivo 
@@ -96,27 +96,27 @@ A proposta apresentada pelo modelo TimeGAN é a união dos métodos de treinamen
 
 A implementação utilizada é uma reprodução do código disponível no [repositório do artigo](https://github.com/benearnthof/TimeGAN/).
 
-### Bases de Dados e Evolução
+### Bases de Dados
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
 |KuHAR | https://data.mendeley.com/datasets/45f952y38r/5 | Dados de 90 participantes capturados de smartphones em 18 atividades diferentes. |
-| RealWorld |https://www.uni-mannheim.de/dws/research/projects/activity-recognition/dataset/dataset-realworld/ | Dados de 15 participantes capturados de sensores IMU em 8 atividades diferentes. |
+| RealWorld |https://www.uni-mannheim.de/dws/research/projects/activity-recognition/dataset/dataset-realworld/ | Dados de 15 participantes capturados de sensores IMU em 8 atividades diferentes.  Subdividido em dois datasets: RealWorld - Thigh e RealWorld - Arm, referentes as posições dos sensores nos participantes. |
 | UCI | https://archive.ics.uci.edu/dataset/341/smartphone+based+recognition+of+human+activities+and+postural+transitions | Dados de 30 participantes capturados de smartphones em 6 atividades diferentes. |
 | WISDM | https://archive.ics.uci.edu/dataset/507/wisdm+smartphone+and+smartwatch+activity+and+biometrics+dataset | Dados de 51 participantes capturados de smartphones e smartwatches em 18 atividades diferentes. |
 | MotionSense | https://www.kaggle.com/datasets/malekzadeh/motionsense-dataset | Dados de 90 participantes capturados de smartphones em 18 atividades diferentes. |
 
-Para este trabalho, inicialmente utilizaremos os conjuntos de dados fornecidos pela equipe da Meta 4 do grupo HIAAC, disponíveis em https://zenodo.org/records/11992126 . A versão balanceada destes conjuntos de dados foi denominada View Balanceada. Os dados foram balanceados de forma que todas as classes apresentassem o mesmo número de amostras, evitando que as diferentes proporções entre os rótulos afetassem a avaliação do desempenho. Essa abordagem visa garantir uma distribuição equitativa das classes, permitindo uma análise mais precisa das metodologias de avaliação implementadas para a geração de dados.
+Para este trabalho, utilizamos os conjuntos de dados fornecidos pela equipe da Meta 4 do grupo HIAAC, disponíveis em https://zenodo.org/records/11992126 . A versão balanceada destes conjuntos de dados foi denominada View Balanceada. Os dados foram balanceados de forma que todas as classes apresentassem o mesmo número de amostras, evitando que as diferentes proporções entre os rótulos afetassem a avaliação do desempenho. Essa abordagem visa garantir uma distribuição equitativa das classes, permitindo uma análise mais precisa das metodologias de avaliação implementadas para a geração de dados.
 Adicionalmente, os subconjuntos de treino, teste e validação foram organizados de maneira que as amostras de um determinado participante não estivessem presentes em dois subconjuntos distintos. Essa estratégia é fundamental para evitar o vazamento de informações entre os conjuntos, assegurando que a validação do modelo seja realizada de forma justa e confiável.
 
 #### Análise das Bases de Dados
 
-Os conjuntos de dados padronizados das cincos bases foram explorados e comparadas entre si.
+Os conjuntos de dados padronizados das cincos bases foram explorados e comparados entre si.
 O notebook presente no arquivo [`notebooks/Exploring datasets.ipynb`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/notebooks/Exploring%20datasets.ipynb) apresenta o código utilizado para a comparação, e os resultados compilados podem ser acessados no arquivo [`reports/exploring all datasets.pdf`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/reports/exploring%20all%20datasets.pdf).
 As principais informações levantadas por essa exploração são:
-- **Atividades Comuns**: Sentado, em pé, caminhando e correndo são atividades presentes em todos os datasets, exceto para o dataset WISDM, que não inclui subir e descer escadas. O UCI-HAR também não inclui a atividade "correr".
-- **Separação de Clusters**: O dataset KU-HAR apresentou uma boa separação de clusters nas análises t-SNE, o que indica maior clareza na distinção entre atividades comparado aos outros datasets, que apresentam confusão entre algumas atividades.
-- **Visualização Temporal**: As visualizações das amostras temporais dos sensores (acelerômetro e giroscópio) para cada classe revelam variações em alguns pontos, indicando possíveis transições entre atividades. No geral, os padrões entre os sensores são consistentes.
+- **Atividades Comuns**: Sentado, em pé e caminhando são atividades presentes em todos os datasets. Entretanto, o dataset UCI-HAR não possui a atividade ‘correndo’, enquanto o dataset WISDM não possui as atividades ‘subindo escada’ e ‘descendo escada’.
+- **Separação de Clusters**: Nenhum dataset apresenta uma divisão clara de clusters na visualização da projeção t-SNE em duas dimensões. Porém, apesar da mistura entre os clusters, as diferentes classes de atividade estão em regiões específicas da projeção e não distribuídas uniformemente, indicando que existem características que distinguem os dados em suas respectivas classes.
+- **Visualização Temporal**: As visualizações das amostras temporais dos sensores (acelerômetro e giroscópio) para cada classe revelam maior variação entre datasets para as classes ‘sentando’ e ‘em pé’, onde o comportamento das séries temporais não são semelhantes entre diferentes datasets.Porém, as classes ‘subindo escada’, ‘descendo escada’ e ‘correndo’ apresentam maior consistência ao comparar amostras de diferentes datasets.
 
 ### Avaliação dos Dados Sintéticos
 
@@ -127,10 +127,11 @@ As principais informações levantadas por essa exploração são:
 
 #### Análise Quantitativa
 
-- **Similaridade entre distribuições**: Nessa abordagem é escolhida uma métrica de similaridade ou distância entre amostras e compara-se a similaridade média entre amostras de três pares de conjuntos diferentes: dois sub-conjuntos de dados reais sem intersecção (R2R); dados reais e dados sintéticos (R2S); dois conjuntos de dados sintéticos sem intersecção(S2S). Com isso, espera-se que o valor R2R seja próximo ao de R2S, indicando uma distribuição semelhante de dados, o valor de S2S serve para verificar que o gerador não colapsou, o que causaria valores de similaridade altos. Por fim, também é obtido o maior valor de similaridade entre amostras dos conjuntos real e sintético (Max-R2S), o qual espera-se ser alto, porém não perfeito (similaridade máxima), pois isso indicaria que dados reais estão sendo copiados para o conjunto de dados sintéticos. Diferentes métricas de similaridade e distância são exploradas:
+- **Similaridade entre distribuições**: NNessa abordagem é escolhida uma métrica de distância entre amostras e compara-se a distância média entre amostras de três pares de conjuntos diferentes: dois sub-conjuntos de dados reais sem intersecção (R2R); dados reais e dados sintéticos (R2S); dois conjuntos de dados sintéticos sem intersecção(S2S). Com isso, espera-se que o valor R2R seja próximo ao de R2S, indicando uma distribuição semelhante de dados, o valor de S2S serve para verificar que o gerador não colapsou, o que causaria valores de distância baixos. Por fim, também é obtido o menor valor de distância entre amostras dos conjuntos real e sintético (Min-R2S), o qual espera-se ser baixo, porém não nulo, pois isso indicaria que dados reais estão sendo copiados para o conjunto de dados sintéticos. Diferentes métricas de distância são exploradas:
   - Distância Euclidiana
-  - Dynamic Tyme Warping
-  - Similaridade de Cosseno
+  - Dynamic Time Warping
+  - Distância de Cosseno
+  - Distância de Minkowski (norma 3)
 
 #### Análise de Usabilidade
 
@@ -140,6 +141,10 @@ As principais informações levantadas por essa exploração são:
 
 ![Workflow](docs/figures/GenHAR_Worflow.png)
 *Figura 4: Diagrama de atividades para o Workflow dos experimentos do projeto*
+
+![](docs/figures/bio_diffusion_workflow.png)
+
+*Figura 5: Diagrama da arquitetura BioDIffusion implementada*
 
 #### Configuração do Ambiente
 
@@ -165,17 +170,19 @@ As principais informações levantadas por essa exploração são:
 
 #### Treinamento de Modelos
 
-- O modelo definido pelo arquivo de configuração é inicializado e treinado:
+- O modelo definido pelo arquivo de configuração é inicializado e treinado. A sequência de operações dessa etapa depende do modelo selecionado:
 - DoppelGAN [[7]](#ref_7)
   - Os dados possuem dimensões (n_amostras, 361) e são organizados para um `np.array` de tamanho (n_amostras, 6, 60) contendo os dados das séries temporais e um `np.array` tamanho (n_amostras, ) com as classes das amostras;
-  - A implementação da DGAN da biblioteca Gretel Synthetics [10] é utilizada para treinamento do modelo;
+  - A implementação da DGAN da biblioteca Gretel Synthetics [10] é utilizada para treinamento do modelo. As opções de configuração são apresentadas no workflow detalhado (Figura 5);
 - TimeGAN [[10]](#ref_10)
   - Os dados possuem dimensões (n_amostras, 361) e são organizados para um `np.array` de tamanho (n_amostras, 6, 60) contendo os dados das séries temporais e um `np.array` tamanho (n_amostras, ) com as classes das amostras;
   - Os dados são separados por classe e é treinado um modelo TimeGAN incondicional por classe, ou seja, obtêm-se 6 diferentes modelos TimeGAN, cada um treinado para gerar dados de uma classe de atividade diferente;
-  - A implementação do repositório XX foi reproduzida para o treinamento do modelo TimeGAN;
+  - A implementação da TimeGAN da biblioteca TSGM [[11]](#ref_11) é utilizada para treinamento do modelo. As opções de configuração são apresentadas no workflow detalhado (Figura 5);
 - BioDiffusion [[9]](#ref_9):
   - Os dados possuem dimensões (n_amostras, 361) e são organizados para um `np.array` de tamanho (n_amostras, 6, 60) contendo os dados das séries temporais e um `np.array` tamanho (n_amostras, ) com as classes das amostras;
-  - Os dados são separados por classe e é treinado um modelo BioDiffusion incondicional por classe, ou seja, obtêm-se 6 diferentes modelos BioDiffusion, cada um treinado para gerar dados de uma classe de atividade diferente;
+   - O modelo treinado pode ser incondicional ou condicional em relação as classes da amostra:
+     - Incondicional: Os dados são separados por classe e é treinado um modelo BioDiffusion incondicional por classe, ou seja, obtêm-se 6 diferentes modelos BioDiffusion, cada um treinado para gerar dados de uma classe de atividade diferente;
+     - Condicional: As classes dos dados são fornecidas ao modelo durante o treinamento junto das amostras. Então, as classes são codificadas em vetores de embedding para condicionar o modelo durante o processo de difusão, dessa forma, somente um modelo é treinado para representar todas as classes de dados;
   - A implementação do (repositório de referência do artigo)[https://github.com/imics-lab/biodiffusion/tree/main] foi reproduzido para o treinamento do modelo BioDiffusion e uma normalização por média e desvio padrão é aplicada nos dados de treino antes de serem passados para o modelo. Os parâmetros de normalização para cada classe são salvos para aplicação nos dados sintéticos gerados pelo modelo;
 
 #### Avaliação de Modelos
@@ -199,6 +206,13 @@ As principais informações levantadas por essa exploração são:
     - Um classificador treinado com o conjunto sintético;
     - Um classificador treinado com os conjuntos de treino e sintético;
   - Para cada classificador é reportados a acurácia, precisão, recall e pontuação f1;
+- Avaliação de Similaridade:
+  - São computadas os valores de distância entre dados reais com reais (R2R), sintéticos com reais (R2S) e sintéticos com sintéticos (S2S), utilizando as métricas:
+    - Distância Euclidiana
+    - Dynamic Time Warping
+    - Distância de Cosseno	
+    - Distância de Minkowski (norma 3)
+
 
 ### Descrição dos Diretórios
 
@@ -263,52 +277,142 @@ GenHar/
 |Gretel Synthetics| Implementação e treinamento do modelo DoppelGAN|
 |Pandas| Manipulação, leitura e escrita de conjuntos de dados|
 |Seaborn| Geração de gráficos para dados projetados por t-SNE|
+|TSGM| Implementação e treinamento do modelo TimeGAN|
 
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
 Esta seção descreve os experimentos realizados para comparar dados reais e sintéticos gerados a partir de múltiplos datasets de sensores. Os dados foram coletados de dispositivos que capturam leituras de acelerômetro e giroscópio, e os modelos generativos aplicados foram projetados para criar séries temporais sintéticas com características semelhantes às dos dados reais. O objetivo principal é avaliar a qualidade, fidelidade e utilidade dos dados gerados.
 
-Os três modelos descritos anteriormente (TimeGAN, DoppelGAN e BioDiffusion) são treinados separadamente em cada base de dados seguindo o workflow de experimento descrito anteriormente, totalizando 15 diferentes modelos treinados.
-Os arquivos de configuração dos experimentos podem ser encontrados em:
-  - [`tests/gans/doppelganger/config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/gans/doppelganger/config.yaml)
-  - [`tests/gans/timeganpt/config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/gans/timeganpt/config.yaml)
-  - [`tests/diffusion/unet1d_config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/diffusion/unet1d_config.yaml)
+Os quatro modelos descritos anteriormente (TimeGAN, DoppelGAN e BioDiffusion Não-condicionado e Condicionado) são treinados separadamente em cada base de dados seguindo o workflow de experimento descrito anteriormente, totalizando 15 diferentes modelos treinados.
+O arquivo de configuração que define todos os experimentos de forma conjunta pode ser encontrado em:
+  - [`tests/all/all_config.yaml`](https://github.com/brgsil/GenHAR/blob/main/projetos/GenHAR/tests/all/all_config.yaml)
 
-No estado atual do projeto estão implementadas as avaliações qualitativas e de usabilidade.
-Abaixo são apresentadas as projeções em t-SNE dos dados reais e sintéticos dos três modelos implementados após serem treinados no conjunto de dados Ku-HAR.
-Os resultados completos podem ser vistos nas subpastas do diretório [`tests/`](https://github.com/brgsil/GenHAR/tree/main/projetos/GenHAR/tests).
+### Execução dos experimentos
 
-<p float="left">
-  <img src="tests/diffusion/unconditional_1d/images/KuHar_None__diffusion_unet1d_tsne_comparison.jpg" width="32%" />
-  <img src="tests/gans/doppelganger/images/KuHar_None__doppelganger_tsne_comparison.png" width="32%" /> 
-  <img src="tests/gans/timeganpt/images/KuHar_None__timegan_tsne_comparison.png" width="32%" />
-</p>
+Os passos a seguir descrevem como executar os experimentos. Para reproduzir os experimentos, é necessário ter Python versão 3.9 instalado.
 
-*Figura 5: Projeção conjunta dos dados reais e sintéticos por t-SNE para modelos treinados com Ku-HAR. Da esquerda para direita: BioDiffusion, DoppelGAN e TimeGAN.*
+ 1. Clonar o repositório em um diretório local e acessar a pasta do projeto
+```shel
+git clone https://github.com/brgsil/GenHAR
+cd GenHAR/projetos/GenHAR
+```
+2. Criar um ambiente virtual python e ativá-lo
+```shel
+python -m venv .venv
+source .venv/bin/activate
+```
+3. Instalar dependências
+```shel
+pip install -r requirements.txt
+```
+4. Executar experimentos
+```shel
+python src/main.py --config tests/all/all_config.yaml --generate --eval
+```
 
-Os resultados preliminares demonstram que a adaptação direta dos modelos TimeGAN e DoppeloGANger para os dados de sensores de acelerômetro e giroscópio não apresentam bom desempenho e não são capazes de capturar corretamente o comportamento das séries temporais.
-Adicionalmente, a avaliação de usbilidade de classificadores nos conjuntos de dados sintéticos apresentam uma queda no desempenho de classificadores treinados com dados reais e sintéticos em comparação com classificadores treinados somente com dados reais. Novamente isso aponta para o baixo representatividade dos dados sintéticos devido ao modelo não ter sido capaz de capturar a distribuição dos dados.
+Os experimentos executados treinam um modelo de cada tipo para cada dataset. Os tipos de modelos são o BioDiffusion condicionado (um modelo para gerar dados de todas as categorias de atividades), BioDiffussion não-condicionado (um modelo de geração por categoria de atividade), DoppelGAN (um modelo para todas as categorias) e TimeGAN (um modelo por categoria). O gŕafico da Figura abaixo apresenta o tempo de treinamento total de cada tipo de modelo para todos os datasets. 
 
-Em contrapartida, o modelo BioDiffusion já apresenta resultados razoáveis, apresentando uma distribuição de dados sintéticos semelhantes aos dados reais.
-Adicionalmente, como visto nos gráficos da figura abaixo, os dados sintéticos gerados pelo modelo BioDiffusion são úteis para a melhoria do desempenho de um classificador por *Support Vector Machine*. Porém, um classificador do tipo *Random Forest* treinado com os mesmos dados sintéticos apresenta uma queda de performance.
-Isso mostra um caminho promissor na exploração de modelos de difussão para geração de dados sintéticos de sensores em comparação a modelos GANs, entretanto mais experimentos são necessários para reforçar essa hipótese.
+![](docs/figures/train_time.png)
 
-<p float="left">
-  <img src="tests/diffusion/unconditional_1d/images/KuHar_none_diffusion_unet1d_ml_acc.png" width="32%" />
-  <img src="tests/diffusion/unconditional_1d/images/KuHar_none_diffusion_unet1d_ml_recall.png" width="32%" />
-  <img src="tests/diffusion/unconditional_1d/images/KuHar_none_diffusion_unet1d_ml_f1.png" width="32%" />
-</p>
+*Figura 6: Tempo de treinamento combinado dos modelos para todos datasets*
 
-*Figura 6: Desempenho de classificadores treinados em três conjuntos de dados: somente dados reais; somente dados sintéticos; dados reais e sintéticos.*
+A seguir são apresentados os resultados obtidos nos experimentos. Todos os dados podem ser visualizados a partir de um dashboard para navegadores web. Após clonar o repósitório e intalar as depêndencias necessárias, conforme os passos 1. a 3. indicados anteriormente, pode-se inicializar o dashboard com o seguinte comando:
+```shel
+python src/main.py --config tests/all/all_config.yaml --visualize
+```
+
+### Resultados e Discussões
+
+**Projeção t-SNE dos dados**
+Abaixo são apresentadas as projeções em t-SNE dos dados reais e sintéticos dos quatro modelos implementados após serem treinados em cada conjunto de dados. Cada coluna da tabela corresponde a um dataset de treino e cada linha representa a arquitetura do modelo treinado neste dataset.
+
+![](./reports/results_all/images/compare/all_comp_none_tsne.png)
+
+*Figura 7: Projeção t-SNE de dados reais e sintéticos para cada modelo treinado por dataset.*
+
+Semelhantemente, foi realizada a projeção t-SNE dos dados sintéticos e reais para cada uma das classes dos datasets de forma independente. A tabela abaixo apresenta os gráficos obtidos para a classe ‘sentado’ em cada dataset e modelo.
+
+| Dataset | BioDiffusion Não-condicionado | BioDiffusion Condicionado | DoppelGAN | TimeGAN|
+|---|---|---|---|---|
+|KuHAR| ![](reports/results_all/images/sit_compare/ku_uncond.png)| ![](reports/results_all/images/sit_compare/ku_cond.png) | ![](./reports/results_all/images/sit_compare/ku_doppel.png) | ![](reports/results_all/images/sit_compare/ku_time.png) | 
+|MotionSense|![](reports/results_all/images/sit_compare/motion_uncond.png) | ![](./reports/results_all/images/sit_compare/motion_cond.png) | ![](./reports/results_all/images/sit_compare/motion_doppel.png) | ![](./reports/results_all/images/sit_compare/motion_time.png) | 
+|RealWorld - Thigh|![](./reports/results_all/images/sit_compare/rw_t_uncond.png) | ![](./reports/results_all/images/sit_compare/rw_t_cond.png) | ![](./reports/results_all/images/sit_compare/rw_t_doppel.png) | ![](./reports/results_all/images/sit_compare/rw_t_time.png) | 
+|RealWorld - Arm|![](./reports/results_all/images/sit_compare/rw_a_uncond.png) | ![](./reports/results_all/images/sit_compare/rw_a_cond.png) | ![](./reports/results_all/images/sit_compare/rw_a_doppel.png) | ![](./reports/results_all/images/sit_compare/rw_a_time.png) | 
+|UCI|![](./reports/results_all/images/sit_compare/uci_uncond.png) | ![](./reports/results_all/images/sit_compare/uci_cond.png) | ![](./reports/results_all/images/sit_compare/uci_doppel.png) | ![](./reports/results_all/images/sit_compare/uci_time.png) | 
+|WISDM|![](./reports/results_all/images/sit_compare/wisdm_uncond.png) | ![](./reports/results_all/images/sit_compare/wisdm_cond.png) | ![](./reports/results_all/images/sit_compare/wisdm_doppel.png) | ![](./reports/results_all/images/sit_compare/wisdm_time.png) | 
+|Combined|![](./reports/results_all/images/sit_compare/comb_uncond.png) | ![](./reports/results_all/images/sit_compare/comb_cond.png) | ![](./reports/results_all/images/sit_compare/comb_doppel.png) | ![](./reports/results_all/images/sit_compare/comb_time.png) | 
+
+As projeções t-SNE apresentadas revelam que os dados gerados pelos modelos TimeGAN e DoppelGAN são muito dissimilares aos dados reais para todos os datasets, formando clusters sem intersecção com os dados reais. Isso mostra que os modelos não foram adequados para gerar os dados de sensores desejados somente com a aplicação direta dos mesmos no domínio desejado. Por outro, lado os modelos BioDiffusion conseguiram se aproximar mais da distribuição dos dados reais e em alguns datasets até mesmo ter interseção dos clusters, mostrando uma opção mais adequada para o domínio de dados estudados. 
+
+**Amostragem Global**
+
+Para cada conjunto de dados sintéticos gerados pelos modelos treinados, foram selecionadas aleatoriamente algumas amostras e visualizadas como séries temporais em um gráfico. As Figuras abaixo apresentam uma amostra da categoria 'caminhando' do dataset KuHAR comparadas com amostras sintéticas dos modelos treinados no mesmo dataset. Pode-se claramente ver que os modelos DoppelGAN e TimeGAN conseguem reproduzir alguns aspectos gerais das formas de onda ao variar a amplitude do sinal, porém expriem padrões de ondas repetidos sem a complexidade presente nos dados reais. Por outro lado, os modelos BioDiffusion Condicionado e Não-condicionado geram amostras com características mais realistas, com picos no sinal em períodos semelhantes ao dos dados reais.
+
+![](docs/figures/sample_uncond.png)
+
+*Figura 8: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Condicionado no dataset KuHAR*
+
+![](docs/figures/sample_cond.png)
+
+*Figura 9: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Não-condicionado no dataset KuHAR*
+
+![](docs/figures/sample_doppel.png)
+
+*Figura 10: Exemplos de amostras reais e sintéticas para o modelo DoppelGAN no dataset KuHAR*
+
+![](docs/figures/sample_time.png)
+
+*Figura 11: Exemplos de amostras reais e sintéticas para o modelo TimeGAN no dataset KuHAR*
+
+**Similaridade entre Distribuições**
+
+As Tabelas 1, 2, 3 e 4 apresentam os valores de similaridade R2R, R2S, S2S e Max-R2S para cada métrica e cada dataset obtidos entre os dados reais e os conjuntos de dados sintéticos obtidos pelos modelos BioDiffusion Não-condicionado, BioDiffusion Condicionado, DoppelGAN e TimeGAN respectivamente.
+
+![](./reports/figures/dist_uncond_diff.png)
+
+*Tabela 1: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Não-condicionado.*
+
+![](./reports/figures/dist_cond_diff.png)
+
+*Tabela 2: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Condicionado.*
+
+![](./reports/figures/dist_doppelgan.png)
+
+*Tabela 3: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo DoppelGAN.*
+
+![](./reports/figures/dist_timegan.png)
+
+*Tabela 4: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo TimeGAN.*
+
+A análise dos resultados nas tabelas acima mostram algumas características interessantes quanto às métricas e o desempenho dos modelos. Primeiramente, pode-se notar que a métrica de distância do cosseno não revela muita informação sobre a qualidade dos dados sintéticos, pois a diferença entre os valores de distância média real para real (R2R) e real para sintético (R2S) não variam muito, mesmo quando outras métricas de distância apresentam variações consideráveis. Por exemplo, na primeira linha da Tabela 4 para o modelo TimeGAN no dataset KuHAR, as variações dos valores R2R e R2S para as métricas de distância euclidiana, DTW e distância de Minkowski são de 40%, 34% e 39% respectivamente, enquanto a variação para a métrica de distância de cosseno é de somente 1.8%.
+
+De maneira geral, os modelos apresentam valores de distância R2R e R2S similares, indicando que o comportamento da variação dos dados são próximos e valores S2S levemente menores do que o R2R, mostrando que os dados sintéticos possuem variabilidade semelhantes aos dados reais e os modelos não colapsaram para a geração de dados repetidos. Contrário a esses resultados, destaca-se o modelo DoppelGAN, o qual apresenta valores de distância R2S maiores que as R2R em quase todos os datasetes e métricas de distância, indicando um afastamento dos dados sintéticos em relação aos dados reais, o que é reforçado pela visualização da projeção t-SNE dos dados mostrado na Figura 7.
+
+Por fim, nenhum modelo apresentou uma distância mínima R2S nula, indicando que não há a cópia de dados reais no conjunto sintético, porém alguns modelos apresentam distâncias muito baixas para métrica DTW indicando que pode haver um pouco de vazamento de dados do conjunto real para o sintético o que pode acarretar em problemas de privacidade dos dados coletados.
+
+**Análise de Usabilidade**
+
+Nas Tabelas 5 e 6 são apresentados os valores de f1-score para modelos Random Forest e SVM, respectivamente, treinados com dados reais (R), dados sintéticos (S) ou dados sintéticos e reais juntos (M) de cada dataset e conjunto de dados sintéticos. 
+
+![](./reports/figures/RF_utility.png)
+
+*Tabela 5: Valores de f1 para modelos Random Forest treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
+
+![](./reports/figures/SVM_utility.png)
+
+*Tabela 6: Valores de f1 para modelos SVM treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
+
+De forma geral, observa-se que os modelos BioDiffusion capturam melhor a diferença entre as categorias de dados presentes nos datasets, sendo que classificadores treinados em seus dados sintéticos possuem um desempenho próximo ou superior aos classificadores treinados com dados reais. O modelo DoppelGAN apresenta desempenho baixíssimo em todos os testes, porém os classificadores Random Forest com dados combinados apresentam pouca diferença de performance em comparação aos treinados somente com dados reais, mostrando que por devido aos dados sintéticos serem muito diferentes dos reais, o classificador consegue separar as regiões dos dados sintéticos ruidosos das regiões dos dados reais e manter o desempenho, porém o mesmo não ocorre de forma consistente com classificadores SVM.
+
 
 ## Conclusão
 
-Este projeto realiza a adaptação e comparação de modelos de geração de séries temporais para dados de sensores de acelerômetro e giroscópio voltados para tarefa de reconhecimento de atividades humanas. São utilizados dados de 5 datasets diferentes, os quais são padronizados e balanceados segundo a metodologia do benchmark DAGHAR.
+Este projeto realiza a adaptação e comparação de modelos de geração de séries temporais para dados de sensores de acelerômetro e giroscópio voltados para tarefa de reconhecimento de atividades humanas. São utilizados dados de 5 datasets diferentes, os quais são padronizados e balanceados segundo a metodologia do benchmark DAGHAR [[6]](#ref_6).
 
-Três modelos generativos foram implementados e avaliados até o momento: TimeGAN, DoppelGANger e BioDiffusion. Esses modelos utilizam diferentes técnicas de geração de dados e melhorias do processo de treinamento específicas para séries temporais. Os resultados parciais mostram que a adaptação direta dos modelos TiemGAN e DoppelGANger para dados de sensores HAR não é capaz de capturar adequadamente a distribuição dos dados reais, gerando amostras sintéticas não representativas do comportamento real. Em contrapartida, a aplicação direta do modelo BioDiffusion foi capaz de gerar dados razoáveis, gerando dados sintéticos com distribuição qualitativamente semelhante aos dados reais e úteis para a melhoria de um classificador SVM.
+Quatro modelos generativos foram implementados e avaliados: TimeGAN, DoppelGANger e BioDiffusion Condicionado e BioDiffusion Não-condicionado. Esses modelos utilizam diferentes técnicas de geração de dados e melhorias do processo de treinamento específicas para séries temporais. Os resultados mostram que a adaptação direta dos modelos TiemGAN e DoppelGANger para dados de sensores HAR não é capaz de capturar adequadamente a distribuição dos dados reais, gerando amostras sintéticas não representativas do comportamento real. Em contrapartida, a aplicação direta do modelo BioDiffusion foi capaz de gerar dados razoáveis, gerando dados sintéticos com distribuição qualitativamente semelhante aos dados reais e úteis para a melhoria de classificadores em alguns datasets.
 
-Os próximos passos do trabalho incluem o estudo de adaptações e ajuste dos hiperparâmetros dos modelos implementados de forma a melhorar a qualidade dos dados sintéticos gerados. Adicionalmente, outras métricas de avaliação serão implementadas para comparar propriedades das distribuições de dados reais e sintéticos, permitindo descrever melhor aspectos da qualidade dos dados sintéticos. Por fim, pretende-se realizar um estudo comparativo do desempenho dos modelos entre diferentes datasets, realizando o treinamento do modelo em um mais datasets e avaliando-o em outro dataset.
+Trabalhos futuros incluem explorar o espaço de hiperparâmetros dos modelos implementados de forma a melhorar a qualidade dos dados sintéticos gerados, implementar e avaliar outras formas de condicionamento dos modelos a partir de características estatísticas dos dados (média, variância, curtose, etc.) e/ou informações extras dos datasets como identificação do usuário.
 
 ## Referências Bibliográficas
 
@@ -332,4 +436,4 @@ Os próximos passos do trabalho incluem o estudo de adaptações e ajuste dos hi
 
 <a name='ref_10'>[10]</a> Yoon, Jinsung and Jarrett, Daniel and van der Schaar, Mihaela. Time-series Generative Adversarial Networks. Advances in Neural Information Processing Systems, 2019. https://papers.nips.cc/paper_files/paper/2019/hash/c9efe5f26cd17ba6216bbe2a7d26d490-Abstract.html
 
-
+<a name='ref_11'>[11]</a> Time Series Generative Modeling. Disponível em: https://tsgm.readthedocs.io/en/latest/index.html
