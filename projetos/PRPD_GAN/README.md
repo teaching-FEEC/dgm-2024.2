@@ -83,13 +83,40 @@ O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de m
 
 ### InfoGAN
 
-<img src="./reports/figures/infogan-epoch66.png" alt="infogan1" width="300" />
+O InfoGAN (*Information Maximizing Generative Adversarial Network*) é uma variação do modelo GAN (*Generative Adversarial Network*) projetada para descobrir e manipular de forma não supervisionada os fatores latentes interpretáveis de um conjunto de dados. A arquitetura do InfoGAN inclui dois componentes principais: o gerador, responsável por criar imagens sintéticas a partir de um vetor de ruído combinado com 
+𝑐 ; e o discriminador, que, além de diferenciar entre imagens reais e geradas, possui um cabeçalho adicional para estimar o vetor 
+𝑐 das imagens geradas. O objetivo é treinar o sistema para que as imagens geradas não apenas sejam indistinguíveis das reais, mas também sejam condicionadas pelos valores do vetor 
+𝑐. A figura a seguir ilustra a arquitetura do InfoGAN.
 
-<img src="./reports/figures/infogan-epoch83.png" alt="infogan2" width="300" />
+<figure>
+  <img src="./reports/figures/infogan_architecture.png" alt="infogan1" width="50%" />
+  <figcaption>Fonte: Sik-Ho Tsang  </figcaption>
+</figure>
+
+Infelizmente, para o problema proposto, não foi possível gerar imagens com boas resoluções utilizando o InfoGAN. Além disso, o modelo apresentou colapso nas épocas iniciais, comprometendo a convergência do treinamento e a qualidade das imagens produzidas. Como é possível observar nas imagens seguintes.
+
+<div style="display: flex; justify-content: space-between;">
+<img src="./reports/figures/infogan-epoch66.png" alt="infogan1" width="50%" />
+<img src="./reports/figures/infogan-epoch83.png" alt="infogan2" width="50%" />
+</div>
+
+Além disso, o modelo apresentou colapso nas épocas iniciais, como observado na Figura abaixo, que mostra a evolução das perdas do gerador e do discriminador durante o treinamento. O aumento instável da perda do gerador por volta da época 40, acompanhado de uma perda quase constante do discriminador, evidencia dificuldades de convergência e a incapacidade do modelo de equilibrar o aprendizado entre os componentes, comprometendo a qualidade das imagens geradas.
+
+<img src="./reports/figures/loss_infogan.png" alt="infogan2" width="50%" />
 
 ### Difussion Model
 
-<img src="./reports/figures/Diffusion.png" alt="diffusion" width="300" />
+Os Diffusion Models são modelos generativos que aprendem a criar dados a partir de ruído puro. A ideia principal é inverter um processo de difusão: enquanto o processo direto (ou forward process) adiciona ruído progressivamente aos dados, o modelo aprende a reconstruir os dados removendo o ruído passo a passo, no processo inverso.
+
+No caso de Conditioned Diffusion Models, o modelo é treinado com condicionamento adicional. No nosso caso, seriam os rótulos das imagens PRPD. Infelizmente, como é possível visualizar na imagem a seguir, os resultados apresentados não foram conforme era esperado.
+
+<img src="./reports/figures/Diffusion.png" alt="diffusion" width="50%" />
+
+O gráfico abaixo mostra a curva de perda (loss) durante o treinamento. Ele ilustra como o modelo reduz gradualmente o erro em cada iteração, demonstrando aprendizado ao longo do tempo.
+
+<img src="./reports/figures/loss_diffusion.png" alt="diffusion" width="50%" />
+
+Como podemos ver, a perda diminui consistentemente, indicando que o modelo está aprendendo a reconstruir os dados a partir do ruído. No entanto, talvez fosse necessário maior poder computacional para conseguir resultados satisfatórios. 
 
 ### ACWGAN-SN
 
