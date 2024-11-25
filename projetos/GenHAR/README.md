@@ -152,7 +152,7 @@ As principais informações levantadas por essa exploração são:
 #### Configuração do Ambiente
 
 - Instalação de requisitos:
-  - Python versão `3.9`,`3.10`
+  - Python versão `3.9`
   - É recomendado o uso de um ambiente virtual do python (`venv` ou `conda`)
   - Instalação de dependências `pip install -r requirements.txt`
 - Definir as configurações principais para realização do experimento em um arquivo YAML. Os arquivos de configuração são armazenados no diretório `/tests`. Um arquivo de configuração define:
