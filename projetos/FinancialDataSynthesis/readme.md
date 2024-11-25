@@ -304,14 +304,11 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 Os detalhes específicos da constituição de cada bloco estão descritos neste link: [Detalhes_Arquitetura](docs/Arquitetura.md)
 
 5. **Treinamento:**
+   
+Após a construção do modelo, partimos para a etapa de treinamento. Nesta etapa, o nossos dados de entrada $D = [X_{1:N}, F_{1:N}]$ são separados em conjunto de treinamento e teste:
 
-Após a construção do modelo, partimos para a etapa de treinamento. Nesta etapa, o nossos dados de entrada $D = [X_{1:N}, F_{1:N}]$ são separados em conjunto de treinamento, validação e teste:
-
-- Conjunto de treinamento: Os 70% primeiros elementos do dataset de entrada
-- Conjunto de validação:      20% dos elementos do dataset
-- Conjunto de teste:       Os 10% últimos elementos do dataset de entrada
-
-Por exemplo, se o dataset de entrada são séries temporais com 1000 elementos, então os 700 primeiros elementos são utilizados para treinamento, os 200 elementos seguintes para validação, e os últimos 100 para teste. Foi importante garantir que os dados estejam ordenados, pois apresentam dependências temporais.
+- Conjunto de treinamento: Os 70% primeiros elementos do dataset de entrada.
+- Conjunto de teste:       Os 30% elementos restantes do dataset de entrada.
 
 Conforme explicado no bloco de sequenciamento das séries temporais, os dados são transformados em sequências de tamanho fixo. No nosso caso, observamos que sequências com 24 instantes de tempo consecutivos apresentaram os melhores resultados. Logo, o modelo recebe como entrada sequências com 24 elementos consecutivos e o rótulo associado, que no caso, seria o 25º elemento.
 
@@ -323,13 +320,15 @@ Para o treinamento, foi utilizado os seguintes hiperparâmetros:
 -  Batch size: 128;
 -  Número de épocas: 200 (com early stopping);
 
-  A escolha dos melhores parâmetros foi baseado na perda observada para o conjunto de validação.
+  A escolha dos melhores parâmetros foi baseado na perda observada para o conjunto de teste.
 
   6. **Inferência:**
 
 Após o treinamento, utilizamos o modelo para prever os pontos do conjunto de teste e comparamos com os respectivos rótulos associados.
 
-A figura abaixo ilustra o workflow:
+**WORKFLOW GERAL**
+
+A figura abaixo ilustra o workflow geral para os modelos:
 
  <div align="center">
     <img src="Workflow.png" alt="Workflow" title="Workflow" />
