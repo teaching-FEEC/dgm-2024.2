@@ -119,25 +119,30 @@ Tomando algumas cenas como exemplo, conforme disposto na figura 10, é possível
 A arquitetura da rede SGAN do modelo de referência, composta por um gerador e um discriminador, pode ser observada nas figuras 11 e 12. As posições relativas são encapsuladas em embeddings, que serão a entrada das células LSTM. Estas serão responsáveis por armazenar o histórico de movimento de cada pedestre e aprender seus estados implícitos, sendo ainda necessário um módulo capaz de combinar as informações de cada um e avaliar as interações sociais existentes. Essa é a função do módulo de pooling, que pode ser implementado de duas formas diferentes.
 
 <p align="center">
-    <img src="/projetos/HTF/images/ARQ_GE.png" alt="Figura 11: Arquitetura do gerador" width="800"/>
-    <br><em>Figura 11: Arquitetura do gerador.</em>
+    <img src="/projetos/HTF/images/ARQ_GE.png" alt="Figura 11: Arquitetura do gerador LSTM" width="800"/>
+    <br><em>Figura 11: Arquitetura do gerador LSTM.</em>
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/ARQ_D.png" alt="Figura 12: Arquitetura do discriminador" width="800"/>
-    <br><em>Figura 12: Arquitetura do discriminador.</em>
+    <img src="/projetos/HTF/images/ARQ_D.png" alt="Figura 12: Arquitetura do discriminador LSTM" width="800"/>
+    <br><em>Figura 12: Arquitetura do discriminador LSTM.</em>
 </p>
 
-O pooling social considera um grid em torno de cada pedestre, para que estes ajustem suas trajetórias conforme movimento dos demais, devido a sua influência mútua. Espera-se que as camadas ocultas das LSTMs capturem as propriedades de movimento que variam ao longo do tempo. Isso é feito pelo compartilhamento dos estados entre as LSTMs vizinhas. A figura 13 mostra como tal processo é realizado para a pessoa representada pelo ponto preto. Já o pooling realtivo, considera as posições relativas dos pedestres presentes nas cenas, conforme disposto na figura 14.
+<p align="center">
+    <img src="/projetos/HTF/images/ARQ_D.png" alt="Figura 13: Arquitetura do discriminador Transformer" width="800"/>
+    <br><em>Figura 13: Arquitetura do discriminador Transformer.</em>
+</p>
+
+O pooling social considera um grid em torno de cada pedestre, para que estes ajustem suas trajetórias conforme movimento dos demais, devido a sua influência mútua. Espera-se que as camadas ocultas das LSTMs capturem as propriedades de movimento que variam ao longo do tempo. Isso é feito pelo compartilhamento dos estados entre as LSTMs vizinhas. A figura 14 mostra como tal processo é realizado para a pessoa representada pelo ponto preto. Já o pooling realtivo, considera as posições relativas dos pedestres presentes nas cenas, conforme disposto na figura 15.
 
 <p align="center">
     <img src="/projetos/HTF/images/P_soc.png" alt="Figura 13: Representação do pooling social " width="600"/>
-    <br><em>Figura 13: Representação do pooling social. Fonte: Social LSTM: Human trajectory prediction in crowded spaces. (A. Alahi, K. Goel, V. Ramanathan, A. Robicquet, L. Fei-Fei, and S. Savarese) [5]</em>
+    <br><em>Figura 14: Representação do pooling social. Fonte: Social LSTM: Human trajectory prediction in crowded spaces. (A. Alahi, K. Goel, V. Ramanathan, A. Robicquet, L. Fei-Fei, and S. Savarese) [5]</em>
 </p>
 
 <p align="center">
     <img src="/projetos/HTF/images/P_rel.png" alt="Figura 14: Representação do pooling relativo " width="600"/>
-    <br><em>Figura 14: Representação do pooling relativo. Fonte: Social GAN: Socially Acceptable Trajectories with Generative Adversarial Networks. (A. Gupta, J. Johnson, L. Fei-Fei, S. Savarese, e A. Alahi) [2]</em>
+    <br><em>Figura 15: Representação do pooling relativo. Fonte: Social GAN: Socially Acceptable Trajectories with Generative Adversarial Networks. (A. Gupta, J. Johnson, L. Fei-Fei, S. Savarese, e A. Alahi) [2]</em>
 </p>
 
 
