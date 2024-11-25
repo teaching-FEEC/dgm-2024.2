@@ -1,5 +1,14 @@
 # Configuration for Synthetic Data Generation and Comparison
 datasets:
+ 
+  - name: UCI
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
   - name: dataset_combination
     path: data
     type: standardized_view
@@ -12,28 +21,9 @@ datasets:
     - MotionSense
     - UCI 
     - KuHar
-    - WISDM
     - RealWorld_thigh
     - RealWorld_upperarm
     - RealWorld_waist
- 
-
-  - name: MotionSense
-    path: data
-    type: standardized_view
-    description: " XXX."
-    sensors: 
-            accel
-            gyro
-    reshape: None
-
-  - name: KuHar
-    path: data
-    type: standardized_view
-    description: " XXX."
-    sensors: 
-            accel
-            gyro
 
   - name: RealWorld_thigh
     path: data
@@ -59,13 +49,6 @@ datasets:
             accel
             gyro
 
-  - name: UCI
-    path: data
-    type: standardized_view
-    description: " XXX."
-    sensors: 
-            accel
-            gyro
 
   - name: WISDM
     path: data
@@ -75,6 +58,22 @@ datasets:
             accel
             gyro
 
+  - name: KuHar
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+
+  - name: MotionSense
+    path: data
+    type: standardized_view
+    description: " XXX."
+    sensors: 
+            accel
+            gyro
+    reshape: None
 
 
 transformations:
@@ -83,6 +82,28 @@ transformations:
 
 # Generative models
 generative_models:
+
+  - name: uncond_diffusion_unet1d
+    model: Diffusion
+    is_conditional: False
+    parameters:
+      in_channel: 6
+      out_channel: 6
+    n_gen_samples: 6000
+    epochs: 100
+    folder_save_generate_df: data/synthetic/unconditional_unet
+    
+  - name: cond_diffusion_unet1d
+    model: Diffusion
+    is_conditional: True
+    parameters:
+      in_channel: 6
+      out_channel: 6
+    n_gen_samples: 6000
+    epochs: 100
+    folder_save_generate_df: data/synthetic/conditional_unet
+
+
 
   - name: Doppelgangerger    
     model: GAN
@@ -96,22 +117,30 @@ generative_models:
         max_sequence_len: 360
         sample_len: 3
         batch_size: 32
-        epochs: 50 ### mudar
-    n_gen_samples: 3000
+        epochs: 100 ### mudar
+    n_gen_samples: 6000
   # Logging and results
     logging:
       log_level: INFO
       save_models: true
 
-  - name: diffusion_unet1d
-    model: Diffusion
-    is_conditional: False
+  - name: timeganpt
+    method: TIMEGANPT
+    framework: None
+    description: "https://github.com/jsyoon0823/TimeGAN/blob/master/tutorial_timegan.ipynb"
+    use_tsgm: True
     parameters:
-      in_channel: 6
-      out_channel: 6
-    n_gen_samples: 3000
-    epochs: 50
+          module: gru
+          hidden_dim: 24
+          num_layers: 3
+          iterations: 50
+          batch_size: 128
+          epoch: 100
+    n_gen_samples: 6000
 
+
+  
+  
 
 
     
@@ -133,5 +162,6 @@ evaluations:
           save_pdf_reports: true
           save_csv_metrics: true
 
-folder_reports: reports/results
-folder_save_data: data/results
+folder_reports: reports/results_all
+folder_save_data: data/results_all
+device: 1
