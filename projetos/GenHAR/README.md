@@ -142,6 +142,10 @@ As principais informações levantadas por essa exploração são:
 ![Workflow](docs/figures/GenHAR_Worflow.png)
 *Figura 4: Diagrama de atividades para o Workflow dos experimentos do projeto*
 
+![](docs/figures/bio_diffusion_workflow.png)
+
+*Figura 5: Diagrama da arquitetura BioDIffusion implementada*
+
 #### Configuração do Ambiente
 
 - Instalação de requisitos:
