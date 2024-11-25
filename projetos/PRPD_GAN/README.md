@@ -89,6 +89,8 @@ O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de m
 
 O modelo que consiguiu obter resultados satisfatórios foi uma versão da ACGAN com penalidade de gradiente de Wasserstein no Discriminador e normalização espectral no Gerador.
 
+![ACWGAN-SN](./reports/figures/ACGAN_schematic.png)
+
 #### Modelo Original
 
 ##### Gerador
@@ -141,9 +143,8 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
 #### Modelo Original
 
-![FULL](./reports/figures/tSNE_ACWGAN_Full.png)
-
-![FULL_perclass](./reports/figures/tSNE_ACWGAN_perClass_Full.png)
+<img src="./reports/figures/tSNE_ACWGAN_Full.png" width="50%">
+<img src="./reports/figures/tSNE_ACWGAN_perClass_Full.png" width="50%">
 
 |    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
@@ -154,9 +155,9 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
 #### Penalizaçao por Wasserstein
 
-![noGP](./reports/figures/tSNE_ACWGAN_noGP.png)
+<img src="./reports/figures/tSNE_ACWGAN_noGP.png" width="50%">
 
-![noGP](./reports/figures/tSNE_ACWGAN_perClass_noGP.png)
+<img src="./reports/figures/tSNE_ACWGAN_perClass_noGP.png" width="50%">
 
 |         | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
@@ -166,9 +167,8 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
 #### Ruído Gaussiano no Discriminador
 
-![gaussian_noise](./reports/figures/t_SNE_Visualization___With_post_processing___Without_Gaussian_Noise.png)
-
-![gaussian_noise_ind](./reports/figures/t-SNE_Visualization_per_Class-Without_Gaussian_Noise.png)
+<img src="./reports/figures/t_SNE_Visualization___With_post_processing___Without_Gaussian_Noise.png" width="50%">
+<img src="./reports/figures/t-SNE_Visualization_per_Class-Without_Gaussian_Noise.png" width="50%">
 
 |    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
@@ -178,9 +178,8 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
 #### Ruído Gaussiano no Gerador
 
-![noGnoise-Generator](./reports/figures/tSNE_ACWGAN_noGNoise.png)
-
-![noGnoise-Generator-perClass](./reports/figures/tSNE_ACWGAN_perClass_noGNoise.png)
+<img src="./reports/figures/tSNE_ACWGAN_noGNoise.png" width="50%">
+<img src="./reports/figures/tSNE_ACWGAN_perClass_noGNoise.png" width="50%">
 
 |    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
@@ -189,10 +188,8 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 | Test    | 224.94 | 0.180 | (0.0000,0.0104) | 258.469314 | 275.457409 | 273.606913 | 0.324978  | 0.305368  | 0.317812  | (0.0000,0.0000) | (0.0000,0.0312) | (0.0000,0.0000) |      |
 
 #### Normalizaçao Espectral
-
-![norm_spectral](./reports/figures/t_SNE_Visualization___With_post_processing___Without_Spectral_Norm.png)
-
-![norm_spectral_ind](reports/figures/t-SNE_Visualization_per_Class-Without_Spectral_Norm.png)
+<img src="./reports/figures/t_SNE_Visualization___With_post_processing___Without_Spectral_Norm.png" width="50%">
+<img src="./reports/figures/t-SNE_Visualization_per_Class-Without_Spectral_Norm.png" width="50%">
 
 |  | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | 
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|
