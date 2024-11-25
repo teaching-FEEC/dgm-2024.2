@@ -127,12 +127,11 @@ O período analisado inclui 2020, escolhido intencionalmente para testar os mode
 2. **Feature Engineering:**
 
 <p align="justify">
-Depois de baixar os históricos de dados das séries temporais financeiras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, foram criadas features baseadas em transformadas de Fourier para extrair tendências de longo e curto prazo nos preços das ações. Também analisamos os sentimentos das notícias financeiras.
+Depois de baixar os históricos de dados das séries temporais financeiras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, foram criadas features baseadas em transformadas de Fourier para extrair tendências de longo e curto prazo nos preços das ações.
 </p>
 
 <ul>
   <li>Indicadores técnicos: Média móvel de 7 e 20 dias, média móvel exponencial, momentum, bandas de Bollinger, MACD.</li>
-  <li>Análise do sentimento das notícias: Usamos o FinBert para analisar as notícias em positivas, neutras ou negativas, usando o score fornecido que vai desde -1 até 1.</li>
   <li>Transformadas de Fourier: Foi obtida a magnitude e a fase das transformadas discretas de Fourier do preço das ações, usando 3, 6 e 9 componentes.</li>
 </ul>
 
