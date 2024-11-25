@@ -1,3 +1,5 @@
+#Objects used for PulmoNet or U-Net training
+
 from model import Generator, Discriminator
 from datasets import lungCTData, processedCTData
 from transforms import AddGaussianNoise, AddUniformNoise
