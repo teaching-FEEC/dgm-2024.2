@@ -31,6 +31,13 @@ Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com 
 
 ## Introdução
 <p align="justify">
+
+A previsão de preços de ações é uma tarefa importante na área de finanças, com aplicações que vão desde a negociação algorítmica (trading) até a gestão de riscos [1]. Modelos tradicionais de previsão, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), são  amplamente utilizados para essa finalidade. No entanto, a natureza complexa dos mercados financeiros requer abordagens mais sofisticadas que possam capturar padrões não lineares e dependências de longo alcance nas séries temporais.
+
+Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers para melhorar a qualidade das previsões de preços de ações. Embora as GANs sejam tradicionalmente utilizadas para a geração de imagens sintéticas, elas podem ser adaptadas para tarefas de predição ao aprender representações profundas dos dados. Os Transformers, por sua vez, têm se mostrado altamente eficazes em tarefas sequenciais devido à sua capacidade de modelar relações complexas em séries temporais.
+
+Neste estudo, realizamos experimentos utilizando os preços das ações da Apple Inc. no período de 2010 a 2020, período que inclui o evento extremo da pandemia de COVID-19. Isso nos permitiu avaliar a robustez dos modelos generativos em condições de alta volatilidade e incertezas.
+
  
 Uma série temporal de preços de ações pode ser representada como:
 
@@ -51,8 +58,6 @@ Desejamos que essa série sintética seja uma aproximação da sequência real f
 $$ X^{s}_{N+1:N+K} \approx X\_{N+1:N+K} $$
 
 Por exemplo, se  $X_{1:N}$ representa os preço de uma ação de 2010 até 2018, então desejamos que $X_{N+1:N+K}$ forneça valores plausíveis de preço de 2018 em diante. 
-
-Neste estudo, realizamos experimentos utilizando os preços das ações da Apple Inc. no período de 2010 a 2020, período que inclui o evento extremo da pandemia de COVID-19. Isso nos permitiu avaliar a robustez dos modelos generativos em condições de alta volatilidade e incertezas.
 </p>
 
 ## Descrição do Problema/Motivação
