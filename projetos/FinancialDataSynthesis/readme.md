@@ -112,7 +112,7 @@ O movimento do preço das ações é influenciado por muitos fatores. Então se 
 
 <img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Vale" />
 
-2. **Engenharia de Caracteristicas:**
+2. **Engenharia de Características:**
 
 <p align="justify">
 Depois de baixar os históricos de dados das séries temporais financeiras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, para avaliar as notícias relevantes, foi inserido um score, e finalmente foram criadas features baseadas em transformadas de Fourier para extrair tendências de longo e curto prazo nas ações da Apple.
