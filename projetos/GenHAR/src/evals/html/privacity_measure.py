@@ -41,14 +41,7 @@ class PrivacyBasedMetrics:
         html.Li("NEIG_PRIV_SCORE: Mede a privacidade em relação a vizinhos próximos. Valores mais baixos indicam maior privacidade, pois dificultam a associação entre amostras similares."),
         html.Li("MEM_INF_SCORE: Mede a proteção de privacidade com base em informações memorizadas. Valores mais baixos indicam maior proteção de privacidade, limitando a recuperação de dados sensíveis.")
     ]),
-    html.H3("Intervalos de Aceitação", style={'textAlign': 'center'}),
-    html.P("Os intervalos de aceitação para cada métrica são os seguintes:"),
-    html.Ul([
-        html.Li("EXAC_MATCH: Idealmente acima de 0.95 para garantir uma boa correspondência, mas sem comprometer a privacidade."),
-        html.Li("NEIG_PRIV_SCORE: Abaixo de 0.5 é considerado bom, pois significa que o modelo preserva bem a privacidade, dificultando a identificação de amostras semelhantes."),
-        html.Li("MEM_INF_SCORE: Abaixo de 0.5 é considerado bom, pois indica que o modelo não está memorizando informações sensíveis que poderiam comprometer a privacidade.")
-    ]),
-]
+ ]
 
 , style={'width': '70%', 'float': 'right', 'padding': '20px'}),
             

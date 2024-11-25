@@ -50,16 +50,8 @@ class DistanceBasedMeasures:
                     html.Li("Cosine: Mede a similaridade de orientação entre vetores. Valores próximos de 1 indicam maior similaridade."),
                     html.Li("Pearson: Mede a correlação linear entre variáveis. Valores próximos de 1 indicam correlação positiva.")
                 ]),
-                html.H3("Intervalos de Aceitação", style={'textAlign': 'center'}),
-                html.P("Os intervalos de aceitação para cada métrica são os seguintes:"),
-                html.Ul([
-                    html.Li("ED: Idealmente abaixo de 0.5 para boa similaridade."),
-                    html.Li("DTW: Abaixo de 0.7 é considerado bom."),
-                    html.Li("Minkowski: Valor ideal depende do parâmetro p; em geral, abaixo de 1 é considerado bom."),
-                    html.Li("Manhattan: Idealmente abaixo de 1 para boa similaridade."),
-                    html.Li("Cosine: Próximo de 1 indica alta similaridade."),
-                    html.Li("Pearson: Próximo de 1 indica alta correlação.")
-                ]),
+             
+               
             ], style={'width': '70%', 'float': 'right', 'padding': '20px'}),
             
             # Container dos gráficos

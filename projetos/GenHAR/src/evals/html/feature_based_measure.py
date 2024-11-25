@@ -48,14 +48,8 @@ class FeatureBasedMeasures:
                     html.Li("SD (Standard Deviation): Mede a dispersão dos valores. Valores mais baixos indicam que os dados estão mais concentrados em torno da média."),
                     html.Li("KD (Kullback-Leibler Divergence): Mede a diferença entre duas distribuições de probabilidade. Valores menores indicam que as distribuições dos dados transformados são mais próximas das originais.")
                 ]),
-                html.H3("Intervalos de Aceitação", style={'textAlign': 'center'}),
-                html.P("Os intervalos de aceitação para cada métrica são os seguintes:"),
-                html.Ul([
-                    html.Li("MDD: O valor ideal é abaixo de 0.1 para garantir que a transformação preserva bem as características dos dados."),
-                    html.Li("ACD: Valores abaixo de 0.05 são aceitáveis para garantir boa consistência."),
-                    html.Li("SD: O valor ideal é abaixo de 0.2, indicando baixa dispersão."),
-                    html.Li("KD: Valores abaixo de 0.1 indicam uma boa aproximação entre as distribuições.")
-                ]),
+               
+               
             ], style={'width': '70%', 'float': 'right', 'padding': '20px'}),
             
             # Container dos gráficos
