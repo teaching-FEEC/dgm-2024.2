@@ -151,14 +151,102 @@ O pooling social considera um grid em torno de cada pedestre, para que estes aju
 O workflow definido para o projeto e entregável 2, como uma visão de desenvolvimento, se dará conforme estabelecido graficamente na figura 7.
 
 <p align="center">
-    <img src="/projetos/HTF/images/Workflow.png" alt="Figura 7: Workflow do projeto" width="300"/>
+    <img src="/projetos/HTF/images/Workflow.png" alt="Figura 7: Workflow do projeto" width="450"/>
     <br><em>Figura 7: Workflow do projeto.</em>
 </p>
 
 
 ## Experimentos, Resultados e Discussão de Resultados
 
-Como resultados parciais de entregável 2 (E2), os principais avanços estão vinculados à compreensão e estruturação do dataset, ao sucesso em estruturar e executar o repositório de referência, e a compreensão mais aprofundada sobre o modelo profundo com estrutura S-GAN. Devido à complexidade do modelo profundo e a grande quantidade de parâmetros a serem ajustados, é necessário um estudo aprofundado da estrutura para que o desenvolvimento possa ocorrer de forma mais efetiva, tal objetivo foi cumprido parcialmente durante o E2 e será aprofundado no E3 com a proposta de modelo profundo com base na S-GAN. Isso permitirá verificar a contribuição dos parâmetros e de modificações na estrutura dos dados de entrada no desempenho do modelo, a fim de testar os impactos em cada métrica quantitativa de referência.
+Os resultados do projeto e treinamento da S-GAN foram efetuados em três tipos de estudo: (i) variação de hiperparâmetros, (ii) estudo de ablação da S-GAN com o discriminador dado pela arquitetura multi-encoder transformers, e (iii) estudo de convergência dos modelos de baseline formado de células LSTM no discriminador e do modelo do discriminador com células transformers, respectivamente.
+
+### Resultados do Estudo 1
+A tabela abaixo apresenta os resultados do estudo comparativo de diferentes modelos no dataset Zara1. As métricas utilizadas foram **ADE** (Average Displacement Error) e **FDE** (Final Displacement Error), onde valores menores indicam melhor desempenho na predição de trajetórias.
+
+### Tabela de Resultados - Estudos de Primeiro Tipo
+
+| **Modelo**                                                                                      | **ADE** | **FDE** |
+|--------------------------------------------------------------------------------------------------|---------|---------|
+| **Baseline: LSTM**                                                                              | 0.22    | 0.43    |
+| **LSTM: ed8, md32, hd32, 841 iterações**                                                        | 0.25    | 0.48    |
+| **LSTM: ed16, md64, hd64, 841 iterações**                                                       | 0.23    | 0.45    |
+| **LSTM: ed32, md64, hd64, 841 iterações**                                                       | 0.23    | 0.45    |
+| **LSTM: ed64, md128, hd128, 841 iterações**                                                     | 0.21    | 0.42    |
+| **Transformers: x1, ed8, md32, hd32, pe T, ap T**                                               | 0.23    | 0.46    |
+| **Transformers: x1, ed16, md64, hd64, pe T, ap T**                                              | 0.23    | 0.46    |
+| **Transformers: x2, ed16, md64, hd64, pe T, ap T**                                              | 0.23    | 0.45    |
+| **Transformers: x4, ed16, md64, hd64, pe T, ap T**                                              | 0.21    | 0.42    |
+| **Transformers: x8, ed32, md64, hd64, pe T, ap T**                                              | 0.22    | 0.45    |
+
+> Legenda
+> - **ed**: Dimensão do Embedding (Embedding Dimension)
+> - **md**: Dimensão da MLP (MLP Dimension)
+> - **hd**: Dimensão do Hidden State (Hidden Dimension)
+> - **pe**: Codificação Posicional (Positional Encoding) (T = True)
+> - **ap**: Pooling por Atenção (Attention Pooling) (T = True)
+> - **xN**: Número de camadas (layers) no encoder-only.
+
+* O **Baseline LSTM** apresentou um desempenho de referência com **ADE: 0.22** e **FDE: 0.43**.
+* Entre os modelos **LSTM**, a configuração **ed64, md128, hd128** alcançou os melhores valores (ADE: 0.21, FDE: 0.42), superando o baseline.
+* Para os **Transformers**, o modelo **x4 (ed16, md64, hd64)** igualou o melhor desempenho do LSTM **ed64, md128, hd128** (ADE: 0.21, FDE: 0.42), mostrando que um número moderado de camadas pode ser eficiente.
+* O modelo **x8 Transformers** aumentou a complexidade sem oferecer melhorias significativas, indicando que mais camadas nem sempre resultam em ganhos de desempenho.
+
+### Resultados do Estudo 2
+
+A tabela abaixo apresenta os resultados do segundo estudo, que avalia os modelos Transformers no dataset Zara1 mediante estudo de ablação. As métricas utilizadas foram **ADE** (Average Displacement Error) e **FDE** (Final Displacement Error), onde valores menores indicam melhor desempenho na predição de trajetórias.
+
+### Tabela de Resultados - Estudos de Segundo Tipo
+
+| **Modelo**                            | **Células (xN)** | **Codificação Posicional (PE)** | **Attention Pooling (AP)** | **ADE** | **FDE** |
+|---------------------------------------|------------------|----------------------------------|----------------------------|---------|---------|
+| **Transformer_x4_ed16_md64_hd64**     | 4                | F                                | F                          | 0.23    | 0.45    |
+| **Transformer_x4_ed16_md64_hd64**     | 4                | F                                | T                          | 0.23    | 0.47    |
+| **Transformer_x4_ed16_md64_hd64**     | 4                | T                                | F                          | 0.22    | 0.44    |
+| **Transformer_x4_ed16_md64_hd64**     | 4                | T                                | T                          | 0.23    | 0.45    |
+| **Transformer_x8_ed16_md64_hd64**     | 8                | F                                | F                          | 0.23    | 0.46    |
+| **Transformer_x8_ed16_md64_hd64**     | 8                | F                                | T                          | 0.21    | 0.42    |
+| **Transformer_x8_ed16_md64_hd64**     | 8                | T                                | F                          | 0.22    | 0.44    |
+| **Transformer_x8_ed16_md64_hd64**     | 8                | T                                | T                          | 0.23    | 0.45    |
+
+> Legenda
+> - **Células (xN)**: Número de camadas no encoder-only.
+> - **PE (Codificação Posicional)**: T = True (ativo), F = False (inativo).
+> - **AP (Attention Pooling)**: T = True (ativo), F = False (inativo).
+> - **ed**: Dimensão do Embedding (Embedding Dimension).
+> - **md**: Dimensão da MLP (MLP Dimension).
+> - **hd**: Dimensão do Hidden State (Hidden Dimension).
+
+* O modelo **Transformer_x8_ed16_md64_hd64** com **PE: F** e **AP: T** apresentou o melhor desempenho geral, com **ADE: 0.21** e **FDE: 0.42**, demonstrando a eficácia de pooling por atenção quando a codificação posicional está desativada.
+* A codificação posicional ativa (**PE: T**) trouxe benefícios modestos em configurações específicas, mas não foi determinante para os melhores resultados.
+* A configuração de 8 camadas (**x8**) mostrou-se mais eficiente em nas relações de longo alcance resultando no menor FDE de 0.42, enquanto as configurações com 4 camadas (**x4**) apresentaram resultados comparativos similares apresentando menor complexidade computacional.
+* O modelo **Transformer_x4_ed16_md64_hd64** com **PE: T** e **AP: F** destacou-se como uma alternativa equilibrada, com **ADE: 0.22** e **FDE: 0.44**.
+
+
+### Resultados do Estudo 3
+
+A tabela abaixo apresenta os resultados do terceiro estudo, que compara um modelo LSTM com um modelo Transformer utilizando o dataset Zara1 após 5047 iterações. O modelo LSTM treinado é igual ao modelo baseline, porém treinado com uma fração de um quarto das iterações cujo modelo baseline foi treinado (20000+ mil iterações). As métricas utilizadas foram **ADE** (Average Displacement Error) e **FDE** (Final Displacement Error), onde valores menores indicam melhor desempenho na predição de trajetórias.
+
+### Tabela de Resultados - Estudo de Terceiro Tipo
+
+| **Modelo**                            | **Células (xN)** | **Codificação Posicional (PE)** | **Attention Pooling (AP)** | **ADE** | **FDE** |
+|---------------------------------------|------------------|----------------------------------|----------------------------|---------|---------|
+| **LSTM_ed16_md64_hd64**               | -                | -                                | -                          | 0.23    | 0.46    |
+| **Transformer_x8_ed16_md64_hd64**     | 8                | T                                | T                          | 0.21    | 0.41    |
+
+> Legenda
+> - **Células (xN)**: Número de camadas no encoder-only (aplicável apenas a Transformers).
+> - **PE (Codificação Posicional)**: T = True (ativo), F = False (inativo) (aplicável apenas a Transformers).
+> - **AP (Attention Pooling)**: T = True (ativo), F = False (inativo) (aplicável apenas a Transformers).
+> - **ed**: Dimensão do Embedding (Embedding Dimension).
+> - **md**: Dimensão da MLP (MLP Dimension).
+> - **hd**: Dimensão do Hidden State (Hidden Dimension).
+
+* O modelo **Transformer_x8_ed16_md64_hd64** com **PE: T** e **AP: T** superou o **LSTM_ed16_md64_hd64**, alcançando um desempenho 10% superior com **ADE: 0.21** e **FDE: 0.41**, mesmo com o processo de treinamento reduzido (< 10 mil iterações).
+* A vantagem do Transformer evidencia a eficácia dos mecanismos de atenção e codificação posicional em capturar dependências complexas em tarefas de predição de trajetórias.
+* O LSTM, apesar de um desempenho inferior, mostrou resultados consistentes, reforçando sua eficiência em tarefas de menor complexidade computacional.
+
+### Resultados de Inferência e Gráficos
+
 
 <p align="center">
     <img src="../HTF/images/distribuicao01.jpeg" alt="Figura 8: Primeiro exemplo de representação gráfica de trajetória observada, predita e de ground truth." width="600"/>
