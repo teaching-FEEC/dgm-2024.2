@@ -127,6 +127,23 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
 <img src="img_readme/Tecnicos.png" alt="Features Baseadas em Indicadores Técnicos" title="Vale" />
 <img src="img_readme/Fourier.png" alt="Features Baseadas em Transformadas de Fouerier" title="Vale" />
 
+3. **Normalização dos Dados:**
+
+Após a coleta dos dados e extração dos features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe: 
+
+\[ D = [X_{1:N}, F_{1:N}] \]
+
+Em seguida, normalizamos os valores de cada série temporal para facilitar o treinamento, utilizando o método Min-Max, que reescala os valores para um intervalo pré-determinado, tipicamente [0, 1]. A normalização adotada foi:
+
+\[
+x_{n}(i) = \frac{x(i) - \text{min}[x]}{\text{max}[x] - \text{min}[x]}
+\]
+
+- $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
+- $x(i)$: representa o valor antes da normalização (preço ou algum feature) no instante $i$.
+- $\text{min}[x], \text{max}[x]$: representam, respectivamente, o menor e o maior valor associado à série temporal dos elementos de $x(i)$.
+
+
 **CASO 2: TRANSFORMERS**
 
 A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
