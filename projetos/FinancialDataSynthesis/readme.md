@@ -109,16 +109,18 @@ Utilizamos como métrica de avaliação o Root Mean Square Error (RMSE).
 
 A metodologia para a geração das séries temporais sintéticas utilizando modelos baseados na arquitetura das Redes Generativas Adversarias pode ser resumida no seguinte passo a passo:
 
-1. **Coleta de Dados via API:**
+1. **Coleta de Dados:**
 
 <p align="justify">
-O movimento do preço das ações é influenciado por muitos fatores. Então se precisa da maior quantidade de informações possíveis. Por isso no caso das GANs o banco de dados criado alem da serie temporal dos preços de fechamento diários (Close) da empresa Apple, temos os índices de mercado, os preços de commodities e os preços de ações de grandes empresas como Amazon, Google e Microsoft. A continuação se apresenta banco de dados criado a partir dos historicos de dados das series tempoais financieras utilizadas neste trabalho, a faixa temporal foi seleccionada intencionalmente para poder testar nossos modelos com um evento extremo (Covid19).
+Para os modelos baseados em GAN, além dos preços históricos, coletamos dados adicionais que servem como features, como índices de mercado, preços de commodities e ações de grandes empresas do setor de tecnologia, como Amazon, Google e Microsoft.
+
+O período analisado inclui 2020, escolhido intencionalmente para testar os modelos em um cenário de alta volatilidade e incertezas causado pela pandemia de Covid-19.
 </p>
 
 </p>
 <div align="center">
     <img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Banco de Dados" />
-    <p><em>Figura 1: Historico de séries temporais usadas para preveer o preço da ação da Apple, usando redes generativas GANs.</em></p>
+    <p><em>Figura 1: Banco de Dados Analisado para os modelos baseados em GAN.</em></p>
 </div>
 
 
