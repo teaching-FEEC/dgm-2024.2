@@ -7,6 +7,11 @@ from lungmask import LMInferer
 from typing import Optional, Callable
 import os
 
+#lungCTData: to train PulmoNet to generate only CT images
+#processedCTData: to train PulmoNet to generate CT images and airway segmentation OR to train U-Net
+
+#processed_data_folder: should be a directiory with folders: 'gan_train' and 'gan_val'
+#inside of each folder should be 3 folders: 'images', 'labels' and 'lungs'
 
 class rawCTData(Dataset):
     def __init__(self,

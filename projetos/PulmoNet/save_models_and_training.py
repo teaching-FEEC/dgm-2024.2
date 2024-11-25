@@ -1,9 +1,14 @@
+#auxiliary functions to store models and other relevant objects
+
 import torch
 import json
 import csv
 import wandb
 import os
 
+#----------------------------------------------Functions for PulmoNet-----------------------------
+
+#creates and updates CSV files writting losses values during training
 class SaveTrainingLosses:
     def __init__(self, dir_save_results, save_count_idx=0):
         self.save_count_idx = save_count_idx
@@ -28,7 +33,7 @@ class SaveTrainingLosses:
                                  mean_loss_validation_disc_list[i]])
         self.save_count_idx = len(mean_loss_train_gen_list)
 
-
+#save models, optimizers and lr schedulers in case something goes wrong and training stops
 def safe_save(dir_save_models, name_model,
               gen, disc, epoch, gen_optimizer, disc_optimizer, current_lr,
               gen_scheduler=None,disc_scheduler=None):
@@ -53,7 +58,7 @@ def safe_save(dir_save_models, name_model,
     with open(f"{dir_save_models}{name_model}_training_state_savesafe", "w") as outfile:
         outfile.write(json.dumps(training_state, indent=4))
 
-
+#save models, optimizers and lr schedulers that were only saved for precaution
 def delete_safe_save(dir_save_models, name_model):
     if os.path.isfile(f"{dir_save_models}{name_model}_gen_trained.pt") and os.path.isfile(f"{dir_save_models}{name_model}_disc_trained.pt"):
         if os.path.isfile(f"{dir_save_models}{name_model}_gen_savesafe.pt"):
@@ -71,12 +76,12 @@ def delete_safe_save(dir_save_models, name_model):
         if os.path.isfile(f"{dir_save_models}{name_model}_training_state_savesafe"):
             os.remove(f"{dir_save_models}{name_model}_training_state_savesafe")
 
-
+#once training ends...
 def save_trained_models(dir_save_models, name_model, gen, disc):
     torch.save(gen.state_dict(), f"{dir_save_models}{name_model}_gen_trained.pt")
     torch.save(disc.state_dict(), f"{dir_save_models}{name_model}_disc_trained.pt")
 
-
+#save best model considering the minimization of a criterion
 class SaveBestModel:
     def __init__(self, dir_save_model, best_score=float("inf")):
         self.best_score = best_score
@@ -98,8 +103,9 @@ class SaveBestModel:
                 torch.save(gen.state_dict(), os.path.join(wandb.run.dir, "gen_best.pt"))
                 torch.save(disc.state_dict(),  os.path.join(wandb.run.dir, "disc_best.pt"))
 
+#----------------------------------------------Functions for U-Net-----------------------------
+#same functions as for PulmoNet, but considering only one network to be stored
 
-### U-Net ----------------------------------------------------------------------------
 class SaveUnetTrainingLosses:
     def __init__(self, dir_save_results, save_count_idx=0):
         self.save_count_idx = save_count_idx
