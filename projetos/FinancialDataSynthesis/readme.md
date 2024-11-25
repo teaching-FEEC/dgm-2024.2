@@ -112,6 +112,8 @@ O movimento do preço das ações é influenciado por muitos fatores. Então se 
 
 <img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Vale" />
 
+2. **Engenharia de Caracteristicas:**
+
 
 **CASO 2: TRANSFORMERS**
 
