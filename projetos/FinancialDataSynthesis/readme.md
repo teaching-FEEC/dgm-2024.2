@@ -337,15 +337,6 @@ A figura abaixo ilustra o workflow geral para os modelos:
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-### Avaliação Quantitativa: Root Mean Square Error
-
-
-| Model                                      | LSTM | GRU  | GAN  | WGAN-GP  | Transformer  |
-|--------------------------------------------|------|------|------|----------|--------------|
-| RMSE do conjunto de treinamento            | 1.52 | 6.60 | 9.45 |   1.74   |   0.52       |
-| RMSE do conjunto de teste (incluindo 2020) | 6.60 | 5.33 | 4.08 |   4.77   |   4.44       |
-| RMSE do conjunto de teste (excluindo 2020) | 9.45 | 5.38 | 3.09 |   3.88   |   3.37       |
-
 ### Avaliação Qualitativa das GANs
 A figura permite fazer a inspeção visual das séries temporais geradas pelos modelos GANs
 
@@ -353,6 +344,25 @@ A figura permite fazer a inspeção visual das séries temporais geradas pelos m
     <img src="img_readme/Qualitativa.png" alt="Qualitativa" title="Qualitativa" />
     <p><em>Figura 11: Avaliação Qualitativa das GANs. </em></p>
 </div>
+
+### Avaliação Quantitativa 1: Root Mean Square Error
+
+
+| Modelo                                      | LSTM | GRU  | GAN  | WGAN-GP  | Transformer |
+|--------------------------------------------|------|------|------|----------|--------------|
+| RMSE do conjunto de treinamento            | 1.52 | 6.60 | 9.45 |   1.74   |   0.52       |
+| RMSE do conjunto de teste (incluindo 2020) | 6.60 | 5.33 | 4.08 |   4.77   |   4.44       |
+| RMSE do conjunto de teste (excluindo 2020) | 9.45 | 5.38 | 3.09 |   3.88   |   3.37       |
+
+
+### Avaliação Quantitativa 2: Acurácia da Direção (%)
+
+
+| Modelo                                                    | LSTM | GRU  | GAN  | WGAN-GP  | Transformer  |
+|-----------------------------------------------------------|------|------|------|----------|--------------|
+| Acurácia de direção do conjunto de treinamento            | 51.63 | 51.46 | 52.84 |   50.77   |   56.01  |
+| Acurácia de direção do conjunto de teste (incluindo 2020) | 50.73 | 51.13 | 53.14 |   50.41   |   50.41  |
+| Acurácia de direção do conjunto de teste (excluindo 2020) | 49.83 | 51.44 | 53.00 |   51.05   |   51.05  |
 
 
 ## Conclusões
