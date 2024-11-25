@@ -255,29 +255,16 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
     <!-- Segunda linha de 3 imagens -->
     <img src="trained_models/first_study/figure_Transformer_x2_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x2" style="width: 400px;">
     <img src="trained_models/first_study/figure_Transformer_x4_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x4" style="width: 400px;">
-    <p><em>Figura 8: Gráficos de convergência dos treinamentos realizados no estudo de primeiro tipo.</em></p>
+    <p><em>Figura 8: Gráficos de convergência dos treinamentos realizados no estudo de primeiro tipo para 841 iterações.</em></p>
 </div>
 
+1. **Modelo LSTM com ed8 (Figura 8.a):** observa-se maior instabilidade no treinamento, especialmente nos valores de perda (Loss). As métricas ADE e FDE apresentam flutuações maiores, indicando dificuldade na convergência.
+2. **Modelo LSTM com ed16 (Figura 8.b):** com maior dimensão no embedding (ed16), o treinamento é visivelmente mais estável em comparação com ed8. Tanto as métricas ADE quanto FDE mostram menos variações, refletindo uma convergência mais consistente.
+3. **Modelo Transformer x2 (Figura 8.c):** com ed16 e arquitetura Transformer, o modelo apresenta métricas ADE e FDE melhores em comparação aos modelos LSTM, embora ainda mostre leve instabilidade inicial.
+4. **Modelo Transformer x4 (Figura 8.d):** este modelo é o mais estável e apresenta as menores métricas ADE e FDE ao longo do treinamento. A diferença na performance é evidente com o progresso do treinamento, indicando maior eficácia na previsão de trajetórias.
+* Para mais resultados gráficos do treinamento, visite a pasta "trained_models" onde estão todos os gráficos de treinamento por modelo.
 
-## Análise dos Modelos
-
-1. **Modelo LSTM com ed8 (Figura a):**
-   - Observa-se maior instabilidade no treinamento, especialmente nos valores de perda (Loss).
-   - As métricas ADE e FDE apresentam flutuações maiores, indicando dificuldade na convergência.
-
-2. **Modelo LSTM com ed16 (Figura b):**
-   - Com maior dimensão no embedding (ed16), o treinamento é visivelmente mais estável em comparação com ed8.
-   - Tanto as métricas ADE quanto FDE mostram menos variações, refletindo uma convergência mais consistente.
-
-3. **Modelo Transformer x2 (Figura c):**
-   - Com ed16 e arquitetura Transformer, o modelo apresenta métricas ADE e FDE melhores em comparação aos modelos LSTM, embora ainda mostre leve instabilidade inicial.
-
-4. **Modelo Transformer x4 (Figura d):**
-   - Este modelo é o mais estável e apresenta as menores métricas ADE e FDE ao longo do treinamento.
-   - A diferença na performance é evidente com o progresso do treinamento, indicando maior eficácia na previsão de trajetórias.
-
-Levando em conta os modelos pré-treinados disponibilizados no repositório, foram realizadas implementações cujos resultados podem ser observados na Figura 10 em que cada cor representa um pedestre, sendo que as linhas tracejadas representam os dados verdadeiros e as pontilhadas as previsões realizadas.
-
+### Resultados Gráficos de Inferência
 
 <div style="text-align: center;">
     <!-- Primeira linha de 3 imagens -->
