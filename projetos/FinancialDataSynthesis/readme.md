@@ -142,7 +142,13 @@ Essa abordagem garante que os valores da série temporal sejam escalados para o 
 4. **Construção da Rede Neural:**
 
 <p align="justify">
-A rede generativas adversarias (GAN) para predição de séries temporais, é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. A estrutura de treinamento que os combina é um processo competitivo. Abaixo detalha-se a GAN:
+A rede generativas adversarias (GAN) para predição de séries temporais, usa como função de perda a divergência de Kullback-Leibler (KL) e a divergência de Jensen-Shannon (JS), no processo de treinamento. Essas duas divergência são métricas matemáticas usadas para medir a semelhança entre duas distribuições de probabilidade. O modelo GAN usará perda de entropia cruzada para minimizar a diferença entre duas distribuições o que equivale a minimizar a divergência KL-JS.
+
+Neste projeto, treinamos o discriminador para maximizar sua função objetivo, a probabilidade de atribuir o rótulo correto às amostras, a função objetivo para o discriminador maximizar é definida como:
+ 
+ 
+ 
+ é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. A estrutura de treinamento que os combina é um processo competitivo. Abaixo detalha-se a GAN:
 </p>
 
 Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$. A continuação se detalha as arquitetura do Gerador e do Discriminador.
