@@ -128,12 +128,18 @@ A arquitetura da rede SGAN do modelo de referência, composta por um gerador e u
     <br><em>Figura 12: Arquitetura do discriminador.</em>
 </p>
 
-O pooling social considera um grid em torno de cada pedestre, para que estes ajustem suas trajetórias conforme movimento dos demais, devido a sua influência mútua. Espera-se que as camadas ocultas das LSTMs capturem as propriedades de movimento que variam ao longo do tempo. Isso é feito pelo compartilhamento dos estados entre as LSTMs vizinhas. A figura 13 mostra como tal processo é realizado para a pessoa representada pelo ponto preto.
+O pooling social considera um grid em torno de cada pedestre, para que estes ajustem suas trajetórias conforme movimento dos demais, devido a sua influência mútua. Espera-se que as camadas ocultas das LSTMs capturem as propriedades de movimento que variam ao longo do tempo. Isso é feito pelo compartilhamento dos estados entre as LSTMs vizinhas. A figura 13 mostra como tal processo é realizado para a pessoa representada pelo ponto preto. Já o pooling realtivo, considera as posições relativas dos pedestres presentes nas cenas, conforme disposto na figura 14.
 
 <p align="center">
-    <img src="/projetos/HTF/images/ARQ_D.png" alt="Figura 13:" width="800"/>
-    <br><em>Figura 13:.</em>
+    <img src="/projetos/HTF/images/P_soc.png" alt="Figura 13: Representação do pooling social " width="600"/>
+    <br><em>Figura 13: Representação do pooling social. Fonte: Social LSTM: Human trajectory prediction in crowded spaces. (A. Alahi, K. Goel, V. Ramanathan, A. Robicquet, L. Fei-Fei, and S. Savarese) [5]</em>
 </p>
+
+<p align="center">
+    <img src="/projetos/HTF/images/P_rel.png" alt="Figura 14: Representação do pooling relativo " width="600"/>
+    <br><em>Figura 14: Representação do pooling relativo. Fonte: Social GAN: Socially Acceptable Trajectories with Generative Adversarial Networks. (A. Gupta, J. Johnson, L. Fei-Fei, S. Savarese, e A. Alahi) [2]</em>
+</p>
+
 
 ## Workflow
 
@@ -184,6 +190,7 @@ Para os próximos passos, conforme E3, espera-se compreender os detalhes da rede
 
 
 ## Referências Bibliográficas
+
 
 
 > [1] P. Kothari e A. Alahi, "Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting," IEEE Transactions on Intelligent Transportation Systems, vol. PP, pp. 1-11, abr. 2023.
