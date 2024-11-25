@@ -30,30 +30,35 @@ Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com 
 </p>
 
 ## Introdução
-O projeto focou na geração de preços sintéticos de ações empregando duas abordagens: baseadas em GANS e Transformers.
+<p align="justify">
+A previsão de preços de ações é uma tarefa importante na área financeira, com aplicações que vão desde a negociação algorítmica até a gestão de riscos [1]. Uma abordagem promissora para aprimorar essas previsões é a geração de dados financeiros sintéticos que estendem séries temporais históricas de maneira realista. Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers para gerar preços de ações sintéticos, visando melhorar a qualidade das previsões futuras.
 
-Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto. Neste trabalho os experimentos foram realizados utilizando os preços das ações da empresa Apple no período de 2010-2020, contemplando um evento extremo (Covid-19). Dessa forma, pudemos verificar a robustez de nossos modelos generativos frente a eventos extremos.
+Uma série temporal de preços de ações pode ser representada como:
+
+$$ X_{1:N} = [x(1), x(2), ..., x(N)] $$
+
+- $x(i)$: representa o preço da ação no dia $i$.
+
+Além dos preços históricos, incorporamos features relevantes, como indicadores técnicos, também organizados em séries temporais:
+
+$$ F_{1:N} = [f(1), f(2), ..., f(N)] $$
+
+Nosso objetivo é utilizar essas informações para gerar uma continuação realista da série temporal de preços, resultando em uma nova série sintética:
+
+$$ X^{s}_{N+1:N+K} = [x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K)] $$
+
+Desejamos que essa série sintética seja uma aproximação da sequência real futura:
+
+&& X^{s}_{N+1:N+K} \approx X_{N+1:N+K} $$
+
+Por exemplo, se  $X_{1:N}$ representa os preço de uma ação de 2010 até 2018, então desejamos que $X_{N+1:N+K}$ forneça valores plausíveis de preço de 2018 em diante. 
+
+Neste estudo, realizamos experimentos utilizando os preços das ações da Apple Inc. no período de 2010 a 2020, período que inclui o evento extremo da pandemia de COVID-19. Isso nos permitiu avaliar a robustez dos modelos generativos em condições de alta volatilidade e incerteza.
+
+A geração de dados sintéticos realistas é de grande importância em aplicações como a otimização de portfólios. Ao simular múltiplos cenários possíveis, é possível testar diferentes estratégias de investimento e identificar aquelas que apresentam melhor desempenho em diversas situações de mercado. Isso torna os modelos de otimização mais robustos e capazes de lidar com eventos inesperados, melhorando o processo de tomada de decisão financeira.
+
 </p>
 
-O projeto lida com séries temporais da forma:
-
-$$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
-
-Em que cada elemento $x(i)$ representa o preço da ação no instante $i$.
-
-Atráves da incorporação de features relevantes, também representados por séries temporais ($F_{1:N}$), buscamos gerar dados sintéticos que representam uma continuação realista de $X_{1:N}$, isso é, uma série temporal do tipo:
-
-$$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
-
-Tal que:
-
-$$ X^{s}_{N+1:N+K}  \approx X\_{N+1:N+K}   $$
-
-
-
-Por exemplo, se $X_{1:N}$ representa os preços da ação da empresa Apple de 2010 até 2018, $X^{s}_{N+1:N+K}$ poderia representar valores plausíveis de 2018 até 2020.
-
-<!-- Essas representações realistas são importantes, por exemplo, para modelos de otimização de portfólios, visto que podemos gerar diversos cenários possíveis e escolher a estratégia que se sai melhor, considerando todas as possibilidades geradas. Dessa forma, o modelo de otimização é robusto e consegue bom desempenho nas mais diversas situações. -->
 ## Descrição do Problema/Motivação
 <p align="justify">
 No setor financeiro, o acesso a dados do mundo real para análise e treinamento de modelos é limitado devido a questões de privacidade e segurança. Assim os dados sintéticos podem ajudar a fornecer uma alternativa segura para disponibilizar esses dados para diversas organizações. O desenvolvimento de modelos com capacidade de prever o preço da ação de forma precisa é desafiador devido à complexidade inerente desses dados. Em geral, os dados financeiros são não estacionários e seguem distribuições de probabilidade desconhecidas e difíceis de serem estimadas. Apesar dos avanços nos algoritmos de deep learning, que conseguem capturar melhor essas complexidades, a escassez de dados financeiros disponíveis tem sido um fator limitante na construção de métodos robustos. Especialmente em eventos extremos quando no histórico de dados nunca se teve um registro de um evento similar.
