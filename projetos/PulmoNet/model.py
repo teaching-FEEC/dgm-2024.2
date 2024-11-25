@@ -1,20 +1,32 @@
+#Implementing PulmoNet
+#Generator: Pix2Pix 
+#Discriminator: 30x30 PatchGAN
+
 import torch
 from torch import nn
 
-
+#--------------------------------------------Generator-----------------------------------------------
 def encoder_block(in_dim, out_dim):
-    return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, kernel_size=4, stride=2, padding=1, dilation=1, bias=True),
+    return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, 
+                                   kernel_size=4, stride=2, padding=1, 
+                                   dilation=1, bias=True),
                          nn.BatchNorm2d(num_features=out_dim),
                          nn.LeakyReLU(negative_slope=0.2, inplace=True))
 
 
 def decoder_block(in_dim, out_dim, dropout=0.5):
-    return nn.Sequential(nn.ConvTranspose2d(in_channels=in_dim, out_channels=out_dim, kernel_size=4, stride=2, padding=1, output_padding=0, groups=1, bias=True, dilation=1),
+    return nn.Sequential(nn.ConvTranspose2d(in_channels=in_dim, out_channels=out_dim, 
+                                            kernel_size=4, stride=2, padding=1, 
+                                            output_padding=0, groups=1, 
+                                            bias=True, dilation=1),
                          nn.BatchNorm2d(num_features=out_dim),
                          nn.Dropout(p=dropout),
                          nn.ReLU(inplace=True))
 
-
+#For pix2pix generator (generate only CT image): use_as_unet=False and generate_airway_segmentation=False (produces a 1 channel output)
+#To generate both CT image and airway segmentation: use_as_unet=False and generate_airway_segmentation=True (produces a 2 channel output)
+#To use the generator as a segmentation network: use_as_unet=True and generate_airway_segmentation=False (removes the dropout)
+#If use_as_unet=True and generate_airway_segmentation=True (removes dropout and produces a 2 channel output, no particular usage forseen)
 class Generator(nn.Module):
     def __init__(self,use_as_unet=False,generate_airway_segmentation=False):
         super().__init__()
@@ -22,7 +34,9 @@ class Generator(nn.Module):
             dropout=0.5
         else:
             dropout=0
-        self.conv1 = nn.Sequential(nn.Conv2d(in_channels=1, out_channels=64, kernel_size=4, stride=2, padding=1, dilation=1, bias=True),
+        self.conv1 = nn.Sequential(nn.Conv2d(in_channels=1, out_channels=64, 
+                                             kernel_size=4, stride=2, padding=1, 
+                                             dilation=1, bias=True),
                                    nn.LeakyReLU(negative_slope=0.2, inplace=True))
         self.conv2 = encoder_block(in_dim=64, out_dim=128)
         self.conv3 = encoder_block(in_dim=128, out_dim=256)
@@ -39,10 +53,16 @@ class Generator(nn.Module):
         self.deconv3 = decoder_block(in_dim=512, out_dim=128, dropout=dropout)
         self.deconv2 = decoder_block(in_dim=256, out_dim=64, dropout=dropout)
         if generate_airway_segmentation is False:
-            self.deconv1 = nn.Sequential(nn.ConvTranspose2d(in_channels=128, out_channels=1, kernel_size=4, stride=2, padding=1, output_padding=0, groups=1, bias=True, dilation=1),
+            self.deconv1 = nn.Sequential(nn.ConvTranspose2d(in_channels=128, out_channels=1, 
+                                                            kernel_size=4, stride=2, padding=1, 
+                                                            output_padding=0, groups=1, bias=True, 
+                                                            dilation=1),
                                         nn.Tanh())
         else:
-            self.deconv1 = nn.Sequential(nn.ConvTranspose2d(in_channels=128, out_channels=2, kernel_size=4, stride=2, padding=1, output_padding=0, groups=1, bias=True, dilation=1),
+            self.deconv1 = nn.Sequential(nn.ConvTranspose2d(in_channels=128, out_channels=2, 
+                                                            kernel_size=4, stride=2, padding=1, 
+                                                            output_padding=0, groups=1, bias=True, 
+                                                            dilation=1),
                                         nn.Tanh())
 
     def forward(self, x):
@@ -76,17 +96,22 @@ class Generator(nn.Module):
     def get_gen(self):
         return self.gen
 
-
+#--------------------------------------------Discriminator-----------------------------------------------
 def block_discriminator(in_dim, out_dim,stride_size,use_batchnorm):
     if use_batchnorm is True:
-        return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, kernel_size=4, stride=stride_size, padding=1, dilation=1, bias=True),
+        return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, 
+                                       kernel_size=4, stride=stride_size, padding=1, 
+                                       dilation=1, bias=True),
                             nn.BatchNorm2d(num_features=out_dim),
                             nn.LeakyReLU(negative_slope=0.2, inplace=True))
     else:
-        return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, kernel_size=4, stride=stride_size, padding=1, dilation=1, bias=True),
+        return nn.Sequential(nn.Conv2d(in_channels=in_dim, out_channels=out_dim, 
+                                       kernel_size=4, stride=stride_size, padding=1, 
+                                       dilation=1, bias=True),
                             nn.LeakyReLU(negative_slope=0.2, inplace=True))
 
-
+#For 30x30 PatchGAN (used with Pix2Pix generator for CT image synthesis): generate_airway_segmentation=False (receives two 1-channel inputs that are concatenated (conditional GAN))
+#To work with generator that synthesizes both CT image and airway segmentation: generate_airway_segmentation=False (receives two inputs that are concatenated, the first has 1-channel and the second, 2-channels)
 class Discriminator(nn.Module):
     def __init__(self,generate_airway_segmentation=False):
         super().__init__()
@@ -97,9 +122,9 @@ class Discriminator(nn.Module):
         self.conv2 = block_discriminator(in_dim=64, out_dim=128,stride_size=2,use_batchnorm=True)
         self.conv3 = block_discriminator(in_dim=128, out_dim=256,stride_size=2,use_batchnorm=True)
         self.conv4 = block_discriminator(in_dim=256, out_dim=512,stride_size=1,use_batchnorm=True)
-        self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True),
+        self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, 
+                                             stride=1, padding=1, dilation=1, bias=True),
                                    nn.Sigmoid())
-        #self.conv5 = nn.Sequential(nn.Conv2d(in_channels=512, out_channels=1, kernel_size=4, stride=1, padding=1, dilation=1, bias=True))
 
     def forward(self, x, y):
         xy_concat = torch.cat([y, x], dim=1)

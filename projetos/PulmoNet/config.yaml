@@ -11,7 +11,7 @@ data:
   processed_data_folder: "/mnt/shared/divided_data/"
   dataset: "processedCTData"
   start_point_train_data: 0
-  end_point_train_data: 10000
+  end_point_train_data: 20000
   start_point_validation_data: 0
   end_point_validation_data: 800
 
@@ -19,7 +19,7 @@ data:
 training:
   batch_size_train: 15
   batch_size_validation: 8
-  n_epochs: 6
+  n_epochs: 40
   steps_to_complete_bfr_upd_disc: 1
   steps_to_complete_bfr_upd_gen: 1
   transformations: 
