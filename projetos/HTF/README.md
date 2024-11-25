@@ -129,7 +129,7 @@ A arquitetura da rede SGAN do modelo de referência, composta por um gerador e u
 </p>
 
 <p align="center">
-    <img src="/projetos/HTF/images/MET.png" alt="Figura 13: Arquitetura do discriminador Transformer" width="800"/>
+    <img src="/projetos/HTF/images/MET.png" alt="Figura 13: Arquitetura do discriminador Transformer" width="2000"/>
     <br><em>Figura 13: Arquitetura do discriminador Transformer.</em>
 </p>
 
