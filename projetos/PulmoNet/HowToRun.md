@@ -13,72 +13,80 @@ As an additional note, we have included a description of how to perform the func
 
 1. Training configurations should be described in a YAML file composed by the following keys:
 
+Keys related to model definition:
 ```
-yaml
 model:
   name_model: "string with model name"
   dir_save_results: "path/name_of_folder_to_be_created/"  # default: ./name_model/
   new_model: True/False # if False, will try to resume a prior training session and restore models,  optimizers and lr_schedulers (default: True)
   use_pretrained_model: True/False # if True, will fine tune a given model (if that's the case new_model should be True) (default: False)
   generate_airway_segmentation: True/False # if False: PulmoNet generates only CT images, if True: tries to genrate both CT images and airway segmentation (default: False)
-  path_to_saved_model_gen: "path to generator model to be restored if you want to resume to a prior training session or you want to fine tune" # or "" if new model
-  path_to_saved_model_disc: "path to discriminator model to be restored if you want to resume to a prior training session or you want to fine tune" # or "" if new model
+  path_to_saved_model_gen: "path to generator model to be restored if one wants to resume to a prior training session or one wants to fine tune" # or "" if new model
+  path_to_saved_model_disc: "path to discriminator model to be restored if one wants to resume to a prior training session or one wants to fine tune" # or "" if new model
 ```
 
+Keys related to data:
+```
 data:
-  processed_data_folder: "path to folder with data (assumes folder has two folders: gan_train and gan_val, each one containing three folders: images, lungs and labels (or at least images and lungs if you are only interested in generating CT images))"
-  dataset: "lungCTData" if you want to generate only CT images or "processedCTData" if you also wants to generate airway segmentation (or other, but must be  declared in constants.py)
-  start_point_train_data: 0 (if you want to use all elements in images, lungs and labels for training, just delete these next keys, if you want to use only part of the data, the index in here will indicate how many .npy files to consider - we will sort data in gan_train/images in alphabethical order and only consider files from start_point_train_data to end_point_train_data (not inclusive) - the same goes for other folders and for validation data) 
-  end_point_train_data: 20000
-  start_point_validation_data: 0
-  end_point_validation_data: 800
+  processed_data_folder: "path to folder with data"  # assumes folder has two folders: gan_train and gan_val, each one containing three folders: images, lungs and labels (or at least images and lungs if you are only interested in generating CT images)
+  dataset: "lungCTData" # if one wants to generate only CT images or "processedCTData" if one also wants to generate airway segmentation (or other, but must be  declared in constants.py)
+  start_point_train_data: integer 
+  end_point_train_data: integer
+  start_point_validation_data: integer
+  end_point_validation_data: integer
+```
+If one wants to use all elements in images, lungs and labels for training, just delete these four last keys.  
+If one wants to use only part of the data, the indexes will indicate how many .npy files to consider: files are sorted in gan_train/images in alphabethical order and only consider files from start_point_train_data to end_point_train_data (not inclusive). The same goes for other folders and for validation data.
 
+Keys related to training:
+```
 training:
   batch_size_train: integer
   batch_size_validation: integer
   n_epochs: integer
-  steps_to_complete_bfr_upd_disc: the amount of steps the GENERATOR takes BEFORE the disc gets updated (default: 1)
-  steps_to_complete_bfr_upd_gen: the amount of steps the DISCRIMINATOR takes BEFORE the gen gets updated (default: 1)
+  steps_to_complete_bfr_upd_disc: integer # the amount of steps the GENERATOR takes BEFORE the disc gets updated (default: 1)
+  steps_to_complete_bfr_upd_gen: integer # the amount of steps the DISCRIMINATOR takes BEFORE the gen gets updated (default: 1)
   transformations: 
-    transform: "AddGaussianNoise"/"AddUniformNoise" - if one wants to add noise to masks (generator input), if not, just delete the related keys
+    transform: "AddGaussianNoise" # or "AddUniformNoise" if one wants to add noise to masks (generator input), if not, just delete the related keys
     info:
-      lung_area: True/False - if True only adds noise to the lung area, otherwise adds noise to the entire image (default: False)
-      intensity: float between 0 and 1 - modulate noise intensity (default: 1)
-      mean: float - only used for Gaussian noise, can be removed if uniform 
-      std: float - only used for Gaussian noise, can be removed if uniform
+      lung_area: True/False # if True only adds noise to the lung area, otherwise adds noise to the entire image (default: False)
+      intensity: float between 0 and 1 # modulate noise intensity (default: 1)
+      mean: float # only used for Gaussian noise, can be removed if uniform 
+      std: float  # only used for Gaussian noise, can be removed if uniform
 
 loss: 
   criterion: 
-    name: "MSELoss"/"BCELoss" (or other, but must be  declared in constants.py)
+    name: "MSELoss" # or "BCELoss" (or other, but must be  declared in constants.py)
   regularizer:
     type:
-      - "MAE"/"MSE"/"MAE_mask"/"MSE_mask"/"MAE_outside_mask"/"MSE_outside_mask" (or other, but must be  defined in losses.py) - can be made a list if more than one must be applied
+      - "MAE" # or "MSE"/"MAE_mask"/"MSE_mask"/"MAE_outside_mask"/"MSE_outside_mask" (or other, but must be  defined in losses.py) - a list can be made if more than one regularization must be applied
     regularization:
-      - integer (level of regularization) - can be made a list if more than one must be applied
+      - integer # level of regularization - a list can be made if more than one regularization must be applied
     
 optimizer:
-  type: "Adam"/"SGD" (or other, but must be  declared in constants.py)
-  lr: float (initial learning rate)
+  type: "Adam" #or "SGD" (or other, but must be  declared in constants.py)
+  lr: float # initial learning rate
   info:
     (kwargs of optimizer)
-  path_to_saved_gen_optimizer: "path to generator optimizer to be restored if you want to resume to a prior training session" or "" if new model
-  path_to_saved_disc_optimizer: "path to discriminator optimizer to be restored if you want to resume to a prior training session" or "" if new model
+  path_to_saved_gen_optimizer: "path to generator optimizer to be restored if one wants to resume to a prior training session" # or "" if new model
+  path_to_saved_disc_optimizer: "path to discriminator optimizer to be restored if one wants to resume to a prior training session" # or "" if new model
 
 lr_scheduler:
-  activate: True/False - if False don't consider learning rate
-  scheduler_type: "LinearLR"/"StepLR" (or others, check lr_scheduler.py)
-  epoch_to_switch_to_lr_scheduler: integer (epoch to start considering lr scheduler)
+  activate: True/False # if False don't consider learning rate scheduler
+  scheduler_type: "LinearLR" # or "StepLR" (or others, check lr_scheduler.py)
+  epoch_to_switch_to_lr_scheduler: integer # epoch to start considering lr scheduler
   info:
     (kwargs of lr scheduler)
-  path_to_saved_gen_scheduler: "path to generator lr scheduler to be restored if you want to resume to a prior training session" or "" if new model
-  path_to_saved_disc_scheduler: "path to discriminator lr scheduler to be restored if you want to resume to a prior training session" or "" if new model
+  path_to_saved_gen_scheduler: "path to generator lr scheduler to be restored if one wants to resume to a prior training session" # or "" if new model
+  path_to_saved_disc_scheduler: "path to discriminator lr scheduler to be restored if one wants to resume to a prior training session" # or "" if new model
 
 save_models_and_results:
-  step_to_safe_save_models: integer (save models/optimizer/lr schedulers every step_to_safe_save_models epochs in case something unexpected interrupts training)
-  save_best_model: True/False (if True saves model that gave the smallest generator's loss for validation data) 
+  step_to_safe_save_models: integer # save models/optimizer/lr schedulers every step_to_safe_save_models epochs in case something unexpected interrupts training
+  save_best_model: True/False # if True saves model that gave the smallest generator's loss for validation data
 
 wandb:
-  activate: True/False (if True, integrates with wandb to save versions and losses)
+  activate: True/False # if True, integrates with wandb to save versions and losses
+```
 
 2. Executar comando em seu terminal:
 
