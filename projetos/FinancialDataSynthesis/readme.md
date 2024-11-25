@@ -26,7 +26,7 @@ O projeto consistiu em utilizar séries temporais dos preços de ações como **
 
 Para treinar os modelos, resolvemos dividir o dataset (série temporal dos preços) em sequências de 24 preços consecutivos e associar o 25º elemento como rótulo (preço a ser predito). Dessa forma, ao invés do modelo receber como entrada a série temporal inteira, ele recebeu sequências com 24 preços consecutivos e teve como objetivo, predizer o próximo preço baseado nos 24 valores passados. Notamos que com essa estratégia, o modelo conseguiu extrair padrões de forma mais eficiente e gerar preços sintéticos mais realistas comparado à uma estratégia em que ele recebe a série temporal inteira como entrada.
 
-Comparamos os resultados dos nosso modelos GANs e Transformer com modelos de aprendizado profundo baseados em LSTM e GRU. O modelo generativo apresentou um melhor desempenho, em termos do erro quadrático médio RMSE.
+Comparamos os resultados dos nosso modelos GANs e Transformer com modelos de aprendizado profundo baseados em LSTM e GRU através da métrica RMSE (Root Mean Squared Error).
 </p>
 
 ## Introdução
