@@ -35,13 +35,6 @@ $$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
 
 Em que cada elemento $x(i)$ representa o preço da ação da empressa Apple no instante $i$.
 
-<p align="justify">
-A continuação se apresenta a serie temporal dos preços da ação da empressa Apple, a usada data usada dos dados foi desde 2010-07-01 até 2020-06-30, para fazer experimentos antes e depois do Covid-19 (evento extremo)
-</p>
-
-![Time Series Visualization](img_readme/Serie_temporal.png)
-
-
 Atráves da incorporação de features relevantes, também representados por séries temporais (alinhadas à $X_{1:N}$), buscamos gerar dados sintéticos que representam uma continuação realista de $X_{1:N}$, isso é, uma série temporal do tipo:
 
 $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
@@ -185,9 +178,13 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
    
    O período de amostragem de 2 minutos foi escolhido pois é o menor que o API disponibiliza. Optamos por realizar uma análise em alta frequência, pois as variações nos preços não são tão abruptas comparadas à de uma frequência menor (e.g. valores diários). Dessa forma, o modelo consegue gerar dados dentro de uma faixa razoável de valores. A figura abaixo ilustra um exemplo.
    
+<p align="justify">
+A continuação se apresenta a serie temporal dos preços da ação da empressa Apple, a usada data usada dos dados foi desde 2010-07-01 até 2020-06-30, para fazer experimentos antes e depois do Covid-19 (evento extremo)
+</p>
+
 <div align="center">
-    <img src="Valores_Vale.png" alt="Preços_Vale" title="Vale" />
-    <p><em>Figura 1: Preços das ações da Vale com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <img src="img_readme/Serie_temporal.png" alt="Preços_Vale" title="Preços Apple" />
+    <p><em>Figura 1: Preços das ações da Apple com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
 2. **Extração de Features:**
