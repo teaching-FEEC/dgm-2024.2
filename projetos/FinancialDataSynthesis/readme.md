@@ -19,7 +19,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 ## Resumo (Abstract)
 <p align="justify">
-Neste trabalho foi testado a capacidade de dois modelos generativos baseados nas arquiteturas de Redes Adversárias Generativas (GANs) e Transformers na geração de dados financeiros sintéticos, mais especificamente, na geração de preços de ações.
+Neste trabalho foi testado a capacidade de dois modelos generativos baseados nas arquiteturas de Redes Adversárias Generativas (GANs) e Transformers na geração de preços de ações.
  
 O modelo baseado na arquitetura GAN foi desenvolvido utilizando Unidades Recorrentes Fechadas (GRU) como um gerador que insere o preço histórico das ações e gera a previsão do preço futuro (no dia seguinte) das ações e uma Rede Neural Convolucional (CNN) como um discriminador para discriminar entre o preço real das ações e o preço das ações gerado. Para estimar o preço da ação foi usada 36 características como índice S&P 500, índice NASDAQ Composite, índice U.S. Índice do dólar, etc.
 
