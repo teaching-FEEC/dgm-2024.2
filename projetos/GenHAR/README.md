@@ -316,7 +316,7 @@ Abaixo são apresentadas as projeções em t-SNE dos dados reais e sintéticos d
 
 ![](./reports/results_all/images/compare/all_comp_none_tsne.png)
 
-Figura XX: Projeção t-SNE de dados reais e sintéticos para cada modelo treinado por dataset.
+*Figura XX: Projeção t-SNE de dados reais e sintéticos para cada modelo treinado por dataset.*
 
 Semelhantemente, foi realizada a projeção t-SNE dos dados sintéticos e reais para cada uma das classes dos datasets de forma independente. A tabela abaixo apresenta os gráficos obtidos para a classe ‘sentado’ em cada dataset e modelo.
 
@@ -329,6 +329,46 @@ Semelhantemente, foi realizada a projeção t-SNE dos dados sintéticos e reais 
 |UCI|![](./reports/results_all/images/sit_compare/uci_uncond.png) | ![](./reports/results_all/images/sit_compare/uci_cond.png) | ![](./reports/results_all/images/sit_compare/uci_doppel.png) | ![](./reports/results_all/images/sit_compare/uci_time.png) | 
 |WISDM|![](./reports/results_all/images/sit_compare/wisdm_uncond.png) | ![](./reports/results_all/images/sit_compare/wisdm_cond.png) | ![](./reports/results_all/images/sit_compare/wisdm_doppel.png) | ![](./reports/results_all/images/sit_compare/wisdm_time.png) | 
 |Combined|![](./reports/results_all/images/sit_compare/comb_uncond.png) | ![](./reports/results_all/images/sit_compare/comb_cond.png) | ![](./reports/results_all/images/sit_compare/comb_doppel.png) | ![](./reports/results_all/images/sit_compare/comb_time.png) | 
+
+As projeções t-SNE apresentadas revelam que os dados gerados pelos modelos TimeGAN e DoppelGAN são muito dissimilares aos dados reais para todos os datasets, formando clusters sem intersecção com os dados reais. Isso mostra que os modelos não foram adequados para gerar os dados de sensores desejados somente com a aplicação direta dos mesmos no domínio desejado. Por outro, lado os modelos BioDiffusion conseguiram se aproximar mais da distribuição dos dados reais e em alguns datasets até mesmo ter interseção dos clusters, mostrando uma opção mais adequada para o domínio de dados estudados. 
+
+**Similaridade entre Distribuições**
+
+As Tabelas XX, XX, XX e XX apresentam os valores de similaridade R2R, R2S, S2S e Max-R2S para cada métrica e cada dataset obtidos entre os dados reais e os conjuntos de dados sintéticos obtidos pelos modelos BioDiffusion Não-condicionado, BioDiffusion Condicionado, DoppelGAN e TimeGAN respectivamente.
+
+![](./reports/figures/dist_uncond_diff.png)
+
+*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Não-condicionado.*
+
+![](./reports/figures/dist_cond_diff.png)
+
+*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo BioDiffusion Condicionado.*
+
+![](./reports/figures/dist_doppelgan.png)
+
+*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo DoppelGAN.*
+
+![](./reports/figures/dist_timegan.png)
+
+*Tabela XX: Resultados de métricas de similaridade para cada dataset em relação ao conjunto de dados sintéticos obtidos pelo modelo TimeGAN.*
+
+A análise dos resultados nas tabelas acima mostram algumas características interessantes quanto às métricas e o desempenho dos modelos. Primeiramente, pode-se notar que a métrica de distância do cosseno não revela muita informação sobre a qualidade dos dados sintéticos, pois a diferença entre os valores de distância média real para real (R2R) e real para sintético (R2S) não variam muito, mesmo quando outras métricas de distância apresentam variações consideráveis. Por exemplo, na primeira linha da Tabela X4 para o modelo TimeGAN no dataset KuHAR, as variações dos valores R2R e R2S para as métricas de distância euclidiana, DTW e distância de Minkowski são de 40%, 34% e 39% respectivamente, enquanto a variação para a métrica de distância de cosseno é de somente 1.8%.
+
+De maneira geral, os modelos apresentam valores de distância R2R e R2S similares, indicando que o comportamento da variação dos dados são próximos e valores S2S levemente menores do que o R2R, mostrando que os dados sintéticos possuem variabilidade semelhantes aos dados reais e os modelos não colapsaram para a geração de dados repetidos. Contrário a esses resultados, destaca-se o modelo DoppelGAN, o qual apresenta valores de distância R2S maiores que as R2R em quase todos os datasetes e métricas de distância, indicando um afastamento dos dados sintéticos em relação aos dados reais, o que é reforçado pela visualização da projeção t-SNE dos dados mostrado na Figura XX.
+
+**Análise de Usabilidade**
+
+Nas Tabelas XX e XX são apresentados os valores de f1-score para modelos Random Forest e SVM, respectivamente, treinados com dados reais (R), dados sintéticos (S) ou dados sintéticos e reais juntos (M) de cada dataset e conjunto de dados sintéticos. 
+
+![](./reports/figures/RF_utility.png)
+
+*Tabela XX: Valores de f1 para modelos Random Forest treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
+
+![](./reports/figures/SVM_utility.png)
+
+*Tabela XX: Valores de f1 para modelos SVM treinados em dados reais (R), sintéticos (S) ou combinados (M) e avaliados no conjunto de teste real.*
+
+De forma geral, observa-se que os modelos BioDiffusion capturam melhor a diferença entre as categorias de dados presentes nos datasets, sendo que classificadores treinados em seus dados sintéticos possuem um desempenho próximo ou superior aos classificadores treinados com dados reais. O modelo DoppelGAN apresenta desempenho baixíssimo em todos os testes, porém os classificadores Random Forest com dados combinados apresentam pouca diferença de performance em comparação aos treinados somente com dados reais, mostrando que por devido aos dados sintéticos serem muito diferentes dos reais, o classificador consegue separar as regiões dos dados sintéticos ruidosos das regiões dos dados reais e manter o desempenho, porém o mesmo não ocorre de forma consistente com classificadores SVM.
 
 
 ## Conclusão
