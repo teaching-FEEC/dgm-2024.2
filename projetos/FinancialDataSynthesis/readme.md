@@ -354,35 +354,19 @@ A figura permite fazer a inspeção visual das séries temporais geradas pelos m
     <p><em>Figura 11: Avaliação Qualitativa das GANs. </em></p>
 </div>
 
-### Artigos de Referência
-Os principais artigos que o grupo já identificou como base para estudo e planejamento do projeto são:
 
-- **Pagnocelli. (2022)**: "A Synthetic Data-Plus-Features Driven Approach for Portfolio Optimization" [5].
-  
-- **Peña et al. (2024)**: "A modified CTGAN-plus-features-based method for optimal asset allocation" [2].
+## Conclusões
+Em nosso trabalho treinamos três modelos generativos: GAN simples,  WGAN-GP e um modelo baseado em Transformers. De acordo com os resultados obtidos do projeto, chegamos as seguintes conclusões:
 
--  **F.Eckerli, J.Osterrieder.** "Generative Adversarial Networks in finance: an overview" [3]. 
-
-### Ferramentas
-- **Python** com bibliotecas como `PyTorch` e `scikit-learn` para implementar os modelos generativos e realizar a síntese de dados.
+- Os modelos conseguem gerar realizar predições melhores, em termos do RMSE, comparados aos modelos tradicionais LSTM e GRU;
    
-- **Colab** para colaboração e execução de experimentos em ambientes com suporte a GPU.
-  
-- **Pandas** e **NumPy** para manipulação de dados tabulares.
-
-## Conclusão
-Em nosso trabalho treinamos três modelos generativos GAN,  WGAN-GP e um modelo baseado em transformers.
-- De acordo com o resultado experimental, temos as seguintes conclusões.
-   
-- Quando há um evento inesperado como COVID-19, o WGAN-GP tem melhor desempenho do que o GAN, mas em períodos normais, o GAN tem melhor desempenho.
+- Quando há períodos de alta instabilidade, como foi o período da pandemia de COVID-19, o WGAN-GP apresentou melhor desempenho do que o GAN, mas em períodos mais estáveis, o GAN obteve melhor desempenho.
   
 - O modelo GAN incluindo RNN é instável, ou seja é muito difícil ajustar os hiperparâmetros, e sem bons parâmetros os resultados são muito ruins.
 
-- No geral, os modelos GANs têm melhor desempenho do que os modelos tradicionais de base, de acordo com nosso resultado, mas o modelo baseado em Transformers tem um melhor comportamento e resultado do que o resto de modelos, neste estudo.
-
-## Trabalhos Futuros
-
-Pesquisas futuras devem ser dedicadas ao desenvolvimento do ajuste de hiperparâmetros. No modelo GAN, se cada um dos parâmetros, em cada camada e para todo o modelo, puder ser ajustado com mais precisão, acreditamos que o resultado teria melhorado significativamente.
+- No geral, os modelos GANs têm melhor desempenho do que os modelos tradicionais de base, de acordo com nosso resultado, mas o modelo baseado em Transformers tem um melhor comportamento e resultado do que o resto de modelos.
+  
+- Nenhum dos modelos foi capaz de determinar com precisão a direção dos preços, apresentando uma acurácia direcional próxima ao nível de aleatoriedade. Isso sugere que, embora os modelos possam capturar certos padrões nos dados, eles não são eficazes em prever a direção futura dos preços das ações de forma confiável.
  
 ## Referências Bibliográficas
 [1] Li, Gaorong, Lei Huang, Jin Yang, and Wenyang Zhang.  
