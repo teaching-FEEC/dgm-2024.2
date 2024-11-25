@@ -155,7 +155,7 @@ A rede generativas adversarias (GAN) para predição de séries temporais, é co
 Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$. A continuação se detalha as arquitetura do Gerador e do Discriminador.
 
 ### Arquitetura do Gerador
-- O gerador foi construido usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais, de acordo com a seguente estrutura:
+- O gerador foi construido usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A estrutura do gerador se detalha a continuação:
   - **GRU** (1024 unidades) com dropout recorrente 0,2
   - **GRU** (512 unidades) com dropout recorrente 0,2
   - **GRU** (256 unidades) com dropout recorrente 0,2
