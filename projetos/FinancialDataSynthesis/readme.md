@@ -37,7 +37,7 @@ Uma série temporal de preços de ações pode ser representada como:
 
 $$ X_{1:N} = [x(1), x(2), ..., x(N)] $$
 
-- $x(i)$: representa o preço da ação no dia $i$.
+- $x(i)$: representa o preço da ação no dia $i$ (preço de fechamento).
 
 Além dos preços históricos, incorporamos features relevantes, como indicadores técnicos, também organizados em séries temporais:
 
