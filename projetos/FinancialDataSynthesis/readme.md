@@ -145,10 +145,11 @@ $$
 - $\max(x)$: representa o maior valor na série temporal $x$.
 
 Essa abordagem garante que os valores da série temporal sejam escalados para o intervalo $[0, 1]$, permitindo que o modelo processe os dados de forma eficiente e consistente.
+
 4. **Construção da Rede Neural:**
 
 <p align="justify">
-A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
+A rede neural é um modelo baseado em redes generativas adversarias (GAN) para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
 </p>
 
 **CASO 2: TRANSFORMERS**
@@ -193,8 +194,10 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
 - $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
 -  $x(i)$: representa o valor antes da normalização (preço ou algum feature) no instante $i$.
 - média[x], desvio padrão [x] : representam a média e o desvio padrão associado à série temporal dos elementos de x(i)  
+
    
 4. **Construção da Rede Neural:**
+
    A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
    <div align="center">
     <img src="Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
