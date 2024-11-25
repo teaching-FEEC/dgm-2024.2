@@ -82,12 +82,13 @@ Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Gener
 
 ## Objetivos
 
-O projeto tem como **objetivo principal** :
+O projeto teve como objetivos:
 
--  Estudar e desenvolver dois modelos generativos (uma baseadas em GANs e outra em Transformers.) para gerar séries temporais sintéticas realistas de ativos financeiros, retendo o máximo de informações estatísticas.
+-  Estudar e desenvolver dois modelos generativos baseados nas arquiteturas GANs e Transformers para predizer preços de ações baseados em valores históricos e features relevantes.
+-  Comparar esses modelos generativos com modelos tradicionais como que usam LSTM e GRU.
 
-Para o projeto, escolhemos três ativos financeiros distintos:
-- **Historico de dados dos preços da ação da empressa Apple**: preço em dolares da ação de Apple desde o 1º de julho de 2010 até 30 de junho de 2020 .
+Para o projeto, escolhemos utilizamos o seguinte dado financeiro:
+- Histórico de dados dos preços da ação da empresa Apple: preço em dólares da ação do período de 1º de julho de 2010 até 1 de julho de 2020.
 
 ## Contribuições
 - Criação de um modelo generativo baseado em GAN  
@@ -95,7 +96,7 @@ Para o projeto, escolhemos três ativos financeiros distintos:
 - Criação de um modelo generativo baseado em Transformers  
 - Comparação de desempenho com redes profundas baseadas em LSTM e GRU
 
-Utilizamos como métrica de avaliação o RMSE.
+Utilizamos como métrica de avaliação o Root Mean Square Error (RMSE).
 
 ### Bases de Dados
 
