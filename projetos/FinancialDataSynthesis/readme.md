@@ -99,7 +99,7 @@ Utilizamos como métrica de avaliação o RMSE.
 |----- | ----- | -----|
 |API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem preços de fechamento, preços máximos, mínimos, volume negociado. Além disso, é possível coletar os dados considerando diferentes períodos de amostragem: 2 minutos, 5 minutos, 15 minutos, 1 hora, 1 dia.|
 
-![Time Series Visualization](img_readme/Banco de Dados.png)
+![Banco de Dados Visualization](img_readme/Banco de Dados.png)
 
 ## Metodologia e Workflow
 **CASO 1: TRANSFORMERS**
