@@ -26,8 +26,9 @@ Utilizamos séries temporais de preços de ações e indicadores técnicos como 
 
 Observamos que, ao utilizar sequências de tamanho fixo, os modelos conseguiram extrair padrões de forma mais eficiente e gerar previsões mais precisas, em comparação com estratégias que consideram a série temporal completa como entrada.
 
-Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com modelos de aprendizado profundo tradicionais, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), utilizando a métrica RMSE (Root Mean Squared Error) para avaliar a precisão. Os resultados indicam que os modelos propostos oferecem vantagens significativas na previsão de preços de ações. Também avaliamos a acurácia da direção dos modelos, medindo a % de previsões que acertaram a direção do preço, isso é, a % de previsões que eles previram que os preços iriam subir e realmente subiram (ou que iriam cair, e realmente cairam). Os resultados indicam que nenhum modelo foi capaz de determinar com precisão a direção dos preços.
-</p>
+Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com modelos de aprendizado profundo tradicionais, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), utilizando a métrica RMSE (Root Mean Squared Error) para avaliar a precisão. Os resultados indicam que os modelos propostos oferecem vantagens significativas na previsão de preços de ações. 
+
+Além disso, avaliamos a acurácia direcional dos modelos, que mede a porcentagem de previsões em que o modelo acertou a direção do movimento dos preços. Isso significa calcular a proporção de vezes em que o modelo previu corretamente que os preços iriam subir e eles de fato subiram, ou previu que iriam cair e eles realmente caíram. Os resultados indicam que nenhum dos modelos foi capaz de determinar com precisão a direção dos preços, apresentando uma acurácia direcional próxima ao nível de aleatoriedade. Isso sugere que, embora os modelos possam capturar certos padrões nos dados, eles não são eficazes em prever a direção futura dos preços das ações de forma confiável."
 
 ## Introdução
 <p align="justify">
