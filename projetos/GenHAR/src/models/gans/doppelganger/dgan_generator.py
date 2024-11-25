@@ -9,6 +9,8 @@ os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"  # ou ":16:8"
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+import numpy as np
+import torch
 
 class DCGANGenerator:
     def __init__(self, config):
@@ -45,6 +47,8 @@ class DCGANGenerator:
                 apply_example_scaling=False,
                 sample_len=self.config["parameters"]["sample_len"],
                 batch_size=self.config["parameters"]["batch_size"],
+                generator_learning_rate=1e-4,
+                discriminator_learning_rate=1e-4,
                 epochs=self.config["parameters"]["epochs"],
                 cuda=device
             )

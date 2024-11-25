@@ -1,6 +1,30 @@
-# from models.gans.timeganpt.modules_and_training import TimeGAN
+#from models.gans.timeganpt.modules_and_training import TimeGAN
 import pickle  # Para salvar e carregar o modelo
 from utils.dataset_utils import split_axis_reshape, dict_class_samples
+#from models.gans.timeganpt.utils import sine_data_generation,MinMaxScaler
+#from sklearn.preprocessing import StandardScaler
+import numpy as np
+import torch
+import torch.nn as nn
+from torch import optim
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+
+from models.gans.timeganpt.utils import extract_time
+from models.gans.timeganpt.utils import random_generator
+from models.gans.timeganpt.utils import MinMaxScaler
+from models.gans.timeganpt.utils import sine_data_generation
+from models.gans.timeganpt.utils import  visualization
+
+from models.gans.timeganpt.modules_and_training import TimeGAN
+from models.gans.timeganpt.modules_and_training import Time_GAN_module
+import pandas as pd
+
+
 
 # from models.gans.timeganpt.utils import sine_data_generation,MinMaxScaler
 # from sklearn.preprocessing import StandardScaler
@@ -55,7 +79,7 @@ class TimeGANGenerator:
         # visualization(data, test_recovery.detach().numpy(), 'tsne')
         # visualization(data, test_recovery.detach().numpy(), 'pca')
         return test_recovery
-
+        
     def train(self, X_train, y_train):
         self.losses = {}
         if self.use_tsgm:
@@ -209,6 +233,7 @@ class TimeGANGenerator:
             # Concatenar com o DataFrame geral
             synthetic_df = pd.concat([synthetic_df, class_df], ignore_index=True)
 
+                
         return synthetic_df
 
     def save_model(self, file_path):

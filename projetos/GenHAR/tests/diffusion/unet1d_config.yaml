@@ -71,7 +71,7 @@ generative_models:
       in_channel: 6
       out_channel: 6
     n_gen_samples: 3000
-    epochs: 250
+    epochs: 500
     folder_save_generate_df: data/synthetic/unconditional_unet
   - name: cd_diffusion_unet1d
     model: Diffusion

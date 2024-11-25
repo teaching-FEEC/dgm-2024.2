@@ -507,5 +507,3 @@ class RealSyntheticComparator:
         # plt.savefig(save_path, dpi=400, bbox_inches='tight')
         plt.close(fig)  # Fechar a figura após salvar
         return fig
-
- 
