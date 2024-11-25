@@ -20,18 +20,19 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 ## Resumo (Abstract)
 <p align="justify">
  
-Neste trabalho foi testado a capacidade de modelos baseados nas arquiteturas de **Redes Adversárias Generativas (GANs)** e **Transformers** em gerar dados financeiros sintéticos, mais precisamente, preços de ações.
+Neste trabalho, estudamos a eficácia de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers na geração de dados financeiros sintéticos, especificamente preços de ações. As GANs são redes neurais que podem gerar novos dados realistas a partir de um conjunto de treinamento, enquanto os Transformers se destacam em tarefas que envolvem sequências temporais devido à sua capacidade de capturar dependências de longo alcance.
 
-O projeto consistiu em utilizar séries temporais dos preços de ações como **entrada**, e utilizar os modelos para regressão, de forma que, eles gerassem preços futuros realistas, baseados nos valores históricos e indicadores técnicos.
+Utilizamos séries temporais de preços de ações e indicadores técnicos como entrada para os modelos, com o objetivo de realizar regressão para prever preços futuros de forma realista. Para treinar os modelos, dividimos o dataset em sequências de 24 preços consecutivos, associando o 25º preço como rótulo (preço a ser predito). Essa estratégia permite que os modelos aprendam padrões dentro de janelas temporais específicas, ao invés de analisar a série temporal inteira de uma só vez.
 
-Para treinar os modelos, resolvemos dividir o dataset (série temporal dos preços) em sequências de 24 preços consecutivos e associar o 25º elemento como rótulo (preço a ser predito). Dessa forma, ao invés do modelo receber como entrada a série temporal inteira, ele recebeu sequências com 24 preços consecutivos e teve como objetivo, predizer o próximo preço baseado nos 24 valores passados. Notamos que com essa estratégia, o modelo conseguiu extrair padrões de forma mais eficiente e gerar preços sintéticos mais realistas comparado à uma estratégia em que ele recebe a série temporal inteira como entrada.
+Observamos que, ao utilizar sequências de tamanho fixo, os modelos conseguiram extrair padrões de forma mais eficiente e gerar previsões mais precisas, em comparação com estratégias que consideram a série temporal completa como entrada.
 
-Comparamos os resultados dos nosso modelos GANs e Transformer com modelos de aprendizado profundo baseados em LSTM e GRU através da métrica RMSE (Root Mean Squared Error).
+Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com modelos de aprendizado profundo tradicionais, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), utilizando a métrica RMSE (Root Mean Squared Error) para avaliar a precisão. Os resultados indicam que os modelos propostos oferecem vantagens significativas na previsão de preços de ações.
 </p>
 
 ## Introdução
-Nosso projeto foca na geração de dados financeiros sintéticos realistas, especificamente geramos preços sintéticos da ação da empresa Apple através de duas abordagens: baseadas em GANS e Transformers.
-Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto. Neste trabalho os experimentos foram realizados utilizando os preços no período de 2010-2020, contemplando um evento extremo (Covid-19). Dessa forma, pudemos verificar a robustez de nossos modelos generativos frente a eventos extremos.
+O projeto focou na geração de preços sintéticos de ações empregando duas abordagens: baseadas em GANS e Transformers.
+
+Os dados sintéticos são úteis em modelos em que a confiança apenas em dados históricos não é suficiente para construir um método robusto. Neste trabalho os experimentos foram realizados utilizando os preços das ações da empresa Apple no período de 2010-2020, contemplando um evento extremo (Covid-19). Dessa forma, pudemos verificar a robustez de nossos modelos generativos frente a eventos extremos.
 </p>
 
 O projeto lida com séries temporais da forma:
