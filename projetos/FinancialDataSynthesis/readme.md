@@ -198,16 +198,20 @@ Assim temos que a função de perda do discriminante na WGAN-GP (Wasserstein GAN
 i) Wasserstein Loss: 
 Wasserstein Loss visa maximizar a diferença entre suas pontuações de saída para amostras reais e falsas. Isso é expresso como:
 
+## Wasserstein Loss
+
+The Wasserstein loss is defined as:
+
 $$
 L_{\text{Wasserstein}} = \mathbb{E}_{x_{\text{real}}} \left[D(x_{\text{real}})\right] - \mathbb{E}_{x_{\text{fake}}} \left[D(x_{\text{fake}})\right]
 $$
 
-where:
+Where:
 - \(x_{\text{real}}\) represents real data samples.
 - \(x_{\text{fake}}\) represents generated (fake) data samples.
 - \(D\) is the discriminator or critic function in the WGAN framework.
 
-i) Gradient Penalty: 
+ii) Gradient Penalty: 
 Para impor a restrição de Lipschitz (garantindo que os gradientes tenham uma norma de no máximo 1), um termo de penalidade é adicionado. A penalidade de gradiente é calculada como:
 
 $$
