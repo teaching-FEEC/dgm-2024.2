@@ -148,7 +148,7 @@ O pooling social considera um grid em torno de cada pedestre, para que estes aju
 
 ## Workflow
 
-O workflow definido para o projeto e entregável 2, como uma visão de desenvolvimento, se dará conforme estabelecido graficamente na figura 7.
+O workflow definido para o projeto e entregável 2, como uma visão de desenvolvimento, se dará conforme estabelecido graficamente na figura 15.
 
 <p align="center">
     <img src="/projetos/HTF/images/Workflow.png" alt="Figura 15: Workflow do projeto" width="600"/>
@@ -269,6 +269,42 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
 
 <div style="text-align: center;">
     <p align="center">
+    <img src="../HTF/images/LSTM/Animação/GTR1.gif" alt="Imagem 1" width="400"/>
+    <img src="../HTF/images/LSTM/Animação/GTR2.gif" alt="Imagem 2" width="400"/>
+    <br>
+    <img src="../HTF/images/LSTM/Animação/GTR3.gif" alt="Imagem 4" width="400"/>
+    <img src="../HTF/images/LSTM/Animação/GTR4.gif" alt="Imagem 5" width="400"/>
+    <br>
+    <img src="../HTF/images/LSTM/Animação/GTR5.gif" alt="Imagem 4" width="400"/>
+    <img src="../HTF/images/LSTM/Animação/GTR6.gif" alt="Imagem 5" width="400"/>
+    <p align="center"><p align="center"><em>Figura 17: Exemplos de cenas de observação, caminho real percorrido e geração de um possivel caminho para o modelo LSTM</em></p>
+</div>
+
+<div style="text-align: center;">
+     <p align="center"><!-- Primeira linha de 3 imagens -->
+    <img src="../HTF/images/LSTM/KDE/TR1.png" alt="Imagem 1" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR2.png" alt="Imagem 2" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR3.png" alt="Imagem 3" width="320"/>
+    <br>
+    <!-- Segunda linha de 3 imagens -->
+    <img src="../HTF/images/LSTM/KDE/TR4.png" alt="Imagem 4" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR5.png" alt="Imagem 5" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR6.png" alt="Imagem 6" width="320"/>
+    <br>
+    <!-- Segunda linha de 3 imagens -->
+    <img src="../HTF/images/LSTM/KDE/TR7.png" alt="Imagem 7" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR8.png" alt="Imagem 8" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR14.png" alt="Imagem 9" width="320"/>
+    <br>
+    <!-- Segunda linha de 3 imagens -->
+    <img src="../HTF/images/LSTM/KDE/TR10.png" alt="Imagem 10" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR11.png" alt="Imagem 11" width="320"/>
+    <img src="../HTF/images/LSTM/KDE/TR12.png" alt="Imagem 12" width="320"/>
+    <p align="center"><p align="center"><p><em>Figura 18: Exemplos de distribuição de probabilidade de possiveis caminhos gerados para o modelo LSTM.</em></p>
+</div>
+
+<div style="text-align: center;">
+    <p align="center">
     <img src="../HTF/images/Transformer/Animação/GTR1.gif" alt="Imagem 1" width="400"/>
     <img src="../HTF/images/Transformer/Animação/GTR2.gif" alt="Imagem 2" width="400"/>
     <br>
@@ -277,7 +313,7 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
     <br>
     <img src="../HTF/images/Transformer/Animação/GTR5.gif" alt="Imagem 4" width="400"/>
     <img src="../HTF/images/Transformer/Animação/GTR6.gif" alt="Imagem 5" width="400"/>
-    <p align="center"><p align="center"><em>Figura 17: Exemplos de cenas de observação, caminho real percorrido e geração de um possivel caminho para o modelo Transformer</em></p>
+    <p align="center"><p align="center"><em>Figura 19: Exemplos de cenas de observação, caminho real percorrido e geração de um possivel caminho para o modelo Transformer</em></p>
 </div>
 
 <div style="text-align: center;">
@@ -300,7 +336,7 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
     <img src="../HTF/images/Transformer/KDE/TR10.png" alt="Imagem 10" width="320"/>
     <img src="../HTF/images/Transformer/KDE/TR11.png" alt="Imagem 11" width="320"/>
     <img src="../HTF/images/Transformer/KDE/TR12.png" alt="Imagem 12" width="320"/>
-    <p align="center"><p align="center"><p><em>Figura 18: Exemplos de distribuição de probabilidade de possiveis caminhos gerados para o modelo transformer.</em></p>
+    <p align="center"><p align="center"><p><em>Figura 20: Exemplos de distribuição de probabilidade de possiveis caminhos gerados para o modelo transformer.</em></p>
 </div>
 
 ## Conclusão
