@@ -15,6 +15,8 @@ As an additional note, we have included a description of how to perform the func
 
 Keys related to model definition:
 ```
+yaml
+
 model:
   name_model: "string with model name"
   dir_save_results: "path/name_of_folder_to_be_created/"  # default: ./name_model/
