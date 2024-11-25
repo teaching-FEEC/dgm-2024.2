@@ -1,4 +1,5 @@
-    
+#Implement main functions for training PulmoNet
+
 from tqdm import trange
 import torch
 import gc
@@ -6,6 +7,13 @@ from losses import *
 from utils import plt_save_example_synth_img, plt_save_example_synth_img_with_airway, set_requires_grad, plt_save_example_airways_img
 import wandb
 
+#--------------------------------------Functions for PulmoNet--------------------------------
+#used for both PulmoNet's version that generates only CT images
+#and the version that generates airway segmentation and CT images
+#for the latter: generate_airway_segmentation=True
+
+#steps_to_complete_bfr_upd_disc: the amount of steps the GENERATOR takes BEFORE the disc gets updated
+#steps_to_complete_bfr_upd_gen: the amount of steps the DISCRIMINATOR takes BEFORE the gen gets updated
 def run_train_epoch(gen, 
                     disc, 
                     criterion, 
@@ -14,7 +22,8 @@ def run_train_epoch(gen,
                     gen_opt, 
                     epoch, 
                     steps_to_complete_bfr_upd_disc, 
-                    steps_to_complete_bfr_upd_gen, device,
+                    steps_to_complete_bfr_upd_gen, 
+                    device,
                     use_wandb, 
                     regularizer=None,
                     regularization_level=None,
@@ -23,6 +32,7 @@ def run_train_epoch(gen,
     mean_loss_gen = 0
     mean_loss_disc = 0
 
+    #average loss of each structure consider only the batches used for updating each of them
     counter_batches_used_to_upd_disc = 0
     counter_batches_used_to_upd_gen = 0
 
@@ -45,6 +55,7 @@ def run_train_epoch(gen,
                 input_airway = input_airway_batch.to(device)
                 input_mask = input_mask_batch.to(device)
             
+            #updates DISC
             if counter_steps_before_upd_disc == 0:
                 set_requires_grad(model=disc,set_require_grad=True)
                 disc_opt.zero_grad()
@@ -70,6 +81,7 @@ def run_train_epoch(gen,
                 if counter_steps_before_upd_gen == steps_to_complete_bfr_upd_gen:
                     counter_steps_before_upd_gen = 0
             
+            #updates GEN
             if counter_steps_before_upd_gen == 0:
                 set_requires_grad(model=disc,set_require_grad=False)
                 gen_opt.zero_grad()
@@ -135,6 +147,7 @@ def run_validation_epoch(gen,
     mean_loss_gen = 0
     mean_loss_disc = 0
 
+    #no updating the networks
     with torch.no_grad():
         torch.cuda.empty_cache()
         gc.collect()
@@ -199,7 +212,7 @@ def run_validation_epoch(gen,
 
     return (mean_loss_gen/len(data_loader)), (mean_loss_disc / len(data_loader))
 
-
+#save image produced on a given epoch to observe the training evolution
 def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir,device, generate_airway_segmentation=False):
 
     gen.eval()
@@ -232,6 +245,8 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir,device, generate_airw
                                         save_dir=save_dir)
         
         else:
+            #synthetic CT: first channel of generator's output
+            #synthetic airway: second channel of generator's output
             plt_save_example_synth_img_with_airway(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(),
                                                     input_mask_ref=input_mask[0,0,:,:].detach().cpu().numpy(), 
                                                     input_airway_ref=input_airway[0,0,:,:].detach().cpu().numpy(), 
@@ -240,9 +255,15 @@ def valid_on_the_fly(gen, disc, data_loader,epoch,save_dir,device, generate_airw
                                                     disc_ans=ans_gen[0,0,:,:].detach().cpu().numpy(), 
                                                     epoch=epoch+1, 
                                                     save_dir=save_dir)
-            
-### U-Net ---------------------------------------------------------
-def run_train_epoch_unet(unet, criterion, data_loader, unet_opt, epoch, device):
+
+
+#--------------------------------------Functions for U-Net--------------------------------
+def run_train_epoch_unet(unet, 
+                         criterion, 
+                         data_loader, 
+                         unet_opt, 
+                         epoch, 
+                         device):
 
     mean_loss = 0 
     counter_batches_used_to_upd = 0   
@@ -257,7 +278,11 @@ def run_train_epoch_unet(unet, criterion, data_loader, unet_opt, epoch, device):
             input_airway = input_airway_batch.to(device)
             
             unet_opt.zero_grad()
-            loss = get_unet_loss(unet,criterion,input_airway,input_img,device)
+            loss = get_unet_loss(unet=unet,
+                                 criterion=criterion,
+                                 input_airway=input_airway,
+                                 input_img=input_img,
+                                 device=device)
             if loss.requires_grad:
                 loss.backward()  # Compute gradients
                 unet_opt.step()  # Update model parameters
@@ -273,7 +298,11 @@ def run_train_epoch_unet(unet, criterion, data_loader, unet_opt, epoch, device):
     return (mean_loss / counter_batches_used_to_upd)
 
 
-def run_validation_epoch_unet(unet, criterion, data_loader, epoch, device):
+def run_validation_epoch_unet(unet, 
+                              criterion, 
+                              data_loader, 
+                              epoch, 
+                              device):
 
     mean_loss = 0
 
@@ -288,7 +317,11 @@ def run_validation_epoch_unet(unet, criterion, data_loader, epoch, device):
 
                 input_img = input_img_batch.to(device)
                 input_airway = input_airway_batch.to(device)
-                loss = get_unet_loss(unet,criterion,input_airway,input_img,device)
+                loss = get_unet_loss(unet=unet,
+                                     criterion=criterion,
+                                     input_airway=input_airway,
+                                     input_img=input_img,
+                                     device=device)
                 mean_loss = mean_loss + loss.item() 
 
                 progress_bar.set_postfix(
@@ -298,7 +331,11 @@ def run_validation_epoch_unet(unet, criterion, data_loader, epoch, device):
     return (mean_loss/len(data_loader))
 
 
-def valid_on_the_fly_unet(unet, data_loader,epoch,save_dir,device):
+def valid_on_the_fly_unet(unet, 
+                          data_loader,
+                          epoch,
+                          save_dir,
+                          device):
 
     unet.eval()
 
