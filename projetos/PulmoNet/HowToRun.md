@@ -14,8 +14,7 @@ As an additional note, we have included a description of how to perform the func
 1. Training configurations should be described in a YAML file composed by the following keys:
 
 Keys related to model definition:
-```
-yaml
+```yaml
 
 model:
   name_model: "string with model name"
