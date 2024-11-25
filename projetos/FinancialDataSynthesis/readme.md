@@ -128,7 +128,7 @@ O período analisado inclui 2020, escolhido intencionalmente para testar os mode
 2. **Engenharia de Features:**
 
 <p align="justify">
-Depois de baixar os históricos de dados das séries temporais financeiras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, foram criadas features baseadas em transformadas de Fourier para extrair tendências de longo e curto prazo nos preços das ações.
+Depois de coletar as séries históricas de preço, calculamos alguns indicadores técnicos e extraímos features relevantes. Também foram criados features baseados nas transformadas de Fourier para extrair tendências de longo e curto prazo nos preços das ações.
 </p>
 
 <ul>
@@ -139,12 +139,12 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
 </p>
 <div align="center">
     <img src="img_readme/Tecnicos.png" alt="Features Baseadas em Indicadores Técnicos" title="Indicadores Técnicos" />
-    <p><em>Figura 2: Features Baseadas em Indicadores Técnicos criadas como complemento para o banco de dados apresentado na Figura 1.</em></p>
+    <p><em>Figura 2: Features Baseados em Indicadores Técnicos criadas como complemento para o banco de dados apresentado na Figura 1.</em></p>
 </div>
 
 <div align="center">
     <img src="img_readme/Fourier.png" alt="Features Baseadas em Transformadas de Fouerier" title="Transformadas de Fouerier" />
-    <p><em>Figura 3: Features Baseadas em Transformadas de Fouerier criadas como complemento para o banco de dados apresentado na Figura 1.</em></p>
+    <p><em>Figura 3: Features Baseados em Transformadas de Fouerier criadas como complemento para o banco de dados apresentado na Figura 1.</em></p>
 </div>
 
 3. **Normalização dos Dados:**
@@ -169,14 +169,14 @@ Essa abordagem garante que os valores da série temporal sejam escalados para o 
 4. **Construção da Rede Neural:**
 
 <p align="justify">
-O modelo GAN para predição de séries temporais, usa como função de perda a divergência de Kullback-Leibler (KL) e a divergência de Jensen-Shannon (JS), no processo de treinamento. Essas duas divergência são métricas matemáticas usadas para medir a semelhança entre duas distribuições de probabilidade. O modelo GAN usa no Discriminador a função de perda baseada na divergência de Jensen-Shannon (JS), que se apresenta a continuação:
+O modelo GAN para predição de séries temporais, usa como função de perda a divergência de Kullback-Leibler (KL) e a divergência de Jensen-Shannon (JS), no processo de treinamento. Essas duas divergência são métricas matemáticas usadas para medir a semelhança entre duas distribuições de probabilidade. O modelo GAN usa, no discriminador ,a função de perda baseada na divergência de Jensen-Shannon (JS), dada por:
 
 $$
 -\frac{1}{m} \sum_{i=1}^m \log D\left(y^i\right)-\frac{1}{m} \sum_{i=1}^m\left(1-\log D\left(G\left(x^i\right)\right)\right)
 $$
 
 
-Neste projeto, o gerador foi treinado usando perda de entropia cruzada para minimizar a diferença entre duas distribuições, o que equivale a minimizar a divergência de Kullback-Leibler (KL), usando a função de perda apresentada a continuação
+Neste projeto, o gerador foi treinado usando perda de entropia cruzada para minimizar a diferença entre duas distribuições, o que equivale a minimizar a divergência de Kullback-Leibler (KL), usando a função de perda, apresentada como:
 
 $$
 -\frac{1}{m} \sum_{i=1}^m\left(\log D\left(G\left(x^i\right)\right)\right)
@@ -192,7 +192,7 @@ $$
 
 
 <p align="justify">
-O gerador foi construído usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A seleção das três camadas GRU foi porque o modelo utilizou os ultimos três dias de dados históricos para poder prever o preço do dia seguente. Na entrada, temos as 36 features explicadas anteriormente nos passos 1 e 2. Por isso, observamos que temos uma dimensão de entrada de (Bs,3,36), em que Bs é o tamanho do batch de treinamento. No estudo,  consideramos Bs = 128. Note-se que a GAN usada tem uma arquitetura condicional, onde a geração dos dados é condicionada a alguns dados de entrada. Neste caso, o contexto usado foi os valores passados reais do valor da ação da Apple $yc$. 
+O gerador foi construído usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A seleção das três camadas GRU foi porque o modelo utilizou os ultimos três dias de dados históricos para poder prever o preço do dia seguinte. Na entrada, temos as 36 features explicadas anteriormente nos passos 1 e 2. Por isso, observamos que temos uma dimensão de entrada de (Bs,3,36), em que Bs é o tamanho do batch de treinamento. No estudo,  consideramos Bs = 128. Note-se que a GAN usada tem uma arquitetura condicional, onde a geração dos dados é condicionada a alguns dados de entrada. Neste caso, o contexto usado foi os valores passados reais do valor da ação da Apple $yc$. 
 </p>
 
 <p align="justify">
