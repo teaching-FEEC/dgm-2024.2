@@ -199,8 +199,13 @@ i) Wasserstein Loss:
 Wasserstein Loss visa maximizar a diferença entre suas pontuações de saída para amostras reais e falsas. Isso é expresso como:
 
 $$
-L_{\text {Wasserstein }}=\mathbb{E}_{x_{\text {real }}}\left[D\left(x_{\text {real }}\right)\right]-\mathbb{E}_{x_{\text {fake }}}\left[D\left(x_{\text {fake }}\right)\right]
+L_{\text{Wasserstein}} = \mathbb{E}_{x_{\text{real}}} \left[D(x_{\text{real}})\right] - \mathbb{E}_{x_{\text{fake}}} \left[D(x_{\text{fake}})\right]
 $$
+
+where:
+- \(x_{\text{real}}\) represents real data samples.
+- \(x_{\text{fake}}\) represents generated (fake) data samples.
+- \(D\) is the discriminator or critic function in the WGAN framework.
 
 i) Gradient Penalty: 
 Para impor a restrição de Lipschitz (garantindo que os gradientes tenham uma norma de no máximo 1), um termo de penalidade é adicionado. A penalidade de gradiente é calculada como:
