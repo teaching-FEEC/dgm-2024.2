@@ -164,28 +164,7 @@ $$
 
 <img src="img_readme/GAN.png" alt="Estrutura GAN" title="Estrutura da rede generativa GAN" />
 
-Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$. A continuação se detalha as arquitetura do Gerador e do Discriminador.
-
-### Arquitetura do Gerador
-- O gerador foi construido usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A estrutura do gerador se detalha a continuação:
-  - **GRU** (1024 unidades) com dropout recorrente 0,2
-  - **GRU** (512 unidades) com dropout recorrente 0,2
-  - **GRU** (256 unidades) com dropout recorrente 0,2
-  - **Dense Layers**: 128 → 64 → `output_dim`
-- Input shape: `(input_dim, feature_size)`
-
-### Discriminator Architecture
-- Employs a 1D CNN (Convolutional Neural Network) architecture.
-- Structure:
-  - **Conv1D** (32 filters) with LeakyReLU activation
-  - **Conv1D** (64 filters) with LeakyReLU activation
-  - **Conv1D** (128 filters) with LeakyReLU activation
-  - **Flatten Layer**
-  - **Dense Layer**: 220 units with LeakyReLU activation
-  - **Dense Layer**: 220 units with ReLU activation
-  - **Dense Layer**: 1 unit with sigmoid activation for binary classification
-
-
+O gerador foi construido usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A seleção das três camadas GRU foi por causa que neste trabalho foi usado os ultimos três días de dados históricos para poder prever o día seguente. Na entrada se pode visualizar que temos as 36 features explicadas anteriormente nos passos 1 e 2. Por isso se pode visualzar que temos uma dimensão de entreda de Bs,3,36 onde Bs é o tamanho do batch de treinamento. Neste estudo foi Bs = 128. Note-se que a GAN usada tem uma arquitetura condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso o contexto usado foi os valores passados reais do valor da ação da Apple $yc$. 
 
 **CASO 2: TRANSFORMERS**
 
