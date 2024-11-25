@@ -129,19 +129,23 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
 
 3. **Normalização dos Dados:**
 
-Após a coleta dos dados e extração dos features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe: 
+Após a coleta dos dados e engenharia de features, armazenamos as séries temporais (do preço e dos features) em um mesmo dataframe: 
 
-\[ D = [X_{1:N}, F_{1:N}] \]
+$$D = [X_{1:N}, F_{1:N}]$$
 
-Em seguida, normalizamos os valores de cada série temporal para facilitar o treinamento, utilizando o método Min-Max, que reescala os valores para um intervalo pré-determinado, tipicamente \([0, 1]\). A normalização adotada foi:
+Para facilitar o treinamento do modelo, os valores de cada série temporal foram normalizados utilizando a técnica de normalização min-max. A fórmula adotada foi:
 
-\[
-x_n(i) = \frac{x(i) - \min[x]}{\max[x] - \min[x]}
-\]
+$$
+x_{n}(i) = \frac{x(i) - \min(x)}{\max(x) - \min(x)}
+$$
 
-- \(x_n(i)\): representa o valor normalizado de uma série temporal (preço ou algum feature) no instante \(i\).
-- \(x(i)\): representa o valor antes da normalização (preço ou algum feature) no instante \(i\).
-- \(\min[x]\), \(\max[x]\): representam, respectivamente, o menor e o maior valor associado à série temporal dos elementos de \(x(i)\).
+- $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
+- $x(i)$: representa o valor original da série temporal (preço ou algum feature) no instante $i$.
+- $\min(x)$: representa o menor valor na série temporal $x$.
+- $\max(x)$: representa o maior valor na série temporal $x$.
+
+Essa abordagem garante que os valores da série temporal sejam escalados para o intervalo $[0, 1]$, permitindo que o modelo processe os dados de forma eficiente e consistente.
+
 
 **CASO 2: TRANSFORMERS**
 
