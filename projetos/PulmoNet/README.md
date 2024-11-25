@@ -359,6 +359,9 @@ Visualmente, dentre os três modelos considerados, o Sweep10 se mostra o modelo 
 
 *Figura 19: Imagens geradas pelo modelo Sweep412 após segunda etapa de treino. A esquerda de cada imagem sintética, apresenta-se a imagem real a partir da qual extraiu-se a máscara pulmonar.*
 
+![](figs/ezgif.com-animated-gif-maker.gif?raw=true)
+
+
 **Análise Quantitativa**
 
 | Modelo | FID (10k) | FID (60k) | SSIM completo (10k) | SSIM completo (60k) | SSIM central (10k) | SSIM central (60k) | Correlação estrutural completa (10k) | Correlação estrutural completa (60k) |
