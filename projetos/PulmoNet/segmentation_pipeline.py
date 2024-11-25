@@ -2,10 +2,8 @@
 @file segmentation_pipeline.py
 
 @description
-Arquivo para execução do treinamento da rede U-Net para segmentação das vias aéreas,
-com e sem os pesos do melhor gerador da GAN da PulmoNet.
-O desempenho desta rede U-Net sem pesos será comparado com o fine-tunning do gerador
-da PulmoNet para a tarefa de segmentação das vias aéreas.
+File for executing the training of the U-Net network for airway segmentation, 
+with and without the weights of the best PulmoNet GAN generator. 
 '''
 
 import torch
@@ -24,16 +22,19 @@ config = read_yaml(file=config_path)
 
 ####----------------------Definition-----------------------------------
 #names and directories
+#dir_save_results will store all training info
 name_model = str(config['model']['name_model'])
 dir_save_results = str(config['model'].get('dir_save_results',
                                             f'./{name_model}/'))
 dir_save_models = dir_save_results+'models/'
 dir_save_example = dir_save_results+'examples/'
 dir_save_test = dir_save_results+'test/'
+#if model is not new, will resume training from a given model
 new_model = bool(config['model'].get('new_model', True))
-
+#if fine_tunning is True, will allocate the weights of a given model
 fine_tunning = bool(config['model'].get('fine_tunning', True))
 trained_gen_path = str(config['model']['trained_gen_path'])
+#if freeze_layers is True, we don't learn the parameters in the encoder part of the generator
 freeze_layers = bool(config['model'].get('freeze_layers', True))
 
 #models
@@ -62,7 +63,8 @@ if fine_tunning is True:
         for param in unet.conv8.parameters():
             param.requires_grad = False
 
-#data
+#path to data: should be a directiory with folders: 'seg_train' and 'seg_val'
+#inside of each folder should be 3 folders: 'images', 'labels' and 'lungs'
 processed_data_folder = str(config['data']['processed_data_folder'])
 print(processed_data_folder)
 dataset_type = str(config['data']['dataset'])
@@ -77,6 +79,7 @@ end_point_validation_data = int(config['data']['end_point_validation_data'])
 batch_size_train = int(config['training']['batch_size_train'])
 batch_size_validation = int(config['training']['batch_size_validation'])
 n_epochs = int(config['training']['n_epochs'])
+#transformations to apply to images in dataset processing
 transformations = config['training'].get('transformations',None)
 if transformations is not None:
     transform = FACTORY_DICT["transforms"][transformations["transform"]]
@@ -85,10 +88,12 @@ else:
     transform = None
     transform_kwargs = {}
 
+#if b_early_stopping allows for early stopping strategy
 b_early_stopping = bool(config['training']['early_stopping'])
 if b_early_stopping is True:
     patience = int(config['training']['patience'])
     delta = int(config['training']['delta'])
+    #check class in utils.py
     early_stopping = EarlyStopping(patience=patience, delta=delta)
 
 #loss
@@ -102,6 +107,8 @@ unet_opt = FACTORY_DICT['optimizer'][optimizer_type](unet.parameters(),
                                                     **config['optimizer'].get('info',{}))
 
 #saves
+#save best model will consider the minimum of validation loss
+#safe save: in case something goes wrong and the training must be interrupted, you don't loose everything
 step_to_safe_save_models = int(config['save_models_and_results']['step_to_safe_save_models'])
 save_training_losses = FACTORY_DICT["savelosses"]["SaveUnetTrainingLosses"](dir_save_results=dir_save_results)
 save_best_model = bool(config['save_models_and_results']['save_best_model'])
@@ -137,13 +144,16 @@ data_loader_validation = DataLoader(dataset_validation,
 mean_loss_train_unet_list = []
 mean_loss_validation_unet_list = []
 
+#create folder or empties an existing folder if model is new
 prepare_environment_for_new_model(new_model=new_model, 
                                   dir_save_results=dir_save_results,
                                   dir_save_models=dir_save_models,
                                   dir_save_example=dir_save_example)
 if new_model is True:
+    #creates CSV file to store losses
     save_training_losses.initialize_losses_file()
 else:
+    #reloads training objects
     epoch_resumed_from = resume_training_unet(dir_save_models=dir_save_models, 
                                                 name_model=name_model, 
                                                 unet=unet, 
@@ -155,6 +165,7 @@ else:
 for epoch in range(n_epochs):
 
     ####----------------------loops-----------------------------------
+    #update weights
     loss_train_unet = run_train_epoch_unet(unet=unet,
                                             criterion=criterion,
                                             data_loader=data_loader_train,
@@ -163,6 +174,7 @@ for epoch in range(n_epochs):
                                             device=device)
     mean_loss_train_unet_list.append(loss_train_unet)
 
+    #check performance on valdiation data
     loss_validation_unet = run_validation_epoch_unet(unet=unet,
                                                     criterion=criterion,
                                                     data_loader=data_loader_validation,
@@ -170,6 +182,7 @@ for epoch in range(n_epochs):
                                                     device=device)
     mean_loss_validation_unet_list.append(loss_validation_unet)
 
+    #save an output sample
     if (new_model is True) or (epoch_resumed_from is None):
         epoch_to_appear_for_ref = epoch
     else:
@@ -177,6 +190,7 @@ for epoch in range(n_epochs):
     valid_on_the_fly_unet(unet=unet, data_loader=data_loader_validation, epoch=epoch_to_appear_for_ref, save_dir=dir_save_example,device=device)
 
     ###------------------------------------------savings----------------------------------
+    #stores model and optimizer
     if epoch % step_to_safe_save_models == 0:
         current_lr =  initial_lr
         safe_save_unet(dir_save_models=dir_save_models, 
@@ -185,10 +199,13 @@ for epoch in range(n_epochs):
                         epoch=epoch, 
                         unet_optimizer=unet_opt,
                         current_lr=current_lr)
+    #save losses in CSV file
     if (epoch % step_to_safe_save_models == 0) or (epoch == n_epochs-1):
         save_training_losses(mean_loss_train_unet_list=mean_loss_train_unet_list,
                              mean_loss_validation_unet_list=mean_loss_validation_unet_list)
-    
+        
+    #checks if validation loss got smaller than the best value
+    #if so, saves current model
     if save_best_model is True:
         best_model(current_score=loss_validation_unet, 
                    name_model=name_model, 
