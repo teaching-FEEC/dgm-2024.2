@@ -85,16 +85,16 @@ Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Gener
 O projeto teve como objetivos:
 
 -  Estudar e desenvolver dois modelos generativos baseados nas arquiteturas GANs e Transformers para predizer preços de ações baseados em valores históricos e features relevantes.
--  Comparar esses modelos generativos com modelos tradicionais como que usam LSTM e GRU.
+- Comparar o desempenho desses modelos com modelos tradicionais de séries temporais, como as redes neurais recorrentes LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit).
 
-Para o projeto, escolhemos utilizamos o seguinte dado financeiro:
-- Histórico de dados dos preços da ação da empresa Apple: preço em dólares da ação do período de 1º de julho de 2010 até 1 de julho de 2020.
+Para alcançar esses objetivos, utilizamos:
+- O histórico dos preços diários (preço de fechamento) das ações da empresa Apple Inc. (ticker: AAPL), em dólares, no período de 1º de julho de 2010 até 1º de julho de 2020.
 
 ## Contribuições
-- Criação de um modelo generativo baseado em GAN  
-- Criação de um modelo generativo baseado em Wasserstein GAN  
-- Criação de um modelo generativo baseado em Transformers  
-- Comparação de desempenho com redes profundas baseadas em LSTM e GRU
+- Criação de um modelo generativo baseado em GAN;  
+- Criação de um modelo generativo baseado em Wasserstein GAN;  
+- Criação de um modelo generativo baseado em Transformers;
+- Comparação de desempenho com redes profundas baseadas em LSTM e GRU;
 
 Utilizamos como métrica de avaliação o Root Mean Square Error (RMSE).
 
