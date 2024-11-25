@@ -357,40 +357,132 @@ Para o segundo modelo, foram feitos dois testes, onde foram alterados alguns hip
 
 ### **Resultados Obtidos Durante o Treinamento**
 
+#### **Métricas Monitoradas durante o Treinamento**
+
 Durante o treinamento da GAIL, as perdas do **Discriminador** e do **Gerador** são monitoradas para avaliar o progresso do aprendizado. Cada componente possui um objetivo específico:
 
 - **Discriminador**: Aprender a distinguir entre pares estado-ação gerados pelo especialista e aqueles gerados pelo modelo. Sua perda é calculada usando a função de **Binary Cross-Entropy (BCE)**:
 
-
+<div align="center">
+  <img src="img/lossdisc.jpeg" alt="lossd">
+  <p>Figura 6: Equação da Loss do Discriminador.</p>
+</div>
 
 
 - **Gerador**: Busca enganar o discriminador ao produzir pares estado-ação que sejam indistinguíveis daqueles do especialista. Sua perda é definida como o negativo do logaritmo da saída do discriminador para o par gerado:
 
-
+<div align="center">
+  <img src="img/lossgen.jpeg" alt="lossg">
+  <p>Figura 7: Equação da Loss do Gerador.</p>
+</div>
 
 As perdas são monitoradas ao longo das épocas para verificar a estabilidade do treinamento e a convergência. Tendências esperadas incluem uma redução consistente da perda do gerador, indicando que ele está aprendendo a replicar as ações do especialista, e uma estabilização na perda do discriminador, sugerindo que ele atingiu equilíbrio na distinção entre os dados gerados e reais.
 
 
 Também foi monitorada a métrica **Jensen-Shannon Divergence (JS)**, que é utilizada para avaliar a similaridade entre as distribuições das ações geradas pelo modelo (policy) e as ações dos especialistas. O valor da divergência JS varia de 0 a 1, onde valores menores indicam maior similaridade.
 
+<div align="center">
+  <img src="img/js.jpeg" alt="JS">
+  <p>Figura 8: Equação da Divergência de JS.</p>
+</div>
 
 No treinamento, a métrica é monitorada a cada época para garantir que a política gerada pela GAIL esteja convergindo para o comportamento do especialista, indicando um aprendizado eficiente. Valores suavizados da JS Divergence também são plotados para facilitar a análise do progresso do treinamento.
+
+#### **Treinamento dos Modelos**
+
+Os resultados obtidos durante o treinamento de cada modelo, são apresentados abaixo, como o treinamento é feito de forma online, ou seja, diretamente no ambiente de simulação, além dos gráficos das métricas monitoradas durante o treinamento, é apresentado um gif com o comportamento (trajetórias geradas pelo manipulador) durante o treinamento de cada variação do modelo.
+
+##### **Modelo 1.1**
+
+<div align="center">
+  <img src="img/model_11.png" alt="metricas1">
+  <p>Figura 9: Perdas e Divergência de JS obtidas durante o treinamento da primeira variação do modelo 1.</p>
+</div>
+
+<div align="center">
+ <img src="img/model1_ini.gif" alt="train1">
+ <p>Figura 10: Comportamento inicial do manipualdor durante o treinamento da primeira variação do modelo 1.</p>
+</div>
+
+
+##### **Modelo 1.2**
+
+<div align="center">
+  <img src="img/model_12.png" alt="metricas2">
+  <p>Figura 11: Perdas e Divergência de JS obtidas durante o treinamento da segunda variação do modelo 1.</p>
+</div>
+
+<div align="center">
+ <img src="img/model2_ini.gif" alt="train1">
+ <p>Figura 12: Comportamento inicial do manipualdor durante o treinamento da segunda variação do modelo 1.</p>
+</div>
+
+##### **Modelo 2.1**
+
+<div align="center">
+  <img src="img/model_21.png" alt="metricas2">
+  <p>Figura 13: Perdas e Divergência de JS obtidas durante o treinamento da primeira variação do modelo 2.</p>
+</div>
+
+<div align="center">
+ <img src="img/model21_ini.gif" alt="train1">
+ <p>Figura 14: Comportamento inicial do manipualdor durante o treinamento da primeira variação do modelo 2.</p>
+</div>
+
+##### **Modelo 2.2**
+
+<div align="center">
+  <img src="img/model_22.png" alt="metricas2">
+  <p>Figura 15: Perdas e Divergência de JS obtidas durante o treinamento da segunda variação do modelo 2.</p>
+</div>
+
+<div align="center">
+ <img src="img/model22_ini.gif" alt="train1">
+ <p>Figura 16: Comportamento inicial do manipualdor durante o treinamento da segunda variação do modelo 2.</p>
+</div>
 
 
 ### **Resultados Durante o Teste - Carregando os Pesos do Modelo Treinado**
 
+Para a execução dos testes após o treinamento, os pesos do Gerador, obtidos durante o processo de treinamento, foram carregados. Assim como em uma GAN tradicional, o Discriminador não é utilizado durante a fase de teste, visto que uma vez que o treinamento foi bem sucedido, o gerador será capaz de gerar trajetórias válidas. A seguir, são apresentados gifs das simulações realizadas durante essa etapa de teste.
+
+##### **Modelo 1.1**
+
+<div align="center">
+ <img src="img/test_model1.gif" alt="test1">
+ <p>Figura 17: Trajetória obtida na fase de teste, com a primeira variação do modelo 1.</p>
+</div>
 
 
+##### **Modelo 1.2**
+
+<div align="center">
+ <img src="img/test_model12.gif" alt="test12">
+ <p>Figura 18: Trajetória obtida na fase de teste, com a segunda variação do modelo 1.</p>
+</div>
+
+##### **Modelo 2.1**
+
+<div align="center">
+ <img src="img/test_model21.gif" alt="test21">
+ <p>Figura 19: Trajetória obtida na fase de teste, com a primeira variação do modelo 2.</p>
+</div>
+
+##### **Modelo 2.2**
+
+<div align="center">
+ <img src="img/test_model22.gif" alt="test21">
+ <p>Figura 20: Trajetória obtida na fase de teste, com a segunda variação do modelo 2.</p>
+</div>
 
 
-### **Discussão dos Resultados**
+### **Discussão dos Resultados e Conclusão**
 
+Embora os resultados obtidos não tenham alcançado trajetórias totalmente fiéis aos dados especialistas, foi possível identificar um padrão consistente entre os modelos testados: todos geraram trajetórias que tendem a buscar o braço esquerdo da pessoa. Isso indica que os resultados fazem sentido dentro do contexto do problema, demonstrando que o modelo não produz saídas aleatórias.
 
+Para aprimorar os resultados, uma direção promissora para trabalhos futuros seria integrar o modelo generativo utilizado neste estudo com técnicas de aprendizado por reforço. Nesse cenário, o aprendizado por reforço poderia atuar como uma etapa de refinamento (fine-tuning) para as trajetórias geradas pelo GAIL. Além disso, o uso de RL permitiria monitorar e ajustar o comportamento da roupa durante a manipulação, o que pode levar a resultados mais precisos e realistas.
 
-
-
-### **Conclusão**
-
+Assim, os resultados obtidos neste trabalho não apenas abrem caminho para melhorias, mas também destacam o potencial da aplicação de modelos generativos em pesquisas relacionadas à robótica assistiva, expandindo o alcance dessa abordagem em tarefas complexas.
 
 
 
