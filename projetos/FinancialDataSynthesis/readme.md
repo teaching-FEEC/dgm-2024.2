@@ -347,7 +347,13 @@ A figura abaixo ilustra o workflow:
 | RMSE do conjunto de teste (incluindo 2020) | 6.60 | 5.33 | 4.08 |   4.77   |   2.605      |
 | RMSE do conjunto de teste (excluindo 2020) | 9.45 | 5.38 | 3.09 |   3.88   |   1.976      |
 
+### Avaliação Qualitativa das GANs
+A figura permite fazer a inspeção visual das séries temporais geradas pelos modelos GANs
 
+ <div align="center">
+    <img src="Qualitativa.png" alt="Qualitativa" title="Qualitativa" />
+    <p><em>Figura 11: Avaliação Qualitativa das GANs. </em></p>
+</div>
 
 ### Artigos de Referência
 Os principais artigos que o grupo já identificou como base para estudo e planejamento do projeto são:
