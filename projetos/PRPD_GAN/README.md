@@ -83,7 +83,13 @@ O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de m
 
 ### InfoGAN
 
+<img src="./reports/figures/infogan-epoch66.png" alt="infogan1" width="300" />
+
+<img src="./reports/figures/infogan-epoch83.png" alt="infogan2" width="300" />
+
 ### Difussion Model
+
+<img src="./reports/figures/Diffusion.png" alt="diffusion" width="300" />
 
 ### ACWGAN-SN
 
@@ -176,6 +182,17 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 | Val     | 168.473.768 | 0.084379 | (0.6250,0.0118) | 216.852.641 | 217.768.535 | 194.649.687 | 0.165530 | 0.099961 | 0.118446 | (0.9648,0.0000) | (0.7679,0.0000) | (0.6377,0.0000) |      |
 | Test    | 192.640.402 | 0.134054 | (0.0127,0.0000) | 284.380.472 | 248.441.158 | 212.888.935 | 0.369825 | 0.205304 | 0.214673 | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
 
+##### Resultados do Defeito de Coroa
+
+![corona_no_gaussiannoisedis](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png)
+
+##### Resultados do Defeito Interno
+![internal_no_spectralnorm](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png)
+
+##### Resultados do Defeito de Superfície
+
+![surface_no_spectralnorm](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png)
+
 #### Ruído Gaussiano no Gerador
 
 <img src="./reports/figures/tSNE_ACWGAN_noGNoise.png" width="50%">
@@ -208,7 +225,7 @@ Citar a grande quantidade de imagens pretas
 
 ##### Resultados do Defeito de Superfície
 
-![surface_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png)
+![surface_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png)
 
 #### Comparação dos modelos
 
