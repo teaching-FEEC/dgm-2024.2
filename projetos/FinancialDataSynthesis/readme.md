@@ -372,7 +372,18 @@ Os principais artigos que o grupo já identificou como base para estudo e planej
 - **Pandas** e **NumPy** para manipulação de dados tabulares.
 
 ## Conclusão
-Por fim, a principal dificuldade do projeto será gerar os dados financeiros sintéticos realistas. Abordaremos diversas estratégias que vão desde o pré-processamento dos dados, ajustes nos hiperparâmetros das GANs e o emprego de métricas eficientes.
+Em nosso trabalho treinamos três modelos generativos GAN,  WGAN-GP e um modelo baseado em transformers.
+- De acordo com o resultado experimental, temos as seguintes conclusões.
+   
+- Quando há um evento inesperado como COVID-19, o WGAN-GP tem melhor desempenho do que o GAN, mas em períodos normais, o GAN tem melhor desempenho.
+  
+- O modelo GAN incluindo RNN é instável, ou seja é muito difícil ajustar os hiperparâmetros, e sem bons parâmetros os resultados são muito ruins.
+
+- No geral, os modelos GANs têm melhor desempenho do que os modelos tradicionais de base, de acordo com nosso resultado, mas o modelo baseado em Transformers tem um melhor comportamento e resultado do que o resto de modelos, neste estudo.
+
+## Trabalhos Futuros
+
+Pesquisas futuras devem ser dedicadas ao desenvolvimento do ajuste de hiperparâmetros. No modelo GAN, se cada um dos parâmetros, em cada camada e para todo o modelo, puder ser ajustado com mais precisão, acreditamos que o resultado teria melhorado significativamente.
  
 ## Referências Bibliográficas
 [1] Li, Gaorong, Lei Huang, Jin Yang, and Wenyang Zhang.  
