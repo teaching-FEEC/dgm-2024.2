@@ -351,7 +351,7 @@ A figura abaixo ilustra o workflow:
 A figura permite fazer a inspeção visual das séries temporais geradas pelos modelos GANs
 
  <div align="center">
-    <img src="Qualitativa.png" alt="Qualitativa" title="Qualitativa" />
+    <img src="img_readme/Qualitativa.png" alt="Qualitativa" title="Qualitativa" />
     <p><em>Figura 11: Avaliação Qualitativa das GANs. </em></p>
 </div>
 
