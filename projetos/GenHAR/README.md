@@ -389,6 +389,8 @@ A análise dos resultados nas tabelas acima mostram algumas características int
 
 De maneira geral, os modelos apresentam valores de distância R2R e R2S similares, indicando que o comportamento da variação dos dados são próximos e valores S2S levemente menores do que o R2R, mostrando que os dados sintéticos possuem variabilidade semelhantes aos dados reais e os modelos não colapsaram para a geração de dados repetidos. Contrário a esses resultados, destaca-se o modelo DoppelGAN, o qual apresenta valores de distância R2S maiores que as R2R em quase todos os datasetes e métricas de distância, indicando um afastamento dos dados sintéticos em relação aos dados reais, o que é reforçado pela visualização da projeção t-SNE dos dados mostrado na Figura 7.
 
+Por fim, nenhum modelo apresentou uma distância mínima R2S nula, indicando que não há a cópia de dados reais no conjunto sintético, porém alguns modelos apresentam distâncias muito baixas para métrica DTW indicando que pode haver um pouco de vazamento de dados do conjunto real para o sintético o que pode acarretar em problemas de privacidade dos dados coletados.
+
 **Análise de Usabilidade**
 
 Nas Tabelas 5 e 6 são apresentados os valores de f1-score para modelos Random Forest e SVM, respectivamente, treinados com dados reais (R), dados sintéticos (S) ou dados sintéticos e reais juntos (M) de cada dataset e conjunto de dados sintéticos. 
