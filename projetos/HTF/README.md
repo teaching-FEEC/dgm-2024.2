@@ -250,12 +250,12 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
 <div style="text-align: center;">
     <p align="center">
     <!-- Primeira linha de 3 imagens -->
-    <img src="trained_models/first_study/figure_LSTM_ed8_md32_hd32_841_zara1.png" alt="LSTM ed8" style="width: 400px;">
-    <img src="trained_models/first_study/figure_LSTM_ed16_md64_hd64_841_zara1.png" alt="LSTM ed16" style="width: 400px;">
+    <img src="trained_models/first_study/figure_LSTM_ed8_md32_hd32_841_zara1.png" alt="LSTM ed8" style="width: 500px;">
+    <img src="trained_models/first_study/figure_LSTM_ed16_md64_hd64_841_zara1.png" alt="LSTM ed16" style="width: 500px;">
     <br>
     <!-- Segunda linha de 3 imagens -->
-    <img src="trained_models/first_study/figure_Transformer_x2_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x2" style="width: 400px;">
-    <img src="trained_models/first_study/figure_Transformer_x4_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x4" style="width: 400px;">
+    <img src="trained_models/first_study/figure_Transformer_x2_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x2" style="width: 500px;">
+    <img src="trained_models/first_study/figure_Transformer_x4_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x4" style="width: 500px;">
     <p align="center"><p><em>Figura 16: Gráficos de convergência dos treinamentos realizados no estudo de primeiro tipo para 841 iterações.</em></p>
 </div>
 
