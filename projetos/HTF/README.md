@@ -151,8 +151,8 @@ O pooling social considera um grid em torno de cada pedestre, para que estes aju
 O workflow definido para o projeto e entregável 2, como uma visão de desenvolvimento, se dará conforme estabelecido graficamente na figura 7.
 
 <p align="center">
-    <img src="/projetos/HTF/images/Workflow.png" alt="Figura 7: Workflow do projeto" width="450"/>
-    <br><em>Figura 7: Workflow do projeto.</em>
+    <img src="/projetos/HTF/images/Workflow.png" alt="Figura 15: Workflow do projeto" width="600"/>
+    <br><em>Figura 15: Workflow do projeto.</em>
 </p>
 
 
@@ -248,6 +248,7 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
 ### Resultados Gráficos do Treinamento
 
 <div style="text-align: center;">
+    <p align="center">
     <!-- Primeira linha de 3 imagens -->
     <img src="trained_models/first_study/figure_LSTM_ed8_md32_hd32_841_zara1.png" alt="LSTM ed8" style="width: 400px;">
     <img src="trained_models/first_study/figure_LSTM_ed16_md64_hd64_841_zara1.png" alt="LSTM ed16" style="width: 400px;">
@@ -255,7 +256,7 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
     <!-- Segunda linha de 3 imagens -->
     <img src="trained_models/first_study/figure_Transformer_x2_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x2" style="width: 400px;">
     <img src="trained_models/first_study/figure_Transformer_x4_ed16_md64_hd64_peT_apT_841_zara1.png" alt="Transformer x4" style="width: 400px;">
-    <p><em>Figura 8: Gráficos de convergência dos treinamentos realizados no estudo de primeiro tipo para 841 iterações.</em></p>
+    <p align="center"><p><em>Figura 16: Gráficos de convergência dos treinamentos realizados no estudo de primeiro tipo para 841 iterações.</em></p>
 </div>
 
 1. **Modelo LSTM com ed8 (Figura 8.a):** observa-se maior instabilidade no treinamento, especialmente nos valores de perda (Loss). As métricas ADE e FDE apresentam flutuações maiores, indicando dificuldade na convergência.
@@ -267,16 +268,39 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
 ### Resultados Gráficos de Inferência
 
 <div style="text-align: center;">
+    <p align="center">
+    <img src="../HTF/images/Transformer/Animação/GTR1.gif" alt="Imagem 1" width="400"/>
+    <img src="../HTF/images/Transformer/Animação/GTR2.gif" alt="Imagem 2" width="400"/>
+    <br>
+    <img src="../HTF/images/Transformer/Animação/GTR3.gif" alt="Imagem 4" width="400"/>
+    <img src="../HTF/images/Transformer/Animação/GTR4.gif" alt="Imagem 5" width="400"/>
+    <br>
+    <img src="../HTF/images/Transformer/Animação/GTR5.gif" alt="Imagem 4" width="400"/>
+    <img src="../HTF/images/Transformer/Animação/GTR6.gif" alt="Imagem 5" width="400"/>
+    <p align="center"><p align="center"><em>Figura 17: Exemplos de cenas de observação, caminho real percorrido e geração de um caminho</em></p>
+</div>
+
+<div style="text-align: center;">
     <!-- Primeira linha de 3 imagens -->
-    <img src="../HTF/images/Figure_1.png" alt="Imagem 1" width="320"/>
-    <img src="../HTF/images/Figure_2.png" alt="Imagem 2" width="320"/>
-    <img src="../HTF/images/Figure_3.png" alt="Imagem 3" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR1.png" alt="Imagem 1" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR2.png" alt="Imagem 2" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR3.png" alt="Imagem 3" width="320"/>
     <br>
     <!-- Segunda linha de 3 imagens -->
-    <img src="../HTF/images/Figure_4.png" alt="Imagem 4" width="320"/>
-    <img src="../HTF/images/Figure_5.png" alt="Imagem 5" width="320"/>
-    <img src="../HTF/images/Figure_6.png" alt="Imagem 6" width="320"/>
-    <p><em>Figura 10: Exemplos de predições comparadas aos dados reais </em></p>
+    <img src="../HTF/images/Transformer/KDE/TR4.png" alt="Imagem 4" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR5.png" alt="Imagem 5" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR6.png" alt="Imagem 6" width="320"/>
+    <br>
+    <!-- Segunda linha de 3 imagens -->
+    <img src="../HTF/images/Transformer/KDE/TR7.png" alt="Imagem 7" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR8.png" alt="Imagem 8" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR14.png" alt="Imagem 9" width="320"/>
+    <br>
+    <!-- Segunda linha de 3 imagens -->
+    <img src="../HTF/images/Transformer/KDE/TR10.png" alt="Imagem 10" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR11.png" alt="Imagem 11" width="320"/>
+    <img src="../HTF/images/Transformer/KDE/TR12.png" alt="Imagem 12" width="320"/>
+    <p><em>Figura 18: Exemplos de distribuição de probabilidade de possiveis caminhos gerados.</em></p>
 </div>
 
 ## Conclusão
