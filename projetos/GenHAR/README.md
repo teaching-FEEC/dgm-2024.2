@@ -15,9 +15,12 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 Na tarefa de reconhecimento de atividades humanas (HAR) utiliza-se dados de acelerômetro e giroscópio para identificar uma ação realizada. A coleta de dados rotulados para HAR apresenta diversas dificuldades, gerando datasets pouco representativos e desbalanceados.
 
-Diante disso, neste trabalho realizamos a adaptação e avaliação de modelos de geração de séries temporais para dados HAR. Comparamos as arquiteturas DoppelGAN, TimeGAN e BioDiffusion em cinco diferentes datasets. Os resultados preliminares demonstram um baixo desempenho dos modelos quando aplicados diretamente aos dados de sensores. Desenvolvimentos futuros serão voltados para melhorias nos modelos utilizados e exploração de hiperparâmetros, e implementação métricas de avaliação quantitativa.
+Diante disso, neste trabalho realizamos a adaptação e avaliação de modelos de geração de séries temporais para dados HAR. Comparamos as arquiteturas DoppelGAN, TimeGAN e BioDiffusion em cinco diferentes datasets. Os resultados demonstram um baixo desempenho dos modelos TImeGAN e DoppelGAN e resultados promissores para o modelo BioDiffusion quando aplicados diretamente aos dados de sensores.
 
 [Slides apresentação 2](https://docs.google.com/presentation/d/1QAhgWlQrLo-e2o8U4tsdcd8HaoaUAeDdyGbtks7ilhw/edit?usp=sharing)
+
+
+[Slides apresentação FINAL](https://docs.google.com/presentation/d/1lPlAoQ-QDFYlUExdJ695K_pnI_nkqhZYO-TgOfDJyN0/edit?usp=sharing)
 
 ## Descrição do Problema/Motivação
 
