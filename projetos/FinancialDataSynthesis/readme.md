@@ -133,16 +133,15 @@ Após a coleta dos dados e extração dos features, armazenamos as séries tempo
 
 \[ D = [X_{1:N}, F_{1:N}] \]
 
-Em seguida, normalizamos os valores de cada série temporal para facilitar o treinamento, utilizando o método Min-Max, que reescala os valores para um intervalo pré-determinado, tipicamente [0, 1]. A normalização adotada foi:
+Em seguida, normalizamos os valores de cada série temporal para facilitar o treinamento, utilizando o método Min-Max, que reescala os valores para um intervalo pré-determinado, tipicamente \([0, 1]\). A normalização adotada foi:
 
 \[
-x_{n}(i) = \frac{x(i) - \text{min}[x]}{\text{max}[x] - \text{min}[x]}
+x_n(i) = \frac{x(i) - \min[x]}{\max[x] - \min[x]}
 \]
 
-- $x_{n}(i)$: representa o valor normalizado de uma série temporal (preço ou algum feature) no instante $i$.
-- $x(i)$: representa o valor antes da normalização (preço ou algum feature) no instante $i$.
-- $\text{min}[x], \text{max}[x]$: representam, respectivamente, o menor e o maior valor associado à série temporal dos elementos de $x(i)$.
-
+- \(x_n(i)\): representa o valor normalizado de uma série temporal (preço ou algum feature) no instante \(i\).
+- \(x(i)\): representa o valor antes da normalização (preço ou algum feature) no instante \(i\).
+- \(\min[x]\), \(\max[x]\): representam, respectivamente, o menor e o maior valor associado à série temporal dos elementos de \(x(i)\).
 
 **CASO 2: TRANSFORMERS**
 
