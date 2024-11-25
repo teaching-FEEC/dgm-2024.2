@@ -38,13 +38,6 @@ $$ X_{1:N}  = [{ x(1), x(2), ..., x(N) }]  $$
 
 Em que cada elemento $x(i)$ representa o preço da ação no instante $i$.
 
-<p align="justify">
-Na figura abaixo, temos a serie temporal dos preços da ação da empresa Apple no período analisado. 
-</p>
-
-![Time Series Visualization](img_readme/Serie_temporal.png)
-
-
 Atráves da incorporação de features relevantes, também representados por séries temporais ($F_{1:N}$), buscamos gerar dados sintéticos que representam uma continuação realista de $X_{1:N}$, isso é, uma série temporal do tipo:
 
 $$ X^{s}_{N+1:N+K}  = [{ x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K) }]  $$
@@ -168,6 +161,8 @@ $$
  
  A rede generativa GAN é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. As funções de perda apresentadas anteriormente garantem um treinamento que combina um processo competitivo. Abaixo detalha-se a estrutura das redes neurais da GAN:
 </p>
+
+<img src="img_readme/GAN.png" alt="Estrutura GAN" title="Estrutura da rede generativa GAN" />
 
 Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$. A continuação se detalha as arquitetura do Gerador e do Discriminador.
 
