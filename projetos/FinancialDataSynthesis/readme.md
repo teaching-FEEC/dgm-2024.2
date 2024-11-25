@@ -48,7 +48,7 @@ $$ X^{s}_{N+1:N+K} = [x^{s}(N+1), x^{s}(N+2), ..., x^{s}(N+K)] $$
 
 Desejamos que essa série sintética seja uma aproximação da sequência real futura:
 
-&& X^{s}_{N+1:N+K}$$
+$$ X^{s}_{N+1:N+K} \approx X\_{N+1:N+K} $$
 
 Por exemplo, se  $X_{1:N}$ representa os preço de uma ação de 2010 até 2018, então desejamos que $X_{N+1:N+K}$ forneça valores plausíveis de preço de 2018 em diante. 
 
