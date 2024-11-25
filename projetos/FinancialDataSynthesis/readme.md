@@ -99,14 +99,16 @@ Utilizamos como métrica de avaliação o RMSE.
 |----- | ----- | -----|
 |API do Yahoo Finance| https://finance.yahoo.com | Permite o acesso a dados financeiros por meio de chamadas de API. Esses dados incluem preços de fechamento, preços máximos, mínimos, volume negociado. Além disso, é possível coletar os dados considerando diferentes períodos de amostragem: 2 minutos, 5 minutos, 15 minutos, 1 hora, 1 dia.|
 
-A continuação se apresenta banco de dados utilizado neste trabalho, a faixa temporal foi seleccionada intencionalmente para poder testar nossos modelos com um evento extremo (Covid19).
-
-<img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Vale" />
-
 ## Metodologia e Workflow
 **CASO 1: GANs**
 
 A metodologia para a geração das séries temporais sintéticas utilizando Redes Generativas Adversarias pode ser resumida no seguinte passo a passo:
+
+1. **Coleta de Dados via API do Yahoo Finance:**
+A continuação se apresenta banco de dados utilizado neste trabalho, a faixa temporal foi seleccionada intencionalmente para poder testar nossos modelos com um evento extremo (Covid19).
+
+<img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Vale" />
+
 
 **CASO 2: TRANSFORMERS**
 
