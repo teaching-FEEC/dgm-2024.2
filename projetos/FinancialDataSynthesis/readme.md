@@ -124,6 +124,9 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
   <li>Transformadas de Fourier: Foi obtida a magnitude e a fase das transformadas discretas de Fourier do preço das ações, usando 3, 6 e 9 componentes.</li>
 </ul>
 
+<img src="img_readme/Tecnicos.png" alt="Features Baseadas em Indicadores Técnicos" title="Vale" />
+<img src="img_readme/Fourier.png" alt="Features Baseadas em Transformadas de Fouerier" title="Vale" />
+
 **CASO 2: TRANSFORMERS**
 
 A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
