@@ -22,7 +22,7 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  
 Neste trabalho, estudamos a eficácia de modelos baseados em **Redes Adversárias Generativas (GANs)** e **Transformers** na geração de dados financeiros sintéticos, especificamente preços de ações. As GANs são redes neurais que podem gerar novos dados realistas a partir de um conjunto de treinamento, enquanto os Transformers se destacam em tarefas que envolvem sequências temporais devido à sua capacidade de capturar dependências de longo alcance.
 
-Utilizamos séries temporais de preços de ações e indicadores técnicos como **entrada** para os modelos, com o objetivo de realizar regressão para prever preços futuros. Para treinar os modelos, dividimos o dataset em sequências de 24 preços consecutivos, associando o 25º preço como rótulo (preço a ser predito). Essa estratégia permite que os modelos aprendam padrões dentro de janelas temporais específicas, ao invés de analisar a série temporal inteira de uma só vez.
+Utilizamos séries temporais de preços de ações e indicadores técnicos como **entrada** para os modelos, com o objetivo de realizar regressão para prever preços futuros. Para treinar os modelos, dividimos o dataset em sequências de 24 preços consecutivos, associando o 25º preço como target (preço a ser predito). Essa estratégia permite que os modelos aprendam padrões dentro de janelas temporais específicas, ao invés de analisar a série temporal inteira de uma só vez.
 
 Observamos que, ao utilizar sequências de tamanho fixo, os modelos conseguiram extrair padrões de forma mais eficiente e gerar previsões mais precisas, em comparação com estratégias que consideram a série temporal completa como entrada.
 
@@ -32,13 +32,12 @@ Comparamos os resultados dos nossos modelos baseados em GANs e Transformers com 
 ## Introdução
 <p align="justify">
 
-A previsão de preços de ações é uma tarefa importante na área de finanças, com aplicações que vão desde a negociação algorítmica (trading) até a gestão de riscos [1]. Modelos tradicionais de previsão, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), são  amplamente utilizados para essa finalidade. No entanto, a natureza complexa dos mercados financeiros requer abordagens mais sofisticadas que possam capturar padrões não lineares e dependências de longo alcance nas séries temporais.
+A previsão de preços de ações é uma tarefa importante na área de finanças, com aplicações que vão desde a negociação algorítmica (trading) até a gestão de riscos [1]. Modelos tradicionais de previsão, como LSTM (Long Short-Term Memory) e GRU (Gated Recurrent Unit), são  amplamente utilizados para essa finalidade. No entanto, a natureza complexa dos mercados financeiros pode requerer abordagens mais sofisticadas, que possam capturar padrões não lineares e dependências de longo alcance nas séries temporais.
 
-Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers para melhorar a qualidade das previsões de preços de ações. Embora as GANs sejam tradicionalmente utilizadas para a geração de imagens sintéticas, elas podem ser adaptadas para tarefas de predição ao aprender representações profundas dos dados. Os Transformers, por sua vez, têm se mostrado altamente eficazes em tarefas sequenciais devido à sua capacidade de modelar relações complexas em séries temporais.
+Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers para melhorar a qualidade das previsões de preços de ações. Embora as GANs sejam tradicionalmente utilizadas para a geração de imagens sintéticas, elas podem ser adaptadas para tarefas de predição ao aprender representações profundas dos dados. Os Transformers, por sua vez, têm se mostrado eficazes em tarefas sequenciais devido à sua capacidade de modelar relações complexas em séries temporais.
 
-Neste estudo, realizamos experimentos utilizando os preços das ações da Apple Inc. no período de 2010 a 2020, período que inclui o evento extremo da pandemia de COVID-19. Isso nos permitiu avaliar a robustez dos modelos generativos em condições de alta volatilidade e incertezas.
+Neste estudo, realizamos experimentos utilizando os preços das ações da empresa Apple no período de 2010 a 2020, período que inclui o evento extremo da pandemia de COVID-19. Isso nos permitiu avaliar a robustez dos modelos generativos em condições de alta volatilidade e incertezas.
 
- 
 Uma série temporal de preços de ações pode ser representada como:
 
 $$ X_{1:N} = [x(1), x(2), ..., x(N)] $$
