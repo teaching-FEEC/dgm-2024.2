@@ -19,7 +19,8 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 
 ## Resumo (Abstract)
 <p align="justify">
-Neste trabalho foi testado a capacidade de modelos baseados nas arquiteturas de Redes Adversárias Generativas (GANs) e Transformers em gerar dados financeiros sintéticos, mais precisamente, preços de ações.
+ 
+Neste trabalho foi testado a capacidade de modelos baseados nas arquiteturas de **Redes Adversárias Generativas (GANs)** e **Transformers** em gerar dados financeiros sintéticos, mais precisamente, preços de ações.
 
 O projeto consistiu em utilizar séries temporais dos preços de ações como **entrada**, e utilizar os modelos para regressão, de forma que, eles gerassem preços futuros realistas, baseados nos preços de entrada.
 
