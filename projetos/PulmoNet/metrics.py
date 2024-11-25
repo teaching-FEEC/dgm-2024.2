@@ -6,48 +6,44 @@ import numpy as np
 
 
 # FID ---------------------------------------------
-
 def my_fid_pipeline(dataset_test, data_loader_test, device, gen, batch_size):
-   # Define a rede Inception V3
+   # get Inception V3
   model_inception = torch.hub.load('pytorch/vision:v0.10.0', 'inception_v3', pretrained=True)
   model_inception.eval()
-  # Define modelo para feature extraction
+  # defines model for feature extraction
   feature_extractor = FeatureExtractor(model_inception)
 
-  # Loop para gerar dados sintéticos e armazenar as features das distribuições de dados reais e sintéticos
   fake_data_features = np.empty((len(dataset_test),2048))
   real_data_features = np.empty((len(dataset_test),2048))
   counter = 0
   with torch.no_grad():
       for batch in data_loader_test:
-          input_img_batch = batch[0] # Imagem real
-          input_mask_batch = batch[1] # Máscara binária com imagem real segmentada
+          input_img_batch = batch[0] # real image
+          input_mask_batch = batch[1] # binary image
           
-          # Aloca imagens no dispositivo de execução da função (se possível, por questões de velocidade, a GPU)
           input_img = input_img_batch.to(device)
           input_mask = input_mask_batch.to(device)
           
-          # Gera dados sintéticos
+          # Generates synthetic data
           gen_img = gen(input_mask)
 
-          # Obtém as features da última camada da InceptionV3
+          # get features from last layer of InceptionV3
           features_fake = get_features(feature_extractor, gen_img, choose_transform=2, device=device)
           features_real = get_features(feature_extractor, input_img, choose_transform=2, device=device)
           fake_data_features[counter*batch_size:(counter+1)*batch_size,:] = features_fake
           real_data_features[counter*batch_size:(counter+1)*batch_size,:] = features_real
           counter=counter+1
 
-  # Obtém as distribuições para os dados reais e sintéticos
+  # get distribution of real and fake data
   mu1, sigma1 = np.mean(np.squeeze(real_data_features),axis=0), np.cov(np.squeeze(real_data_features))
   mu2, sigma2 = np.mean(np.squeeze(fake_data_features),axis=0), np.cov(np.squeeze(fake_data_features))
 
-  # Calcula o FID entre os dados reais e sintéticos
+  # calculates FID
   fid_value = calculate_fid(mu1, sigma1, mu2, sigma2)
 
-  # Retorna o valor do FID
   return fid_value
 
-# Referencia: https://machinelearningmastery.com/how-to-implement-the-frechet-inception-distance-fid-from-scratch/
+# Reference: https://machinelearningmastery.com/how-to-implement-the-frechet-inception-distance-fid-from-scratch/
 def calculate_fid(mu1, sigma1, mu2, sigma2):
     # Calculate the squared difference between means
     diff = mu1 - mu2
@@ -66,12 +62,12 @@ def calculate_fid(mu1, sigma1, mu2, sigma2):
     return fid
 
 
-# Define uma classe que herda do Inception V3 e modifica sua última camada
+# Define class that inherits Inception V3 and modifies its last layer
 class FeatureExtractor(torch.nn.Module):
     def __init__(self, model_inceptionv3):
         super(FeatureExtractor, self).__init__()
         self.model_inceptionv3 = model_inceptionv3
-        # Remove a última camada (fully connected) usada pelo classificador
+        # removes last layer (fully connected) used by the classifier
         self.model_inceptionv3.fc = torch.nn.Identity()
 
     def forward(self, x):
@@ -79,27 +75,27 @@ class FeatureExtractor(torch.nn.Module):
         return x
 
 
-# Define uma função que encontra o meio de uma matriz 4D de entrada e corta a matriz conforme as dimensões de entrada
+# finds center of a 4D tensor and crops considering given dimensions
 def crop_center_4D(input, cropx, cropy):
     _, _, x, y = input.shape
     startx = x//2 - cropx//2
     starty = y//2 - cropy//2    
     return input[:, :, startx:startx+cropx, starty:starty+cropy]
 
-# Define uma função que encontra o meio de uma matriz 2D de entrada e corta a matriz conforme as dimensões de entrada
+# finds center of a 2D tensor and crops considering given dimensions
 def crop_center_2D(input, cropx, cropy):
     x, y = input.shape
     startx = x//2 - cropx//2
     starty = y//2 - cropy//2    
     return input[startx:startx+cropx, starty:starty+cropy]
 
-# Obtém as features do InceptionV3
+# get features of InceptionV3
 def get_features(feature_extractor, input_tensor, choose_transform=1, device='cpu'):
-    # Adiciona canal de dimensão já que está em escala cinza
+    # adds channel, since we are using grayscale images
     if input_tensor.dim() == 3:
         input_tensor = input_tensor.unsqueeze(0)  # Now shape is (<batch_size>, 1, 512, 512)
 
-    # Define o pré-processamento
+    # pre-processing definition
     if (choose_transform == 1):
         transform = transforms.Compose([
             transforms.Resize((299, 299)),  # Resize to 299x299
@@ -110,7 +106,7 @@ def get_features(feature_extractor, input_tensor, choose_transform=1, device='cp
             transforms.Lambda(lambda x: x.repeat(1, 3, 1, 1)),  # Repeat grayscale to 3 channels if necessary
           ])
 
-    # Aplica a transformação
+    # transforms
     if (choose_transform == 1):
         input_batch = transform(input_tensor.float())  # shape = <batch_size>, 3, 299, 299
     else:
@@ -121,7 +117,7 @@ def get_features(feature_extractor, input_tensor, choose_transform=1, device='cp
     input_batch = input_batch.to(device)
     feature_extractor.to(device)
 
-    # Obtem as features para os dados reais
+    # extract features
     features = feature_extractor(input_batch).detach().cpu().numpy()  # torch.Size([<batch_size>, 2048])
 
     return features
@@ -129,38 +125,35 @@ def get_features(feature_extractor, input_tensor, choose_transform=1, device='cp
 
 # SSIM ------------------------------------------------------------------------
 def my_ssim_pipeline(dataset_test, data_loader_test, device, gen, batch_size, bComplete):
-   #gera dados sintéticos
+   #generates synthetic data
   fake_data_imgs = np.empty((len(dataset_test),512,512))
   real_data_imgs = np.empty((len(dataset_test),512,512))
   counter = 0
   with torch.no_grad():
       for batch in data_loader_test:
-          input_img_batch = batch[0] # Imagem real
-          input_mask_batch = batch[1] # Máscara de entrada do gerador
+          input_img_batch = batch[0] # real image
+          input_mask_batch = batch[1] # mask
           
-          # Move para GPU para aumentar velocidade de processamento, se possível
           input_img = input_img_batch.to(device)
           input_mask = input_mask_batch.to(device)
           
-          # Gera CTs pulmonares sintéticas
           gen_img = gen(input_mask)
 
-          # Armazena os dados reais e sintéticos em arrays
           fake_data_imgs[counter*batch_size:(counter+1)*batch_size,:,:] = np.squeeze(gen_img.detach().cpu().numpy())
           real_data_imgs[counter*batch_size:(counter+1)*batch_size,:,:] = np.squeeze(input_img.detach().cpu().numpy())
           counter=counter+1
   
-  # Calcula SSIM entre dados reais e sintéticos
+  # gets SSIM between real and fake data
   ssim = np.zeros(len(dataset_test))
   luminance = np.zeros(len(dataset_test))
   contraste = np.zeros(len(dataset_test))
   struct_similarity = np.zeros(len(dataset_test))
 
-  # Considerando toda a imagem (512 x 512)
+  # considering the full image (512 x 512)
   if (bComplete):
     for i in range(len(dataset_test)):
         ssim[i], luminance[i], contraste[i], struct_similarity[i] = my_ssim(np.squeeze(real_data_imgs[i]), np.squeeze(fake_data_imgs[i]), 0.01, 0.03, 0.03)
-  # Considerando apenas o centro da imagem (256 x 256) -> foca nas vias aéreas
+  # considering the center (256 x 256) -> focus on airways and lungs
   else:
     for i in range(len(dataset_test)):
         ssim[i], luminance[i], contraste[i], struct_similarity[i] = my_ssim(np.squeeze(crop_center_2D(real_data_imgs[i], 256, 256)), np.squeeze(crop_center_2D(fake_data_imgs[i], 256, 256)), 0.01, 0.03, 0.03)
@@ -168,51 +161,48 @@ def my_ssim_pipeline(dataset_test, data_loader_test, device, gen, batch_size, bC
   return ssim, luminance, contraste, struct_similarity
 
 def my_ssim_pipeline(dataset_test, data_loader_test, device, gen, batch_size, bComplete):
-   #gera dados sintéticos
+   #generates synthetic data
   fake_data_imgs = np.empty((len(dataset_test),512,512))
   real_data_imgs = np.empty((len(dataset_test),512,512))
   counter = 0
   with torch.no_grad():
       for batch in data_loader_test:
-          input_img_batch = batch[0] # Imagem real
-          input_mask_batch = batch[1] # Máscara de entrada do gerador
+          input_img_batch = batch[0] # real image
+          input_mask_batch = batch[1] # mask
           
-          # Move para GPU para aumentar velocidade de processamento, se possível
           input_img = input_img_batch.to(device)
           input_mask = input_mask_batch.to(device)
           
-          # Gera CTs pulmonares sintéticas
           gen_img = gen(input_mask)
 
-          # Armazena os dados reais e sintéticos em arrays
           fake_data_imgs[counter*batch_size:(counter+1)*batch_size,:,:] = np.squeeze(gen_img.detach().cpu().numpy())
           real_data_imgs[counter*batch_size:(counter+1)*batch_size,:,:] = np.squeeze(input_img.detach().cpu().numpy())
           counter=counter+1
   
-  # Calcula SSIM entre dados reais e sintéticos
+  # gets SSIM between real and fake data
   ssim = np.zeros(len(dataset_test))
   luminance = np.zeros(len(dataset_test))
   contraste = np.zeros(len(dataset_test))
   struct_similarity = np.zeros(len(dataset_test))
 
-  # Considerando toda a imagem (512 x 512)
+  # considering the full image (512 x 512)
   if (bComplete):
     for i in range(len(dataset_test)):
         ssim[i], luminance[i], contraste[i], struct_similarity[i] = my_ssim(np.squeeze(real_data_imgs[i]), np.squeeze(fake_data_imgs[i]), 0.01, 0.03, 0.03)
-  # Considerando apenas o centro da imagem (256 x 256) -> foca nas vias aéreas
+  # considering the center (256 x 256) -> focus on airways and lungs
   else:
     for i in range(len(dataset_test)):
         ssim[i], luminance[i], contraste[i], struct_similarity[i] = my_ssim(np.squeeze(crop_center_2D(real_data_imgs[i], 256, 256)), np.squeeze(crop_center_2D(fake_data_imgs[i], 256, 256)), 0.01, 0.03, 0.03)
 
   return ssim, luminance, contraste, struct_similarity
 
-# Calcula luminância
+# gets luminance
 def luminance(img1, img2, C1):
     l = (2 * np.mean(img1) * np.mean(img2) + C1) / (np.mean(img1)**2 + np.mean(img2)**2 + C1)
     return l
 
 
-# Calcula a distorção de contraste
+# gets contrast distortion
 def contrast(img1, img2, C2):
     c = (2 * np.std(img1) * np.std(img2) + C2) / (np.std(img1)**2 + np.std(img2)**2 + C2)
     return c
@@ -243,13 +233,13 @@ def cross_covariance(image1, image2):
     return cross_cov
 
 
-# Calcula a perda de correlação estrutural
+# gets loss of structure similarity
 def structure_similarity(img1, img2, C3):
     s = (cross_covariance(img1, img2) + C3) / (np.std(img1) * np.std(img2) + C3)
     return s
 
 
-# Calcula o SSIM entre duas imagens:
+# gets SSIM between two images
 def my_ssim(img1, img2, C1, C2, C3):
     l = luminance(img1, img2, C1)
     c = contrast(img1, img2, C2)

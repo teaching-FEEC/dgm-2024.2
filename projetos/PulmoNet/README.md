@@ -341,7 +341,7 @@ Ressalta-se também que esta etapa preliminar de seleção e varredura da combin
 
 **Análise Qualitativa**
 
-As figuras 15 a 17 trazem exemplos de imagens geradas pelos três modelos selecionados após o treinamento complementar dos mesmos com os 60 mil dados disponíveis para a tarefa de treinamento da GAN. Como referência, ao lado de cada imagem gerada, apresenta-se a imagem real cuja máscara foi utilizada como entrada para o gerador. Todos os modelos inovam pouco na geração, e têm dificuldade na geração das estruturas internas ao pulmão. 
+As figuras 17 a 19 trazem exemplos de imagens geradas pelos três modelos selecionados após o treinamento complementar dos mesmos com os 60 mil dados disponíveis para a tarefa de treinamento da GAN. Como referência, ao lado de cada imagem gerada, apresenta-se a imagem real cuja máscara foi utilizada como entrada para o gerador. Todos os modelos inovam pouco na geração, e têm dificuldade na geração das estruturas internas ao pulmão. 
 
 Visualmente, dentre os três modelos considerados, o Sweep10 se mostra o modelo com mais dificuldade de gerar imagens nítidas, de forma que as bordas das estruturas parecem "borradas" (Animação 1). Os modelos Sweep205 e Sweep412 são mais difíceis de serem comparados, visto que as imagens geradas parecem apresentar o mesmo nível de qualidade, e é necessário conhecimento especialista para indicar qual é melhor. Dos quatro exemplos apresentados para cada modelo, tanto o Sweep205 e Sweep412 apresentam duas imagens sintéticas onde o interior do pulmão não aparece vazio. A nitidez das imagens geradas por tais modelos também é similar, e, quanto a capacidade de inovação dos modelos, para os dois, as quatro imagens geradas apresentam variações com relação as imagens originais. As variações mais perceptivas estão relacionadas a presença ou ausência de "furos" na região cinzenta, ou uma alteração do formato dos mesmos. Tais variações podem indicar uma capacidade do modelo de inovar e criar imagens sintéticas que não se limitem a replicar as imagens usadas no treino, ou podem indicar mudanças que não correspondem a anatomia humana, e, logo, inúteis ao propósito de auxiliar no treino de outras redes para aplicação clínica. 
 
@@ -414,21 +414,28 @@ Nota-se que parte das vias aéras está presente nas imagens geradas, mas també
 ![Exemplos de saídas da rede de segmentação - from zero.](figs/unet_results/model_trained_from_zero/example_generated_epoch_9.png?raw=true)
 ![Exemplos de saídas da rede de segmentação - from zero.](figs/unet_results/model_trained_from_zero/example_generated_epoch_15.png?raw=true)
 
-*Figura XXXXXX: Exemplos de saídas da rede de segmentação, treinada com pesos iniciais aleatórios.*
+*Figura 20: Exemplos de saídas da rede de segmentação, treinada com pesos iniciais aleatórios.*
 
 Já a rede pré-treinada para a síntese de CTs pulmonares (modelo Sweep 412), passou pela etapa de transferência de aprendizado com uma quantidade reduzida de dados com relação ao treinamento da U-Net a partir do zero.
 Na arquitetura deste modelo, as camadas de dropout também foram removidas e os pesos da rede codificadora se mantiveram inalterados.
 Exemplos de figuras sintéticas geradas com este processo estão ilustradas abaixo.
-Nota-se que xxxx
+Nota-se que nas imagens com baixo contraste entre o pulmão e a região externa, a rede gerada tinha dificuldades em identificar as vias aéreas, ao passo que nas imagens com alto contraste entre a região do pulmão e os músculos torácicos o modelo de segmentação alucinou.
+Isto é, em uma análise qualitativa, a rede não teve bons resultados quando aplicado o método de *transfer learning*.
 
-xxxx figuras xxxx
+![Exemplos de saídas da rede de segmentação - transfer learning.](figs/unet_results/model_transfer_learning/example_generated_epoch_3.png?raw=true)
+![Exemplos de saídas da rede de segmentação - transfer learning.](figs/unet_results/model_transfer_learning/example_generated_epoch_6.png?raw=true)
+![Exemplos de saídas da rede de segmentação - transfer learning.](figs/unet_results/model_transfer_learning/example_generated_epoch_14.png?raw=true)
+![Exemplos de saídas da rede de segmentação - transfer learning.](figs/unet_results/model_transfer_learning/example_generated_epoch_18.png?raw=true)
+![Exemplos de saídas da rede de segmentação - transfer learning.](figs/unet_results/model_transfer_learning/example_generated_epoch_20.png?raw=true)
+
+*Figura 21: Exemplos de saídas da rede de segmentação, treinada via tranfer learning do modelo Sweep412.*
 
 Calculando a métrica DICE para ambos os modelos, tem-se os resultados da tabela abaixo.
 
 | Modelo | Melhor época | Dice |
 | ------ | ------------ | ---- |
-| Pesos inciais aleatórios | 1 | 0.02|
-| Sweep412: transfer learning | xxx | xxxx|
+| Modelo com pesos inciais aleatórios | 1 | 0.02|
+| Transfer learning a partir do modelo Sweep412 | 29 | 0.02|
 
 Fica evidente que o método de *transfer learning* não teve impacto positivo significativo na tarefa de segmentação, retornando um Dice próximo à U-Net inicializada com pesos aleatórios.
 Este comportamento pode ter ocorrido devido ao baixo preenchimento da região interna pulmonar por parte da PulmoNet, conforme já comentado anteriormente neste relatório.
@@ -437,10 +444,11 @@ Em outras palavras, como o gerador do nosso modelo não preencheu detalhadamente
 ## Conclusão
 O projeto da PulmoNet busca a geração de fatias de CTs pulmonares a partir de máscaras binárias, em duas dimensões, baseada em GANs. Esta rede utiliza uma arquitetura Pix2Pix para o gerador e uma PatchGAN para o discriminador. São usados dados da base pública ATM'22, cujos dados correspondem a volumes pulmonares de tomografias e segmentações das vias aéreas feitas por especialistas. Para a avaliação da qualidade da rede, propõe-se métodos qualitativos, quantitativos e análises de utilidade.
 
-> Completar com dados da E3 + contribuições da nossa pesquisa
+Nosso projeto conseguiu implementar modelos de síntese com qualidade considerável, frente a uma base de dados distinta daquela usada tipicamente nas tarefas de síntese de CTs pulmonares. Mais ainda, as imagens sintéticas geradas pela PulmoNet incluem tanto a região interna quanto a região externa do pulmão, fornecendo uma saída completa de uma tomografia (fatiada transversalmente). Destarte, nossa pesquisa pode ser considerada um passo inicial na busca de melhores modelos de síntese de CTs pulmonares, estabelecendo uma metodologia e uma aplicação da base ATM'22 para esta outra finalidade.
+
+Por fim, ressalta-se que os resultados gerados não são ideais e há ainda uma boa margem para aprimorar. Por exemplo, a métrica FID resultante ainda está demasiadamente elevada frente a trabalhos similares da literatura. Ademais, a análise de utilidade não forneceu resultados promissores para nosso modelo, o que indica que há um caminho a ser percorrido para geração de imagens que contenham informações anatômicas significativas sobre a região das vias aéreas.
 
 ### Perspectivas Futuras
-
 Novos estudos poderão ser elaborados a partir da nossa pesquisa, tais como:
 - Aplicação de um método de fine-tunning do nosso melhor modelo, focado apenas na região interna do pulmão. Com isso, buscar-se-ia um modelo que realiza-se um preenchimento melhor desta região. Caso este novo modelo tenha sucesso nesta tarefa, espera-se que o teste de utilidade aplicado a ele seja melhor do que os resultados que obbtivemos nesta pesquisa.
 - Estudar arquiteturas alternativas para a tarefa de síntese de CTs pulmonares, tais como modelos de difusão.

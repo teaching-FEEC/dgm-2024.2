@@ -1,3 +1,6 @@
+#Evaluate PulmoNet for the generation of CT images (only)
+#or evaluate U-Net
+
 import torch
 from torch.utils.data import DataLoader
 import numpy as np
@@ -9,7 +12,7 @@ from metrics import my_fid_pipeline, my_ssim_pipeline, dice_coefficient_score_ca
 from utils import read_yaml, plt_save_example_synth_during_test, save_quantitative_results, plt_save_example_airways_img, save_quantitative_results_unet
 
 
-# Definição da função para avaliação dos resultados
+#-------------------------------------Function to evaluate PulmoNet-----------------------------------
 def evaluate(gen, 
              trained_gen_dir,
              device,
@@ -20,16 +23,16 @@ def evaluate(gen,
              bFID=True, 
              bSSIM=True):
 
-    # Diretorios onde imagens geradas serao armazenadas
+    # directory where created images are stored
     dir_to_save_gen_imgs = trained_gen_dir+'generated_imgs/'
-    # Arquivo JSON com as metricas quantitativas
+    # JSON with quantitative metrics
     path_to_save_metrics = trained_gen_dir+'quantitative_metrics.json'
     os.makedirs(dir_to_save_gen_imgs, exist_ok=True)
 
-    # Coloca o modelo no modo de avaliação
+    # Set model to evaluate config
     gen.eval()
 
-    # Gera dados sintéticos para análise qualitativa (visual e subjetiva)
+    # Generates images for qualitative evaluation (visual)
     if (bQualitativa is True):
         print('Generating examples for qualitative analysis...')
         counter = 0
@@ -57,22 +60,22 @@ def evaluate(gen,
                     if skip == 0:
                         skip=20
 
-    # Calcula FID
+    # FID between real and fake images
     if (bFID is True):
         print('Calculating FID...')
         fid_value = my_fid_pipeline(dataset_test, data_loader_test, device, gen, batch_size)
     else:
         fid_value = np.nan
 
-    # Calcula SSIM entre dados reais e sintéticos
+    # SSIM between real and fake images
     if (bSSIM is True):
         print('Calculating SSIM...')
-        # Imagem completa
+        # Full image
         ssim_complete, luminance_complete, contraste_complete, struct_similarity_complete = my_ssim_pipeline(dataset_test, 
                                                                                                             data_loader_test, 
                                                                                                             device, gen, batch_size, 
                                                                                                             bComplete=True)
-        # Imagem parcial (apenas centro)
+        # Only center (256x256)
         ssim_center, luminance_center, contraste_center, struct_similarity_center = my_ssim_pipeline(dataset_test, 
                                                                                                     data_loader_test, 
                                                                                                     device, 
@@ -89,7 +92,7 @@ def evaluate(gen,
         contraste_center = np.nan
         struct_similarity_center = np.nan      
 
-    # Salva os resultados
+    # Store results
     save_quantitative_results(fid=fid_value,
                             ssim_complete=ssim_complete,
                             luminance_complete=luminance_complete,
@@ -103,7 +106,7 @@ def evaluate(gen,
     print("Evaluation done!")
 
 
-# Definição da função para avaliação dos resultados
+#-------------------------------------Function to evaluate U-Net-----------------------------------
 def evaluate_seg_net(model, data_loader_test, dir_save_test):
     dir_to_save_gen_imgs = dir_save_test+'generated_imgs/'
     path_to_save_metrics = dir_save_test+'quantitative_metrics.json'
@@ -138,11 +141,12 @@ def evaluate_seg_net(model, data_loader_test, dir_save_test):
                 if skip == 0:
                     skip=20
         
+        #DICE of segmented airways
         print('Calculating DICE...')
         dice =  dice_coefficient_score_calculation(pred=input_airway.detach().cpu().numpy(), label=input_img.detach().cpu().numpy())
         print(dice)
 
-    # Salva os resultados
+    # Store results
     save_quantitative_results_unet(dice = dice, save_path=path_to_save_metrics)
     print("Evaluation done!")
 
@@ -154,17 +158,24 @@ config = read_yaml(file=config_path)
 ##--------------------Definitions--------------------
 #Generator model
 model_gen_name = str(config['model']['name_model'])
+trained_gen_dir = str(config['model'].get('name_model','./' + model_gen_name + '/'))
+#if True use model marked as 'best' instead of 'trained' (last epoch)
 use_best_version = bool(config['model']['use_best_version'])
 
-#data
+#data for evaluation
+#assumes a folder with a foder 'all_test' inside, and inside of this one, 
+#three folders: images, lungs, labels
 processed_data_folder = str(config['data'].get('processed_data_folder',
                                                '/mnt/shared/ctdata_thr25'))
+#dataset as defined in constants.py and datasets.py
 dataset_type = str(config['data'].get('dataset',
                                     'lungCTData'))
+#if None will use all files available in folder
 start_point_test_data = config['data'].get('start_point_test_data',None)
 end_point_test_data = config['data'].get('end_point_test_data',None)
 batch_size = int(config['data']['batch_size'])
 transformations = config['data'].get('transformations',None)
+#transformations to apply to images in dataset processing
 if transformations is not None:
     transform = FACTORY_DICT["transforms"][transformations["transform"]]
     transform_kwargs = transformations.get('info',{})
@@ -181,9 +192,6 @@ bDice = bool(config['evaluation']['bDice'])
 
 
 ##--------------------Preparing Objects for Evaluation--------------------
-
-# Definição dos caminhos para localização do modelo e onde dados serão armazenados
-trained_gen_dir = './' + model_gen_name + '/'
 if bDice is False:
     if use_best_version is True:
         trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_gen_best.pt'
@@ -195,12 +203,12 @@ else:
     else:
         trained_gen_path = trained_gen_dir+'models/'+ model_gen_name + '_unet_trained.pt'
 
-# Define gerador
+# generator
 gen = FACTORY_DICT["model_gen"]["Generator"]()
 gen.load_state_dict(torch.load(trained_gen_path, weights_only=True, map_location=torch.device(device)))
 gen.to(device)
 
-# Obtenção dos dados de teste
+#get data for test
 dataset_test = FACTORY_DICT['dataset'][dataset_type](processed_data_folder=processed_data_folder,
                                                                 mode='all_test',
                                                                 start=start_point_test_data,

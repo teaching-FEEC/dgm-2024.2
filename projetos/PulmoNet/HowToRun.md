@@ -13,14 +13,17 @@ As an additional note, we have included a description of how to perform the func
 
 1. Training configurations should be described in a YAML file composed by the following keys:
 
+```
+yaml
 model:
   name_model: "string with model name"
-  dir_save_results: "path/name_of_folder_to_be_created/" - if not provided: ./name_model/
-  new_model: True/False - if False, will try to resume a prior training session and restore models,  optimizers and lr_schedulers (default: True)
-  use_pretrained_model: True/False - if True, will fine tune a given model (if that's the case new_model should be True) (default: False)
-  generate_airway_segmentation: True/False - if False: PulmoNet generates only CT images, if True: tries to genrate both CT images and airway segmentation (default: False)
-  path_to_saved_model_gen: "path to generator model to be restored if you want to resume to a prior training session or you want to fine tune" or "" if new model
-  path_to_saved_model_disc: "path to discriminator model to be restored if you want to resume to a prior training session or you want to fine tune" or "" if new model
+  dir_save_results: "path/name_of_folder_to_be_created/"  # default: ./name_model/
+  new_model: True/False # if False, will try to resume a prior training session and restore models,  optimizers and lr_schedulers (default: True)
+  use_pretrained_model: True/False # if True, will fine tune a given model (if that's the case new_model should be True) (default: False)
+  generate_airway_segmentation: True/False # if False: PulmoNet generates only CT images, if True: tries to genrate both CT images and airway segmentation (default: False)
+  path_to_saved_model_gen: "path to generator model to be restored if you want to resume to a prior training session or you want to fine tune" # or "" if new model
+  path_to_saved_model_disc: "path to discriminator model to be restored if you want to resume to a prior training session or you want to fine tune" # or "" if new model
+```
 
 data:
   processed_data_folder: "path to folder with data (assumes folder has two folders: gan_train and gan_val, each one containing three folders: images, lungs and labels (or at least images and lungs if you are only interested in generating CT images))"
