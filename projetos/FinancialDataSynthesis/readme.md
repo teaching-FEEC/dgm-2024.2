@@ -115,10 +115,10 @@ O movimento do preço das ações é influenciado por muitos fatores. Então se 
 2. **Engenharia de Caracteristicas:**
 
 <p align="justify">
-Depois de baixar os historicos de dados das series tempoais financieras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, para avaliar as notícias relevantes foi inserido um score.
-Indicadores técnicos: calculamos os indicadores técnicos mais populares para investidores (média móvel de 7 e 20 dias, média móvel exponencial, momentum, bandas de Bollinger, MACD).
-Análise do sentimento das notícias: Usamos o FinBert para analisar as notícias em positivas, neutras ou negativas, usando o score fornecido que vai desde -1 até 1.
-Transformadas de Fourier: Foi criada transformadas de Fourier para extrair tendências de longo e curto prazo nas ações da Apple. As transformadas de Fourier pegam uma função e criam uma série de ondas senoidais. Quando combinadas, essas ondas senoidais se aproximam da função original, o que pode ajudar a rede GRU a escolher suas tendências de previsão com mais precisão.
+Depois de baixar os historicos de dados das series tempoais financieras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, para avaliar as notícias relevantes foi inserido um score, e finalmente foi criada features baseadaas em transformadas de Fourier para extrair tendências de longo e curto prazo nas ações da Apple.
+- Indicadores técnicos: Média móvel de 7 e 20 dias, média móvel exponencial, momentum, bandas de Bollinger, MACD.
+- Análise do sentimento das notícias: Usamos o FinBert para analisar as notícias em positivas, neutras ou negativas, usando o score fornecido que vai desde -1 até 1.
+- Transformadas de Fourier: Foi obtido a magnitude e a phase das transformadas discretas de fourier do preço das ações, usando 3, 6 e 9 componentes
 </p>
 
 **CASO 2: TRANSFORMERS**
