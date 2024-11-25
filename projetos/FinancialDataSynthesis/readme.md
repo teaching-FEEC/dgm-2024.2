@@ -145,6 +145,8 @@ $$
 - $\max(x)$: representa o maior valor na série temporal $x$.
 
 Essa abordagem garante que os valores da série temporal sejam escalados para o intervalo $[0, 1]$, permitindo que o modelo processe os dados de forma eficiente e consistente.
+4. **Construção da Rede Neural:**
+   A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
 
 
 **CASO 2: TRANSFORMERS**
