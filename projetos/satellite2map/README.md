@@ -1,8 +1,11 @@
-# `Obtenção de mapas a partir de imagens de satélite`
-# `Obtaining maps from satellite images`
+
+# `Projeto Satellite2Map: Modelos de Traudção de Imagens de Satélite para Mapas (supervisionados e não supervisionados)`
+
+# `Satellite2Map Project: Satellite Image Translation Models for Maps (supervised and unsupervised)`
+
+
 
 ## Apresentação
-
 O presente projeto foi originado no contexto das atividades da disciplina de pós-graduação *IA376N - IA generativa: de modelos a aplicações multimodais*, 
 oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra. Paula Dornhofer Paro Costa, do Departamento de Engenharia de Computação e Automação (DCA) da Faculdade de Engenharia Elétrica e de Computação (FEEC).
 
@@ -11,67 +14,177 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > | Vinicius Ventura Andreossi  | 195125  | Eng. de Computação|
 > | Cosme Rodolfo Roque dos Santos  | 042687  | Doutorado Eng. Elétrica|
 
+Link para os [slides](https://docs.google.com/presentation/d/18XwLWld7ohCpPfSSIJcnvKr4fydOenq4/edit?usp=sharing&ouid=105403349377020117206&rtpof=true&sd=true)
 
-## Descrição Resumida do Projeto
-Uma das subáreas de IA generativa que obteve alguns dos mais impressionantes resultados dos últimos anos tem sido a área de *image-to-image translation* (I2IT) [[1]](#1). Dentro dessa subárea, um problema frequentemente abordado é a obtenção de mapas a partir de imagens de satélite, e vice-versa, devido às suas inúmeras aplicações, por exemplo, ajudando governos a tomarem medidas rapidamente em casos de desastres naturais [[2]](#2).
 
-A motivação pelo estudo desse problema é estudar aplicações menos convencionais de modelos generativos, visto que a síntese de dados já é estudada com frequência. Além disso, mapas são um tipo de dado muito rico em informações diversas, sendo relevantes para problemas distintos, desde criação de rotas até segmentação semântica de vegetações. 
 
-O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como presença corpos d'àgua, parques, etc.
+## Resumo
+Com a finalidade de estudar os principais métodos da área de *image-to-image translation* (I2IT), o objetivo deste projeto é explorar o problema da extração de mapas a partir de imagens de  satélite utilizando duas abordagens diferentes: uma supervisionada (Pix2Pix) e outra não supervisionada (CycleGAN).
+Os modelos foram implementados e treinados com a base de dados fornecida em seus próprios artigos (ambos usam o mesmo _dataset_). Os resultados obtidos foram imagens coerentes porém distorcidas e com perda de alguns elementos relevantes para esse tipo de tarefa, como consistência de ruas, preservação de rotas e alucinações com áreas verdes não existentes.
 
-Como objetivo principal do projeto, tentaremos extrair o mapa da Unicamp de sua foto de satélite e testar a generalização do modelo tentando extrair o mesmo mapa a partir de uma imagem de drone.
+ ## Descrição do Problema/Motivação
+ Uma das subáreas de IA generativa que obteve alguns dos mais impressionantes resultados dos últimos anos tem sido a área de *image-to-image translation* (I2IT) [[1]](#1). Dentro dessa subárea, um problema frequentemente abordado é a obtenção de mapas a partir de imagens de satélite, e vice-versa, devido às suas inúmeras aplicações, por exemplo, ajudando governos a tomarem medidas rapidamente em casos de desastres naturais [[2]](#2).
+ A motivação pelo estudo desse problema é avaliar aplicações menos convencionais de modelos generativos, visto que a síntese de dados já é estudada com frequência. Além disso, mapas são um tipo de dado muito rico em informações diversas, sendo relevantes para problemas distintos, desde criação de rotas até segmentação semântica de vegetações. 
+ O objetivo principal do projeto será criar um modelo generativo que recebe em sua entrada uma imagem de satélite qualquer e produz como saída uma imagem de mesma dimensão traduzida para um mapa. O mapa obtido deve preservar aspectos julgados como relevantes para esse tipo de dado, como consistência de ruas, preservação de rotas e identificação de propriedades do terreno como presença de corpos d'àgua, parques, etc.
+ Durante as etapas de treino, validação, testes e inferências, serão utilizados Datasets de imagens de Nova Iorque. 
 
-## Metodologia Proposta
+## Objetivo
+O objetivo final principal é explorar os modelos de extração de mapas a partir de sua foto de satélite. Outros objetivos incluem:
+- Familiarização com aplicações menos convencionais de GANs.
+- Estudo da avaliação quantitativa e qualitativa de modelos generativos.
+- Aprender as etapas do processo de pesquisa na área de modelos generativos.
+- Encontrar paralelos e diferenças entre as abordagens supervisionada e não-supervisionada.
 
-- **Base de dados**: Inicialmente, a base de dados a ser utilizada será a mesma utilizada pelos autores da Pix2Pix e consiste em 2196 pares de imagens da cidade de Nova Iorque. As imagens possuem dimensões 256x256 e são separadas em conjuntos de treino, teste e validação com 1099, 550 e547 imagens, respectivamente. O dataset encontra-se disponibilizado gratuitamente na [internet](http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/). 
+## Metodologia
 
-    Outras base de dados utilizadas por outros trabalhos até foram encontradas, mas não são disponibilizadas gratuitamente [[2]](#2)[[5]](#5).
-
-- **Abordagens interessantes**: As duas abordagens escolhidas são baseadas en métodos muito bem estabelecidos na área de I2IT e até hoje são usados como *benchmarks* para novos trabalhos:
-    1. Pix2Pix (2016)[[3]](#3): Possivelmente o framework mais amplamente adotado em problemas de I2IT, o modelo consiste em uma GAN condicional onde a condição é a imagem de entrada.
-
-    2. MapGen-GAN (2021)[[2]](#2): MapGen-GAN é uma implementação da CycleGAN otimizada para o problema de extração de mapas de imagens de satélite. A CycleGAN, proposta pelos mesmos criadores do Pix2Pix, também é uma arquitetura muito utilizada em I2IT e tem um processo de treinamento diferente, buscando otimizar uma loss de "consistência de ciclo" que procura garantir que a imagem original seja a mais próxima possível da imagem obtida pelo mapeamento inverso da imagem traduzida.
-
-- **Ferramentas**: As ferramentas utilizadas serão as mais utilizadas na comunidade de Deep Learning atualmente:
+- **Abordagens escolhidas**: As duas abordagens escolhidas são baseadas em métodos consolidados na área de I2IT e até hoje são usados como *benchmarks* para novos trabalhos:
+    1. Pix2Pix (2016)[[3]](#3): Possivelmente o framework mais amplamente adotado em problemas de I2IT, o modelo consiste em uma GAN condicionada à imagem de entrada. 
+    2. Cycle-GAN (2017)[[4]](#4): proposta pelos mesmos criadores do Pix2Pix, também é uma arquitetura muito utilizada em I2IT e tem um processo de treinamento diferente, buscando otimizar uma loss de "consistência de ciclo" que procura garantir que a imagem original seja a mais próxima possível da imagem obtida pelo mapeamento inverso da imagem traduzida.
+- **Ferramentas**: As ferramentas utilizadas estão entre as mais utilizadas na comunidade de Deep Learning atualmente:
     - Criação e treinamento dos modelos: PyTorch
-    - Monitoramento de métricas: WandB 
+    - Monitoramento de métricas: WandB
+- **Resultados esperados**: É esperado que ambos os modelos possam apresentar resultados de tradução de imagens relativamente bons, considerando as limitações no processamento de imagens e diversificação de dados.
+Adicionalmente, devido ao modelo CGAN ser não supervisionado, e como consequência, necessitar de um maior tempo de convergência do modelo, é esperado que seu desempenho seja inferior ao modelo Pix2Pix supervisionado.
+Por fim, é esperado que as métricas escolhidas possam traduzir esta percepção inicial, de que o Pix2Pix é superior ao CGGAN ao considerar especialmente a limitaçao no treinamento dos modelos (100 épocas).
 
-- **Resultados esperados**: Devido à quantidade limitada de dados disponíveis e aos dados utilizados não corresponderem a paisagens brasileiras ou próximas das paisagens da Unicamp, é de se esperar um enviesamento do modelo à cidade de Nova Iorque. Esse enviesamento provavelmente será refletido até mesmo em aplicações do modelo a paisagens rurais ou litorâneas. No entanto, espera-se que o modelo  consiga extrair mapas qualitativamente bons ainda que apresentem algumas distorções, principalmente em áreas mais rurais visto que o *dataset* utilizado será de uma região urbana. 
 
-- **Proposta de avaliação dos resultados de síntese**: As métricas de avaliação encontradas na literatura foram:
+## Avaliação de resultados
+As métricas de avaliação quantitativa que serão utilizadas serão:
 
-    - PSNR (Peak signal-to-noise ratio): Uma medida da qualidade geral de um sinal, é uma das métricas de performance mais utilizadas. Dada uma imagem real $Y$ e uma imagem sintética $\bar{Y}$, o PSNR é dado por 
 
-    $$ PSNR = 20 * \log_{10} \frac{MAX_Y}{MSE} $$
+**1. Erro Quadrático Médio (MSE)**
 
-    onde 
+O Erro Quadrático Médio é uma métrica comum usada para quantificar a diferença entre a imagem prevista e a imagem real. É definida como:
 
-    $$ MSE = \frac{1}{mn} \sum_{i=0}^{m-1} \sum_{j=0}^{n-1} [Y(i,j) - \bar{Y}(i,j)]^2 $$
+$$ MSE = \frac{1}{N}\sum_{i=1}^N (y_i - \hat{y}_i)^2 $$
+      
+onde N é o número total de elementos na imagem, $\hat{y}_i$ é o valor do pixel i da imagem real e $y_i$ é o valor do pixel i da imagem gerada. 
+Em tarefas de tradução de imagem, o MSE é usado para avaliar a precisão em nível de pixel das imagens geradas. Um MSE mais baixo indica uma correspondência direta muito próxima com a imagem de verdade, sugerindo que as imagens geradas são próximas em nível de valor de pixels.
 
-    - RMSE: A raíz do erro quadrático médio pixel-a-pixel. Pode ser calculado rapidamente durante o cálculo do PSRN.
 
-    $$ RMSE = \sqrt{MSE} $$
+**2. Relação Sinal-Ruído de Pico (PSNR)**
+      
+O PSNR é frequentemente utilizado para medir a qualidade da reconstrução de uma imagem e é inversalmente proporcional ao logarítmo do MSE entre a imagem verdadeira e a imagem gerada: 
 
-    - SSIM (Structural Similarity Index): Medida de similaridade entre duas imagens. O SSIM marca cada pixel como o centro de um bloco e então SSIM compara três atributos estatísticos de cada bloco - luminância (média) contraste (variância) e estrutura (covariância). O SSIM então é calculado seguindo a fórmula a seguir: 
+$$ PSNR = 20 \cdot \log_{10} \left( \frac{MAX_I}{RMSE(y, \hat{y})} \right)$$
 
-    $$ SSIM(x, y) = \frac{(2\mu_x\mu_y + c_1)(2\sigma_{xy}+c_2)}{(\mu^2_x+\mu^2_y+c_1)(\sigma^2_x+\sigma^2_y+c_2)} $$
+onde $MAX_I$ é o valor máximo possível para um pixel (255 para imagens de 8bits). Geralmente, um valor alto de PSNR sugere uma melhor qualidade de reconstrução da imagem, mas pode enganar por não levar em consideração aspectos estruturais das imagens. Isso pode fazer com que imagens visualmente incoerentes tenham valores de PSNR altos.
 
-    onde $c_1$ e $c_2$ são constantes para manter a estabilidade.
+**3. Índice de Similaridade Estrutural (SSIM)**
 
-    - ACC (Acurácia de pixel): Dado um pixel $i$ com valor verdadeiro $(r_i, g_i, b_i)$ e valor previsto $(r_i', g_i', b_i')$, se $\max{(|r_i - r_i'|, |g_i - g_i'|, |b_i - b_i'|)} < \delta$, onde será utilizado o valor $\delta=5$ para obter resultados comparáveis à literatura [[2]](#2).
+O SSIM[[6]](#6) baseia-se na ideia de que o sistema visual humano é altamente sensível às informações estruturais nas imagens. Essa métrica é baseada em luminância, contraste e mudanças na informação estrutural e tem como hipótese a ideia de que um pixel é altamente correlacionado aos pixels vizinhos. O SSIM é calculado usando três componentes: luminância, contraste e estrutura:
 
-## Cronograma
-TODO: MAKE A COLORED TABLE 
-| Data    | Planejamento |
-| --------| ------- |
-| 17/09   | Definição do tema e definição da bibliografia. |
-| 24/09   | Implementação inicial dos modelos + treinamento com conjunto arbitrário de hiperparâmetros. Visualização, análise e pré-processamento dos dados |
-| 08/10   | Implementação preliminar concluída com modelos otimizados e produzindo resultados qualitativamente satisfatórios.|
-| 22/10   | Implementação das métricas e avaliação quantitativa dos resultados obtidos. |
-| 12/11   | Segunda rodada de otimização dos modelos visando melhorar as métricas quantitativas. Possivelmente os modelos podem já estar concluídos nessa data.  |
-| 26/11   | Duas semanas de "folga" para resolver eventuais problemas que possam aparecer. README.md escrito explicando em detalhes o funcionamento do projeto e documentando os resultados obtidos. Aplicativo Streamlit / Gradio mostrando o projeto em funcionamento (*). |
+$$ SSIM(y, \hat{y}) = \frac{(2 \mu_y \mu_{\hat{y}}  + C_1) (2 \sigma_{y \hat{y}} + C_2)}{(2 \mu^2_y + \mu^2_{\hat{y}}  + C_1)(\sigma^2_{y} + \sigma^2_{\hat{y}} + C_2)}$$
+      
+Onde $\mu$ representa a média das imagens, $\sigma$ são os desvios padrões, $\sigma_{y \hat{y}}$ denota a covariância entre as duas imagens e $C_1$ e $C_2$ são constantes para evitar instabilidade numérica. Evidentemente o SSIM reflete melhor a perspectiva visual humana do que as métricas anteriores.
 
-(*): Esses recursos só serão implementados caso o projeto esteja funcionando adequadamente e os resultados quantitativos já tenham sido coletados. 
+O SSIM é particularmente útil em tarefas de tradução de imagem, pois fornece uma abordagem mais centrada no ser humano para avaliar a qualidade da imagem. Ao contrário do MSE e do PSNR, que podem ser sensíveis a pequenos erros pixel por pixel, o SSIM captura diferenças perceptuais na estrutura e no padrão, tornando-se uma métrica valiosa para avaliar a qualidade das imagens geradas que devem ser visualmente similares às suas correspondentes reais. Nesta métrica os resultados variam entre 0 e 1, e quanto maior o valor, melhor é a qualidade da imagem gerada em relação à imagem de referência.
+  
+**4. Acurácia Pixel a Pixel (PA)**
+
+Esta métrica se baseia na diferença absoluta pixel a pixel entre uma imagem gerada e a imagem de referência, com uma tolerância de erro, em que um pixel é considerado "correto" se a diferença absoluta entre o valor gerado e o valor real é menor que um limite pré-definido (delta). 
+
+$$ PA = \frac{1}{N} \sum_{i=1}^N (|y_i - \hat{y}_i| < \delta) $$
+      
+onde $\delta$ é o limite de tolerância que define se um pixel é correto ou não.  Nesta métrica os resultados variam entre 0 e 1, e quanto maior o valor, melhor é a acurácia da imagem gerada em relação à imagem de referência.
+
+**Obs:** Para o cálculo de todas as métricas as imagens foram normalizadas para o intervalo [0,1].
+
+## Bases de Dados e Evolução
+
+|Base de Dados | Endereço na Web | Resumo descritivo|
+|----- | ----- | -----|
+| Pix2pix maps | [Link](http://efrosgans.eecs.berkeley.edu/pix2pix/datasets/) | 2196 pares de imagens de satélite e mapas da cidade de Nova Iorque com dimensões 600x600 e são separadas em conjuntos de treino, teste e validação com, respectivamente, 1099, 550 e 547 imagens. |
+
+A base de dados é pensada para modelos supervisionados (que aprendem a partir de imagens pareadas nos dois domínios de interesse). Apesar da CycleGAN não necessitar de bases pareadas, o uso desse tipo de base de dados permite uma avaliação objetiva das métricas quantitativas.
+
+As transformações aplicadas às imagens foram o redimensionamento para 256x256 e normalização para o intervalo [-1, 1]. Adicionalmente, foram aplicadas inversões verticais e horizontais com probabilidade de 0.5 para cada.
+
+Exemplos de pares de imagens da base de dados:
+
+![data](reports/figures/data.png)
+
+## Workflows
+
+- **Workflow de dados**
+
+![workflow_data](reports/figures/workflows/data_workflow.png)
+
+- **Arquitetura do gerador (U-net)**
+
+![arquitetura_g](reports/figures/workflows/Unet_workflow.png)
+
+- **Arquitetura do discriminador**
+
+![arquitetura_d](reports/figures/workflows/discriminator_workflow.png)
+
+- **Treinamento Pix2pix**
+
+![pix2pix_train](reports/figures/workflows/pix2pix_trainworkflow.png)
+
+- **Treinamento CycleGAN**
+
+![cyclegan_train](reports/figures/workflows/workflow_cycleGAN.png)
+
+## Treinamento e Validação:
+
+- **CycleGAN**:
+
+  -- Evolução da Loss do Gerador:
+
+![image](https://github.com/user-attachments/assets/8cddb897-98a0-4a3d-99a4-f61ef3bb4902)
+
+  -- Evolução da Loss do Discriminador:
+
+![image](https://github.com/user-attachments/assets/c10aa7dc-3bff-431c-b713-3038f2e17570)
+
+  -- Resultado Parcial da Época 10:
+
+![image](https://github.com/user-attachments/assets/f4ce436b-898c-42be-b5be-e33117d9dc73)
+
+  -- Resultado Parcial da Época 50:
+
+![image](https://github.com/user-attachments/assets/bb6e950e-9611-4d2c-a6ab-7399f35c6965)
+
+  -- Resultado Parcial da Época 90:
+
+![image](https://github.com/user-attachments/assets/efe24f0b-5a3b-47c0-9a3f-3486569ef801)
+
+- **Pix2Pix**:
+  -- Evolução da Loss (Gerador e Discriminador):
+
+![image](https://github.com/user-attachments/assets/ec47ca17-d7d9-4e11-a9a3-3b99a6ea677e)
+
+  -- Resultado Parcial da Época 10:
+
+![image](https://github.com/user-attachments/assets/aad5d3d8-74c6-45e4-8d6c-9556d9a846db)
+
+  -- Resultado Parcial da Época 50:
+
+![image](https://github.com/user-attachments/assets/773c89f4-93c9-40c8-beca-0e2d27c82220)
+
+  -- Resultado Parcial da Época 100:
+
+![image](https://raw.githubusercontent.com/cosmerodolfo/dgm-2024.2/refs/heads/main/projetos/satellite2map/reports/figures/pix2pix/output_epoch100.png)
+
+- **Resultados:  Métricas**:
+
+Abaixo se encontram os valores obtidos para as métricas propostas para cada um dos modelos. As métricas foram calculadas utilizando todo o conjunto de teste. O procedimento utilizado para o cálculos das métricas pode ser visualizado nos notebooks com sufixo "eval".
+
+> | | MSE | PSNR| SSIM | PA |
+> |--|--|--|--|--|
+> | Pix2pix | **0.003559** | **72.61** | **0.5703** | **0.5414** |
+> | CGAN  | 0.005664 | 70.60 | 0.4312 | 0.4437 |
+
+A partir dos resultados da tabela acima, é possível observar que o Pix2Pix apresentou um desempenho melhor que a CycleGAN em todas as métricas avaliadas. Isso se deve ao fato de que o mesmo modelo foi utilizado para os dois métodos, diferenciando-se apenas no treinamento. Dado que o treinamento do Pix2pix é supervisionado, é de se esperar que o desempenho desse método fosse melhor do que o do método não supervisionado. Vale ressaltar que a principal vantagem da CycleGAN frente ao Pix2pix é a capacidade de aprender mapeamentos a partir de base de dados não pareadas. Em casos onde há acesso a dados pareados, é possível inferir que o Pix2pix apresenta resultados melhores através de um método mais simples.
+
+## Conclusão
+
+Apesar dos resultados obtidos não possuírem um nivél qualitativamente bom, pode-se dizer que os modelos utilizados conseguiram sim capturar a distribuição de probabilidade condicional desejada. Os resultados obtidos são limitados principalmente pela falta de hardware adequado para busca de melhores hiperparâmetros e por limitações dos próprios métodos, visto que foram utilizadas as implementações _vanilla_ de ambas as técnicas. Muita pesquisa já foi desenvolvida em cima desses modelos, inclusive uma implementação da CycleGAN otimizada para o problema de extração da mapas a partir de imagens de satélite é proposta em [[2]](#2) e uma abordagem com um discriminador que usa camadas de atenção é apresentada em [[5]](#5).
+
+Tanto o Pix2pix quanto a CycleGAN deixaram de ser o estado-da-arte a muitos anos. Ainda assim, pode-se dizer que foram capazes de alcançar seus objetivos visto que seus autores os propuseram com frameworks de I2IT simples, leves e generalistas.
+
+Finalmente, podemos dizer que durante o desenvolvimento desse projeto foi possível adquirir muito conhecimento sobre o pipeline de pesquisa com modelos generativos, aumentar a familiaridade com conceitos chave da área como arquiteturas de redes neurais, datasets, métricas quantitativas, etc. e também foi possível desenvolver habilidades práticas como monitoramento de métricas, desenvolver visualizações dos resultados, armazenamento de checkpoints, etc.
 
 ## Referências Bibliográficas
 <a id="1">[1]</a>
@@ -90,3 +203,33 @@ J. -Y. Zhu, T. Park, P. Isola and A. A. Efros, "Unpaired Image-to-Image Translat
 
 <a id="5">[5]</a>
 Song, J.; Li, J.; Chen, H.; Wu J. RSMT: A Remote Sensing Image-to-Map Translation Model via Adversarial Deep Transfer Learning. *Remote Sensing*. **2022**, 14, 919.
+
+<a id="6">[6]</a>
+Wang, Z., Bovik, A. C., Sheikh, H. R., & Simoncelli, E. P. (2004). "Image quality assessment: From error visibility to structural similarity." IEEE Transactions on Image Processing.
+
+<!-- <a id="7">[7]</a>
+Wang, Z., & Bovik, A. C. (2006). "Mean Squared Error: Love it or Leave it?" IEEE Signal Processing Magazine. -->
+
+## Apêndice 1 - Mais resultados Pix2pix
+
+![image](reports/figures/pix2pix/results1.png)
+
+![image](reports/figures/pix2pix/results2.png)
+
+![image](reports/figures/pix2pix/results3.png)
+
+![image](reports/figures/pix2pix/results4.png)
+
+![image](reports/figures/pix2pix/results5.png)
+
+## Apêndice 2 - Mais resultados CycleGAN
+
+![image](reports/figures/cyclegan/results1.png)
+
+![image](reports/figures/cyclegan/results2.png)
+
+![image](reports/figures/cyclegan/results3.png)
+
+![image](reports/figures/cyclegan/results4.png)
+
+![image](reports/figures/cyclegan/results5.png)
