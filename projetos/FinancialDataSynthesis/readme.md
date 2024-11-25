@@ -195,6 +195,11 @@ Adicionalmente no caso das GANs, neste estudo foi explorada o tipo de GAN conhec
 
 Assim temos que a função de perda do discriminante na WGAN-GP (Wasserstein GAN com Gradient Penalty) foi projetada para aproximar a distância de Wasserstein entre distribuições de dados reais e geradas. Consiste dos seguentes componentes principais:
 
+<div align="center">
+    <img src="img_readme/ComponentesWGAN-GP.png" alt="Componentes da WGAN-GP" title="Componentes da WGAN-GP" />
+    <p><em>Figura 6: Componentes da WGAN-GP.</em></p>
+</div>
+
 **CASO 2: TRANSFORMERS**
 
 A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
@@ -211,7 +216,7 @@ A continuação se apresenta a serie temporal dos preços da ação da empressa 
 
 <div align="center">
     <img src="img_readme/Serie_temporal.png" alt="Preços_Vale" title="Preços Apple" />
-    <p><em>Figura 6: Preços das ações da Apple com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <p><em>Figura 7: Preços das ações da Apple com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
 2. **Extração de Features:**
@@ -227,7 +232,7 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
 
 <div align="center">
     <img src="img_readme/vol.png" alt="Volume_Vale" title="Volume de Ações da Apple" />
-    <p><em>Figura 7: Volume de ações da Apple negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <p><em>Figura 8: Volume de ações da Apple negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
 3. **Normalização dos Dados:**
@@ -248,7 +253,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
    A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
    <div align="center">
     <img src="Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
-    <p><em>Figura 8: Estrutura simplificada do modelo baseado na arquitetura Transformer. </em></p>
+    <p><em>Figura 9: Estrutura simplificada do modelo baseado na arquitetura Transformer. </em></p>
 </div>
 
 - **Input:**
@@ -319,7 +324,7 @@ A figura abaixo ilustra o workflow:
 
  <div align="center">
     <img src="Workflow.png" alt="Workflow" title="Workflow" />
-    <p><em>Figura 9: Workflow contemplando o processo de treinamento e inferência. </em></p>
+    <p><em>Figura 10: Workflow contemplando o processo de treinamento e inferência. </em></p>
 </div>
 
 ## Experimentos, Resultados e Discussão dos Resultados
