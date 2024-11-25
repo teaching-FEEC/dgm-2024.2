@@ -104,7 +104,7 @@ Utilizamos como métrica de avaliação o RMSE.
 
 A metodologia para a geração das séries temporais sintéticas utilizando Redes Generativas Adversarias pode ser resumida no seguinte passo a passo:
 
-1. **Coleta de Dados via API do Yahoo Finance:**
+1. **Coleta de Dados via API:**
 
 <p align="justify">
 O movimento do preço das ações é influenciado por muitos fatores. Então se precisa da maior quantidade de informações possíveis. Por isso no caso das GANs o banco de dados criado alem da serie temporal dos preços de fechamento diários (Close) da empresa Apple, temos os índices de mercado, os preços de commodities e os preços de ações de grandes empresas como Amazon, Google e Microsoft. A continuação se apresenta banco de dados criado a partir dos historicos de dados das series tempoais financieras utilizadas neste trabalho, a faixa temporal foi seleccionada intencionalmente para poder testar nossos modelos com um evento extremo (Covid19).
