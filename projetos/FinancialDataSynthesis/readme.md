@@ -104,7 +104,8 @@ A continuação se apresenta banco de dados utilizado neste trabalho, a faixa te
 <img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Vale" />
 
 ## Metodologia e Workflow
-**CASO 1: TRANSFORMERS**
+**CASO 1: GANs**
+**CASO 2: TRANSFORMERS**
 
 A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
 
