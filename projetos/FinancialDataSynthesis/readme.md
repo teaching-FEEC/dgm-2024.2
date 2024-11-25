@@ -97,7 +97,9 @@ Para alcançar esses objetivos, utilizamos:
 - Criação de um modelo generativo baseado em Transformers;
 - Comparação de desempenho com redes profundas baseadas em LSTM e GRU;
 
-Utilizamos como métrica de avaliação o Root Mean Square Error (RMSE).
+Utilizamos como métrica de avaliação:
+- Root Mean Square Error (RMSE);
+- Acurácia de Direção (mede a % de previsões que acertaram a direção do movimento dos preços);
 
 ### Bases de Dados
 
