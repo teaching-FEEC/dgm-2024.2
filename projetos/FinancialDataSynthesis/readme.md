@@ -77,7 +77,7 @@ A criação de dados financeiros que reproduzam o comportamento de dados reais �
 </p>
 
 <p align="justify">
-Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers para melhorar a qualidade das previsões de preços de ações. As GANS podem ser adaptadas para tarefas de predição ao aprender representações profundas dos dados. Os Transformers, por sua vez, têm se mostrado  eficazes em tarefas sequenciais devido à sua capacidade de modelar relações complexas em séries temporais.
+Neste trabalho, exploramos o uso de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers para melhorar a qualidade das previsões de preços de ações. As GANS podem ser adaptadas para tarefas de predição ao aprender representações profundas dos dados, enquanto os Transformers são eficazes em modelar relações não lineares em séries temporais.
 </p>
 
 ## Objetivos
