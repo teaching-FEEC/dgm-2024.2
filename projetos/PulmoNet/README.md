@@ -490,8 +490,15 @@ Documento com as referências extras identificadas: https://docs.google.com/docu
 
 # Anexos
 
-## Testes adicionais com outras arquiteturas
-> TODO
+## Explorações de arquiteturas e dados
+
+Considerando a dificuldade do modelo em sintetizar estruturas no interior do pulmão, duas outras abordagens foram testadas. A primeira envolveu apenas uma mudança no processamento dos dados de treino, e a segunda uma mudança na arquitetura da PulmoNet.
+
+Quanto a mudança dos dados, ao invés de simplesmente enviar ao gerador a máscara da região pulmonar, testou-se a ideia de somar a máscara do pulmão com a máscara das vias aéreas. Para isso, 17 mil imagens dos dados de treino da GAN que continham vias aéreas foram selecionadas e criou-se um novo dataset de treino, onde a entrada do gerador corresponde a $0,5 \times máscara pulmonar + 0,5 \times máscara das vias aéreas$. Para aproveitar o conhecimento da região externa e forçar o modelo a focar na região interna ao pulmão, continuou-se o treinamento do modelo Sweep412 por mais 40 épocas, utilizando as mesmas configurações de *loss* e ruído, porém com esse novo dataset de treino. Como teste, comparou-se as imagens sintéticas geradas pelo Sweep412 e pelo mesmo após esse treino adicional, considerando como entrada de ambos apenas a máscara do pulmão (Fig. A1). O impacto desse novo treino foi mínimo, com a adição de poucas ou nenhuma estrutura no interior do pulmão. Além disso, o novo modelo pareceu mais propenso a erros, gerando estruturas indesejáveis na região externa ao pulmão (Fig. A1, exemplos 2 e 3). Desse modo, conclui-se que a estratégia de *fine-tuning* explorada nesse experimento causa uma melhora irrelevante no interior do pulmão e não justifica o custo computacional da abordagem. 
+
+*figura*
+*Figura A1: Exemplos de imagens sintéticas geradas pelo modelo Sweep412 e pelo mesmo após treino adicional com as máscaras de pulmão e vias aéreas combinadas. Ambos modelos receberam como entrada a máscara somente do pulmão para geração dos exemplos. Ao lado de cada imagem gerada, apresenta-se a imagem original a partir da qual obteve-se a máscara pulmonar.*
+
 
 ## How To Run
 > TODO: Fix / Update
