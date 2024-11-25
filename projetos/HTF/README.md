@@ -267,6 +267,7 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
 
 ### Resultados Gráficos de Inferência
 
+Nesta seção tem-se dois tipos de resultados qualitativos. As figuras 17 e 19 mostram respectivamente animações de cenas para o modelo de base LSTM e o Transformer em que se tem a sequência de observação, a sequência de movimento real e uma sequência de movimento gerada, que corresponde a uma de muitas possibilidades socialmente aceitáveis. As figuras 18 e 20, que também correspondem aos modelos LSTM e Transformer respectivamente, mostram justamente uma nuvem de possibilidades de possíveis trajetórias, indicando quais as que mais se repetem. Tais distribuições de probabilidade foram calculadas utilizando a função de densidade de estimativa de kernel (Kernel Density Estimation).
 
 <div style="text-align: center;">
     <p align="center">
