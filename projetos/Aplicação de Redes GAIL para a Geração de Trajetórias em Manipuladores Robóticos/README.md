@@ -235,18 +235,149 @@ Este projeto adota um workflow bem definido para alcançar o objetivo de gerar t
 
 
 
-## Experimentos, Resultados e Discussão dos Resultados
+## Modelos Propostos, Resultados e Discussão dos Resultados
 
-### **Descrição dos Experimentos**
+Neste trabalho, foram desenvolvidos e avaliados dois modelos de Rede GAIL. A seguir, são detalhadas as arquiteturas e os processos de treinamento de cada modelo. Em sequência, são apresentados e discutidos os resultados obtidos, destacando o desempenho e as implicações para a geração de trajetórias válidas em manipuladores robóticos.
+
+### **Modelos Propostos**
+
+#### **Arquitetura da Rede GAIL Proposta para o Modelo 1**
+
+##### Gerador (GeneratorPolicy)
+| Camada                 | Detalhes                     |
+|------------------------|------------------------------|
+| Entrada                | Dimensão: 3x13 (`state_dim`)       |
+| Linear + ReLU          | Entrada: `state_dim`        |
+|                        | Saída: 128                  |
+| Linear + ReLU          | Entrada: 128                |
+|                        | Saída: 128                  |
+| Linear + Tanh          | Entrada: 128                |
+|                        | Saída: 1x13 (`action_dim`)         |
+
+##### Discriminador
+| Camada                 | Detalhes                     |
+|------------------------|------------------------------|
+| Entrada                | Dimensão: 39+13 (`state_dim + action_dim`) |
+| Linear + ReLU + Dropout| Entrada: `state_dim + action_dim` |
+|                        | Saída: 128                  |
+| Linear + ReLU + Dropout| Entrada: 128                |
+|                        | Saída: 128                  |
+| Linear + Sigmoid       | Entrada: 128                |
+|                        | Saída: 1                    |
+
+##### Funções de Perda
+| Rede                   | Função de Perda              |
+|------------------------|------------------------------|
+| Gerador                | -log(Discriminador(state, action)) |
+| Discriminador          | BCE Loss (Binary Cross-Entropy)   |
+
+
+Para o primeiro modelo, foram feitos dois testes, onde foram alterados alguns hiperparâmetros, de acordo com o que está sendo apresentado nas tabelas abaixo:
+
+##### Hiperparâmetros - Modelo 1.1
+| Parâmetro              | Valor                        |
+|------------------------|------------------------------|
+| Hidden Dim (Discriminator)| 128                      |
+| Dropout                | 0.3                          |
+| Otimizador (Gen/Disc)  | Adam                         |
+| Taxa de Aprendizado    | 1e-4                         |
+| Batch Size             | 128                          |
+| Número de Épocas       | 250                          |
+
+
+##### Hiperparâmetros - Modelo 1.2
+| Parâmetro              | Valor                        |
+|------------------------|------------------------------|
+| Hidden Dim (Discriminator)| 128                      |
+| Dropout                | 0.3                          |
+| Otimizador (Gen/Disc)  | Adam                         |
+| Taxa de Aprendizado    | 1e-3                         |
+| Batch Size             | 256                          |
+| Número de Épocas       | 150                           |
+
+
+
+#### **Arquitetura da Rede GAIL Proposta para o Modelo 2**
+
+  O modelo 2 segue praticamente a mesma arquitetura do modelo 1, a diferença está na presença de um pré-treinamento inicial do gerador, esse pré-treinamento inicial foi feito, visando estabelecer uma métrica inicial para a avaliação. Uma vez que o discriminador é responsável por diferenciar as trajetórias geradas pelo gerador e as trajetórias especialistas, o seu pré-treinamento ajuda a garantir que ele tenha uma capacidade inicial razoável de distinção.
+
+##### Gerador (GeneratorPolicy)
+| Camada                 | Detalhes                     |
+|------------------------|------------------------------|
+| Entrada                | Dimensão: 3x13 (`state_dim`)       |
+| Linear + ReLU          | Entrada: `state_dim`        |
+|                        | Saída: 128                  |
+| Linear + ReLU          | Entrada: 128                |
+|                        | Saída: 128                  |
+| Linear + Tanh          | Entrada: 128                |
+|                        | Saída: 1x13 (`action_dim`)         |
+
+##### Discriminador
+| Camada                 | Detalhes                     |
+|------------------------|------------------------------|
+| Entrada                | Dimensão: 39+13 (`state_dim + action_dim`) |
+| Linear + ReLU + Dropout| Entrada: `state_dim + action_dim` |
+|                        | Saída: 128 (`hidden_dim`)         |
+| Linear + ReLU + Dropout| Entrada: `hidden_dim`       |
+|                        | Saída: `hidden_dim`         |
+| Linear + Sigmoid       | Entrada: `hidden_dim`       |
+|                        | Saída: 1                   |
+
+##### Funções de Perda
+| Rede                   | Função de Perda              |
+|------------------------|------------------------------|
+| Gerador                | -log(Discriminador(state, action)) |
+| Discriminador          | BCE Loss (Binary Cross-Entropy)   |
+
+
+Para o segundo modelo, foram feitos dois testes, onde foram alterados alguns hiperparâmetros, de acordo com o que está sendo apresentado nas tabelas abaixo:
+
+##### Hiperparâmetros - Modelo 2.1
+| Parâmetro              | Valor                        |
+|------------------------|------------------------------|
+| Hidden Dim (Discriminator)| 128                      |
+| Dropout                | 0.2                          |
+| Otimizador (Gen/Disc)  | Adam                         |
+| Taxa de Aprendizado    | 1e-4                         |
+| Batch Size             | 128                          |
+| Número de Épocas       | 300  (onde 30 das épocas iniciais são exclusivas para pré-treinar o discriminador)                        |
+
+
+##### Hiperparâmetros - Modelo 2.2
+| Parâmetro              | Valor                        |
+|------------------------|------------------------------|
+| Hidden Dim (Discriminator)| 128                      |
+| Dropout                | 0.2                          |
+| Otimizador (Gen/Disc)  | Adam                         |
+| Taxa de Aprendizado    | 1e-3                         |
+| Batch Size             | 128                          |
+| Número de Épocas       | 200  (onde 20 das épocas iniciais são exclusivas para pré-treinar o discriminador)                         |
+
+
+
+### **Resultados Obtidos Durante o Treinamento**
+
+Durante o treinamento da GAIL, as perdas do **Discriminador** e do **Gerador** são monitoradas para avaliar o progresso do aprendizado. Cada componente possui um objetivo específico:
+
+- **Discriminador**: Aprender a distinguir entre pares estado-ação gerados pelo especialista e aqueles gerados pelo modelo. Sua perda é calculada usando a função de **Binary Cross-Entropy (BCE)**:
 
 
 
 
-### **Resultados Obtidos**
+- **Gerador**: Busca enganar o discriminador ao produzir pares estado-ação que sejam indistinguíveis daqueles do especialista. Sua perda é definida como o negativo do logaritmo da saída do discriminador para o par gerado:
 
 
 
-#### **Resultados Qualitativos**
+As perdas são monitoradas ao longo das épocas para verificar a estabilidade do treinamento e a convergência. Tendências esperadas incluem uma redução consistente da perda do gerador, indicando que ele está aprendendo a replicar as ações do especialista, e uma estabilização na perda do discriminador, sugerindo que ele atingiu equilíbrio na distinção entre os dados gerados e reais.
+
+
+Também foi monitorada a métrica **Jensen-Shannon Divergence (JS)**, que é utilizada para avaliar a similaridade entre as distribuições das ações geradas pelo modelo (policy) e as ações dos especialistas. O valor da divergência JS varia de 0 a 1, onde valores menores indicam maior similaridade.
+
+
+No treinamento, a métrica é monitorada a cada época para garantir que a política gerada pela GAIL esteja convergindo para o comportamento do especialista, indicando um aprendizado eficiente. Valores suavizados da JS Divergence também são plotados para facilitar a análise do progresso do treinamento.
+
+
+### **Resultados Durante o Teste - Carregando os Pesos do Modelo Treinado**
 
 
 
@@ -264,7 +395,7 @@ Este projeto adota um workflow bem definido para alcançar o objetivo de gerar t
 
 
 ## Referências Bibliográficas
-#### Artigos de Referência:
+### Artigos de Referência:
 
 * **GAIL**: Ho, J. & Ermon, S. (2016). Generative Adversarial Imitation Learning. [arXiv:1606.03476](https://arxiv.org/abs/1606.03476).
 * WANG, Haoxu; MEGER, David. Robotic object manipulation with full-trajectory gan-based imitation learning. In: 2021 18th Conference on Robots and Vision (CRV). IEEE, 2021. p. 57-63. <https://ieeexplore.ieee.org/abstract/document/9469449>
