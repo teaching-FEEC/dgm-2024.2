@@ -298,7 +298,7 @@ Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado e
 > TODO: Atualizar com dados da E3
 
 ### Resultados preliminares com 10 mil dados de treinamento da GAN
-A PulmoNet - o modelo de GAN proposto em nosso projeto - passou por uma etapa de busca pelas configurações e hiperparâmetros de treinamentos ótimos, a fim de encontrar uma combinação que gerasse tomografias pulmonares mais realistas. Para isto, testou-se quinze configurações distintas, com uma parcela dos dados selecionados para o treinamento da GAN (Tab. 3).
+A PulmoNet - o modelo de GAN proposto em nosso projeto - passou por uma etapa de busca pelas configurações e hiperparâmetros de treinamentos ótimos, a fim de encontrar uma combinação que gerasse tomografias pulmonares mais realistas. Para isto, testou-se quinze configurações distintas, com uma parcela dos dados selecionados para o treinamento da GAN. As  configurações de cada modelo avaliado nesta varredura quanto métricas qualitativas e quantitativas obtidas estão apresentadas na Tabela 3.
 
 *Tabela 3: Resultados varredura inicial de hiper parâmetros. A cada modelo, atribuí-s eum nome aleatório.*
 | Modelo |	Relação Passos (Disc/Gen) |	Ruído |	Ruído só no pulmão |	Intensidade do Ruído	|Média Ruído para Gaussiano |Desvio Ruído para Gaussiano	| Critério	| Regularizador	| Nível Regularização	| Learning Rate	| Beta | Época de menor *loss* de validação (gerador)| Análise Qualitativa |
@@ -320,18 +320,15 @@ A PulmoNet - o modelo de GAN proposto em nosso projeto - passou por uma etapa de
 |Sweep464	|2/2	|Gaussiano	|Verdadeiro	|0,986	|0,993	|0,101	|MSELoss	|MSE_mask	|1	|2,91E-04	|0,439| 38 | Ruim |
 
 
-Nesta tabela, apresenta-se tanto as configurações de cada modelo avaliado nesta varredura quanto métricas qualitativas e quantitativas obtidas.
 Com relação à análise qualitativa, cada um dos três membros deste projeto examinaram algumas imagens sintéticas e classificaram o modelo entre três categorias: "Bom", "Médio" e "Ruim".
 Nesta análise qualitativa, considerou-se a definição das bordas e da região externa ao pulmão, além do preenchimento na região com as vias aéreas.
 Alguns exemplos destas imagens são apresentados em anexo, em [Varredura dos parâmetros da GAN para 10 mil dados](#varredura-dos-parâmetros-da-gan-para-10-mil-dados).
 
-Considerando a média das avaliações qualitativas, apenas um modelo recebeu três votos "Bom" (Sweep 205), um modelo recebeu dois votos "Bom" (Sweep 10) e dois modelos receberam apenas um voto "Bom" (Sweep 412 e 123), de modo que filtramos 4 dos 15 modelos.
-Destes dois modelos com apenas um voto "Bom", comparou-se o FID e o SSIM para selecionar a configuração que prosseguiria com o treinamento. Em função destas métricas, considerou-se que o Sweep 412 tinha mais potencial para aprimorar e gerar boas imagens sintéticas.
-Assim, foram escolhidas as configurações **Sweep 205, Sweep 10 e Sweep 412** para a realização do treinamento com toda a base de dados disponível.
+Considerando a média das avaliações qualitativas, apenas um modelo recebeu três votos "Bom" (Sweep 205), um modelo recebeu dois votos "Bom" (Sweep 10) e dois modelos receberam apenas um voto "Bom" (Sweep 412 e 123), de modo que filtrou-se 4 dos 15 modelos. Destes dois modelos com apenas um voto "Bom", comparou-se o FID e o SSIM para selecionar a configuração que prosseguiria com o treinamento. Em função destas métricas, considerou-se que o Sweep 412 tinha mais potencial para aprimorar e gerar boas imagens sintéticas. Assim, foram escolhidas as configurações **Sweep 205, Sweep 10 e Sweep 412** para a realização do treinamento com toda a base de dados disponível.
 
-Ainda sobre a análise qualitativa dos resultados, é pertinente observar que todos os modelos que foram treinados com regularização apenas na região do pulmão (interior da máscara binária) não tiveram bons resultados.
+Ainda sobre a análise qualitativa dos resultados, é pertinente observar que todos os modelos que foram treinados com regularização apenas na região do pulmão (interior da máscara binária) não tiveram bons resultados, e foram julgados como "Ruim".
 
-Ressalta-se também que esta etapa preliminar de seleção e varredura da combinação de parâmetros da treinamento do modelo é primordial para potencializar bons resultados. Além disso, esta estratégia também economiza tempo e recursos, já que previne que o treinamento completo do modelo seja alocado em uma configuração potencialmente ruim.
+Ressalta-se também que esta etapa preliminar de seleção e varredura da combinação de parâmetros da treinamento do modelo é primordial para potencializar bons resultados, visto a instabilidade dos treinos das GANs. Além disso, esta estratégia também economiza tempo e recursos, já que previne que o treinamento completo do modelo seja alocado em uma configuração potencialmente ruim.
 
 ### Resultados com 60 mil dados de treinamento da GAN
 
