@@ -193,6 +193,20 @@ Adicionalmente no caso das GANs, neste estudo foi explorada o tipo de GAN conhec
     <p><em>Figura 5: Diferenças da GAN com WGAN-GP.</em></p>
 </div>
 
+Assim temos que a função de perda do discriminante na WGAN-GP (Wasserstein GAN com Gradient Penalty) foi projetada para aproximar a distância de Wasserstein entre distribuições de dados reais e geradas. Consiste em dois componentes principais:
+
+### i) Wasserstein Loss: 
+Wasserstein Loss visa maximizar a diferença entre suas pontuações de saída para amostras reais e falsas. Isso é expresso como:
+
+$$
+L_{\text {Wasserstein }}=\mathbb{E}_{x_{\text {real }}}\left[D\left(x_{\text {real }}\right)\right]-\mathbb{E}_{x_{\text {fake }}}\left[D\left(x_{\text {fake }}\right)\right]
+$$
+
+### i) Gradient Penalty: 
+Para impor a restrição de Lipschitz (garantindo que os gradientes tenham uma norma de no máximo 1), um termo de penalidade é adicionado. A penalidade de gradiente é calculada como:
+$$
+\lambda \cdot \mathbb{E}_{\hat{x}}\left[\left(\left\|\nabla_{\hat{x}} D(\hat{x})\right\|_2-1\right)^2\right]
+$$
 **CASO 2: TRANSFORMERS**
 
 A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
