@@ -235,13 +235,13 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 Os features que se mostraram úteis na geração dos dados sintéticos foram:
 
    - Volume de ações negociada;
-   - Índices técnicos: Moving Average Convergence Divergence (MACD), Stochastic Oscillator (SO), Commodity Channel Index (CCI), Money Flow Index (MFI);
+   - Índicadores técnicos: Moving Average Convergence Divergence (MACD), Stochastic Oscillator (SO), Commodity Channel Index (CCI), Money Flow Index (MFI);
   
-Os índices técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, além do volume de ações negociadas. Esses índices técnicos buscam capturar as tendências de movimentação dos preços. A figura abaixo ilustra um exemplo de um feature utilizado:
+Os índicadores técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, e volume de ações negociadas. Esses índicadores buscam capturar as tendências de movimentação dos preços. A figura abaixo ilustra um exemplo de um feature utilizado:
 
 <div align="center">
     <img src="img_readme/vol.png" alt="Volume_Vale" title="Volume de Ações da Apple" />
-    <p><em>Figura 8: Volume de ações da Apple negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <p><em>Figura 8: Volume de ações da Apple negociadas coletados do API do Yahoo Finance.</em></p>
 </div>
 
 3. **Normalização dos Dados:**
