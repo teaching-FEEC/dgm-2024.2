@@ -13,6 +13,7 @@ As an additional note, we have included a description of how to perform the func
 
 1. Training configurations should be described in a YAML file composed by the following keys:
 
+yaml
 model:
   name_model: "string with model name"
   dir_save_results: "path/name_of_folder_to_be_created/" - if not provided: ./name_model/
