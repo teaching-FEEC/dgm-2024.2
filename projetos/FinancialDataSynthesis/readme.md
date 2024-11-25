@@ -103,7 +103,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando Rede
 O movimento do preço das ações é influenciado por muitos fatores. Então se precisa da maior quantidade de informações possíveis. Por isso no caso das GANs o banco de dados criado alem da serie temporal dos preços de fechamento diários (Close) da empresa Apple, temos os índices de mercado, os preços de commodities e os preços de ações de grandes empresas como Amazon, Google e Microsoft. A continuação se apresenta banco de dados criado a partir dos historicos de dados das series tempoais financieras utilizadas neste trabalho, a faixa temporal foi seleccionada intencionalmente para poder testar nossos modelos com um evento extremo (Covid19).
 </p>
 
-<img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Vale" />
+<img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Banco de Dados" />
 
 2. **Engenharia de Características:**
 
@@ -117,8 +117,8 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
   <li>Transformadas de Fourier: Foi obtida a magnitude e a fase das transformadas discretas de Fourier do preço das ações, usando 3, 6 e 9 componentes.</li>
 </ul>
 
-<img src="img_readme/Tecnicos.png" alt="Features Baseadas em Indicadores Técnicos" title="Vale" />
-<img src="img_readme/Fourier.png" alt="Features Baseadas em Transformadas de Fouerier" title="Vale" />
+<img src="img_readme/Tecnicos.png" alt="Features Baseadas em Indicadores Técnicos" title="Indicadores Técnicos" />
+<img src="img_readme/Fourier.png" alt="Features Baseadas em Transformadas de Fouerier" title="Transformadas de Fouerier" />
 
 3. **Normalização dos Dados:**
 
@@ -200,7 +200,7 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
 
 <div align="center">
     <img src="img_readme/vol.png" alt="Volume_Vale" title="Volume de Ações da Apple" />
-    <p><em>Figura 2: Volume de ações da Vale negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <p><em>Figura 2: Volume de ações da Apple negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
 3. **Normalização dos Dados:**
