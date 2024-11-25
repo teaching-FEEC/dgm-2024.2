@@ -166,7 +166,7 @@ $$
 $$
  
  
- é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. A estrutura de treinamento que os combina é um processo competitivo. Abaixo detalha-se a GAN:
+ A rede generativa GAN é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. As funções de perda apresentadas anteriormente garantem um treinamento que combina um processo competitivo. Abaixo detalha-se a estrutura das redes neurais da GAN:
 </p>
 
 Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$. A continuação se detalha as arquitetura do Gerador e do Discriminador.
