@@ -106,7 +106,12 @@ A metodologia para a geração das séries temporais sintéticas utilizando Rede
 O movimento do preço das ações é influenciado por muitos fatores. Então se precisa da maior quantidade de informações possíveis. Por isso no caso das GANs o banco de dados criado alem da serie temporal dos preços de fechamento diários (Close) da empresa Apple, temos os índices de mercado, os preços de commodities e os preços de ações de grandes empresas como Amazon, Google e Microsoft. A continuação se apresenta banco de dados criado a partir dos historicos de dados das series tempoais financieras utilizadas neste trabalho, a faixa temporal foi seleccionada intencionalmente para poder testar nossos modelos com um evento extremo (Covid19).
 </p>
 
-<img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Banco de Dados" />
+</p>
+<div align="center">
+    <img src="img_readme/Banco de Dados.png" alt="Banco de Dados" title="Banco de Dados" />
+    <p><em>Figura 1: Historico de series temporais usadas para preveer o preço da ação da Apple, usando redes generativas GANs.</em></p>
+</div>
+
 
 2. **Engenharia de Características:**
 
@@ -120,8 +125,16 @@ Depois de baixar os históricos de dados das séries temporais financeiras, calc
   <li>Transformadas de Fourier: Foi obtida a magnitude e a fase das transformadas discretas de Fourier do preço das ações, usando 3, 6 e 9 componentes.</li>
 </ul>
 
-<img src="img_readme/Tecnicos.png" alt="Features Baseadas em Indicadores Técnicos" title="Indicadores Técnicos" />
-<img src="img_readme/Fourier.png" alt="Features Baseadas em Transformadas de Fouerier" title="Transformadas de Fouerier" />
+</p>
+<div align="center">
+    <img src="img_readme/Tecnicos.png" alt="Features Baseadas em Indicadores Técnicos" title="Indicadores Técnicos" />
+    <p><em>Figura 2: Features Baseadas em Indicadores Técnicos criadas como complemento para o banco de dados apresentado na Figura 1.</em></p>
+</div>
+
+<div align="center">
+    <img src="img_readme/Fourier.png" alt="Features Baseadas em Transformadas de Fouerier" title="Transformadas de Fouerier" />
+    <p><em>Figura 3: Features Baseadas em Transformadas de Fouerier criadas como complemento para o banco de dados apresentado na Figura 1.</em></p>
+</div>
 
 3. **Normalização dos Dados:**
 
@@ -163,12 +176,17 @@ $$
 </p>
 <div align="center">
     <img src="img_readme/GAN.png" alt="Estrutura GAN" title="Estrutura da rede generativa GAN" />
-    <p><em>Figura 1: Estrutura da arquitetura GAN.</em></p>
+    <p><em>Figura 4: Estrutura da arquitetura GAN.</em></p>
 </div>
 
 
 
 O gerador foi construido usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A seleção das três camadas GRU foi por causa que neste trabalho foi usado os ultimos três días de dados históricos para poder prever o día seguente. Na entrada se pode visualizar que temos as 36 features explicadas anteriormente nos passos 1 e 2. Por isso se pode visualzar que temos uma dimensão de entreda de Bs,3,36 onde Bs é o tamanho do batch de treinamento. Neste estudo foi Bs = 128. Note-se que a GAN usada tem uma arquitetura condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso o contexto usado foi os valores passados reais do valor da ação da Apple $yc$. 
+
+<div align="center">
+    <img src="img_readme/WGAN-GP.png" alt="Diferenças da GAN com WGAN-GP" title="Diferenças da GAN com WGAN-GP" />
+    <p><em>Figura 5: Diferenças da GAN com WGAN-GP.</em></p>
+</div>
 
 **CASO 2: TRANSFORMERS**
 
@@ -186,7 +204,7 @@ A continuação se apresenta a serie temporal dos preços da ação da empressa 
 
 <div align="center">
     <img src="img_readme/Serie_temporal.png" alt="Preços_Vale" title="Preços Apple" />
-    <p><em>Figura 2: Preços das ações da Apple com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <p><em>Figura 6: Preços das ações da Apple com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
 2. **Extração de Features:**
@@ -202,7 +220,7 @@ Os índices técnicos são algumas métricas que podem ser calculadas a partir d
 
 <div align="center">
     <img src="img_readme/vol.png" alt="Volume_Vale" title="Volume de Ações da Apple" />
-    <p><em>Figura 2: Volume de ações da Apple negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <p><em>Figura 7: Volume de ações da Apple negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
 3. **Normalização dos Dados:**
@@ -223,7 +241,7 @@ $$ x_{n}(i) = \frac{x(i) - \text{média[x]}}{\text{desvio padrão[x]}}$$
    A rede neural é um modelo baseado na arquitetura Transformer sendo utilizado para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
    <div align="center">
     <img src="Arquitetura_Blocos.png" alt="Arquitetura" title="Arquitetura" />
-    <p><em>Figura 3: Estrutura simplificada do modelo baseado na arquitetura Transformer. </em></p>
+    <p><em>Figura 8: Estrutura simplificada do modelo baseado na arquitetura Transformer. </em></p>
 </div>
 
 - **Input:**
@@ -294,7 +312,7 @@ A figura abaixo ilustra o workflow:
 
  <div align="center">
     <img src="Workflow.png" alt="Workflow" title="Workflow" />
-    <p><em>Figura 4: Workflow contemplando o processo de treinamento e inferência. </em></p>
+    <p><em>Figura 9: Workflow contemplando o processo de treinamento e inferência. </em></p>
 </div>
 
 ## Experimentos, Resultados e Discussão dos Resultados
