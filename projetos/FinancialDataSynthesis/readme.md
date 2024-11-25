@@ -149,8 +149,11 @@ Essa abordagem garante que os valores da série temporal sejam escalados para o 
 4. **Construção da Rede Neural:**
 
 <p align="justify">
-A rede neural é um modelo baseado em redes generativas adversarias (GAN) para predição de séries temporais. Ele processa sequências de dados para predizer o valor futuro com base nas observações passadas. A figura abaixo ilustra o modelo, de maneira simplificada, atráves de blocos:
+A rede generativas adversarias (GAN) para predição de séries temporais, é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. A estrutura de treinamento que os combina é um processo competitivo. Abaixo detalha-se a GAN:
 </p>
+
+Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$.
+
 
 **CASO 2: TRANSFORMERS**
 
