@@ -44,7 +44,7 @@ O desenvolvimento do projeto, considerando o modelo da S-GAN e seu treinamento, 
 As avaliações qualitativas serão realizadas por observações gráficas que comparam os movimentos reais observados aos preditos e as avaliações quantitativas utilizarão as métricas do benchmark ([1]), que são amplamente utilizadas na literatura, como o Erro de Deslocamento Médio (ADE - *Average Displacement Error*), que mede a distância média entre todas as posições previstas e as trajetórias reais ao longo do tempo, fornecendo uma visão geral de quão próximas as trajetórias previstas estão das trajetórias reais dos pedestres. No entanto, o ADE não capta diretamente as interações entre pedestres, algo que modelos como o Social GAN buscam melhorar por meio de técnicas como "Social Pooling". Portanto, será empregada a métrica do Erro de Deslocamento Final (FDE - *Final Displacement Error*), que de forma semelhante ao ADE, mede a distância entre a posição final das trajetórias previstas e a posição final real dos pedestres. Essa métrica é particularmente utilizada para avaliar a precisão do modelo ao prever a posição final no horizonte de previsão. Entretanto, como ADE e o FDE isoladamente, não avaliam as interações sociais entre pedestres, é importante complementar a avaliação quantitativa a partir da métrica conhecida por taxa de colisão, que avalia a porcentagem de trajetórias previstas que resultam em colisões entre pedestres. Tal métrica é fundamental para verificar se o modelo é capaz de gerar trajetórias socialmente aceitáveis. Modelos com alta taxa de colisão indicam que as interações sociais naturais não estão corretamente modeladas. No caso da S-GAN, a modelagem das interações espaciais e temporais é essencial para minimizar a taxa de colisão e gerar melhores indicadores ADE e FDE, que a partir da aplicação do método Top-K, selecionam apenas as trajetórias potenciais cuja saída consiste nas K trajetórias mais prováveis, com base nos padrões e interações aprendidas.
 
 
-## Datasets
+## Datasets 
 
 No projeto serão consideradas duas bases de dados principais conforme tabelas abaixo, constituidas por vídeos de trajetórias humanas em espaços populados, cujos cenários são repletos em interações. O primeiro dataset é o BIWI Walking Pedestrians e oa segundo a UCY Crowd, cuja combinação é amplamente conhecida por ETH-UCY dataset. Ambos foram convertidos para dados tabulares com coordenadas do mundo real em metros que foram interpolados para obter valores a cada 0,4 segundos, tempo este correspondente ao de um frame.
 
@@ -113,6 +113,27 @@ Tomando algumas cenas como exemplo, conforme disposto na figura 10, é possível
     <img src="../HTF/images/trajetoriaSP5.gif" alt="Imagem 5" width="400"/>
     <p align="center"><em>Figura 10: Exemplos de cenas de observação e caminho real percorrido</em></p>
 </div>
+
+## Arquitetura
+
+A arquitetura da rede SGAN do modelo de referência, composta por um gerador e um discriminador, pode ser observada nas figuras 11 e 12. As posições relativas são encapsuladas em embeddings, que serão a entrada das células LSTM. Estas serão responsáveis por armazenar o histórico de movimento de cada pedestre e aprender seus estados implícitos, sendo ainda necessário um módulo capaz de combinar as informações de cada um e avaliar as interações sociais existentes. Essa é a função do módulo de pooling, que pode ser implementado de duas formas diferentes.
+
+<p align="center">
+    <img src="/projetos/HTF/images/ARQ_GE.png" alt="Figura 11: Arquitetura do gerador" width="800"/>
+    <br><em>Figura 11: Arquitetura do gerador.</em>
+</p>
+
+<p align="center">
+    <img src="/projetos/HTF/images/ARQ_D.png" alt="Figura 12: Arquitetura do discriminador" width="800"/>
+    <br><em>Figura 12: Arquitetura do discriminador.</em>
+</p>
+
+O pooling social considera um grid em torno de cada pedestre, para que estes ajustem suas trajetórias conforme movimento dos demais, devido a sua influência mútua. Espera-se que as camadas ocultas das LSTMs capturem as propriedades de movimento que variam ao longo do tempo. Isso é feito pelo compartilhamento dos estados entre as LSTMs vizinhas. A figura 13 mostra como tal processo é realizado para a pessoa representada pelo ponto preto.
+
+<p align="center">
+    <img src="/projetos/HTF/images/ARQ_D.png" alt="Figura 13:" width="800"/>
+    <br><em>Figura 13:.</em>
+</p>
 
 ## Workflow
 
