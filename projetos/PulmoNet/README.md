@@ -334,6 +334,18 @@ Ressalta-se também que esta etapa preliminar de seleção e varredura da combin
 
 **Análise Qualitativa**
 > Colocar figuras e gráficos + comentar
+> 
+![Histrograma da quantidade de pixels das fatias selecionadas após segmentação das CTS pulmonares da base de dados ATM'22.](figs/sweep10.png?raw=true)
+
+*Figura 15: Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.*
+
+![Histrograma da quantidade de pixels das fatias selecionadas após segmentação das CTS pulmonares da base de dados ATM'22.](figs/sweep205.png?raw=true)
+
+*Figura 16: Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.*
+
+![Histrograma da quantidade de pixels das fatias selecionadas após segmentação das CTS pulmonares da base de dados ATM'22.](figs/sweep412.png?raw=true)
+
+*Figura 17: Histrograma da quantidade de pixels das fatias selcionadas após segmentação das CTS pulmonares da base de dados ATM'22.*
 
 **Análise Quantitativa**
 
