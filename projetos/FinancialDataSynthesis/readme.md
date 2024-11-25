@@ -199,7 +199,7 @@ Os features que se mostraram úteis na geração dos dados sintéticos foram:
 Os índices técnicos são algumas métricas que podem ser calculadas a partir do preço de fechamento, preço máximo e mínimo, além do volume de ações negociadas. Esses índices técnicos buscam capturar as tendências de movimentação dos preços. A figura abaixo ilustra um exemplo de um feature utilizado:
 
 <div align="center">
-    <img src="Volume_Vale.png" alt="Volume_Vale" title="Vale" />
+    <img src="img_readme/vol.png" alt="Volume_Vale" title="Volume de Ações da Apple" />
     <p><em>Figura 2: Volume de ações da Vale negociadas com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
 </div>
 
