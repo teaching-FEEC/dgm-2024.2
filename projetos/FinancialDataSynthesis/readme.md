@@ -219,7 +219,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 
 1. **Coleta de Dados via API do Yahoo Finance:**
    
-   Através desse API, coletamos a série histórica de preços diários (preços de fechamento), do período de 2010 até 2020.
+   Através desse API, coletamos a série histórica de preços diários (preços de fechamento), do período de 2010 até 2020, representada por $X_{1:N}$.
 <p align="justify">
 </p>
 
@@ -230,7 +230,7 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 
 2. **Extração de Features:**
 
-   Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar o comportamento dos preços. Esses features também são séries temporais, dados (cada um) por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
+   Para auxiliar na geração de dados sintéticos realistas, também extraimos diversos features que ajudam a explicar o comportamento dos preços. Esses features também são séries temporais, cada um descrito por: $F\_{1:N}$. Eles possuem o mesmo número de amostras da série temporal de preços.
 
 Os features que se mostraram úteis na geração dos dados sintéticos foram:
 
