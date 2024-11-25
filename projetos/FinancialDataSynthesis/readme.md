@@ -364,7 +364,7 @@ Neste trabalho, treinamos e avaliamos três modelos preditivos avançados: um GA
   
 - O modelo GAN incluindo RNN é instável, ou seja é muito difícil ajustar os hiperparâmetros, e sem bons parâmetros os resultados são muito ruins.
 
-- Nenhum dos modelos foi capaz de prever com precisão a direção dos movimentos dos preços, apresentando uma acurácia direcional próxima ao nível de aleatoriedade (cerca de 50%).Isso sugere que, embora os modelos sejam eficazes em prever valores numéricos aproximados, eles não são confiáveis para determinar se o preço de uma ação irá subir ou descer em um dado período.
+- Nenhum dos modelos foi capaz de prever com precisão a direção dos movimentos dos preços, apresentando uma acurácia direcional próxima ao nível de aleatoriedade (cerca de 50%). Isso sugere que, embora os modelos sejam eficazes em prever valores numéricos aproximados, eles não são confiáveis para determinar se o preço de uma ação irá subir ou descer em um dado período.
 
  
 ## Referências Bibliográficas
