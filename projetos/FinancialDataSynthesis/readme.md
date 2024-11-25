@@ -124,10 +124,10 @@ O período analisado inclui 2020, escolhido intencionalmente para testar os mode
 </div>
 
 
-2. **Engenharia de Características:**
+2. **Feature Engineering:**
 
 <p align="justify">
-Depois de baixar os históricos de dados das séries temporais financeiras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, para avaliar as notícias relevantes, foi inserido um score, e finalmente foram criadas features baseadas em transformadas de Fourier para extrair tendências de longo e curto prazo nas ações da Apple.
+Depois de baixar os históricos de dados das séries temporais financeiras, calculamos alguns indicadores técnicos e extraímos algumas características de tendência. Além disso, foram criadas features baseadas em transformadas de Fourier para extrair tendências de longo e curto prazo nos preços das ações. Também analisamos os sentimentos das notícias financeiras.
 </p>
 
 <ul>
