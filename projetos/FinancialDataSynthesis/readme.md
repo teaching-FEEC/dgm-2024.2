@@ -343,8 +343,8 @@ A figura abaixo ilustra o workflow geral para os modelos:
 | Model                                      | LSTM | GRU  | GAN  | WGAN-GP  | Transformer  |
 |--------------------------------------------|------|------|------|----------|--------------|
 | RMSE do conjunto de treinamento            | 1.52 | 6.60 | 9.45 |   1.74   |   0.52       |
-| RMSE do conjunto de teste (incluindo 2020) | 6.60 | 5.33 | 4.08 |   4.77   |   2.605      |
-| RMSE do conjunto de teste (excluindo 2020) | 9.45 | 5.38 | 3.09 |   3.88   |   1.976      |
+| RMSE do conjunto de teste (incluindo 2020) | 6.60 | 5.33 | 4.08 |   4.77   |   4.44       |
+| RMSE do conjunto de teste (excluindo 2020) | 9.45 | 5.38 | 3.09 |   3.88   |   3.37       |
 
 ### Avaliação Qualitativa das GANs
 A figura permite fazer a inspeção visual das séries temporais geradas pelos modelos GANs
