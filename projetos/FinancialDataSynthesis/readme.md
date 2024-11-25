@@ -22,13 +22,11 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
  
 Neste trabalho foi testado a capacidade de modelos baseados nas arquiteturas de **Redes Adversárias Generativas (GANs)** e **Transformers** em gerar dados financeiros sintéticos, mais precisamente, preços de ações.
 
-O projeto consistiu em utilizar séries temporais dos preços de ações como **entrada**, e utilizar os modelos para regressão, de forma que, eles gerassem preços futuros realistas, baseados nos preços de entrada.
+O projeto consistiu em utilizar séries temporais dos preços de ações (valores diários) como **entrada**, e utilizar os modelos para regressão, de forma que, eles gerassem preços futuros realistas, baseados nos preços de entrada.
 
+Para treinar os modelos, resolvemos dividir o dataset (série temporal dos preços) em sequências de 24 preços consecutivos e associar o 25º elemento como rótulo (preço a ser predito). Dessa forma, ao invés do modelo receber como entrada a série temporal inteira, ele recebeu sequências com 24 preços consecutivos e teve como objetivo, predizer o próximo preço baseado nos 24 valores passados. Notamos que com essa estratégia, o modelo conseguiu extrair padrões de forma mais eficiente e gerar preços sintéticos mais realistas comparado à uma estratégia em que ele recebe a série temporal inteira como entrada.
 
-O modelo baseado na arquitetura GAN foi desenvolvido utilizando Unidades Recorrentes Fechadas (GRU) como um gerador que insere o preço histórico das ações e gera a previsão do preço futuro (no dia seguinte) das ações e uma Rede Neural Convolucional (CNN) como um discriminador para discriminar entre o preço real das ações e o preço das ações gerado. Para estimar o preço da ação foi usada 36 características como índice S&P 500, índice NASDAQ Composite, índice U.S. Índice do dólar, etc.
-
-
-Comparamos os resultados do nosso modelo GAN e Transformer com modelos de aprendizado profundo baseados em LSTM e GRU. O modelo generativo apresenta um melhor desempenho em eventos extremos, em termos do erro quadrático médio RMSE.
+Comparamos os resultados dos nosso modelos GANs e Transformer com modelos de aprendizado profundo baseados em LSTM e GRU. O modelo generativo apresentou um melhor desempenho, em termos do erro quadrático médio RMSE.
 </p>
 
 ## Introdução
