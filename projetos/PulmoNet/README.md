@@ -54,9 +54,7 @@ Links para apresentações de slides e vídeos para entregas E1, E2 e E3 para a 
 
 ## Resumo (Abstract)
 
-> TODO: Update
-
-As tomografias computadorizadas (CT) pulmonares e a segmentação das vias aéreas são essenciais para o diagnóstico preciso de doenças pulmonares. Propõe-se a PulmoNet, uma rede para síntese de imagens 2D de CTs pulmonares, visando apoiar redes de segmentação e gerar dados sintéticos para bases de dados de outras redes neurais, como classificadores de tumores. Utilizando a base ATM'22, implementa-se uma arquitetura GAN com gerador Pix2Pix e discriminador PatchGAN, que preencherá máscaras binárias do pulmão com vias aéreas. Avalia-se a rede qualitativamente, quantitativamente (métricas FID e SSIM) e em utilidade. Resultados parciais indicam problemas no treinamento devido à velocidade de aprendizado do discriminador.
+As tomografias computadorizadas (CT) pulmonares e a segmentação das vias aéreas são essenciais para o diagnóstico preciso de doenças pulmonares, e para auxiliar nesse procedimento, propõe-se a PulmoNet, uma rede generativa que produz imagens artificiais 2D de CTs pulmonares para auxiliar a ampliar bancos de dados existentes, possibilitando melhorar a qualidade de redes neurais de segmentação das vias aéreas. Utilizando a base de dados ATM'22, implementa-se uma arquitetura GAN com gerador Pix2Pix e discriminador PatchGAN, que sintetiza novas amostras de tomografia a partir de segmentações pulmonares, com foco na amplificação de informações das vias aéreas. Avalia-se a rede qualitativamente, quantitativamente (métricas FID e SSIM) e em utilidade. Os resultados finais demonstraram uma evolução na qualidade das imagens ao ampliar a quantidade de imagens utilizadas e otimizar os parâmetros de treino, mas demonstraram dificuldade em gerar conteúdo das vias aéreas em si. A FID obtidas nos três melhores modelos variaou entre 290 e 310, enquanto o SSIM ficou entre 0.61 e 0.77, dependendo se o enfoque era nas vias aéreas ou na imagem como um todo. Também foram realizados testes para analisar a possibilidade de utilizar os pesos da GAN para treinar redes de segmentação, mas sem resultados relevantes alcançados.
 
 ## Descrição do Problema/Motivação
 As tomografias computadorizadas (CT) pulmonares, juntamente com a segmentação das vias aéreas, desempenham um papel crucial no diagnóstico preciso de doenças pulmonares. Ao gerar imagens detalhadas da região torácica, a tomografia permite que médicos mapeiem a anatomia das vias aéreas antes de procedimentos cirúrgicos, avaliando a extensão de lesões e facilitando o acompanhamento da progressão de doenças respiratórias [[2]](#2). Além disso, a CT é fundamental para monitorar a eficácia de tratamentos e detectar seus possíveis efeitos colaterais [[5]](#5).
@@ -112,7 +110,7 @@ Sua divisão foi feita destinando 300 volumes para treino, 50 para validação e
 
 Os dados desta base são arquivos com extensão `*.nii.gz`, um formato comum para imagens médicas por possibilitar armazenar outras informações relevantes para estudos clínicos, e contêm todo o volume pulmonar obtido durante um exame de tomografia. Os arquivos são fornecidos em pares, com os volumes de CT sendo acompanhados pelas anotações das vias aéreas feitas por especialistas da totalidade do volume. Tais dados podem ser lidos com auxílio da biblioteca `SimpleITK`, conforme feito pelas classes em `datasets.py` neste repositório.
 
-Dado que este trabalho centra-se na geração de imagens sintéticas 2D de CTs pulmonares, as fatias de cada um dos volumes pulmonares foram separadas, assim como ilustrado na imagem abaixo, permitindo utilizá-las de forma independente, resultando imagens 2D de 512x512, aumentando o tamanho dos conjuntos de dados disponíveis para treinamento, validação e testes.
+Dado que este trabalho centra-se na geração de imagens sintéticas 2D de CTs pulmonares, as fatias de cada um dos volumes pulmonares foram separadas, assim como ilustrado na imagem abaixo, permitindo utilizá-las de forma independente, resultando em imagens 2D de 512x512, aumentando o tamanho dos conjuntos de dados disponíveis para treinamento, validação e testes.
 
 ![Exemplo de fatia de CT pulmonar obtida a partir da base de dados ATM'22.](figs/dataset_exemplo_fatia.png?raw=true)
 
@@ -217,14 +215,14 @@ Para avaliar a qualidade dos resultados obtidos com o modelo de síntese, propõ
 Esta estratégia consiste na própria observação e avaliação dos dados sintéticos por meio dos estudantes. Os dados sintéticos são comparados aos reais, avaliando se eles se mostram muito distantes de uma CT pulmonar ou se o modelo está se encaminhando para bons resultados. Uma vez que os estudantes não possuem conhecimento clínico para julgar imagens sintéticas muito próximas das reais, essa etapa faz sentido num momento inicial, onde as diferenças são facilmente percebidas. Em uma fase posterior, em que as amostras reais e sintéticas são difíceis de serem distinguidas por leigos, a simples avaliação dos estudantes não se torna relevante, e é preciso buscar conhecimento especializado. 
 
 #### Análise Quantitativa
-A análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos **Fréchet Inception Distance (FID)** e **Structural Similarity Index (SSIM)**, os quais são utilizados para avaliação de qualidade das imagens sintéticas e de similaridade com dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), o que permite comparações entre os resultados produzidos no projeto proposto frente a esta outro trabalho apresentado em [[1]](#1).
+A análise quantitativa trata de uma avaliação sobre as imagens a partir dos métodos **Fréchet Inception Distance (FID)** e **Structural Similarity Index (SSIM)**, os quais são utilizados para avaliação da qualidade das imagens sintéticas e da similaridade com os dados reais. Ambas estratégias foram utilizadas pelos pesquisadores do artigo [[1]](#1), permitindo comparar os resultados produzidos no projeto proposto frente a esse trabalho utilizado como base [[1]](#1).
 
 A métrica FID avalia o desempenho da rede generativa e é calculada utilizando uma rede neural pré-treinada *InceptionV3*, que extrai *features* das fatias pulmonares geradas e das fatias originais. Com isso, as distribuições dos dados sintéticos e dos dados reais, obtidas pelo encoder desta rede, são usadas para calcular a FID e, assim, avaliar a qualidade da imagem gerada.
 A expressão matemática que descreve o cálculo da FID entre duas distribuições Gaussianas criadas pelas *features* da última camada de *pooling* do modelo *Inception-v3* é dada por:
 
 $$FID = ‖𝜇_{𝑟} − 𝜇_{𝑔}‖^{2} + Tr(\sum_{𝑟} + \sum_{𝑔} − 2(\sum_{𝑟}\sum_{𝑔})^{1∕2})$$
 
-onde $𝜇_{𝑟}$ e $𝜇_{𝑔}$ são as médias entre as imagens reais e sintéticas, e $\sum_{𝑟},\ \sum_{𝑔}$ são as matrizes de convariância para os vetores de *features* dos dados reais e gerados, respectivamente.
+onde $𝜇_{𝑟}$ e $𝜇_{𝑔}$ são as médias entre as imagens reais e sintéticas, e $\sum_{𝑟},\ \sum_{𝑔}$ são as matrizes de covariância para os vetores de *features* dos dados reais e gerados, respectivamente.
 Quanto menor for o FID, maior a qualidade da imagem gerada.
 
 Por sua vez, a métrica SSIM compara a imagem gerada com seu respectivo *ground-truth* com base em três características: luminância, distorção de contraste e perda de correlação estrutural.
@@ -298,10 +296,10 @@ Dado este fluxo, estipulamos o seguinte cronograma para desenvolvimento do proje
 
 
 ### Ambiente Computacional
-> TODO: Falar sobre a máquina usada para treinar a GAN (quantidade de memória, tipo de GPU etc) e para treinar a rede de segmentação
 
-Os modelos da GAN foram treinados em uma máquina com uma GPU NVIDIA GeForce RTX 3060 de 12GB de VRAM, 64GB de RAM e um processador intel i7...
-Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado em um computador pessoal que tinha uma GPU 	NVIDIA GeForce RTX 3050, 4G de memória de GPU, 16G de memória RAM e processador Intel I5 de 12ª geração.
+Os modelos da GAN foram treinados em uma máquina com uma GPU NVIDIA GeForce RTX 3060 com 12GB de VRAM, 64GB de memória RAM e um processador AMD Ryzen 5 5600. Nessa máquina foram realizados todos os treinamentos da GAN, sendo que aqueles que utilizaram 10k imagens demoraram 10 horas por modelo, enquanto os treinos com as 60k imagens levaram cerca de 30 horas por modelo.
+
+Já o modelo da rede de segmentação, para o teste de utilidade, foi treinado em um computador pessoal que tinha uma GPU NVIDIA GeForce RTX 3050 com 4GB de VRAM, 16GB de memória RAM e processador Intel i5 de 12ª geração. Nesse computador foram rodadas algumas versões da rede de segmentação utilizadas para avaliação, sendo que o tempo necessário por batch foi de cerca de 10s, com o tempo total variando conforme a quantidade de dados e os critérios de early stopping.
 
 
 ## Experimentos, Resultados e Discussão dos Resultados
@@ -365,13 +363,21 @@ Visualmente, dentre os três modelos considerados, o Sweep10 se mostra o modelo 
 
 **Análise Quantitativa**
 
-| Modelo | FID (10k) | FID (60k) | SSIM completo (10k) | SSIM completo (60k) | SSIM central (10k) | SSIM central (60k) | Correlação estrutural completa (10k) | Correlação estrutural completa (60k) |
-| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| Sweep10 | $335.2427761838304$ | $293.994238421036$ | $0.6254112471415655 \pm 0.24085973511049694$ | $0.6824532200521825 \pm 0.2379720225297553$ | $0.7065009961027625 \pm 0.21001197291512$ | $0.7728551928415837 \pm 0.1802642799563599$ | $0.8668365623247514$ | $0.8803608040163259$ |
-| Sweep205 | $327.52689178408133$ | $311.54110516417313$ | $0.6430093517319526 \pm 0.23893143933984787$ | $0.6352922878176526 \pm 0.23498065222278722$ | $0.7408941452705249 \pm 0.19407037910322725$ | $0.7254140055600942 \pm 0.18445858921111588$ | $0.874886884710851$ | $0.859104974492586$ |
-| Sweep412 | $320.07174504683894$ | $304.826262102015$ | $0.6932878879454677 \pm 0.2317557196412487$ | $0.6161909340086005 \pm 0.23712984568136655$ | $0.7859251088659772 \pm 0.17404220837041773$ | $0.7086681423114665 \pm 0.19055641930566072$ | $0.8961127511813266$ | $0.8555982899610189$ |
+Para a análise quantitativa, os três melhores modelos obtidos foram comparados por meio da FID e do SSIM, comparando os treinamentos feitos com apenas 10 mil dados e o treinamento feito com os 60 mil. 
 
-Métricas do artigo de referência:
+É possível notar que a utilização de uma maior quantidade de dados reduziu o valor da FID nos três modelos apresentados, demonstrando que as imagens passaram a ter mais qualidade, mas os resultados se mantiveram elevados para os três. A SSIM various entre os modelos: enquanto no Sweep10 ela se elevou ao utilizar mais dados, ela caiu para o Sweep205 e para o 412. Num geral, os valores de SSIM tiveram resultados similares, com a Sweep10 gerando resultados mais similares em relação aos dados reais, enquanto os outros modelos apresentaram resultados mais "criativos", no entanto, é difícil confirmar a qualidade dessa informação devido a elevada FID dos três modelos em conjunto com a proximidade dos valores obtidos da SSIM. 
+
+Também é possível notar que a SSIM realizada na imagem total obteve valores maiores do que a realizada apenas no centro da imagem gerada. Considerar todo o pulmão reduziu a similaridades das imagens nos três modelos analisados em comparação com as reais, demonstrando que a região central, onde deviam ser geradas as vias aéreas, teve uma baixa variação, confirmando a dificuldade em gerar dados relativos a elas.
+
+| Modelo | FID (10k) | FID (60k) | SSIM completo (10k) | SSIM completo (60k) | SSIM central (10k) | SSIM central (60k) |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| Sweep10 | $335.24$ | $293.99$ | $0.62 \pm 0.24$ | $0.68 \pm 0.23$ | $0.70 \pm 0.21$ | $0.77 \pm 0.18$ |
+| Sweep205 | $327.52$ | $311.54$ | $0.64 \pm 0.23$ | $0.63 \pm 0.23$ | $0.74 \pm 0.19$ | $0.72 \pm 0.18$ |
+| Sweep412 | $320.07$ | $304.82$ | $0.69 \pm 0.23$ | $0.61 \pm 0.23$ | $0.78 \pm 0.17$ | $0.70 \pm 0.19$ |
+
+A comparação com a literatura base é incerta por não estarem sendo utilizados os mesmos conjuntos de dados e por terem objetivos diferentes: o artigo [[1]](#1)gera apenas o conteúdo interior do pulmão, enquanto a metodologia proposta gera a tomografia como um todo. Mesmo assim, a comparação de FID e SSIM podem ser vistas nas tabelas abaixo, onde o FID mostrou a maior divergência, com a literatura atingindo valores muito inferiores aos alcançados no projeto, enquanto a SSIM foi mais similar, com a literatura tendo resultados maiores/mais similaridade para a imagem completa, o que faz sentido considerando que não ela não foca em gerar conteúdo externo ao pulmão, enquanto para a região central o resultado da SSIM foi inferior ao alcançado neste trabalho, mostrando que os resultados da literatura foram mais criativos e menos similares ao conjunto original na geração das vias aéreas.
+
+Comparação da FID obtida em comparação com o artigo de referência:
 
 | Modelo | $FID_{InceptionV3}$ |
 | ------- | ------- |
@@ -379,17 +385,9 @@ Métricas do artigo de referência:
 | $Sweep205$ | 311.541 |
 | $Sweep412$ | 304.826 |
 | $P2P_{𝐿𝐼𝐷𝐶}$ (Mendes et al., 2023) | 12.82 |
-| $P2P_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | 11.56 |
-| $cCGAN_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | 10.82 |
-| $P2P_{𝐹𝑎𝑐𝑎𝑑𝑒𝑠}$ (DeVries et al., 2019) | 104 |
-| $P2P_{𝑀𝑎𝑝𝑠}$ (DeVries et al., 2019) | 106.8 |
-| $P2P_{𝐸𝑑𝑔𝑒𝑠2𝑆ℎ𝑜𝑒𝑠}$ (DeVries et al., 2019) | 74.2 |
-| $P2P_{𝐸𝑑𝑔𝑒𝑠2𝐻𝑎𝑛𝑑𝑏𝑎𝑔𝑠}$ (DeVries et al., 2019) | 95.6 |
-| $DCGAN_{𝑀𝑅𝐼}$ (Haarburger et al., 2019) | 20.23 |
-| $CT-SGAN_{𝐶𝑇}$ (Pesaranghader et al., 2021) | 145.18 |
 
 
-SSIM results for entire 512 × 512 image and with a central crop of 256 × 256.
+Comparação da SSIM para as imagens completas(512x512) e com o corte centralizado (256x256):
 | Modelo | $ SSIM_{512} $ | $ SSIM_{256} $ |
 | ------- | ------- | ------- |
 | | $𝜇 \pm 𝜎$ | $𝜇 \pm 𝜎$ |
@@ -397,15 +395,6 @@ SSIM results for entire 512 × 512 image and with a central crop of 256 × 256.
 | $Sweep205$ | $0.635 \pm 0.235$ | $0.725 \pm 0.184$ |
 | $Sweep412$ | $0.616 \pm 0.237$ | $0.709 \pm 0.1912$ |
 | $P2P_{𝐿𝐼𝐷𝐶}$ (Mendes et al., 2023) | $0.803 \pm 0.122$ | $0.651 \pm 0.083$ |
-| $P2P_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | $0.841 \pm 0.057$ | $0.687 \pm 0.065$ |
-| $cCGAN_{𝑁𝐿𝑆𝑇}$ (Mendes et al., 2023) | $0.846 \pm 0.057$ | $0.696  \pm0.064$ |
-
-
-Comentários:
-- Métricas melhoraram com mais dados!!! (FID diminuiu = mais qualidade; SSIM diminuiu = mais diversidade)
-- apesar de um FID bem maior, temos o diferencial de que geramos toda a estrutura presente em uma imagem de tomografia pulmonar. Isto é, não ficamos restritos apenas à região interna, como no artigo de referência
-- Nossa similaridade estrtural ser melhor para a região focada no centro da imagem (será que é porque não teve tanto preenchimento desta área?)
-- SSIM geral foi menor do que a referência --> poderia ser indicativo de maior criatividade?
 
 ****
 **Teste de Utilidade**
@@ -451,7 +440,6 @@ O projeto da PulmoNet busca a geração de fatias de CTs pulmonares a partir de 
 > Completar com dados da E3 + contribuições da nossa pesquisa
 
 ### Perspectivas Futuras
-> TODO: Aprimorar / completar
 
 Novos estudos poderão ser elaborados a partir da nossa pesquisa, tais como:
 - Aplicação de um método de fine-tunning do nosso melhor modelo, focado apenas na região interna do pulmão. Com isso, buscar-se-ia um modelo que realiza-se um preenchimento melhor desta região. Caso este novo modelo tenha sucesso nesta tarefa, espera-se que o teste de utilidade aplicado a ele seja melhor do que os resultados que obbtivemos nesta pesquisa.
@@ -494,7 +482,7 @@ Documento com as referências extras identificadas: https://docs.google.com/docu
 
 Considerando a dificuldade do modelo em sintetizar estruturas no interior do pulmão, duas outras abordagens foram testadas. A primeira envolveu apenas uma mudança no processamento dos dados de treino, e a segunda uma mudança na arquitetura da PulmoNet.
 
-Quanto a mudança dos dados, ao invés de simplesmente enviar ao gerador a máscara da região pulmonar, testou-se a ideia de somar a máscara do pulmão com a máscara das vias aéreas. Para isso, 17 mil imagens dos dados de treino da GAN que continham vias aéreas foram selecionadas e criou-se um novo dataset de treino, onde a entrada do gerador corresponde a $0,5 \times máscara pulmonar + 0,5 \times máscara das vias aéreas$. Para aproveitar o conhecimento da região externa e forçar o modelo a focar na região interna ao pulmão, continuou-se o treinamento do modelo Sweep412 por mais 40 épocas, utilizando as mesmas configurações de *loss* e ruído, porém com esse novo dataset de treino. Como teste, comparou-se as imagens sintéticas geradas pelo Sweep412 e pelo mesmo após esse treino adicional, considerando como entrada de ambos apenas a máscara do pulmão (Fig. A1). O impacto desse novo treino foi mínimo, com a adição de poucas ou nenhuma estrutura no interior do pulmão. Além disso, o novo modelo pareceu mais propenso a erros, gerando estruturas indesejáveis na região externa ao pulmão (Fig. A1, exemplos 2 e 3). Desse modo, conclui-se que a estratégia de *fine-tuning* explorada nesse experimento causa uma melhora irrelevante no interior do pulmão e não justifica o custo computacional da abordagem. 
+Quanto a mudança dos dados, ao invés de simplesmente enviar ao gerador a máscara da região pulmonar, testou-se a ideia de somar a máscara do pulmão com a máscara das vias aéreas. Para isso, 17 mil imagens dos dados de treino da GAN que continham vias aéreas foram selecionadas e criou-se um novo dataset de treino, onde a entrada do gerador corresponde a $0,5 \times {Máscara\ Pulmonar} + 0,5 \times Máscara\ das\ Vias\ Aéreas$. Para aproveitar o conhecimento da região externa e forçar o modelo a focar na região interna ao pulmão, continuou-se o treinamento do modelo Sweep412 por mais 40 épocas, utilizando as mesmas configurações de *loss* e ruído, porém com esse novo dataset de treino. Como teste, comparou-se as imagens sintéticas geradas pelo Sweep412 e pelo mesmo após esse treino adicional, considerando como entrada de ambos apenas a máscara do pulmão (Fig. A1). O impacto desse novo treino foi mínimo, com a adição de poucas ou nenhuma estrutura no interior do pulmão. Além disso, o novo modelo pareceu mais propenso a erros, gerando estruturas indesejáveis na região externa ao pulmão (Fig. A1, exemplos 2 e 3). Desse modo, conclui-se que a estratégia de *fine-tuning* explorada nesse experimento causa uma melhora irrelevante no interior do pulmão e não justifica o custo computacional da abordagem. 
 
 ![Exemplos de imagens sintéticas geradas pelo modelo Sweep412 e pelo mesmo após treino adicional com as máscaras de pulmão e vias aéreas combinadas. Ambos modelos receberam como entrada a máscara somente do pulmão para geração dos exemplos. Ao lado de cada imagem gerada, apresenta-se a imagem original a partir da qual obteve-se a máscara pulmonar.](figs/sweep_com_mask.png?raw=true)
 *Figura A1: Exemplos de imagens sintéticas geradas pelo modelo Sweep412 e pelo mesmo após treino adicional com as máscaras de pulmão e vias aéreas combinadas. Ambos modelos receberam como entrada a máscara somente do pulmão para geração dos exemplos. Ao lado de cada imagem gerada, apresenta-se a imagem original a partir da qual obteve-se a máscara pulmonar.*
@@ -505,89 +493,3 @@ Considerando a abordagem descrita acima, propôs-se um treino com as mesmas conf
 
 ![Exemplo de imagens sintéticas geradas pelo modelo treinado para geração de imagens CT e da segmentação das vias aéreas simultâneamente.](figs/anexo_gen_segm.png?raw=true)
 *Figura A2: Exemplo de imagens sintéticas geradas pelo modelo treinado para geração de imagens CT e da segmentação das vias aéreas simultâneamente.*
-
-## How To Run
-> TODO: Fix / Update
-
-Como uma observação adicional, incluimos uma descrição de como executar as funções propostas neste projeto.
-
-**Processamento da base de dados:**
-
-`1.` Baixar a base de dados ATM'22 na internet
-
-`2.` Fazer a leitura inicial dos dados por meio da classe `rawCTData`
-
-
-**Treinamento da GAN:**
-
-1. Configurar parâmetros do modelo no arquivo `config.yaml` e a localização da pasta com os dados processados.
-
-2. Executar comando em seu terminal:
-
-```
-py training_pipeline.py
-```
-
-3. Selecionar o arquivo YAML de configuração desejado:
-
-```
- config.yaml
-```
-
-**Obtenção das métricas da GAN:**
-
-`1.` Configurar parâmetros do modelo no arquivo `config_eval.yaml` e a localização da pasta com os dados processados.
-
-`2.` Executar comando em seu terminal:
-
-```
-test_pipeline.py config_eval.yaml
-```
-
-**Treinamento da rede de segmentação:**
-
-`1.` Configurar parâmetros do modelo no arquivo `config_segmentation.yaml` e a localização da pasta com os dados processados.
-- Caso queira continuar com um treinamento, deve-se atribuir `False` para o parâmetro `new_model`. Caso seja a primeira vez que está realizando este treinamento, deve atribuir `True` para este parâmetro.
-- Caso queira treinar um modelo de segmentação a partir do zero deve-se atribuir `False` para o parâmetro `fine_tunning`.
-- Caso queira reaproveitar os pesos iniciais de um gerador pré-treinado e queira treinar todas as camadas do modelo (isto é, não congelar os pesos do codificador), deve-se atribuir `False` para o parâmetro `freeze_layers`.
-- Na seção de configuração `data` é possível selecionar a quantidade de dados de treinamento e validação que deseja utilizar.
-- Deve-se direcionar o parâmetro `processed_data_folder` para o diretório de dados do projeto. Dentro deste diretório, deverá ter duas pastas (`seg_train` e `seg_val`), contendo os dados de treinamento e validação para a tarefa de segmentação.
-- Não mexer no parâmetro `dataset` deste arquivo.
-- É possível ajustar parâmetro de treinamento, critério da função de *loss* e parâmetros do otimizador neste arquivo.
-- Também é possível configurar a frequência de "check-points" de salvamentos intermediários do modelo durante o treinamento, com o parâmetro `step_to_safe_save_models`. Esse recurso ajuda a salvar o estado do modelo durante o treinamento, o qual poderá ser recuperado caso este processo seja interrompido.
-
-`2.` Executar comando em seu terminal:
-
-```
-py segmentation_pipeline.py
-```
-
-`3.` Selecionar o arquivo YAML de configuração:
-
-```
-config_segmentation.yaml
-```
-
-`4.` Esta execução retorna uma pasta com o nome do seu modelo. Dentro deste diretório, haverá 2 arquivos com a evolução das *losses* (uma imagem e um JSON com os valores) e dois diretórios: *examples*, com algumas imagens geradas durante o treinamento do modelo, e *models*, com os modelos treinados (safesave, trained e best).
-
-**Teste da rede de segmentação:**
-
-`1.` Configurar parâmetros do modelo no arquivo `config_eval_seg.yaml` e a localização da pasta com os dados processados.
-- O nome do modelo (parâmetro `name_model`) deve ser o nome da pasta onde está o modelo que deseja avaliar. Este modelo deve estar no diretório *models* dentro desta pasta.
-- Caso o parâmetro `use_best_version` seja `True`, será avaliado o modelo `<name_model>_unet_best.pt`. Caso seja `False`, será avaliado o modelo `<name_model>_unet_trained.pt`.
-- Direcionar o parâmetro `processed_data_folder` para o diretório de dados do projeto. Dentro deste diretório, deverá ter uma pasta chamada `all_test`, contendo os dados de testes.
-- Não alterar os valores em `evaluation` e nem o parâmetro `dataset`.
-
-`2.` Executar comando em seu terminal:
-
-```
-py evaluate.py
-```
-
-`3.` Selecionar o arquivo YAML de configuração:
-
-```
-config_eval_seg.yaml
-```
-
-`4.` Esta execução retorna uma pasta *generated_images* dentro da pasta do modelo treinado, com algumas imagens de segmentação geradas com dados do conjunto de testes. Além disso, haverá um arquivo JSON com o resultado da métrica DICE.
