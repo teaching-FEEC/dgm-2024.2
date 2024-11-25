@@ -130,7 +130,10 @@ A técnica GAIL, combina o aprendizado por imitação com a abordagem de redes g
 - A janela deslizante utilizada neste projeto possui tamanho 3, garantindo um equilíbrio entre informações passadas relevantes e eficiência computacional.
 
 Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos do manipulador robótico, resultando em trajetórias mais precisas e adaptadas às demonstrações fornecidas.
-
+<div align="center">
+  <img src="img/dados_temporais.png" alt="dados temporais">
+  <p>Figura 4: Dados Organizados com a Técnica de Janela Deslizante.</p>
+</div>
 
 ### Etapas Metodológicas
 
@@ -225,13 +228,17 @@ Essa abordagem permite que o gerador aprenda padrões temporais nos movimentos d
 
 Este projeto adota um workflow bem definido para alcançar o objetivo de gerar trajetórias válidas para manipuladores robóticos de 7 graus de liberdade (DoF), utilizando redes GAIL (Generative Adversarial Imitation Learning).
 
-
+<div align="center">
+  <img src="img/workflow.png" alt="workflow">
+  <p>Figura 5: Workflow.</p>
+</div>
 
 
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
 ### **Descrição dos Experimentos**
+
 
 
 
