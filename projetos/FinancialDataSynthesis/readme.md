@@ -168,7 +168,7 @@ Essa abordagem garante que os valores da série temporal sejam escalados para o 
 4. **Construção da Rede Neural:**
 
 <p align="justify">
-A rede generativas adversarias (GAN) para predição de séries temporais, usa como função de perda a divergência de Kullback-Leibler (KL) e a divergência de Jensen-Shannon (JS), no processo de treinamento. Essas duas divergência são métricas matemáticas usadas para medir a semelhança entre duas distribuições de probabilidade. O modelo GAN usa no Discriminador a função de perda baseada na divergência de Jensen-Shannon (JS), que se apresenta a continuação:
+O modelo GAN para predição de séries temporais, usa como função de perda a divergência de Kullback-Leibler (KL) e a divergência de Jensen-Shannon (JS), no processo de treinamento. Essas duas divergência são métricas matemáticas usadas para medir a semelhança entre duas distribuições de probabilidade. O modelo GAN usa no Discriminador a função de perda baseada na divergência de Jensen-Shannon (JS), que se apresenta a continuação:
 
 $$
 -\frac{1}{m} \sum_{i=1}^m \log D\left(y^i\right)-\frac{1}{m} \sum_{i=1}^m\left(1-\log D\left(G\left(x^i\right)\right)\right)
@@ -182,7 +182,7 @@ $$
 $$
  
  
- A rede generativa GAN é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. As funções de perda apresentadas anteriormente garantem um treinamento que combina um processo competitivo. Abaixo detalha-se a estrutura das redes neurais da GAN:
+ A rede é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. As funções de perda apresentadas anteriormente garantem um treinamento que combina um processo competitivo. Abaixo detalha-se a estrutura das redes neurais da GAN:
 </p>
 <div align="center">
     <img src="img_readme/GAN.png" alt="Estrutura GAN" title="Estrutura da rede generativa GAN" />
@@ -191,7 +191,7 @@ $$
 
 
 <p align="justify">
-O gerador foi construido usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A seleção das três camadas GRU foi por causa que neste trabalho foi usado os ultimos três días de dados históricos para poder prever o día seguente. Na entrada se pode visualizar que temos as 36 features explicadas anteriormente nos passos 1 e 2. Por isso se pode visualzar que temos uma dimensão de entreda de Bs,3,36 onde Bs é o tamanho do batch de treinamento. Neste estudo foi Bs = 128. Note-se que a GAN usada tem uma arquitetura condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso o contexto usado foi os valores passados reais do valor da ação da Apple $yc$. 
+O gerador foi construído usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais e três camadas densas para refinar os resultados e produzir o dado sintético final. A seleção das três camadas GRU foi porque o modelo utilizou os ultimos três dias de dados históricos para poder prever o preço do dia seguente. Na entrada, temos as 36 features explicadas anteriormente nos passos 1 e 2. Por isso, observamos que temos uma dimensão de entrada de (Bs,3,36), em que Bs é o tamanho do batch de treinamento. No estudo,  consideramos Bs = 128. Note-se que a GAN usada tem uma arquitetura condicional, onde a geração dos dados é condicionada a alguns dados de entrada. Neste caso, o contexto usado foi os valores passados reais do valor da ação da Apple $yc$. 
 </p>
 
 <p align="justify">
