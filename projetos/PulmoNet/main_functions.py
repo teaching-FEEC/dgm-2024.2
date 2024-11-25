@@ -280,8 +280,8 @@ def run_train_epoch_unet(unet,
             unet_opt.zero_grad()
             loss = get_unet_loss(unet=unet,
                                  criterion=criterion,
-                                 input_airway=input_airway,
-                                 input_img=input_img,
+                                 target=input_airway,
+                                 input=input_img,
                                  device=device)
             if loss.requires_grad:
                 loss.backward()  # Compute gradients
@@ -353,5 +353,5 @@ def valid_on_the_fly_unet(unet,
         plt_save_example_airways_img(input_img_ref=input_img[0,0,:,:].detach().cpu().numpy(), 
                                     input_airway_ref=input_airway[0,0,:,:].detach().cpu().numpy(), 
                                     gen_seg_ref=gen_seg[0,0,:,:].detach().cpu().numpy(), 
-                                    epoch=epoch+1, 
-                                    save_dir=save_dir)
+                                    save_dir=save_dir,
+                                    img_idx=epoch+1)

@@ -108,12 +108,16 @@ def evaluate(gen,
 
 #-------------------------------------Function to evaluate U-Net-----------------------------------
 def evaluate_seg_net(model, data_loader_test, dir_save_test):
-    dir_to_save_gen_imgs = dir_save_test+'generated_imgs/'
-    path_to_save_metrics = dir_save_test+'quantitative_metrics.json'
+    # directory where created images are stored
+    dir_to_save_gen_imgs = trained_gen_dir+'generated_imgs/'
+    # JSON with quantitative metrics
+    path_to_save_metrics = trained_gen_dir+'quantitative_metrics.json'
     os.makedirs(dir_to_save_gen_imgs, exist_ok=True)
 
+    # Set model to evaluate config
     gen.eval()
 
+    # Generates images for qualitative evaluation (visual)
     print('Generating examples for qualitative analysis...')
     counter = 0
     skip = 20
@@ -151,6 +155,7 @@ def evaluate_seg_net(model, data_loader_test, dir_save_test):
     print("Evaluation done!")
 
 
+#-------------------------------------Read YAML file with configurations-----------------------------------
 config_path = input("Enter path for YAML file with evaluation description: ")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 config = read_yaml(file=config_path)
@@ -158,7 +163,7 @@ config = read_yaml(file=config_path)
 ##--------------------Definitions--------------------
 #Generator model
 model_gen_name = str(config['model']['name_model'])
-trained_gen_dir = str(config['model'].get('name_model','./' + model_gen_name + '/'))
+trained_gen_dir = str('./' + model_gen_name + '/')
 #if True use model marked as 'best' instead of 'trained' (last epoch)
 use_best_version = bool(config['model']['use_best_version'])
 
@@ -183,12 +188,12 @@ else:
     transform = None
     transform_kwargs = {}
 
-#evaluation def
+#Definition of the metrics evaluated in this pipeline
 bQualitativa = bool(config['evaluation']['bQualitativa'])
 bFID = bool(config['evaluation']['bFID'])
 bSSIM = bool(config['evaluation']['bSSIM'])
 
-bDice = bool(config['evaluation']['bDice'])
+bDice = bool(config['evaluation']['bDice']) # only for the segmentation net
 
 
 ##--------------------Preparing Objects for Evaluation--------------------
@@ -221,15 +226,17 @@ data_loader_test = DataLoader(dataset_test,
                             shuffle=False)
 
 ###--------------------------Call for Evaluation--------------------------
-evaluate(gen=gen, 
-        trained_gen_dir=trained_gen_dir,
-        device=device,
-        dataset_test=dataset_test,
-        data_loader_test=data_loader_test,
-        batch_size=batch_size,
-        bQualitativa=bQualitativa, 
-        bFID=bFID, 
-        bSSIM=bSSIM)
-
-if bDice is True:
+# If its not the utility test, calculate the qualitative and quantitative (FID and SSIM) metrics
+if bDice is False: 
+    evaluate(gen=gen, 
+            trained_gen_dir=trained_gen_dir,
+            device=device,
+            dataset_test=dataset_test,
+            data_loader_test=data_loader_test,
+            batch_size=batch_size,
+            bQualitativa=bQualitativa, 
+            bFID=bFID, 
+            bSSIM=bSSIM)
+# Otherwise, calculate the Dice for the segmentation net
+else:
     evaluate_seg_net(model=gen, data_loader_test=data_loader_test, dir_save_test=trained_gen_dir)

@@ -217,12 +217,13 @@ for epoch in range(n_epochs):
     if b_early_stopping is True:
         early_stopping(loss_validation_unet, unet)
         if early_stopping.early_stop:
-            print("Early stopping")            
+            print("Early stopping")
+            delete_safe_save_unet(dir_save_models=dir_save_models, name_model=name_model)          
             break
 
 ####----------------------Finishing-----------------------------------
 save_trained_models_unet(dir_save_models=dir_save_models, name_model=name_model, unet=unet)
-#delete_safe_save_unet(dir_save_models=dir_save_models, name_model=name_model)
+delete_safe_save_unet(dir_save_models=dir_save_models, name_model=name_model)
 
 if new_model is True:
     plot_training_evolution_unet(path=dir_save_results,

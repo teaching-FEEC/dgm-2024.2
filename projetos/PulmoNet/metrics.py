@@ -82,12 +82,14 @@ def crop_center_4D(input, cropx, cropy):
     starty = y//2 - cropy//2    
     return input[:, :, startx:startx+cropx, starty:starty+cropy]
 
+
 # finds center of a 2D tensor and crops considering given dimensions
 def crop_center_2D(input, cropx, cropy):
     x, y = input.shape
     startx = x//2 - cropx//2
     starty = y//2 - cropy//2    
     return input[startx:startx+cropx, starty:starty+cropy]
+
 
 # get features of InceptionV3
 def get_features(feature_extractor, input_tensor, choose_transform=1, device='cpu'):
@@ -160,41 +162,6 @@ def my_ssim_pipeline(dataset_test, data_loader_test, device, gen, batch_size, bC
 
   return ssim, luminance, contraste, struct_similarity
 
-def my_ssim_pipeline(dataset_test, data_loader_test, device, gen, batch_size, bComplete):
-   #generates synthetic data
-  fake_data_imgs = np.empty((len(dataset_test),512,512))
-  real_data_imgs = np.empty((len(dataset_test),512,512))
-  counter = 0
-  with torch.no_grad():
-      for batch in data_loader_test:
-          input_img_batch = batch[0] # real image
-          input_mask_batch = batch[1] # mask
-          
-          input_img = input_img_batch.to(device)
-          input_mask = input_mask_batch.to(device)
-          
-          gen_img = gen(input_mask)
-
-          fake_data_imgs[counter*batch_size:(counter+1)*batch_size,:,:] = np.squeeze(gen_img.detach().cpu().numpy())
-          real_data_imgs[counter*batch_size:(counter+1)*batch_size,:,:] = np.squeeze(input_img.detach().cpu().numpy())
-          counter=counter+1
-  
-  # gets SSIM between real and fake data
-  ssim = np.zeros(len(dataset_test))
-  luminance = np.zeros(len(dataset_test))
-  contraste = np.zeros(len(dataset_test))
-  struct_similarity = np.zeros(len(dataset_test))
-
-  # considering the full image (512 x 512)
-  if (bComplete):
-    for i in range(len(dataset_test)):
-        ssim[i], luminance[i], contraste[i], struct_similarity[i] = my_ssim(np.squeeze(real_data_imgs[i]), np.squeeze(fake_data_imgs[i]), 0.01, 0.03, 0.03)
-  # considering the center (256 x 256) -> focus on airways and lungs
-  else:
-    for i in range(len(dataset_test)):
-        ssim[i], luminance[i], contraste[i], struct_similarity[i] = my_ssim(np.squeeze(crop_center_2D(real_data_imgs[i], 256, 256)), np.squeeze(crop_center_2D(fake_data_imgs[i], 256, 256)), 0.01, 0.03, 0.03)
-
-  return ssim, luminance, contraste, struct_similarity
 
 # gets luminance
 def luminance(img1, img2, C1):

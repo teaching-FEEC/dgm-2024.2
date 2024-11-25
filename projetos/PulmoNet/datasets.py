@@ -40,28 +40,28 @@ class rawCTData(Dataset):
 
     def __getitem__(self, idx: int):
         '''
-        Carregar, transformar e retornar o item 'i' do dataset
+        Load, transform, and return the 'i' item of the dataset
         '''
         ct_path = self.cts[idx]
         ct_labels_path = self.labels[idx]
 
-        # Ler imagem usando a biblioteca SITK
+        # Read image using SITK library
         print(f'Reading {ct_path} and {ct_labels_path}.......')
         image = sitk.ReadImage(ct_path)
         label = sitk.ReadImage(ct_labels_path)
 
-        # Converter imagem para array numpy na variável 'ct'
+        # Convert image to numpy array in 'ct' variable
         print("Converting to array")
         ct = sitk.GetArrayFromImage(image)
         ct_label = sitk.GetArrayFromImage(label)
         ct_lung = self.inferer.apply(ct)
         ct_lung[ct_lung > 1] = 1
 
-        # Se uma função de transformada foi passada para o dataset, aplicá-la
+        # If a transform function has been passed to the dataset, apply it
         if self.transform is not None:
             ct = self.transform(ct)
         print(ct.shape)
-        # Retornar a imagem e metadados
+        # Return image and metadata
         return ct, ct_label, ct_lung
 
 
@@ -149,13 +149,13 @@ class lungCTData(Dataset):
 
     def __getitem__(self, idx: int):
         '''
-        Carregar, transformar e retornar o item 'i' do dataset
+        Load, transform, and return the 'i' item of the dataset
         '''
         ct_path = self.cts[idx]
         ct_lungs_path = self.lungs[idx]
 
-        # Ler imagem usando a biblioteca SimpleITK
-        # O objeto image contêm tambem metadados
+        # Read image using the SimpleITK library
+        # The image object also contains metadata
         # print(f'Reading {ct_path} and {ct_labels_path}.......')
         image_npz = np.load(ct_path)
         lung_npz = np.load(ct_lungs_path)
@@ -166,10 +166,10 @@ class lungCTData(Dataset):
         ct = ct.unsqueeze(0)
         lung = torch.tensor(lung).to(torch.float32).unsqueeze(0)
 
-        # Se uma função de transformada foi passada para o dataset, aplicá-la
+        # If a transform function has been passed to the dataset, apply it
         if self.transform is not None:
             lung = self.transform(lung)
-        # Retornar a imagem e metadados
+        # Return image and metadata
         return ct, lung
 
 
@@ -242,13 +242,13 @@ class processedCTData(Dataset):
 
     def __getitem__(self, idx: int):
         '''
-        Carregar, transformar e retornar o item 'i' do dataset
+        Load, transform, and return the 'i' item of the dataset
         '''
         ct_path = self.cts[idx]
         ct_lungs_path = self.lungs[idx]
         ct_airways_path = self.airways[idx]
 
-        # Ler os .npz salvos no pre processamento
+        # Read the .npz saved in pre-processing
         # print(f'Reading {ct_path} and {ct_labels_path}.......')
         image_npz = np.load(ct_path)
         lung_npz = np.load(ct_lungs_path)
@@ -262,8 +262,8 @@ class processedCTData(Dataset):
         airway = torch.tensor(airway.astype(float)).to(torch.float32).unsqueeze(0)
         lung = torch.tensor(lung).to(torch.float32).unsqueeze(0)
 
-        # Se uma função de transformada foi passada para o dataset, aplicá-la
+        # If a transform function has been passed to the dataset, apply it
         if self.transform is not None:
             lung = self.transform(lung)
-        # Retornar a imagem e metadados
+        # Return image and metadata
         return ct, airway, lung
