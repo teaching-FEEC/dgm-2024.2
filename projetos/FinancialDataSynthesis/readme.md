@@ -159,8 +159,11 @@ $$
 $$
 
 
-Neste projeto, treinamos o discriminador para maximizar sua função objetivo, a probabilidade de atribuir o rótulo correto às amostras, a função objetivo para o discriminador maximizar é definida como:
- 
+Neste projeto, o gerador foi treinado usando perda de entropia cruzada para minimizar a diferença entre duas distribuições, o que equivale a minimizar a divergência de Kullback-Leibler (KL), usando a função de perda apresentada a continuação
+
+$$
+-\frac{1}{m} \sum_{i=1}^m\left(\log D\left(G\left(x^i\right)\right)\right)
+$$
  
  
  é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. A estrutura de treinamento que os combina é um processo competitivo. Abaixo detalha-se a GAN:
