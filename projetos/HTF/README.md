@@ -267,6 +267,7 @@ A tabela abaixo apresenta os resultados do terceiro estudo, que compara um model
 
 ### Resultados Gráficos de Inferência
 
+
 <div style="text-align: center;">
     <p align="center">
     <img src="../HTF/images/LSTM/Animação/BLG1.gif" alt="Imagem 1" width="400"/>
