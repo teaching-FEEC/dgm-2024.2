@@ -364,6 +364,7 @@ A figura permite fazer a inspeção visual das séries temporais geradas pelos m
 | Acurácia de direção do conjunto de teste (incluindo 2020) | 50.73 | 51.13 | 53.14 |   50.41   |   50.41  |
 | Acurácia de direção do conjunto de teste (excluindo 2020) | 49.83 | 51.44 | 53.00 |   51.05   |   51.05  |
 
+A acurácia de direção mede a porcentagem de previsões em que o modelo acertou a direção do movimento dos preços. Isso significa calcular a proporção de vezes em que o modelo previu corretamente que os preços iriam subir e eles de fato subiram, ou previu que iriam cair e eles realmente caíram.
 
 ## Conclusões
 Neste trabalho, treinamos e avaliamos três modelos preditivos avançados: um GAN simples, um WGAN-GP e um modelo baseado em Transformers, com o objetivo de prever preços de ações utilizando séries temporais e indicadores técnicos. Com base nos resultados obtidos, chegamos às seguintes conclusões:
