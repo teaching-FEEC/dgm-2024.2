@@ -85,13 +85,13 @@ O projeto tem como **objetivo principal** :
 Para o projeto, escolhemos três ativos financeiros distintos:
 - **Historico de dados dos preços da ação da empressa Apple**: preço em dolares da ação de Apple desde o 1º de julho de 2010 até 30 de junho de 2020 .
 
-Além disso, adotamos duas abordagens distintas para geração dos dados:
-1. Baseada na arquitetura **Transformers**;
-2. Baseada na arquitetura de redes generativas adversarias **(GANs)**;
+## Contribuições
+- Criação de um modelo generativo baseado em GAN  
+- Criação de um modelo generativo baseado em Wasserstein GAN  
+- Criação de um modelo generativo baseado em Transformers  
+- Comparação de desempenho com redes profundas baseadas em LSTM e GRU
 
-Temos como missão, dado a série temporal desses ativos em determinado período, gerar séries temporais sintéticas plausíveis que representam a continuação das séries originais.
-
-Para medir o "realismo" das séries, utilizamos diversas métricas, como o teste Kolmogorov-Smirnov (KS), distância de Jensen-Shannon, distância de Wasserstein, além de gráficos de similaridade T-SNE bidemnsional para verificar visualmente a similaridade distribucional entre dados reais e sintéticos.
+Utilizamos como métrica de avaliação o RMSE.
 
 ### Bases de Dados
 
