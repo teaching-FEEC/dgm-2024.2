@@ -219,17 +219,13 @@ A metodologia para a geração das séries temporais sintéticas utilizando arqu
 
 1. **Coleta de Dados via API do Yahoo Finance:**
    
-   Através desse API, coletamos os preços com um período de amostragem de 2 minutos, e armazenamos em um vetor que representa a série temporal: $X\_{1:N}$.
-   
-   O período de amostragem de 2 minutos foi escolhido pois é o menor que o API disponibiliza. Optamos por realizar uma análise em alta frequência, pois as variações nos preços não são tão abruptas comparadas à de uma frequência menor (e.g. valores diários). Dessa forma, o modelo consegue gerar dados dentro de uma faixa razoável de valores. A figura abaixo ilustra um exemplo.
-   
+   Através desse API, coletamos a série histórica de preços diários (preços de fechamento), do período de 2010 até 2020.
 <p align="justify">
-A continuação se apresenta a serie temporal dos preços da ação da empressa Apple, a usada data usada dos dados foi desde 2010-07-01 até 2020-06-30, para fazer experimentos antes e depois do Covid-19 (evento extremo)
 </p>
 
 <div align="center">
     <img src="img_readme/Serie_temporal.png" alt="Preços_Vale" title="Preços Apple" />
-    <p><em>Figura 7: Preços das ações da Apple com um período de amostragem de 2 minutos coletados do API do Yahoo Finance.</em></p>
+    <p><em>Figura 7: Preços das ações da Apple coletados do API do Yahoo Finance.</em></p>
 </div>
 
 2. **Extração de Features:**
