@@ -356,17 +356,16 @@ A figura permite fazer a inspeção visual das séries temporais geradas pelos m
 
 
 ## Conclusões
-Em nosso trabalho treinamos três modelos generativos: GAN simples,  WGAN-GP e um modelo baseado em Transformers. De acordo com os resultados obtidos do projeto, chegamos as seguintes conclusões:
+Neste trabalho, treinamos e avaliamos três modelos preditivos avançados: um GAN simples, um WGAN-GP e um modelo baseado em Transformers, com o objetivo de prever preços de ações utilizando séries temporais e indicadores técnicos. Com base nos resultados obtidos, chegamos às seguintes conclusões:
 
-- Os modelos conseguem gerar realizar predições melhores, em termos do RMSE, comparados aos modelos tradicionais LSTM e GRU;
-   
-- Quando há períodos de alta instabilidade, como foi o período da pandemia de COVID-19, o WGAN-GP apresentou melhor desempenho do que o GAN, mas em períodos mais estáveis, o GAN obteve melhor desempenho.
+- Os modelos baseados em GANs e Transformers apresentaram desempenho superior em termos de RMSE (Root Mean Squared Error) quando comparados aos modelos tradicionais de redes neurais recorrentes, como LSTM e GRU. Especificamente, o modelo baseado em Transformers demonstrou o melhor desempenho geral, exceto na acurácia de direção.
+  
+- Durante períodos de alta instabilidade, como o ocorrido durante a pandemia de COVID-19, o WGAN-GP superou o GAN simples, mostrando maior robustez em condições de mercado voláteis. Em contrapartida, em períodos mais estáveis, o GAN simples apresentou desempenho ligeiramente superior ao WGAN-GP.
   
 - O modelo GAN incluindo RNN é instável, ou seja é muito difícil ajustar os hiperparâmetros, e sem bons parâmetros os resultados são muito ruins.
 
-- No geral, os modelos GANs têm melhor desempenho do que os modelos tradicionais de base, de acordo com nosso resultado, mas o modelo baseado em Transformers tem um melhor comportamento e resultado do que o resto de modelos.
-  
-- Nenhum dos modelos foi capaz de determinar com precisão a direção dos preços, apresentando uma acurácia direcional próxima ao nível de aleatoriedade. Isso sugere que, embora os modelos possam capturar certos padrões nos dados, eles não são eficazes em prever a direção futura dos preços das ações de forma confiável.
+- Nenhum dos modelos foi capaz de prever com precisão a direção dos movimentos dos preços, apresentando uma acurácia direcional próxima ao nível de aleatoriedade (cerca de 50%).Isso sugere que, embora os modelos sejam eficazes em prever valores numéricos aproximados, eles não são confiáveis para determinar se o preço de uma ação irá subir ou descer em um dado período.
+
  
 ## Referências Bibliográficas
 [1] Li, Gaorong, Lei Huang, Jin Yang, and Wenyang Zhang.  
