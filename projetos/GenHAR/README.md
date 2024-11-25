@@ -311,7 +311,16 @@ pip install -r requirements.txt
 python src/main.py --config tests/all/all_config.yaml --generate --eval
 ```
 
-Os experimentos executados treinam um modelo de cada tipo para cada dataset. Os tipos de modelos são o BioDiffusion condicionado (um modelo para gerar dados de todas as categorias de atividades), BioDiffussion não-condicionado (um modelo de geração por categoria de atividade), DoppelGAN (um modelo para todas as categorias) e TimeGAN (um modelo por categoria). 
+Os experimentos executados treinam um modelo de cada tipo para cada dataset. Os tipos de modelos são o BioDiffusion condicionado (um modelo para gerar dados de todas as categorias de atividades), BioDiffussion não-condicionado (um modelo de geração por categoria de atividade), DoppelGAN (um modelo para todas as categorias) e TimeGAN (um modelo por categoria). O gŕafico da Figura abaixo apresenta o tempo de treinamento total de cada tipo de modelo para todos os datasets. 
+
+![](docs/figures/train_time.png)
+
+*Figura XX: Tempo de treinamento combinado dos modelos para todos datasets*
+
+A seguir são apresentados os resultados obtidos nos experimentos. Todos os dados podem ser visualizados a partir de um dashboard para navegadores web. Após clonar o repósitório e intalar as depêndencias necessárias, conforme os passos 1. a 3. indicados anteriormente, pode-se inicializar o dashboard com o seguinte comando:
+```shel
+python src/main.py --config tests/all/all_config.yaml --visualize
+```
 
 ### Resultados e Discussões
 
@@ -335,6 +344,26 @@ Semelhantemente, foi realizada a projeção t-SNE dos dados sintéticos e reais 
 |Combined|![](./reports/results_all/images/sit_compare/comb_uncond.png) | ![](./reports/results_all/images/sit_compare/comb_cond.png) | ![](./reports/results_all/images/sit_compare/comb_doppel.png) | ![](./reports/results_all/images/sit_compare/comb_time.png) | 
 
 As projeções t-SNE apresentadas revelam que os dados gerados pelos modelos TimeGAN e DoppelGAN são muito dissimilares aos dados reais para todos os datasets, formando clusters sem intersecção com os dados reais. Isso mostra que os modelos não foram adequados para gerar os dados de sensores desejados somente com a aplicação direta dos mesmos no domínio desejado. Por outro, lado os modelos BioDiffusion conseguiram se aproximar mais da distribuição dos dados reais e em alguns datasets até mesmo ter interseção dos clusters, mostrando uma opção mais adequada para o domínio de dados estudados. 
+
+**Amostragem Global**
+
+Para cada conjunto de dados sintéticos gerados pelos modelos treinados, foram selecionadas aleatoriamente algumas amostras e visualizadas como séries temporais em um gráfico. As Figuras abaixo apresentam uma amostra da categoria 'caminhando' do dataset KuHAR comparadas com amostras sintéticas dos modelos treinados no mesmo dataset. Pode-se claramente ver que os modelos DoppelGAN e TimeGAN conseguem reproduzir alguns aspectos gerais das formas de onda ao variar a amplitude do sinal, porém expriem padrões de ondas repetidos sem a complexidade presente nos dados reais. Por outro lado, os modelos BioDiffusion Condicionado e Não-condicionado geram amostras com características mais realistas, com picos no sinal em períodos semelhantes ao dos dados reais.
+
+![](docs/figures/sample_uncond.png)
+
+*Figura XX: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Condicionado no dataset KuHAR*
+
+![](docs/figures/sample_cond.png)
+
+*Figura XX: Exemplos de amostras reais e sintéticas para o modelo BioDiffusion Não-condicionado no dataset KuHAR*
+
+![](docs/figures/sample_doppel.png)
+
+*Figura XX: Exemplos de amostras reais e sintéticas para o modelo DoppelGAN no dataset KuHAR*
+
+![](docs/figures/sample_time.png)
+
+*Figura XX: Exemplos de amostras reais e sintéticas para o modelo TimeGAN no dataset KuHAR*
 
 **Similaridade entre Distribuições**
 
