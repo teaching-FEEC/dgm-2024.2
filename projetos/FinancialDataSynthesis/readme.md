@@ -152,7 +152,27 @@ Essa abordagem garante que os valores da série temporal sejam escalados para o 
 A rede generativas adversarias (GAN) para predição de séries temporais, é composta por duas redes neurais: (i) Gerador e (ii) Discriminador. A estrutura de treinamento que os combina é um processo competitivo. Abaixo detalha-se a GAN:
 </p>
 
-Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$.
+Neste trabalho foi usada uma arquitetura GAN condicional, onde a geração dos dados é condicionada a alguns dados de entrada neste caso ao contexto dos valores passados reais do valor da ação $yc$. A continuação se detalha as arquitetura do Gerador e do Discriminador.
+
+### Arquitetura do Gerador
+- O gerador foi construido usando uma sequência de três camadas GRU (Gated Recurrent Unit) para processamento de dados sequenciais, de acordo com a seguente estrutura:
+  - **GRU** (1024 unidades) com dropout recorrente 0,2
+  - **GRU** (512 unidades) com dropout recorrente 0,2
+  - **GRU** (256 unidades) com dropout recorrente 0,2
+  - **Dense Layers**: 128 → 64 → `output_dim`
+- Input shape: `(input_dim, feature_size)`
+
+### Discriminator Architecture
+- Employs a 1D CNN (Convolutional Neural Network) architecture.
+- Structure:
+  - **Conv1D** (32 filters) with LeakyReLU activation
+  - **Conv1D** (64 filters) with LeakyReLU activation
+  - **Conv1D** (128 filters) with LeakyReLU activation
+  - **Flatten Layer**
+  - **Dense Layer**: 220 units with LeakyReLU activation
+  - **Dense Layer**: 220 units with ReLU activation
+  - **Dense Layer**: 1 unit with sigmoid activation for binary classification
+
 
 
 **CASO 2: TRANSFORMERS**
