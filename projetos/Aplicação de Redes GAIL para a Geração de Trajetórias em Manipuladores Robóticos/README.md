@@ -21,6 +21,9 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 - [Slides da segunda entrega](https://docs.google.com/presentation/d/1d-bhS5pN8eW80D_pL8XNPtMwcds4ifCcIb9pqzJnMhk/edit#slide=id.p1)
 
+- [Slides da terceira entrega](https://docs.google.com/presentation/d/1wuQ6BvICtXrNJWrWs5RK8m1QEzQHU_HxAeNmNKEh678/edit#slide=id.p1)
+
+
 
 ## Resumo (Abstract)
 Este projeto investiga o uso de redes Generative Adversarial Imitation Learning (GAIL), uma abordagem generativa avançada, para a geração de trajetórias válidas e seguras no contexto de manipulação robótica, nesse trabalho será utilizado um manipulador de 7 graus de liberdade - Kinova Gen3 7DoF. As trajetórias geradas, possuem o foco em tarefas assistivas, como vestir de forma autônoma um jaleco cirúrgico em um paciente, o modelo GAIL combina aprendizado por imitação e aprendizado adversarial para replicar trajetórias especialistas a partir de demonstrações capturadas via teleoperação em um ambiente de simulação (RCareWorld).
