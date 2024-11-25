@@ -20,9 +20,9 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 ## Resumo (Abstract)
 <p align="justify">
  
-Neste trabalho, estudamos a eficácia de modelos baseados em Redes Adversárias Generativas (GANs) e Transformers na geração de dados financeiros sintéticos, especificamente preços de ações. As GANs são redes neurais que podem gerar novos dados realistas a partir de um conjunto de treinamento, enquanto os Transformers se destacam em tarefas que envolvem sequências temporais devido à sua capacidade de capturar dependências de longo alcance.
+Neste trabalho, estudamos a eficácia de modelos baseados em **Redes Adversárias Generativas (GANs)** e **Transformers** na geração de dados financeiros sintéticos, especificamente preços de ações. As GANs são redes neurais que podem gerar novos dados realistas a partir de um conjunto de treinamento, enquanto os Transformers se destacam em tarefas que envolvem sequências temporais devido à sua capacidade de capturar dependências de longo alcance.
 
-Utilizamos séries temporais de preços de ações e indicadores técnicos como entrada para os modelos, com o objetivo de realizar regressão para prever preços futuros de forma realista. Para treinar os modelos, dividimos o dataset em sequências de 24 preços consecutivos, associando o 25º preço como rótulo (preço a ser predito). Essa estratégia permite que os modelos aprendam padrões dentro de janelas temporais específicas, ao invés de analisar a série temporal inteira de uma só vez.
+Utilizamos séries temporais de preços de ações e indicadores técnicos como **entrada** para os modelos, com o objetivo de realizar regressão para prever preços futuros de forma realista. Para treinar os modelos, dividimos o dataset em sequências de 24 preços consecutivos, associando o 25º preço como rótulo (preço a ser predito). Essa estratégia permite que os modelos aprendam padrões dentro de janelas temporais específicas, ao invés de analisar a série temporal inteira de uma só vez.
 
 Observamos que, ao utilizar sequências de tamanho fixo, os modelos conseguiram extrair padrões de forma mais eficiente e gerar previsões mais precisas, em comparação com estratégias que consideram a série temporal completa como entrada.
 
