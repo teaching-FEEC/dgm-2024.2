@@ -105,6 +105,8 @@ A continuação se apresenta banco de dados utilizado neste trabalho, a faixa te
 
 ## Metodologia e Workflow
 **CASO 1: GANs**
+A metodologia para a geração das séries temporais sintéticas utilizando Redes Generativas Adversarias pode ser resumida no seguinte passo a passo:
+
 **CASO 2: TRANSFORMERS**
 
 A metodologia para a geração das séries temporais sintéticas utilizando arquitetura Transformers pode ser resumida no seguinte passo a passo:
