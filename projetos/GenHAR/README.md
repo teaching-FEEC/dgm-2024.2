@@ -405,6 +405,17 @@ Nas Tabelas 5 e 6 são apresentados os valores de f1-score para modelos Random F
 
 De forma geral, observa-se que os modelos BioDiffusion capturam melhor a diferença entre as categorias de dados presentes nos datasets, sendo que classificadores treinados em seus dados sintéticos possuem um desempenho próximo ou superior aos classificadores treinados com dados reais. O modelo DoppelGAN apresenta desempenho baixíssimo em todos os testes, porém os classificadores Random Forest com dados combinados apresentam pouca diferença de performance em comparação aos treinados somente com dados reais, mostrando que por devido aos dados sintéticos serem muito diferentes dos reais, o classificador consegue separar as regiões dos dados sintéticos ruidosos das regiões dos dados reais e manter o desempenho, porém o mesmo não ocorre de forma consistente com classificadores SVM.
 
+Em contrapartida, o modelo BioDiffusion já apresenta resultados razoáveis, apresentando uma distribuição de dados sintéticos semelhantes aos dados reais.
+Adicionalmente, como visto nos gráficos da figura abaixo, os dados sintéticos gerados pelo modelo BioDiffusion são úteis para a melhoria do desempenho de um classificador por *Support Vector Machine*. Porém, um classificador do tipo *Random Forest* treinado com os mesmos dados sintéticos apresenta uma queda de performance.
+Isso mostra um caminho promissor na exploração de modelos de difussão para geração de dados sintéticos de sensores em comparação a modelos GANs, entretanto mais experimentos são necessários para reforçar essa hipótese.
+
+<p float="left">
+  <img src="tests/diffusion/unconditional_1d/images/KuHar_none_diffusion_unet1d_ml_acc.png" width="32%" />
+  <img src="tests/diffusion/unconditional_1d/images/KuHar_none_diffusion_unet1d_ml_recall.png" width="32%" />
+  <img src="tests/diffusion/unconditional_1d/images/KuHar_none_diffusion_unet1d_ml_f1.png" width="32%" />
+</p>
+
+*Figura 6: Desempenho de classificadores treinados em três conjuntos de dados: somente dados reais; somente dados sintéticos; dados reais e sintéticos.*
 
 ## Conclusão
 

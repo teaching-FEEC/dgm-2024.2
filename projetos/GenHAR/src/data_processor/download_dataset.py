@@ -5,24 +5,25 @@ from utils import log
 
 def download_zenodo_datasets(extract_dir):
     # Define paths for the data directories
-   # extract_dir = 'data'
     standardized_view_dir = os.path.join(extract_dir, 'standardized_view')
     baseline_view_dir = os.path.join(extract_dir, 'baseline_view')
 
     # Check if the directories already exist
     if os.path.exists(standardized_view_dir) and os.path.exists(baseline_view_dir):
-        print("Directories already exist. Skipping download.")
+        log.print_debug("Directories already exist. Skipping download.")
         return
-    log.print_debug("Download the file")
+    log.print_debug(f".... Downloading the HAR DATASET {baseline_view_dir}")
     # Download the file
     url = 'https://zenodo.org/api/records/11992126/files-archive'
     file_name = 'archive.zip'
     response = requests.get(url)
+    log.print_debug(f".... response {response}")
 
     # Save the downloaded content as a zip file
     with open(file_name, 'wb') as file:
         file.write(response.content)
 
+    log.print_debug(f".... dataset write ok {response}")
     # Create 'data' folder if it doesn't exist
     if not os.path.exists(extract_dir):
         os.makedirs(extract_dir)

@@ -1,3 +1,4 @@
+import sys
 import math
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
@@ -231,7 +232,7 @@ class GaussianDiffusion(nn.Module):
         )
         if condition_x is not None:
             x_recon = self.predict_start_from_noise(
-                x, t=t, noise=self.denoise_fn(torch.cat([condition_x, x], dim=1), noise_level)
+                x, t=t, noise=self.denoise_fn(x, noise_level, condition_x)
             )
         else:
             x_recon = self.predict_start_from_noise(x, t=t, noise=self.denoise_fn(x, noise_level))
@@ -263,7 +264,7 @@ class GaussianDiffusion(nn.Module):
         return model_mean + noise * (0.5 * model_log_variance).exp()
 
     @torch.no_grad()
-    def p_sample_loop(self, x_in, continous=False):
+    def p_sample_loop(self, x_in, continous=False, cond=None):
         """
         Generate a sample from the diffusion process.
 
@@ -284,7 +285,7 @@ class GaussianDiffusion(nn.Module):
             desc="sampling loop time step",
             total=self.num_timesteps,
         ):
-            img = self.p_sample(img, i)
+            img = self.p_sample(img, i, condition_x=cond)
             if (i + 1) % sample_inter == 0:
                 ret_img = torch.cat([ret_img, img.unsqueeze(0)], dim=0)
         if continous:
@@ -293,7 +294,7 @@ class GaussianDiffusion(nn.Module):
             return ret_img[-1]
 
     @torch.no_grad()
-    def sample(self, batch_size=1, continous=False):
+    def sample(self, batch_size=1, continous=False, cond=None):
         """
         Generate samples from the diffusion process.
 
@@ -306,7 +307,7 @@ class GaussianDiffusion(nn.Module):
         """
         seq_length = self.seq_length
         channels = self.channels
-        return self.p_sample_loop((batch_size, channels, seq_length), continous)
+        return self.p_sample_loop((batch_size, channels, seq_length), continous, cond)
 
     @torch.no_grad()
     def super_resolution(self, x_in, continous=False):
@@ -341,7 +342,7 @@ class GaussianDiffusion(nn.Module):
             + (1 - continuous_sqrt_alpha_cumprod**2).sqrt() * noise
         )
 
-    def p_losses(self, x_in, noise=None):
+    def p_losses(self, x_in, cond=None, noise=None):
         """
         Calculate losses for p(x_t | x_{t-1}).
 
@@ -373,12 +374,12 @@ class GaussianDiffusion(nn.Module):
             noise=noise,
         )
 
-        x_recon = self.denoise_fn(x_noisy, continuous_sqrt_alpha_cumprod)
+        x_recon = self.denoise_fn(x_noisy, continuous_sqrt_alpha_cumprod, cond)
 
         loss = self.loss_func(noise, x_recon)
         return loss
 
-    def forward(self, x, *args, **kwargs):
+    def forward(self, x, cond=None, *args, **kwargs):
         """
         Forward pass of the diffusion model.
 
@@ -388,7 +389,7 @@ class GaussianDiffusion(nn.Module):
         Returns:
             torch.Tensor: Loss value.
         """
-        return self.p_losses(x, *args, **kwargs)
+        return self.p_losses(x, cond, *args, **kwargs)
 
 
 class DiffusionGenerator:
@@ -398,15 +399,21 @@ class DiffusionGenerator:
         self.model = None
 
     def train(self, X_train, y_train):
+        self.scaler = {}
+        self.losses = {}
+        if self.config["is_conditional"]:
+            self.train_conditional(X_train, y_train)
+        else:
+            self.train_separated(X_train, y_train)
+        return self.model, self.losses
 
+    def train_separated(self, X_train, y_train):
         params = self.config["parameters"]
-        gen_samples = self.config["n_gen_samples"]
 
         x_df = X_train.copy()
         self.columns_names = x_df.columns
 
         self.model = {}
-        self.scaler = {}
         x_data = split_axis_reshape(x_df)
         class_data_dict = dict_class_samples(x_data, y_train.copy())
         for class_label in class_data_dict.keys():
@@ -425,14 +432,89 @@ class DiffusionGenerator:
                 out_channel=params["out_channel"],
                 seq_length=60,
             ).to(device)
-            model = self.train_model(model, train_data)
+            model, loss_hist = self.train_model(model, train_data)
+            self.losses[class_label] = loss_hist
             self.model[class_label] = model
             self.scaler[class_label] = scaler
+
+    def train_conditional(self, X_train, y_train):
+        params = self.config["parameters"]
+        x_df = X_train.copy()
+        self.columns_names = x_df.columns
+        self.classes = np.unique(y_train.values)
+
+        X_data = []
+        Y_data = []
+        split_data = split_axis_reshape(x_df)
+        class_data_dict = dict_class_samples(split_data, y_train.copy())
+        for class_label in class_data_dict.keys():
+            train_data = class_data_dict[class_label]
+            assert train_data.shape[-2:] == (6, 60)
+
+            transform_data = train_data.transpose(0, 2, 1).reshape(-1, 6)
+            scaler = StandardScaler()
+            scaler.fit(transform_data)
+            transform_data = scaler.transform(transform_data)
+            transform_data = transform_data.reshape(train_data.shape[0], 60, 6).transpose(0, 2, 1)
+            X_data.append(transform_data)
+            Y_data.append(np.ones((train_data.shape[0], 1)) * class_label)
+            self.scaler[class_label] = scaler
+
+        X_data = np.concatenate(X_data, axis=0)
+        Y_data = np.concatenate(Y_data, axis=0)
+        X_data = torch.from_numpy(X_data)
+        Y_data = torch.from_numpy(Y_data).int()
+        model = UNet(
+            in_channel=params["in_channel"],
+            out_channel=params["out_channel"],
+            seq_length=60,
+            conditional=True,
+        ).to(device)
+
+        assert X_data.shape[0] == Y_data.shape[0]
+        assert X_data.shape[-2:] == (6, 60)
+        assert Y_data.shape[1] == 1
+        self.model, loss_hist = self.train_model(model, X_data, Y_data)
+        self.losses['all'] = loss_hist
 
     def generate(self, n_samples):
         if self.model is None:
             raise RuntimeError("The model has not yet been trained")
 
+        if self.config["is_conditional"]:
+            return self.gen_conditional(n_samples)
+        else:
+            return self.gen_separated(n_samples)
+
+    def gen_conditional(self, n_samples):
+        synthetic_df = pd.DataFrame()
+        samples_per_class = n_samples // self.classes.shape[0]
+        diffusion = GaussianDiffusion(
+            self.model,
+            60,
+            channels=6,
+            loss_type="l2",
+            schedule_opt={"schedule": "cosine", "n_timestep": 1000, "cosine_s": 8e-3},
+        )
+        for class_label in self.scaler.keys():
+            cond_batch = torch.ones(samples_per_class, 1) * class_label
+            cond_batch = cond_batch.to(device).int()
+            synthetic_samples = (
+                diffusion.sample(batch_size=samples_per_class, cond=cond_batch).detach().cpu()
+            )
+            synthetic_samples = synthetic_samples.transpose(2, 1).reshape(-1, 6)
+            synthetic_samples = self.scaler[class_label].inverse_transform(synthetic_samples)
+            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(
+                0, 2, 1
+            )
+            synthetic_samples = synthetic_samples.reshape(samples_per_class, -1)
+            class_df = pd.DataFrame(synthetic_samples, columns=self.columns_names)
+            class_df["label"] = [class_label] * samples_per_class
+            synthetic_df = pd.concat([synthetic_df, class_df], ignore_index=True)
+
+        return synthetic_df
+
+    def gen_separated(self, n_samples):
         synthetic_df = pd.DataFrame()
         samples_per_class = n_samples // len(self.model)
         for class_label, model in self.model.items():
@@ -446,7 +528,9 @@ class DiffusionGenerator:
             synthetic_samples = diffusion.sample(batch_size=samples_per_class).detach().cpu()
             synthetic_samples = synthetic_samples.transpose(2, 1).reshape(-1, 6)
             synthetic_samples = self.scaler[class_label].inverse_transform(synthetic_samples)
-            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(0, 2, 1)
+            synthetic_samples = synthetic_samples.reshape(samples_per_class, 60, 6).transpose(
+                0, 2, 1
+            )
             synthetic_samples = synthetic_samples.reshape(samples_per_class, -1)
             class_df = pd.DataFrame(synthetic_samples, columns=self.columns_names)
             class_df["label"] = [class_label] * samples_per_class
@@ -454,7 +538,7 @@ class DiffusionGenerator:
 
         return synthetic_df
 
-    def train_model(self, model, x_train):
+    def train_model(self, model, x_train, y_train=None):
         diffusion_process = GaussianDiffusion(
             model,
             x_train.shape[1],
@@ -464,15 +548,30 @@ class DiffusionGenerator:
         )
 
         optimizer = optim.AdamW(model.parameters(), lr=3e-4)
-        dataloader = DataLoader(TensorDataset(x_train), batch_size=64, shuffle=True)
 
+        if y_train is not None:
+            dataloader = DataLoader(TensorDataset(x_train, y_train), batch_size=64, shuffle=True)
+        else:
+            dataloader = DataLoader(TensorDataset(x_train), batch_size=64, shuffle=True)
+
+        loss_hist = []
         for e in tqdm(range(self.config["epochs"])):
+            epoch_loss = 0
             for batch in tqdm(dataloader):
-                batch = batch[0].to(device)
+                if y_train is not None:
+                    batch_x = batch[0].to(device)
+                    batch_y = batch[1].to(device)
 
-                loss = diffusion_process(batch.float())
+                    loss = diffusion_process(batch_x.float(), cond=batch_y)
+                else:
+                    batch = batch[0].to(device)
+
+                    loss = diffusion_process(batch.float())
 
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-        return model
+                epoch_loss += loss.detach().item()
+
+            loss_hist.append(epoch_loss / len(dataloader))
+        return model, loss_hist
