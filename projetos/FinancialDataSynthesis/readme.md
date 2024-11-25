@@ -332,6 +332,14 @@ A figura abaixo ilustra o workflow:
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
+### Avaliação Quantitativa: Root Mean Square Error
+
+
+| Model                                      | LSTM | GRU  | GAN  | WGAN-GP  | Transformer  |
+|--------------------------------------------|------|------|------|----------|--------------|
+| RMSE do conjunto de treinamento            | 1.52 | 6.60 | 9.45 |   1.74   |   0.52       |
+| RMSE do conjunto de teste (incluindo 2020) | 6.60 | 5.33 | 4.08 |   4.77   |   2.605      |
+| RMSE do conjunto de teste (excluindo 2020) | 9.45 | 5.38 | 3.09 |   3.88   |   1.976      |
 
 
 
