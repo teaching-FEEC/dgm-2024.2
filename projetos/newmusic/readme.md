@@ -87,10 +87,13 @@ $$
 
 A Equação 5 representa as duas funções de perda extra dos discriminadores.
  
-$$ L_{D_{A,m}} = \frac{1}{2} \left( \left| D_{A,m}(x_M) - 1 \right|_2^2 + \left| D_{A,m}(\hat{x}_A) \right|_2^2 \right) $$
+$$
+L_{D_{A,m}} = \frac{1}{2} \left( \left\| D_{A,m}(x_M) - 1 \right\|_2^2 + \left\| D_{A,m}(\hat{x}_A) \right\|_2^2 \right)
+$$
 
-
-$$ L_{D_{B,m}} = \frac{1}{2} \left( \left| D_{B,m}(x_M) - 1 \right|_2^2 + \left| D_{B,m}(\hat{x}_B) \right|_2^2 \right) $$
+$$
+L_{D_{B,m}} = \frac{1}{2} \left( \left\| D_{B,m}(x_M) - 1 \right\|_2^2 + \left\| D_{B,m}(\hat{x}_B) \right\|_2^2 \right)
+$$
 
 
 Por fim, a função de perda total é dada pela Equação 6, em que $\gamma$ foi utilizado como sendo fixo e igual a 1.
