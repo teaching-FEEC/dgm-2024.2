@@ -4,7 +4,7 @@
 
 Instituto de Computação -- Universidade Estadual de Campinas (Unicamp)
 
-[Link](https://docs.google.com/presentation/d/1b1SgfHnqVQIU_on1VeyIp8biBsLkpgM4pq8h6LIzWmY/edit#slide=id.g2d613a0c77d_0_34) apresentação
+[Link](https://docs.google.com/presentation/d/1b1SgfHnqVQIU_on1VeyIp8biBsLkpgM4pq8h6LIzWmY/edit#slide=id.g2d613a0c77d_0_34) apresentação. O relatório técnico tem o mesmo conteúdo do read.me e uma melhor visualização das tabelas e imagens, use-o para avaliar os resultados.
 
 ---
 
@@ -18,7 +18,7 @@ Este trabalho tem como objetivo explorar técnicas de inteligência artificial, 
 
 A geração e transferência de estilos musicais é um campo emergente dentro da inteligência artificial (IA), que busca utilizar modelos de aprendizado de máquina para criar ou transformar músicas em diferentes estilos. Esses modelos são particularmente interessantes no contexto da IA generativa, onde a ideia é aprender padrões e estruturas de dados existentes para produzir novos exemplos sintéticos, com aplicações tanto artísticas quanto práticas. Neste trabalho, explorou-se a aplicação de dois modelos de aprendizado profundo amplamente utilizados para essa tarefa: o CycleGAN e o VAE. Esses modelos oferecem abordagens distintas para gerar e transferir estilos musicais e suas aplicações têm se mostrado promissor para criar novas composições musicais, realizar transformações ou até gerar variações de gêneros musicais existentes.
 
-\quad O primeiro modelo generativo testado foi a CycleGAN *(Cycle-Consistent Generative Adversarial Network)*, que é um tipo de rede neural capaz de transformar imagens de um tipo em imagens de outro tipo, sem precisar de pares de imagens correspondentes. Em modelos tradicionais de redes neurais, é necessário ter imagens que combinem entre si, como uma foto e sua versão em preto e branco, para que o modelo aprenda a fazer a transformação. Porém, a CycleGAN consegue aprender essa transformação sem precisar desses pares de imagens.
+O primeiro modelo generativo testado foi a CycleGAN *(Cycle-Consistent Generative Adversarial Network)*, que é um tipo de rede neural capaz de transformar imagens de um tipo em imagens de outro tipo, sem precisar de pares de imagens correspondentes. Em modelos tradicionais de redes neurais, é necessário ter imagens que combinem entre si, como uma foto e sua versão em preto e branco, para que o modelo aprenda a fazer a transformação. Porém, a CycleGAN consegue aprender essa transformação sem precisar desses pares de imagens.
 
 A principal ideia por trás da CycleGAN é um conceito chamado consistência cíclica. Isso significa que, ao transformar uma imagem de um tipo (por exemplo, uma foto) em outro tipo (como uma pintura), e depois transformar novamente essa imagem para o primeiro tipo (foto), a imagem original precisa ser recuperada. Esse processo ajuda a garantir que a transformação mantenha as características importantes da imagem original. A CycleGAN usa duas redes que geram as imagens e duas redes que avaliam se as imagens geradas são reais ou não. O modelo foi criado para trabalhar em situações em que é difícil ou até impossível encontrar pares de imagens correspondentes para treinar, o que acontece, por exemplo, quando não há uma correspondência exata entre os dois tipos de imagens.
 
@@ -56,7 +56,8 @@ Para a problemática em questão, foi proposto o *workflow* da Figura 1, em que 
 Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes na Equação 1.
 
 $$
-L_{G_{A \to B}} = \|D_B(\hat{x}_B) - 1\|_2; \nonumber \\ 
+L_{G_{A \to B}} = \|D_B(\hat{x}_B) - 1\|_2; \\ 
+
 L_{G_{B \to A}} = \|D_A(\hat{x}_A) - 1\|_2.
 $$
 
@@ -75,14 +76,14 @@ $$
 Agora, na Equação 4 consta as funções de perda para os discriminadores. Para todas as amostras que estes receberam, foi adicionado um ruído com distribuição Normal padrão, servindo para estabilizar o aprendizado do modelo.
 
 $$
-L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right); \nonumber \\ 
+L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right); \\ 
 L_{D_B} = \frac{1}{2} \left( \|D_B(x_B) - 1\|_2^2 + \|D_B(\hat{x}_B)\|_2^2 \right).
 $$
 
 A Equação 5 representa as duas funções de perda extra dos discriminadores.
  
 $$
-L_{D_{A,m}} = \frac{1}{2} \left( \|D_{A,m}(x_M) - 1\|_2^2 + \|D_{A,m}(\hat{x}_A)\|_2^2 \right); \nonumber \\
+L_{D_{A,m}} = \frac{1}{2} \left( \|D_{A,m}(x_M) - 1\|_2^2 + \|D_{A,m}(\hat{x}_A)\|_2^2 \right); \\
 L_{D_{B,m}} = \frac{1}{2} \left( \|D_{B,m}(x_M) - 1\|_2^2 + \|D_{B,m}(\hat{x}_B)\|_2^2 \right).
 $$
 
@@ -139,19 +140,19 @@ O treinamento do VAE é baseado em duas principais partes da função de perda:
 1. **Perda de reconstrução**: Mede a qualidade da reconstrução dos dados originais a partir das amostras latentes. Em termos de máxima verossimilhança é expresso pela fórmula 7, onde $p(x/z)$ é a distribuição de probabilidade de reconstrução, e $q(z/x)$ é a distribuição do espaço latente dada a entrada $x$:
 
 $$
-\mathcal{L}_{\text{reconstruction}} = -\mathbb{E}_{q(z|x)}[\log p(x|z)]
+\{L}_{\text{reconstruction}} = -\text{E}_{q(z|x)}[\log p(x|z)]
 $$
 
 2. **Divergência Kullback-Leibler (KL)**: Mede a diferença entre a distribuição latente aprendida e uma distribuição prior (normal multivariada). A perda KL é dada pela fórmula 8, onde $\mu\_j$ e $\sigma\_j$ são os parâmetros do encoder, e $p(z)$ é a distribuição prior (normal):
 
 $$
-\mathcal{L}_{\text{KL}} = D_{\text{KL}}(q(z|x) || p(z)) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log(\sigma_j^2) - \mu_j^2 - \sigma_j^2 \right)
+\{L}_{\text{KL}} = D_{\text{KL}}(q(z|x) || p(z)) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log(\sigma_j^2) - \mu_j^2 - \sigma_j^2 \right)
 $$
 
 A função de perda total é a soma das duas perdas mencionadas, e o VAE aprende a balancea-las durante o treinamento, gerando representações latentes que são ao mesmo tempo precisas e bem comportadas.
 
 $$
-\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{KL}}
+\{L}_{\text{total}} = \{L}_{\text{reconstruction}} + \{L}_{\text{KL}}
 $$
 
 A arquitetura proposta (chamada de [*MuseMorphose*](https://arxiv.org/pdf/2105.04090)) para a geração de música trata o problema de geração musical como uma tarefa de modelagem autoregressiva condicionada. O modelo considera segmentos da música como a unidade de geração, permitindo que o decoder modele de forma mais flexível e dinâmica a estrutura da música ao longo do tempo. Uma característica importante é o uso da "atenção auto-regressiva", onde cada token de entrada afeta diretamente a geração do token seguinte, permitindo capturar dependências de longo alcance dentro da sequência de música, como pode ser visto na figura abaixo.
@@ -217,7 +218,7 @@ Os resultados que os autores apresentam foram obtidos após treinar o modelo por
 
 As métricas de avaliação utilizadas neste trabalho são projetadas para avaliar a qualidade das amostras de áudio geradas, e avaliam a similaridade do histograma de pitch, a distância de MFCC, a convergência espectral e a relação sinal-ruído (SNR). A primeira métrica, similaridade do histograma de pitch, calcula a diferença entre os histogramas de pitch ("quão alto ou quão baixo o som está") das amostras geradas e das amostras originais, ou seja, avalia a correspondência entre a distribuição das notas presentes em ambas as amostras. Um valor mais alto indica uma melhor correspondência.
 
-A distância de MFCC \textit{(Mel-Frequency Cepstral Coefficients)}, por outro lado, é usada para comparar a similaridade entre as características espectrais das amostras. Essa métrica calcula a distância entre os coeficientes MFCC das amostras geradas e as amostras originais. Uma distância de MFCC mais baixa sugere uma maior similaridade espectral, ou seja, que as amostras geradas possuem características de timbre e tonalidade mais próximas das originais. \cite{rossi2020spectral}
+A distância de MFCC *(Mel-Frequency Cepstral Coefficients)*, por outro lado, é usada para comparar a similaridade entre as características espectrais das amostras. Essa métrica calcula a distância entre os coeficientes MFCC das amostras geradas e as amostras originais. Uma distância de MFCC mais baixa sugere uma maior similaridade espectral, ou seja, que as amostras geradas possuem características de timbre e tonalidade mais próximas das originais.
 
 Por fim, a relação sinal-ruído (SNR) é uma métrica que quantifica a relação entre o sinal útil (o som) e o ruído indesejado em uma amostra. Uma SNR alta sugere que o sinal de áudio gerado é claro e de boa qualidade, com pouco ruído perceptível. Valores mais elevados de SNR são desejáveis, pois indicam que a amostra gerada mantém a clareza e a fidelidade do áudio original. Essas métricas têm sido amplamente usadas em tarefas de geração de áudio e avaliação de qualidade de som, como demonstrado em [Jang et al. (2017)](https://ieeexplore.ieee.org/document/7952714) e [Rossi et al. (2020)](https://ieeexplore.ieee.org/document/8954337).
 
