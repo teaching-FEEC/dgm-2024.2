@@ -342,7 +342,7 @@ A figura permite fazer a inspeção visual das séries temporais geradas pelos m
 
  <div align="center">
     <img src="img_readme/Qualitativa.png" alt="Qualitativa" title="Qualitativa" />
-    <p><em>Figura 11: Avaliação Qualitativa das GANs. </em></p>
+    <p><em>Figura 11: Avaliação Qualitativa dos modelos Generativos. </em></p>
 </div>
 
 ### Avaliação Quantitativa 1: Root Mean Square Error
