@@ -27,7 +27,7 @@ model:
 ```
 
 Keys related to data:
-```
+```yaml
 data:
   processed_data_folder: "path to folder with data"  # assumes folder has two folders: gan_train and gan_val, each one containing three folders: images, lungs and labels (or at least images and lungs if you are only interested in generating CT images)
   dataset: "lungCTData" # if one wants to generate only CT images or "processedCTData" if one also wants to generate airway segmentation (or other, but must be  declared in constants.py)
@@ -40,7 +40,7 @@ If one wants to use all elements in images, lungs and labels for training, just 
 If one wants to use only part of the data, the indexes will indicate how many .npy files to consider: files are sorted in gan_train/images in alphabethical order and only consider files from start_point_train_data to end_point_train_data (not inclusive). The same goes for other folders and for validation data.
 
 Keys related to training:
-```
+```yaml
 training:
   batch_size_train: integer
   batch_size_validation: integer
@@ -89,72 +89,128 @@ wandb:
   activate: True/False # if True, integrates with wandb to save versions and losses
 ```
 
-2. Executar comando em seu terminal:
+2. Run in terminal:
 
 ```
 py training_pipeline.py
 ```
 
-3. Selecionar o arquivo YAML de configuração desejado:
+3. You will be prompted to give the path to YAML file:
 
 ```
  config.yaml
 ```
 
-**Obtenção das métricas da GAN:**
+`4.` This execution returns a folder with the name of your model. Inside this directory, there will be two files showing the evolution of the *losses* (an image and a CSV file with the values) and two directories: *examples*, containing some images generated during the model's training, and *models*, containing the trained models (trained and best).
 
-`1.` Configurar parâmetros do modelo no arquivo `config_eval.yaml` e a localização da pasta com os dados processados.
+**Training segmentation network (similar to U-Net):**
 
-`2.` Executar comando em seu terminal:
+1. Training configurations should be described in a YAML file composed by the following keys:
 
+Keys related to model definition:
+```yaml
+
+model:
+  name_model: "string with model name"
+  dir_save_results: "path/name_of_folder_to_be_created/"  # default: ./name_model/
+  new_model: True/False # if False, will try to resume a prior training session and restore model and optimizer (default: True)
+  fine_tunning: True/False # if True, will fine tune a given model (if that's the case new_model should be True) (default: True)
+  freeze_layers: True/False # if True: freeze encoder layers, so only decoder parameters get updated (default: True)
+  path_to_saved_model: "path to U-Net model to be restored if one wants to resume to a prior training session or if one wants to fine tune" # or "" if new model
+
+data:
+  processed_data_folder: "path to folder with data"  # assumes folder has two folders: seg_train and seg_val, each one containing three folders: images, lungs and labels (or at least images and labels)
+  dataset: "processedCTData" # or other if declared in constants.py and datasets.py
+  start_point_train_data: integer
+  end_point_train_data: integer
+  start_point_validation_data: integer
+  end_point_validation_data: integer
 ```
-test_pipeline.py config_eval.yaml
+If one wants to use all elements in images, lungs and labels for training, just delete these four last keys.  
+If one wants to use only part of the data, the indexes will indicate how many .npy files to consider: files are sorted in gan_train/images in alphabethical order and only consider files from start_point_train_data to end_point_train_data (not inclusive). The same goes for other folders and for validation data.
+
+```yaml
+training:
+  batch_size_train: integer
+  batch_size_validation: integer
+  n_epochs: integer
+  early_stopping : True/False # if True implements early stopping startegy (monitors validation loss, if it doesn't decrease 'delta' in 'patience' epochs, stops training
+  patience : integer
+  delta : float
+
+loss: 
+  criterion: 
+    name: "DiceLoss" # or other if declared in constants.py
+
+optimizer:
+  type: "Adam" #or "SGD" (or other, but must be  declared in constants.py)
+  lr: float # initial learning rate
+  info:
+    (kwargs of optimizer)
+  path_to_saved_gen_optimizer: "path to optimizer to be restored if one wants to resume to a prior training session" # or "" if new model
+
+save_models_and_results:
+  step_to_safe_save_models: integer # save models/optimizer every step_to_safe_save_models epochs in case something unexpected interrupts training
+  save_best_model: True/False # if True saves model that gave the smallest loss for validation data
 ```
 
-**Treinamento da rede de segmentação:**
-
-`1.` Configurar parâmetros do modelo no arquivo `config_segmentation.yaml` e a localização da pasta com os dados processados.
-- Caso queira continuar com um treinamento, deve-se atribuir `False` para o parâmetro `new_model`. Caso seja a primeira vez que está realizando este treinamento, deve atribuir `True` para este parâmetro.
-- Caso queira treinar um modelo de segmentação a partir do zero deve-se atribuir `False` para o parâmetro `fine_tunning`.
-- Caso queira reaproveitar os pesos iniciais de um gerador pré-treinado e queira treinar todas as camadas do modelo (isto é, não congelar os pesos do codificador), deve-se atribuir `False` para o parâmetro `freeze_layers`.
-- Na seção de configuração `data` é possível selecionar a quantidade de dados de treinamento e validação que deseja utilizar.
-- Deve-se direcionar o parâmetro `processed_data_folder` para o diretório de dados do projeto. Dentro deste diretório, deverá ter duas pastas (`seg_train` e `seg_val`), contendo os dados de treinamento e validação para a tarefa de segmentação.
-- Não mexer no parâmetro `dataset` deste arquivo.
-- É possível ajustar parâmetro de treinamento, critério da função de *loss* e parâmetros do otimizador neste arquivo.
-- Também é possível configurar a frequência de "check-points" de salvamentos intermediários do modelo durante o treinamento, com o parâmetro `step_to_safe_save_models`. Esse recurso ajuda a salvar o estado do modelo durante o treinamento, o qual poderá ser recuperado caso este processo seja interrompido.
-
-`2.` Executar comando em seu terminal:
+2. Run in terminal:
 
 ```
 py segmentation_pipeline.py
 ```
 
-`3.` Selecionar o arquivo YAML de configuração:
+3. You will be prompted to give the path to YAML file:
 
 ```
-config_segmentation.yaml
+ config_segm.yaml
 ```
 
-`4.` Esta execução retorna uma pasta com o nome do seu modelo. Dentro deste diretório, haverá 2 arquivos com a evolução das *losses* (uma imagem e um JSON com os valores) e dois diretórios: *examples*, com algumas imagens geradas durante o treinamento do modelo, e *models*, com os modelos treinados (safesave, trained e best).
+`4.` This execution returns a folder with the name of your model. Inside this directory, there will be two files showing the evolution of the *losses* (an image and a CSV file with the values) and two directories: *examples*, containing some images generated during the model's training, and *models*, containing the trained models (trained and best).
 
-**Teste da rede de segmentação:**
+**Evaluating GAN (only synthesis of CT images) or Segmentation network:**
 
-`1.` Configurar parâmetros do modelo no arquivo `config_eval_seg.yaml` e a localização da pasta com os dados processados.
-- O nome do modelo (parâmetro `name_model`) deve ser o nome da pasta onde está o modelo que deseja avaliar. Este modelo deve estar no diretório *models* dentro desta pasta.
-- Caso o parâmetro `use_best_version` seja `True`, será avaliado o modelo `<name_model>_unet_best.pt`. Caso seja `False`, será avaliado o modelo `<name_model>_unet_trained.pt`.
-- Direcionar o parâmetro `processed_data_folder` para o diretório de dados do projeto. Dentro deste diretório, deverá ter uma pasta chamada `all_test`, contendo os dados de testes.
-- Não alterar os valores em `evaluation` e nem o parâmetro `dataset`.
+`1.` Evaluation configurations should be described in a YAML file composed by the following keys:
 
-`2.` Executar comando em seu terminal:
+```yaml
+model:
+  name_model: "string with model name"
+  dir_trained_model: "path for the folder with model"  # assumes this folder has an inner folder 'models' with file 'name_model_gen_trained.pt', 'name_model_gen_best.pt', 'name_model_unet_trained.pt' or 'name_model_unet_best.pt' (default: ./name_model/)
+  use_best_version: True/False # if True, selects '_best.pt', else '_trained.pt'
+
+data:
+  processed_data_folder: "path to folder with data"  # assumes folder has 'all_test' folder three folders: images, lungs and labels (or at least images and lungs for GAN or images and labels for U-Net)
+  dataset: "lungCTData" # if evaluating GAN or "processedCTData" if evaluating U-Net (or other, but must be  declared in constants.py)
+  batch_size: integer
+  transformations: # ONLY RELEVANT TO GAN (ignored for U-Net)
+    transform: "AddGaussianNoise" # or "AddUniformNoise" if one wants to add noise to masks (generator input), if not, just delete the related keys
+    info:
+      lung_area: True/False # if True only adds noise to the lung area, otherwise adds noise to the entire image (default: False)
+      intensity: float between 0 and 1 # modulate noise intensity (default: 1)
+      mean: float # only used for Gaussian noise, can be removed if uniform 
+      std: float  # only used for Gaussian noise, can be removed if uniform
+
+evaluation:
+  bQualitativa: True/False # if True: generates output samples from test data
+  bFID: True/False # if True: calculates FID for test data (only for GAN)
+  bSSIM: True/False # if True: calculates SSIM for test data (only for GAN)
+  bDice: True/False # if True: calculates DICE for test data (only for U-Net) - if True assumes we are evaluating an U-Net, else a GAN 
+```
+
+2. Run in terminal:
 
 ```
 py evaluate.py
 ```
 
-`3.` Selecionar o arquivo YAML de configuração:
+3. You will be prompted to give the path to YAML file:
 
 ```
-config_eval_seg.yaml
+ config_eval.yaml
 ```
 
-`4.` Esta execução retorna uma pasta *generated_images* dentro da pasta do modelo treinado, com algumas imagens de segmentação geradas com dados do conjunto de testes. Além disso, haverá um arquivo JSON com o resultado da métrica DICE.
+`4.` This execution returns a folder *generated_images* within the model folder with samples of model's outputs (either segmented images if U-Net or synthetic CT images if GAN). Also in this directory, one will also find a JSON file with the metrics evaluated on the test data. 
+
+This code, currently, does not support evaluating the GAN version that generates both the CT images and airway segmentation.
+
+
