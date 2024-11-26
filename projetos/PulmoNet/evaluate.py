@@ -163,7 +163,8 @@ config = read_yaml(file=config_path)
 ##--------------------Definitions--------------------
 #Generator model
 model_gen_name = str(config['model']['name_model'])
-trained_gen_dir = str('./' + model_gen_name + '/')
+trained_gen_dir = str(config['model'].get('dir_trained_model',
+                                            f'./{model_gen_name}/'))
 #if True use model marked as 'best' instead of 'trained' (last epoch)
 use_best_version = bool(config['model']['use_best_version'])
 
