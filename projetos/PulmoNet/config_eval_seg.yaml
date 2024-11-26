@@ -1,0 +1,15 @@
+model:
+  name_model: "model_test_unet"
+  dir__trained_model: "./model_test_unet/"
+  use_best_version: True
+
+data:
+  processed_data_folder: "/mnt/shared/divided_data/"
+  dataset: "processedCTData"
+  batch_size: 10
+
+evaluation:
+  bQualitativa: False
+  bFID: False
+  bSSIM: False
+  bDice: True

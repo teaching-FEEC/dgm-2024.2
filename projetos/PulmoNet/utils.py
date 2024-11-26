@@ -26,6 +26,7 @@ def plot_img_label(img, label):
     axarr[0].imshow(img, cmap='gray')
     axarr[1].imshow(label, cmap='gray')
     plt.show()
+    plt.close()
 
 
 def test_lung_segmentator(data):
@@ -97,6 +98,7 @@ def test_processed_data(processed_data_folder):
     axarr[0].imshow(ct_sample, cmap='gray')
     axarr[1].imshow(lung_sample, cmap='gray')
     plt.show()
+    plt.close()
 
 
 def test_lung_dataset(processed_data_folder):
@@ -135,15 +137,48 @@ def plt_save_example_synth_img(input_img_ref, input_mask_ref, gen_img_ref, disc_
     ax.flat[3].set_title('Disc Output')
     fig.colorbar(im, ax=ax[3])
     plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+    plt.close()
+
+def plt_save_example_synth_img_with_airway(input_img_ref, input_mask_ref, input_airway_ref, gen_img_ref, gen_airway_ref, disc_ans, epoch, save_dir): 
+    fig, ax = plt.subplots(2, 3, figsize=(18, 10))
+    ax[0,0].imshow(input_mask_ref, cmap='gray')
+    ax[0,1].imshow(input_img_ref, cmap='gray')
+    ax[0,2].imshow(input_airway_ref, cmap='gray')
+    im = ax[1,0].imshow(disc_ans, cmap='gray')
+    fig.colorbar(im, ax=ax[1,0])
+    ax[1,1].imshow(gen_img_ref, cmap='gray')
+    ax[1,2].imshow(gen_airway_ref, cmap='gray')
+    ax[0,0].set_title('Mask')
+    ax[0,1].set_title('Original')
+    ax[0,2].set_title('Original Airway')
+    ax[1,0].set_title('Disc Output')
+    ax[1,1].set_title('Generated')
+    ax[1,2].set_title('Genereated Airway')
+    plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+    plt.close()
 
 
-def plt_save_example_synth_during_test(input_img_ref,  gen_img_ref, save_dir, img_idx):
-    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+def plt_save_example_synth_during_test(input_img_ref, input_mask_ref, gen_img_ref, save_dir, img_idx):
+    fig, ax = plt.subplots(1, 3, figsize=(12, 4))
     ax.flat[0].imshow(input_img_ref, cmap='gray')
-    ax.flat[1].imshow(gen_img_ref, cmap='gray')
+    ax.flat[1].imshow(input_mask_ref, cmap='gray')
+    ax.flat[2].imshow(gen_img_ref, cmap='gray')
     ax.flat[0].set_title('Original')
-    ax.flat[1].set_title('Generated')
+    ax.flat[1].set_title('Mask')
+    ax.flat[2].set_title('Generated')
     plt.savefig(save_dir+'test_'+str(img_idx)+'.png')
+    plt.close()
+
+
+def plt_save_example_airways_img(input_img_ref, input_airway_ref, gen_seg_ref, save_dir, img_idx): 
+    fig, ax = plt.subplots(1, 3, figsize=(18, 4))
+    ax.flat[0].imshow(input_img_ref, cmap='gray')
+    ax.flat[1].imshow(input_airway_ref, cmap='gray')
+    ax.flat[2].imshow(gen_seg_ref, cmap='gray')
+    ax.flat[0].set_title('Original Input')
+    ax.flat[1].set_title('Expected Airway')
+    ax.flat[2].set_title('Generated Airway')
+    plt.savefig(save_dir+'example_generated_epoch_'+str(img_idx)+'.png')
     plt.close()
 
 
@@ -162,6 +197,15 @@ def save_quantitative_results(fid, ssim_complete, luminance_complete, contrast_c
         'luminance_center': np.mean(luminance_center),
         'contrast_center': np.mean(contrast_center),
         'struct_sim_center': np.mean(struct_sim_center)
+    }
+    with open(save_path, "w") as outfile:
+        outfile.write(json.dumps(dict_qnttive_metrics, indent=4))
+
+
+def save_quantitative_results_unet(dice, save_path):
+
+    dict_qnttive_metrics = {
+        'dice': float(dice)
     }
     with open(save_path, "w") as outfile:
         outfile.write(json.dumps(dict_qnttive_metrics, indent=4))
@@ -190,6 +234,19 @@ def plot_training_evolution(path, mean_loss_train_gen_list, mean_loss_validation
     ax[0].set_xlabel('Epochs')
     ax[1].set_xlabel('Epochs')
     plt.savefig(path+'losses_evolution.png')
+    plt.close()
+
+
+def plot_training_evolution_unet(path, mean_loss_train_unet_list, mean_loss_validation_unet_list):
+    fig, ax = plt.subplots(1, 1, figsize=(14, 4))
+    ax.plot(mean_loss_train_unet_list, label='Train')
+    ax.plot(mean_loss_validation_unet_list, label='Validation')
+    ax.legend(loc='upper right')
+    ax.set_title('U-Net')
+    ax.set_xlabel('Epochs')
+    plt.savefig(path+'losses_evolution.png')
+    plt.close()
+
 
 def prepare_environment_for_new_model(new_model, dir_save_results,dir_save_models,dir_save_example):
     os.makedirs(dir_save_results, exist_ok=True)
@@ -279,6 +336,34 @@ def resume_training(dir_save_models, name_model, gen, disc, gen_opt, disc_opt, c
                             object_name='disc_scheduler_state')
     return last_epoch
 
+
+def resume_training_unet(dir_save_models, name_model, unet, unet_opt, config):
+    print('Loading old model to keep training...')
+    
+    if os.path.isfile(dir_save_models+f"{name_model}_training_state_savesafe"):
+        with open(dir_save_models+f"{name_model}_training_state_savesafe", 'r') as file:
+            training_state = json.load(file)
+        last_epoch = training_state['epoch']
+    else:
+        last_epoch = None
+
+    reload_saved_object(path_to_object='path_to_saved_model', 
+                        object_dict=config['model'], 
+                        object_instance=unet, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='unet')
+    
+    reload_saved_object(path_to_object='path_to_saved_optimizer', 
+                        object_dict=config['optimizer'], 
+                        object_instance=unet_opt, 
+                        usual_directory=dir_save_models, 
+                        usual_name_ref=name_model, 
+                        object_name='unet_optimizer')
+
+    return last_epoch
+
+
 def start_from_pretrained_model(gen, disc, config):
     if config['model']['path_to_saved_model_gen'] != "":
         print('Loading pre-trained generator...')
@@ -332,3 +417,32 @@ def set_requires_grad(model,set_require_grad):
     for param in model.parameters():
         param.requires_grad = set_require_grad
 
+
+class EarlyStopping:
+    '''
+    Credits: https://www.geeksforgeeks.org/how-to-handle-overfitting-in-pytorch-models-using-early-stopping/
+    '''
+    def __init__(self, patience=5, delta=0):
+        self.patience = patience
+        self.delta = delta
+        self.best_score = None
+        self.early_stop = False
+        self.counter = 0
+        self.best_model_state = None
+
+    def __call__(self, val_loss, model):
+        score = -val_loss
+        if self.best_score is None:
+            self.best_score = score
+            self.best_model_state = model.state_dict()
+        elif score < self.best_score + self.delta:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.best_model_state = model.state_dict()
+            self.counter = 0
+
+    def load_best_model(self, model):
+        model.load_state_dict(self.best_model_state)

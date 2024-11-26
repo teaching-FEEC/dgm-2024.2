@@ -1,6 +1,8 @@
 import torch
 from utils import add_uniform_noise, add_gaussian_noise
 
+#if lung_area is True: adds noise only in the regions where 'tensor' equals 1
+
 class AddUniformNoise(object):
     def __init__(self, lung_area=False,intensity=1):
         self.lung_area = lung_area
