@@ -12,9 +12,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 | João Gabriel Teixeira Lima  | 237473  | Eng. de Computação|
 | Rita Braga Soares da Silva  | 251627  | Graduação Estatística|
 
-Link para os slides de apresentação da Entrega 3 [aqui](https://docs.google.com/presentation/d/e/2PACX-1vQikFuBtzlrPWVnxrWJvFwhY--e8GFf5YpjGtCYTuwvlJ8whJlT63VM438m4BwytQ/pub?start=false&loop=false&delayms=60000).
-
-> TODO: Atualizar link de apresentação
+Link para os slides de apresentação da Entrega 3 [aqui](https://docs.google.com/presentation/d/1QOK3iJmVRf2GFpL-G1nACGtBHe7FLuEn/edit?usp=sharing&ouid=111380037797956709735&rtpof=true&sd=true).
 
 ## Resumo (Abstract)
 
@@ -191,7 +189,7 @@ A análise da métrica MSD (Vide gráficos abaixo) corrobora com as diferenças 
 </div>
 ## Conclusão
 
->TODO: conclusão
+Este trabalho observou diferentes configurações experimentais para fine-tuning de um modelo de síntese text-to-speech em um cenário de pouca disponibilidade de dados de qualidade. Observou-se que o uso da função de perda speaker contrastive loss e a realização do procedimento de remoção de ruído dos dados de treinamento podem, de um modo geral, resultar em maior qualidade das amostras geradas, o que pode ser refletido pelas métricas mel cepstral distortion e mel spectral distortion. Contudo, as métricas objetivas observadas não são categóricas em apontar superioridade de desempenho dos modelos treinados sob diferentes configurações experimentais. Em eventuais versões futuras deste trabalho, seria de grande interesse obter maior volume de dados com boa qualidade e desenvolver técnicas de avaliação alinhadas à percepção e à correta realização fonética de segmentos específicos caracterizadores de cada sotaque.
 
 ## Referências Bibliográficas
 **[1]** NGUYEN, T.-N.; PHAM, N.-Q.; WAIBEL, A. SYNTACC : Synthesizing Multi-Accent Speech By Weight Factorization. In: ICASSP 2023 - 2023 IEEE INTERNATIONAL CONFERENCE ON ACOUSTICS, SPEECH AND SIGNAL PROCESSING (ICASSP), jun. 2023. ICASSP 2023 - 2023 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) [...]. [S. l.: s. n.], jun. 2023. p. 1–5. Disponível em: https://ieeexplore.ieee.org/document/10096431/?arnumber=10096431. Acesso em: 9 set. 2024.
