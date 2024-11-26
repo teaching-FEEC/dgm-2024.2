@@ -93,38 +93,17 @@ $$
 L_{D,all} = L_D + \gamma \left( L_{D_{A,m}} + L_{D_{B,m}} \right).
 $$
 
-No que tange ao treinamento do modelo, utilizou-se tamanho dos *batches* igual a $16$, otimizador Adam com taxa de aprendizado de $lr=0,0002$ e taxas de decaimento de $0,5$ e $0,999$, durante $25$ épocas. Nas Tabelas 1 e 2 constam as arquiteturas dos discriminadores e geradores da CycleGAN proposta, respectivamente. Todos os hiperparâmetros fixos citados anteriormente foram mantidos do artigo original, em que foi comentado que estas eram as melhores opções apresentadas na literatura para esse tipo de problemática.
+No que tange ao treinamento do modelo, utilizou-se tamanho dos *batches* igual a $16$, otimizador Adam com taxa de aprendizado de $lr=0,0002$ e taxas de decaimento de $0,5$ e $0,999$, durante $25$ épocas. Nas duas tabelas abaixo constam as arquiteturas dos discriminadores e geradores da CycleGAN proposta, respectivamente. Todos os hiperparâmetros fixos citados anteriormente foram mantidos do artigo original, em que foi comentado que estas eram as melhores opções apresentadas na literatura para esse tipo de problemática.
 
 Para o treinamento da CycleGAN, utilizou-se uma máquina com processador Ryzen 7 5800X e GPU RTX4060 de 16GB.
 
 #### Arquitetura do Discriminador - CycleGAN
 
-Entrada: (batchsize = 16) x 64 x 84 x 1
-
-| Camada     | Filtro     | Stride   | Canal | Instance Norm. | Func. Ativação |
-|------------|------------|----------|-------|-----------------|----------------|
-| Conv.      | 4 x 4      | 2 x 2    | 64    | Sim             | LeakyReLU      |
-| Conv.      | 4 x 4      | 2 x 2    | 256   | Não             | LeakyReLU      |
-| Conv.      | 1 x 1      | 2 x 2    | 1     | Sim             | -              |
-
-Saída: (batchsize = 16) x 16 x 21 x 1
+![alt text](tbl_arq_discr_cgan.png)
 
 #### Arquitetura do Gerador - CycleGAN
 
-Entrada: (batchsize = 64) x 84 x 1
-
-| Camada            | Filtro     | Stride   | Canal | Instance Norm. | Func. Ativação |
-|-------------------|------------|----------|-------|-----------------|----------------|
-| Conv.             | 7 x 7      | 1 x 1    | 64    | Sim             | ReLU           |
-| Conv.             | 3 x 3      | 2 x 2    | 128   | Sim             | ReLU           |
-| Conv.             | 3 x 3      | 2 x 2    | 256   | Sim             | ReLU           |
-| 10 x ResNet       | 3 x 3      | 1 x 1    | 256   | Sim             | ReLU           |
-| Deconv.           | 3 x 3      | 2 x 2    | 128   | Sim             | ReLU           |
-| Deconv.           | 3 x 3      | 2 x 2    | 64    | Sim             | ReLU           |
-| Deconv.           | 7 x 7      | 1 x 1    | 1     | Não             | Sigmoid        |
-
-Saída: (batchsize = 64) x 84 x 1
-
+![alt text](tbl_arq_gen_cgan.png)
 
 
 ### MuseMorphose
@@ -185,33 +164,7 @@ Os resultados que os autores apresentam foram obtidos após treinar o modelo por
 
 #### Arquitetura do Modelo MuseMorphose: Encoder e Decoder
 
-##### Encoder: Entrada: (batchsize = 64) x 84 x 1
-
-| Camada  | Filtro  | Stride   | Canal | Normalização  | Func. Ativação |
-|---------|---------|----------|-------|---------------|----------------|
-| Conv.   | 4 x 4   | 2 x 2    | 64    | Instance Norm.| LeakyReLU      |
-| Conv.   | 4 x 4   | 2 x 2    | 64    | Não           | ReLU           |
-| Conv.   | 3 x 3   | 1 x 1    | 128   | Instance Norm.| LeakyReLU      |
-| Conv.   | 3 x 3   | 1 x 1    | 128   | Instance Norm.| LeakyReLU      |
-
-**Transformer Encoder (12 camadas)**
-
-| Camada | - | - | - | Layer Norm. | - |
-|--------|---|---|---|-------------|---|
-
-##### Decoder: Entrada: (batchsize = 64) x 84 x 1
-
-| Camada  | Filtro  | Stride   | Canal | Normalização  | Func. Ativação |
-|---------|---------|----------|-------|---------------|----------------|
-| Deconv. | 4 x 4   | 2 x 2    | 128   | Não           | ReLU           |
-| Deconv. | 4 x 4   | 2 x 2    | 64    | Não           | ReLU           |
-| Deconv. | 7 x 7   | 1 x 1    | 1     | Não           | Softmax        |
-
-**Transformer Decoder (12 camadas)**
-
-| Camada | - | - | - | Layer Norm. | - |
-|--------|---|---|---|-------------|---|
-
+![alt text](tbl_arq_vae.png) 
 
 
 ## Métricas de Avaliação
