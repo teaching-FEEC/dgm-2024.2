@@ -111,10 +111,10 @@ O InfoGAN (*Information Maximizing Generative Adversarial Network*) é uma varia
 
 Infelizmente, para o problema proposto, não foi possível gerar imagens com boas resoluções utilizando o InfoGAN. Além disso, o modelo apresentou colapso nas épocas iniciais, comprometendo a convergência do treinamento e a qualidade das imagens produzidas. Como é possível observar nas imagens seguintes.
 
-<div style="display: flex; justify-content: space-between;">
-<img src="./reports/figures/infogan-epoch66.png" alt="infogan1" width="50%" />
-<img src="./reports/figures/infogan-epoch83.png" alt="infogan2" width="50%" />
-</div>
+| ***Epoch* 66**                | ***Epoch* 83**                |
+|-----------------------------|-----------------------------|
+| ![Epoch 66](./reports/figures/infogan-epoch66.png) | ![Epoch 83](./reports/figures/infogan-epoch83.png) |
+
 
 Além disso, o modelo apresentou colapso nas épocas iniciais, como observado na Figura abaixo, que mostra a evolução das perdas do gerador e do discriminador durante o treinamento. O aumento instável da perda do gerador por volta da época 40, acompanhado de uma perda quase constante do discriminador, evidencia dificuldades de convergência e a incapacidade do modelo de equilibrar o aprendizado entre os componentes, comprometendo a qualidade das imagens geradas.
 
