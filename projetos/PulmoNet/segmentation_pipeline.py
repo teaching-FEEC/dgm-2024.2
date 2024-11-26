@@ -33,7 +33,7 @@ dir_save_test = dir_save_results+'test/'
 new_model = bool(config['model'].get('new_model', True))
 #if fine_tunning is True, will allocate the weights of a given model
 fine_tunning = bool(config['model'].get('fine_tunning', True))
-trained_gen_path = str(config['model']['trained_gen_path'])
+trained_gen_path = str(config['model']['path_to_saved_model'])
 #if freeze_layers is True, we don't learn the parameters in the encoder part of the generator
 freeze_layers = bool(config['model'].get('freeze_layers', True))
 

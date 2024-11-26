@@ -340,14 +340,14 @@ def resume_training_unet(dir_save_models, name_model, unet, unet_opt, config):
     else:
         last_epoch = None
 
-    reload_saved_object(path_to_object='path_to_saved_model_unet', 
+    reload_saved_object(path_to_object='path_to_saved_model', 
                         object_dict=config['model'], 
                         object_instance=unet, 
                         usual_directory=dir_save_models, 
                         usual_name_ref=name_model, 
                         object_name='unet')
     
-    reload_saved_object(path_to_object='path_to_saved_unet_optimizer', 
+    reload_saved_object(path_to_object='path_to_saved_optimizer', 
                         object_dict=config['optimizer'], 
                         object_instance=unet_opt, 
                         usual_directory=dir_save_models, 
