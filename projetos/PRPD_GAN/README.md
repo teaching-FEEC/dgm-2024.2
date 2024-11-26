@@ -228,20 +228,9 @@ A tabela a seguir apresenta as métricas geradas durante os experimentos, com da
 
 Por fim, apresentamos imagens geradas sinteticamente pelo modelo, uma para cada classe (coroa, interno e superfície). Essas imagens ilustram a capacidade do modelo de gerar dados realistas que correspondem a cada classe específica.
 
-<div style="display: flex; justify-content: space-between;">
-    <div>
-        <h5>Defeito de Coroa</h5>
-        <img src="./reports/figures/syn-ACWGAN_full/synthetic_corona_292.png" alt="corona_no_gaussiannoisedis">
-    </div>
-    <div>
-        <h5>Defeito Interno</h5>
-        <img src="./reports/figures/syn-ACWGAN_full/synthetic_internal_41.png" alt="internal_no_spectralnorm">
-    </div>
-    <div>
-        <h5>Defeito de Superfície</h5>
-        <img src="./reports/figures/syn-ACWGAN_full/synthetic_surface_364.png" alt="surface_no_spectralnorm">
-    </div>
-</div>
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_full/synthetic_corona_292.png) | ![Image 2](./reports/figures/syn-ACWGAN_full/synthetic_internal_41.png) | ![Image 3](./reports/figures/syn-ACWGAN_full/synthetic_surface_364.png) |
 
 #### Penalizaçao por Wasserstein
 A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
@@ -258,20 +247,9 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 | Val     | 293.99     | 0.265    | (0.0000,0.0000) | 287.282253 | 299.069478 | 313.793774 | 0.333442  | 0.264077  | 0.328807  | (0.6406,0.0000) | (0.9781,0.0345) | (0.7117,0.0714) |      |
 | Test    | 288.49     | 0.302    | (0.0000,0.0000) | 241.880872 | 321.797007 | 316.801898 | 0.365371  | 0.445290  | 0.440961  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
 
-<div style="display: flex; justify-content: space-between;">
-    <div>
-        <h5>Defeito de Coroa</h5>
-        <img src="./reports/figures/syn-ACWGAN_noGP/synthetic_corona_1.png" alt="corona_no_gaussiannoisedis">
-    </div>
-    <div>
-        <h5>Defeito Interno</h5>
-        <img src="./reports/figures/syn-ACWGAN_noGP/synthetic_internal_1.png" alt="internal_no_spectralnorm">
-    </div>
-    <div>
-        <h5>Defeito de Superfície</h5>
-        <img src="./reports/figures/syn-ACWGAN_noGP/synthetic_surface_1.png" alt="surface_no_spectralnorm">
-    </div>
-</div>
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_noGP/synthetic_corona_1.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGP/synthetic_internal_1.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGP/synthetic_surface_1.png) |
 
 
 #### Ruído Gaussiano no Discriminador
@@ -292,21 +270,9 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 
 Abaixo estão as imagens geradas para cada classe.
 
-
-<div style="display: flex; justify-content: space-between;">
-    <div>
-        <h5>Defeito de Coroa</h5>
-        <img src="./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png" alt="corona_no_gaussiannoisedis">
-    </div>
-    <div>
-        <h5>Defeito Interno</h5>
-        <img src="./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png" alt="internal_no_spectralnorm">
-    </div>
-    <div>
-        <h5>Defeito de Superfície</h5>
-        <img src="./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png" alt="surface_no_spectralnorm">
-    </div>
-</div>
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png) |
 
 #### Ruído Gaussiano no Gerador
 A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
@@ -323,20 +289,9 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 | Val     | 183.46 | 0.102 | (0.5410,0.0118) | 178.491791 | 212.824949 | 247.799486 | 0.140242  | 0.112723  | 0.199009  | (0.7049,0.0000) | (0.9045,0.0000) | (0.8046,0.0000) |      |
 | Test    | 224.94 | 0.180 | (0.0000,0.0104) | 258.469314 | 275.457409 | 273.606913 | 0.324978  | 0.305368  | 0.317812  | (0.0000,0.0000) | (0.0000,0.0312) | (0.0000,0.0000) |      |
 
-<div style="display: flex; justify-content: space-between;">
-    <div>
-        <h5>Defeito de Coroa</h5>
-        <img src="./reports/figures/syn-ACWGAN_noGNoise/synthetic_corona_152.png" alt="corona_no_gaussiannoisedis">
-    </div>
-    <div>
-        <h5>Defeito Interno</h5>
-        <img src="./reports/figures/syn-ACWGAN_noGNoise/synthetic_internal_7.png" alt="internal_no_spectralnorm">
-    </div>
-    <div>
-        <h5>Defeito de Superfície</h5>
-        <img src="./reports/figures/syn-ACWGAN_noGNoise/synthetic_surface_92.png" alt="surface_no_spectralnorm">
-    </div>
-</div>
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_noGNoise/synthetic_corona_152.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGNoise/synthetic_internal_7.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGNoise/synthetic_surface_92.png) |
 
 #### Normalizaçao Espectral
 A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
@@ -352,22 +307,9 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 | Val     | 191.818.868 | 0,100242 | (0.4736,0.0000) | 212.507.233 | 228.128.554 | 238.886.100 | 0,168298 | 0,119335 | 0,175691 | (0.7160,0.0000) | (0.8696,0.0000) | (0.4636,0.0000) |      
 | Test    | 208.008.298 | 0,150208 | (0.0020,0.0000) | 185.499.858 | 201.195.731 | 216.606.640 | 0,153220 | 0,139393 | 0,178365 | (0.5136,0.0000) | (0.2453,0.0000) | (0.0054,0.0000) |      
 
-##### Resultados do Defeito de Coroa
-
-<div style="display: flex; justify-content: space-between;">
-    <div>
-        <h5>Defeito de Coroa</h5>
-        <img src="./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png" alt="corona_no_spectralnorm">
-    </div>
-    <div>
-        <h5>Defeito Interno</h5>
-        <img src="./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png" alt="internal_no_spectralnorm">
-    </div>
-    <div>
-        <h5>Defeito de Superfície</h5>
-        <img src="./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png" alt="surface_no_spectralnorm">
-    </div>
-</div>
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png) |
 
 #### Comparação dos modelos
 
