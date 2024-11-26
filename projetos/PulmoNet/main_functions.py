@@ -318,10 +318,10 @@ def run_validation_epoch_unet(unet,
                 input_img = input_img_batch.to(device)
                 input_airway = input_airway_batch.to(device)
                 loss = get_unet_loss(unet=unet,
-                                     criterion=criterion,
-                                     input_airway=input_airway,
-                                     input_img=input_img,
-                                     device=device)
+                                    criterion=criterion,
+                                    target=input_airway,
+                                    input=input_img,
+                                    device=device)
                 mean_loss = mean_loss + loss.item() 
 
                 progress_bar.set_postfix(
