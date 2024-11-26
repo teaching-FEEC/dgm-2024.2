@@ -49,56 +49,45 @@ Primeiramente, abordou-se uma técnica mais conhecida pela literatura, as CycleG
 Os dados já se encontravam previamente pré-processados no quesito de tempo das notas e com representação *Pianoroll* (auxílio dos pacotes *pretty midi* e *Pypianoroll* do *Python*), em que as músicas são representadas em um formato de matriz bidimensional (tempo x notas), de modo que os valores na matriz indicam a presença ou ausência de notas musicais em um determinado instante. Ainda, foi utilizado uma taxa de amostragem de 16 passos de tempo por compasso (segmento de tempo correspondente a um número específico de batidas), escolha padrão em diversas literaturas, utilizando frases consistindo de 4 barras consecutivas. Como notas de tom abaixo de C1 ou acima de C8 não são muito comuns, os autores do artigo de referência decidiram reter notas apenas entre esse intervalo, que são $p = 84$ notas. Note, então, que a entrada da rede a ser treinada é de $64 \times 84$.
 
 
-Para a problemática em questão, foi proposto o *workflow* da Figura 1, em que foi adicionado mais dois extras geradores (além dos dois do ciclo), $D_{A,m}$ e $D_{B,m}$, com a finalidade de abordar desafios específicos relacionados à qualidade e realismo da música gerada durante a transferência de gênero musical. Esses discriminadores extras, ao serem treinados com dados de múltiplos domínios (não apenas do domínio alvo), ajudam a regularizar o gerador, evitando que este crie apenas músicas que se mantenham dentro do manifold musical, i.e., previne que o gerador produza características superficiais do gênero musical de origem.
+Para a problemática em questão, foi proposto o *workflow* da próxima figura, em que foi adicionado mais dois extras geradores (além dos dois do ciclo), $D_{A,m}$ e $D_{B,m}$, com a finalidade de abordar desafios específicos relacionados à qualidade e realismo da música gerada durante a transferência de gênero musical. Esses discriminadores extras, ao serem treinados com dados de múltiplos domínios (não apenas do domínio alvo), ajudam a regularizar o gerador, evitando que este crie apenas músicas que se mantenham dentro do manifold musical, i.e., previne que o gerador produza características superficiais do gênero musical de origem. Na imagem abaixo, as setas em preto apontam para as funções de perda que serão definidas abaixo; as cores azul e vermelho são referentes aos dois ciclos existentes.
 
 ![alt text](dinamica_cyclegan.JPG)
 
-Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes na Equação 1.
+Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes na equação abaixo.
 
-$$
-L_{G_{A \to B}} = \|D_B(\hat{x}_B) - 1\|_2
-$$
+$$\begin{aligned}
+L_{G_{A \to B}} &= \|D_B(\hat{x}_B) - 1\|_2; \\
+L_{G_{B \to A}} &= \|D_A(\hat{x}_A) - 1\|_2.
+\end{aligned}$$
 
-$$
-L_{G_{B \to A}} = \|D_A(\hat{x}_A) - 1\|_2.
-$$
-
-Por sua vez, a função perda do ciclo está na Equação 2.
+Por sua vez, a função perda do ciclo segue:
 
 $$
 L_c = \|\hat{x}_A - x_A\|_1 + \|\hat{x}_B - x_B\|_1.
 $$
 
-Resultando, então, na função perda total dos geradores, Equação 3, em que no treinamento a constante $\lambda$ foi empregada com valor sendo igual a 10.
+Resultando, então, na função perda total dos geradores, equação a seguir, em que no treinamento a constante $\lambda$ foi empregada com valor sendo igual a 10.
 
 $$
 L_G = L_{G_{A \to B}} + L_{G_{B \to A}} + \lambda L_c.
 $$
 
-Agora, na Equação 4 consta as funções de perda para os discriminadores. Para todas as amostras que estes receberam, foi adicionado um ruído com distribuição Normal padrão, servindo para estabilizar o aprendizado do modelo.
+Agora, nas próximas duas equaçãoequações constam as funções de perda para os discriminadores. Para todas as amostras que estes receberam, foi adicionado um ruído com distribuição Normal padrão, servindo para estabilizar o aprendizado do modelo.
 
-$$
-L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right)
-$$
-
-$$
+$$\begin{aligned}
+L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right); \\
 L_{D_B} = \frac{1}{2} \left( \|D_B(x_B) - 1\|_2^2 + \|D_B(\hat{x}_B)\|_2^2 \right).
-$$
+\end{aligned}$$
 
-A Equação 5 representa as duas funções de perda extra dos discriminadores.
+As duas funções de perda extra dos discriminadores são definidas por:
  
-$$
-L_{D_{A,m}} = \frac{1}{2} \left( \left\| D_{A,m}(x_M) - 1 \right\|_2^2 + \left\| D_{A,m}(\hat{x}_A) \right\|_2^2 \right)
-$$
-
-E a equação 6 também:
-
-$$
-L_{D_{B,m}} = \frac{1}{2} \left( \left\| D_{B,m}(x_M) - 1 \right\|_2^2 + \left\| D_{B,m}(\hat{x}_B) \right\|_2^2 \right)
-$$
+$$\begin{aligned}
+L_{D_{A,m}} = \frac{1}{2} \left( \left\| D_{A,m}(x_M) - 1 \right\|_2^2 + \left\| D_{A,m}(\hat{x}_A) \right\|_2^2 \right); \\
+L_{D_{B,m}} = \frac{1}{2} \left( \left\| D_{B,m}(x_M) - 1 \right\|_2^2 + \left\| D_{B,m}(\hat{x}_B) \right\|_2^2 \right).
+\end{aligned}$$
 
 
-Por fim, a função de perda total é dada pela Equação 6, em que $\gamma$ foi utilizado como sendo fixo e igual a 1.
+Por fim, a função de perda total é definida conforme a equação abaixo, em que $\gamma$ foi utilizado como sendo fixo e igual a 1.
 
 $$
 L_{D,all} = L_D + \gamma \left( L_{D_{A,m}} + L_{D_{B,m}} \right).
@@ -148,13 +137,13 @@ Os Autoencoders Variacionais (VAEs) são uma classe de modelos probabilísticos 
 
 O treinamento do VAE é baseado em duas principais partes da função de perda:
 
-1. **Perda de reconstrução**: Mede a qualidade da reconstrução dos dados originais a partir das amostras latentes. Em termos de máxima verossimilhança é expresso pela fórmula 7, onde $p(x/z)$ é a distribuição de probabilidade de reconstrução, e $q(z/x)$ é a distribuição do espaço latente dada a entrada $x$:
+1. **Perda de reconstrução**: Mede a qualidade da reconstrução dos dados originais a partir das amostras latentes. Em termos de máxima verossimilhança é expresso pela equação abaixo, onde $p(x/z)$ é a distribuição de probabilidade de reconstrução, e $q(z/x)$ é a distribuição do espaço latente dada a entrada $x$:
 
 $$
 L_{\text{reconstruction}} = -\mathbb{E}_{q(z|x)}[\log p(x|z)]
 $$
 
-2. **Divergência Kullback-Leibler (KL)**: Mede a diferença entre a distribuição latente aprendida e uma distribuição prior (normal multivariada). A perda KL é dada pela fórmula 8, onde $\mu\_j$ e $\sigma\_j$ são os parâmetros do encoder, e $p(z)$ é a distribuição prior (normal):
+2. **Divergência Kullback-Leibler (KL)**: Mede a diferença entre a distribuição latente aprendida e uma distribuição prior (normal multivariada). A perda KL, em que $\mu\_j$ e $\sigma\_j$ são os parâmetros do encoder, e $p(z)$ é a distribuição prior (normal), é definida como:
 
 $$
 L_{\text{KL}} = D_{\text{KL}}(q(z|x) \parallel p(z)) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log(\sigma_j^2) - \mu_j^2 - \sigma_j^2 \right)
@@ -238,7 +227,7 @@ Por fim, a relação sinal-ruído (SNR) é uma métrica que quantifica a relaç�
 
 ### CycleGAN
 
-Os resultados utilizando a CycleGAN foram bastante distantes do esperado, tendo como *benchamark* os áudios gerados pelo artigo de referência. Dos mais de 1.000 áudios originais de teste, menos de $5\%$ produziram sons de notas de piano factíveis e, quando isso acontecia, as notas eram muito espaçadas, não apresentando uma fluidez no áudio em que houve transferência de gênero musical. Esse último fato fica evidente ao se analisar as Figuras 3 (áudio original no gênero Jazz) e 4 (áudio transferido para o gênero Pop), em que no eixo horizontal está os compassos musicais (tempo em segundo) dentro de cada compasso e o eixo vertical as notas, então o comprimento da linha verde se refere a duração da nota tocada. Note que na primeira Figura 3 há uma sintonia melódica e há poucas notas esparsas, ao contrário da Figura 4.
+Os resultados utilizando a CycleGAN foram bastante distantes do esperado, tendo como *benchamark* os áudios gerados pelo artigo de referência. Dos mais de 1.000 áudios originais de teste, menos de $5\%$ produziram sons de notas de piano factíveis e, quando isso acontecia, as notas eram muito espaçadas, não apresentando uma fluidez no áudio em que houve transferência de gênero musical. Esse último fato fica evidente ao se analisar as duas próximas figuras (primeira referente ao áudio original no gênero Jazz e a segunda ao áudio transferido para o gênero Pop), em que no eixo horizontal está os compassos musicais (tempo em segundo) dentro de cada compasso e o eixo vertical as notas, então o comprimento da linha verde se refere a duração da nota tocada. Note que nesta primeira imagem há uma sintonia melódica e há poucas notas esparsas, ao contrário da segunda.
 
 ![alt text](musica_original.jpg)
 
@@ -249,11 +238,11 @@ Ainda, utilizou-se a métrica *Pitch Histogram Similarity*, que mede a similarid
 
 ### MuseMorphose
 
-Conseguimos treinar a arquitetura por 7 épocas, que durou quase dois dias inteiros. Os resultados das perdas do modelo estão ilustrados na figura 5. São poucas épocas para conslusões estatisticamente válidas, mas é possível ver que a perda de reconstrução (RC) diminui ao longo das épocas, o que pode indicar que o modelo está melhorando sua capacidade em reconstruir e gerar músicas. Já a perda KL (da divergência de Kullback-Leibler) mede a distribuição latente aprendida pelo modelo e ela parece aumentar nas primeiras épocas, indicando que a distribuição que está sendo aprendida ainda não é satisfatória (provavelmente por uma não convergencia).
+Conseguimos treinar a arquitetura por 7 épocas, que durou quase dois dias inteiros. Os resultados das perdas do modelo estão ilustrados na figura a seguir, embora sejam poucas épocas para conslusões estatisticamente válidas, é possível ver que a perda de reconstrução (RC) diminui ao longo das épocas, o que pode indicar que o modelo está melhorando sua capacidade em reconstruir e gerar músicas. Já a perda KL (da divergência de Kullback-Leibler) mede a distribuição latente aprendida pelo modelo e ela parece aumentar nas primeiras épocas, indicando que a distribuição que está sendo aprendida ainda não é satisfatória (provavelmente por uma não convergencia).
 
 ![alt text](loss_curves.png)
 
-Após o treinamento do modelo, gerou-se 5 amostras distintas a partir de um áudio original de entrada. As amostras foram geradas variando o coeficiente de mudança do ritmo e da polifonia. O gráfico da figura 6 é o mesmo apresentado para a CycleGAN (no eixo horizontal estão os compassos - tempos em segundo e no eixo vertical as notas - o tamanho da barra corresponde a duração da nota tocada). É possível ver que a amostra 1 é a mais condizente com o áudio original, pois não geramos o áudio com muitas mudanças. Também, esta amostra é o que apresenta menos notas esparças, em comparação com as amostras 2 e 4, por exemplo.
+Após o treinamento do modelo, gerou-se 5 amostras distintas a partir de um áudio original de entrada. As amostras foram geradas variando o coeficiente de mudança do ritmo e da polifonia. Os gráficos a seguir são os mesmos que os apresentados para a CycleGAN (no eixo horizontal estão os compassos - tempos em segundo e no eixo vertical as notas - o tamanho da barra corresponde a duração da nota tocada). É possível ver que a amostra 1 é a mais condizente com o áudio original, pois não geramos o áudio com muitas mudanças. Também, esta amostra é o que apresenta menos notas esparças, em comparação com as amostras 2 e 4, por exemplo.
 
 ![alt text](grafico_audio_orig.png)
 ![alt text](graf_sample1.png) 
