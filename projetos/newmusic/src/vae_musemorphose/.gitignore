@@ -1,0 +1,7 @@
+**/*.tar.gz
+*dataset*
+**/__pycache__/
+**/.vscode/
+**/*ckpt*/
+**/*.pt
+**/gens/
