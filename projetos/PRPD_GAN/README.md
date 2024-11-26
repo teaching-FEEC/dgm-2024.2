@@ -68,7 +68,7 @@ A escolha desse dataset se justifica por sua qualidade e relevância no contexto
 
 A imagem dos dataset possui tamanho de 640 x480 pixels. As anotações são pelo defeito do motor. A seguir é apresentada a quantidade percentual de cada tipo de defeito nos dados. 
 
-![defect](./reports/figures/dataset_distribution_by_class.png)
+<img src="./reports/figures/dataset_distribution_by_class.png" width="50%">
 
 Foi realizada a divisão por tipo de motor anotado. Dessa forma, a representação do mesmo motor não estará no conjunto de teste e treino, evitando *data leakage*. Posteriormente há o gráfico da quantidade de cada motor por defeito analisado. 
 
