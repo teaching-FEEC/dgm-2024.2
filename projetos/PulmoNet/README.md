@@ -39,7 +39,7 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 
 **ANEXOS**:
 1. [Explorações de arquiteturas e dados](#explorações-de-arquiteturas-e-dados)
-2. [Como rodar os modelos](#how-to-run)
+2. [Como rodar os modelos](HowToRun.md?raw=true).
 
 ## Links Importantes
 Links para apresentações de slides e vídeos para entregas E1, E2 e E3 para a disciplina:
