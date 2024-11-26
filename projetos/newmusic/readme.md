@@ -136,9 +136,9 @@ $$
 
 A arquitetura proposta (chamada de [*MuseMorphose*](https://arxiv.org/pdf/2105.04090)) para a geração de música trata o problema de geração musical como uma tarefa de modelagem autoregressiva condicionada. O modelo considera segmentos da música como a unidade de geração, permitindo que o decoder modele de forma mais flexível e dinâmica a estrutura da música ao longo do tempo. Uma característica importante é o uso da "atenção auto-regressiva", onde cada token de entrada afeta diretamente a geração do token seguinte, permitindo capturar dependências de longo alcance dentro da sequência de música, como pode ser visto na figura abaixo.
 
-![alt text](aqr_vae.png)
+![alt text](tbl_aqr_vae.png)
 
-A arquitetura é baseado em um VAE (Autoencoder Variacional, apresentado acima também), no qual as entradas de música e controles são passados por um encoder para gerar uma representação latente que é utilizada pelo decoder para gerar a música. A arquitetura está apresentada na tabela 3 em detalhes. Os controles que os autores fazem são da Intensidade rítmica e polifonia, que são dois atributos musicais que têm impacto direto na percepção emocional da música. A intensidade rítmica refere-se à força ou ênfase dos ritmos em uma peça musical, enquanto a polifonia se refere à presença de múltiplas linhas melódicas independentes na música, como em uma composição com vários instrumentos tocando simultaneamente em diferentes registros.
+A arquitetura é baseado em um VAE (Autoencoder Variacional, apresentado acima também), no qual as entradas de música e controles são passados por um encoder para gerar uma representação latente que é utilizada pelo decoder para gerar a música. A arquitetura está apresentada na tabela abaixo em detalhes. Os controles que os autores fazem são da Intensidade rítmica e polifonia, que são dois atributos musicais que têm impacto direto na percepção emocional da música. A intensidade rítmica refere-se à força ou ênfase dos ritmos em uma peça musical, enquanto a polifonia se refere à presença de múltiplas linhas melódicas independentes na música, como em uma composição com vários instrumentos tocando simultaneamente em diferentes registros.
 
 Outros hiperparâmetros de interesse do modelo foram:
 
