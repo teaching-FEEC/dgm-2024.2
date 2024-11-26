@@ -179,16 +179,16 @@ Ainda, utilizou-se a métrica *Pitch Histogram Similarity*, que mede a similarid
 
 Conseguimos treinar a arquitetura por 7 épocas, que durou quase dois dias inteiros. Os resultados das perdas do modelo estão ilustrados na figura a seguir, embora sejam poucas épocas para conslusões estatisticamente válidas, é possível ver que a perda de reconstrução (RC) diminui ao longo das épocas, o que pode indicar que o modelo está melhorando sua capacidade em reconstruir e gerar músicas. Já a perda KL (da divergência de Kullback-Leibler) mede a distribuição latente aprendida pelo modelo e ela parece aumentar nas primeiras épocas, indicando que a distribuição que está sendo aprendida ainda não é satisfatória (provavelmente por uma não convergencia).
 
-![alt text](loss_curves.png)
+![alt text](images/loss_curves.png)
 
 Após o treinamento do modelo, gerou-se 5 amostras distintas a partir de um áudio original de entrada. As amostras foram geradas variando o coeficiente de mudança do ritmo e da polifonia. Os gráficos a seguir são os mesmos que os apresentados para a CycleGAN (no eixo horizontal estão os compassos - tempos em segundo e no eixo vertical as notas - o tamanho da barra corresponde a duração da nota tocada). É possível ver que a amostra 1 é a mais condizente com o áudio original, pois não geramos o áudio com muitas mudanças. Também, esta amostra é o que apresenta menos notas esparças, em comparação com as amostras 2 e 4, por exemplo.
 
-![alt text](grafico_audio_orig.png)
-![alt text](graf_sample1.png) 
-![alt text](graf_sample2.png) 
-![alt text](graf_sample3.png) 
-![alt text](graf_sample4.png) 
-![alt text](graf_sample5.png) 
+![alt text](images/grafico_audio_orig.png)
+![alt text](images/graf_sample1.png) 
+![alt text](images/graf_sample2.png) 
+![alt text](images/graf_sample3.png) 
+![alt text](images/graf_sample4.png) 
+![alt text](images/graf_sample5.png) 
 
 Também calculamos as métricas de *Histogram Similarity* e *signal-to-noise ratio (SNR)* para cada uma das amostras em relação ao áudio original, que estão apresentadas na tabela 4. Pode-se ver que o maior valor de similaridade de pitch foi para a amostra 1, que pelo gráfico das notas estava mais similar com o áudio original. Já pela métrica de ruído, todos os áudios são ruídosos quando comparados com o original, provavelmente puxados pelas notas esparsas.
 
