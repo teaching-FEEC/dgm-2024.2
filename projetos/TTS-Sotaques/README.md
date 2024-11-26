@@ -17,7 +17,7 @@ Link para os slides de apresentação da Entrega 3 [aqui](https://docs.google.co
 ## Resumo (Abstract)
 
 Este trabalho explora a aplicação de um modelo de síntese text-to-speech (TTS) com o objetivo de gerar fala sintética em português brasileiro com variação de sotaque das regiões de Minas Gerais e Pernambuco. A abordagem adotada baseia-se no fine-tuning, a partir de um corpus de fala espontânea, de um modelo TTS do tipo end-to-end pré-treinado. A fim de avaliar a qualidade das amostras geradas, calculamos métricas objetivas associadas à prosódia e à representação mel-cepstral dos áudios. Analisamos, a partir dessas métricas e de observações qualitativas, o efeito do uso da função de perda speaker contrastive loss e da realização de um procedimento de remoção de ruído das amostras originais de treinamento.
-Os resultados obtidos sugerem maior qualidade de amostras geradas quando é realizada remoção de ruído das amostras de treino e é feito uso de função de perda speaker contrastive loss, porém análises de estatística inferencial revelam casos em que essas métricas não apresentam resultados significativos para diferenciar amostras sintéticas geradas por diferentes configurações de fine-tuning.
+Os resultados obtidos sugerem maior qualidade de amostras geradas quando são adotadas essas medidas, porém análises de estatística inferencial revelam casos em que essas métricas não apresentam resultados significativos para diferenciar amostras sintéticas geradas por diferentes configurações de fine-tuning.
 
 ## Descrição do Problema/Motivação
 
