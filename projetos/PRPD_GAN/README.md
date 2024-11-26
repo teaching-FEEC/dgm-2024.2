@@ -142,11 +142,7 @@ O modelo que conseguiu obter resultados satisfatórios foi uma versão da ACGAN 
 
 As funções de perda para o gerador e o discriminador foram os seguintes:
 
-$L_{\text{CE}} = - \sum_{i=1}^{C} y_i \log(\hat{y}_i)$
-
-$L_{D}^{ACWGAN} = -\mathbb{E}_{x \sim p_{d}}[D(x)] + \mathbb{E}_{\hat{z} \sim p_{g}}[D(\hat{x})] + \lambda\mathbb{E}_{\hat{x} \sim p_{g}} \left[(\| \nabla D(\alpha{x} + (1-\alpha\hat{x}) \|_2 - 1)^2 \right] + \lambda_{\text{cls}} L_{\text{CE}}(D_{\text{aux}}(x), C) + L_{\text{CE}}(D_{\text{aux}}(\hat{x}), \hat{C})$
-
-$L_{G}^{ACWGAN} = -\mathbb{E}_{\hat{z} \sim p_{g}}[D(\hat{x})] + L_{\text{CE}}(D_{\text{aux}}(\hat{x}), \hat{C})$
+![ACWGAN-SN](./reports/figures/losses_formula.jpg)
 
 #### Modelo Original
 
