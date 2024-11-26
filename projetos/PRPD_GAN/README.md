@@ -231,6 +231,7 @@ Por fim, apresentamos imagens geradas sinteticamente pelo modelo, uma para cada 
 | Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
 |------------------------|------------------------|------------------------|
 | ![Image 1](./reports/figures/syn-ACWGAN_full/synthetic_corona_292.png) | ![Image 2](./reports/figures/syn-ACWGAN_full/synthetic_internal_41.png) | ![Image 3](./reports/figures/syn-ACWGAN_full/synthetic_surface_364.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_full/synthetic_corona_6.png) | ![Image 2](./reports/figures/syn-ACWGAN_full/synthetic_internal_25.png) | ![Image 3](./reports/figures/syn-ACWGAN_full/synthetic_surface_344.png) |
 
 #### Penalizaçao por Wasserstein
 A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
@@ -250,6 +251,7 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 | Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
 |------------------------|------------------------|------------------------|
 | ![Image 1](./reports/figures/syn-ACWGAN_noGP/synthetic_corona_1.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGP/synthetic_internal_1.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGP/synthetic_surface_1.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_noGP/synthetic_corona_14.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGP/synthetic_internal_34.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGP/synthetic_surface_65.png) |
 
 
 #### Ruído Gaussiano no Discriminador
@@ -292,6 +294,7 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 | Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
 |------------------------|------------------------|------------------------|
 | ![Image 1](./reports/figures/syn-ACWGAN_noGNoise/synthetic_corona_152.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGNoise/synthetic_internal_7.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGNoise/synthetic_surface_92.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_noGNoise/synthetic_corona_176.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGNoise/synthetic_internal_44.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGNoise/synthetic_surface_105.png) |
 
 #### Normalizaçao Espectral
 A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
