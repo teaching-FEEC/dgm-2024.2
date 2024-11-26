@@ -183,10 +183,26 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
 #### Ablation Study
 
+Como foi analisado que o modelo ACWGAN-SN com diversos ruídos apresentou resultados satisfatórios, foi visto que poderíamos melhorá-lo retirando cada um dos componentes em um experimento e avaliando, ao final, qual foi a melhor situação. Esse processo é conhecido como ablation study. Foram estudadas 4 situações:
+
+- Normalização espectral
+- Penalização por Wasserstein
+- Ruído gaussiano no discriminador
+- Ruído gaussiano no gerador
+
+Esses experimentos visaram entender a contribuição de cada componente para o desempenho geral do modelo e verificar se a remoção de algum deles poderia resultar em uma melhoria ou degradação do desempenho.
+
 #### Modelo Original
 
+A seguir, apresentamos a visualização dos dados usando t-SNE, que mostra a distribuição global das amostras geradas. Essa visualização ajuda a entender a separação entre as diferentes classes e a qualidade da geração de dados.
+
 <img src="./reports/figures/tSNE_ACWGAN_Full.png" width="50%">
+
+Além da visualização global, realizamos o t-SNE individualizado por classe, permitindo uma análise mais detalhada de como o modelo se comporta em relação a cada tipo de dado. Isso é importante para avaliar se o modelo está conseguindo gerar amostras de alta qualidade para cada classe individualmente.
+
 <img src="./reports/figures/tSNE_ACWGAN_perClass_Full.png" width="50%">
+
+A tabela a seguir apresenta as métricas geradas durante os experimentos, com dados de treino, validação e teste. As métricas incluem FID, KID, precisão e recall para cada conjunto de dados e para cada classe. As classes são indicadas por números: 1 para coroa, 2 para interno e 3 para superfície.
 
 |    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
@@ -194,13 +210,19 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 | Val     | 174.95 | 0.094 | (0.5967,0.0000) | 176.923227 | 202.807142 | 240.696508 | 0.128564  | 0.099677  | 0.183579  | (0.7175,0.0000) | (0.8754,0.0000) | (0.7147,0.0000) |      |
 | Test    | 221.68 | 0.179 | (0.0010,0.0000) | 265.188173 | 283.617005 | 266.801814 | 0.344515  | 0.302050  | 0.299347  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0031,0.0000)|      |
 
+Por fim, apresentamos imagens geradas sinteticamente pelo modelo, uma para cada classe (coroa, interno e superfície). Essas imagens ilustram a capacidade do modelo de gerar dados realistas que correspondem a cada classe específica.
+
+#TODO
 
 #### Penalizaçao por Wasserstein
-
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
 <img src="./reports/figures/tSNE_ACWGAN_noGP.png" width="50%">
+
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
 
 <img src="./reports/figures/tSNE_ACWGAN_perClass_noGP.png" width="50%">
 
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
 |         | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
 | Train   | 290.60     | 0.268    | (0.0000,0.0000) | 280.444725 | 288.940699 | 309.726250 | 0.313640  | 0.282250  | 0.325883  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
@@ -208,9 +230,14 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 | Test    | 288.49     | 0.302    | (0.0000,0.0000) | 241.880872 | 321.797007 | 316.801898 | 0.365371  | 0.445290  | 0.440961  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
 
 #### Ruído Gaussiano no Discriminador
-
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
 <img src="./reports/figures/t_SNE_Visualization___With_post_processing___Without_Gaussian_Noise.png" width="50%">
+
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
+
 <img src="./reports/figures/t-SNE_Visualization_per_Class-Without_Gaussian_Noise.png" width="50%">
+
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
 
 |    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
@@ -218,21 +245,32 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 | Val     | 168.473.768 | 0.084379 | (0.6250,0.0118) | 216.852.641 | 217.768.535 | 194.649.687 | 0.165530 | 0.099961 | 0.118446 | (0.9648,0.0000) | (0.7679,0.0000) | (0.6377,0.0000) |      |
 | Test    | 192.640.402 | 0.134054 | (0.0127,0.0000) | 284.380.472 | 248.441.158 | 212.888.935 | 0.369825 | 0.205304 | 0.214673 | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
 
-##### Resultados do Defeito de Coroa
+Abaixo estão as imagens geradas para cada classe.
 
-![corona_no_gaussiannoisedis](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png)
 
-##### Resultados do Defeito Interno
-![internal_no_spectralnorm](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png)
-
-##### Resultados do Defeito de Superfície
-
-![surface_no_spectralnorm](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png)
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        <h5>Defeito de Coroa</h5>
+        <img src="./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png" alt="corona_no_gaussiannoisedis">
+    </div>
+    <div>
+        <h5>Defeito Interno</h5>
+        <img src="./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png" alt="internal_no_spectralnorm">
+    </div>
+    <div>
+        <h5>Defeito de Superfície</h5>
+        <img src="./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png" alt="surface_no_spectralnorm">
+    </div>
+</div>
 
 #### Ruído Gaussiano no Gerador
-
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
 <img src="./reports/figures/tSNE_ACWGAN_noGNoise.png" width="50%">
+
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
 <img src="./reports/figures/tSNE_ACWGAN_perClass_noGNoise.png" width="50%">
+
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
 
 |    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
@@ -241,9 +279,13 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 | Test    | 224.94 | 0.180 | (0.0000,0.0104) | 258.469314 | 275.457409 | 273.606913 | 0.324978  | 0.305368  | 0.317812  | (0.0000,0.0000) | (0.0000,0.0312) | (0.0000,0.0000) |      |
 
 #### Normalizaçao Espectral
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
 <img src="./reports/figures/t_SNE_Visualization___With_post_processing___Without_Spectral_Norm.png" width="50%">
+
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
 <img src="./reports/figures/t-SNE_Visualization_per_Class-Without_Spectral_Norm.png" width="50%">
 
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
 |  | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | 
 |---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|
 | Train   | 170.996.605 | 0,102736 | (0.2812,0.0000) | 293.775.102 | 232.025.363 | 245.501.314 | 0,362067 | 0,203655 | 0,273549 | (0.0000,0.0000) | (0.0031,0.0000) | (0.0000,0.0000) |      
@@ -252,16 +294,20 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
 ##### Resultados do Defeito de Coroa
 
-Citar a grande quantidade de imagens pretas
-
-![corona_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png)
-
-##### Resultados do Defeito Interno
-![internal_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png)
-
-##### Resultados do Defeito de Superfície
-
-![surface_no_spectralnorm](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png)
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        <h5>Defeito de Coroa</h5>
+        <img src="./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png" alt="corona_no_spectralnorm">
+    </div>
+    <div>
+        <h5>Defeito Interno</h5>
+        <img src="./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png" alt="internal_no_spectralnorm">
+    </div>
+    <div>
+        <h5>Defeito de Superfície</h5>
+        <img src="./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png" alt="surface_no_spectralnorm">
+    </div>
+</div>
 
 #### Comparação dos modelos
 
