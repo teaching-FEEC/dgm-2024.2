@@ -56,8 +56,10 @@ Para a problemática em questão, foi proposto o *workflow* da Figura 1, em que 
 Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes na Equação 1.
 
 $$
-L_{G_{A \to B}} = \|D_B(\hat{x}_B) - 1\|_2; \\ 
+L_{G_{A \to B}} = \|D_B(\hat{x}_B) - 1\|_2
+$$
 
+$$
 L_{G_{B \to A}} = \|D_A(\hat{x}_A) - 1\|_2.
 $$
 
@@ -76,14 +78,20 @@ $$
 Agora, na Equação 4 consta as funções de perda para os discriminadores. Para todas as amostras que estes receberam, foi adicionado um ruído com distribuição Normal padrão, servindo para estabilizar o aprendizado do modelo.
 
 $$
-L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right); \\ 
+L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right)
+$$
+
+$$
 L_{D_B} = \frac{1}{2} \left( \|D_B(x_B) - 1\|_2^2 + \|D_B(\hat{x}_B)\|_2^2 \right).
 $$
 
 A Equação 5 representa as duas funções de perda extra dos discriminadores.
  
 $$
-L_{D_{A,m}} = \frac{1}{2} \left( \|D_{A,m}(x_M) - 1\|_2^2 + \|D_{A,m}(\hat{x}_A)\|_2^2 \right); \\
+L_{D_{A,m}} = \frac{1}{2} \left( \|D_{A,m}(x_M) - 1\|_2^2 + \|D_{A,m}(\hat{x}_A)\|_2^2 \right).
+$$
+
+$$
 L_{D_{B,m}} = \frac{1}{2} \left( \|D_{B,m}(x_M) - 1\|_2^2 + \|D_{B,m}(\hat{x}_B)\|_2^2 \right).
 $$
 
