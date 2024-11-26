@@ -355,7 +355,7 @@ O Wandb foi usado como uma ferramenta de monitoramento para ter um controle sobr
 
 ## Conclusão
 
-O projeto proposto aborda a geração sintética de imagens de PRPD como uma solução para a escassez de bases de dados de alta qualidade e volume, essenciais para o treinamento de modelos de deep learning no diagnóstico de falhas em motores elétricos. A metodologia utiliza modelos generativos, como GANs e VAEs, com o objetivo de aumentar a diversidade e a quantidade de dados disponíveis, tendo como base um conjunto de dados real sobre descargas parciais.
+O projeto proposto aborda a geração sintética de imagens de PRPD como uma solução para a escassez de bases de dados de alta qualidade e volume, essenciais para o treinamento de modelos de deep learning no diagnóstico de falhas em motores elétricos. A metodologia utiliza modelos generativos com o objetivo de aumentar a diversidade e a quantidade de dados disponíveis, tendo como base um conjunto de dados real sobre descargas parciais.
 
 Após uma exploração detalhada da base de dados, foram identificadas características relevantes, como textura e contornos, que evidenciam a complexidade das imagens de PRPD. Durante o desenvolvimento, a implementação de uma variante da GAN (ACWGAN-SN) foi bem-sucedida, gerando imagens sintéticas de boa qualidade. No entanto, modelos como InfoGAN e Diffusion apresentaram resultados insatisfatórios. Os principais desafios enfrentados incluíram baixa variabilidade nas imagens geradas, limitações arquiteturais e restrições de poder computacional, o que impactou negativamente os resultados.
 
@@ -369,7 +369,7 @@ O estudo de ablação revelou insights fundamentais sobre os fatores que influen
 
 Os resultados indicaram que **a normalização espectral** e **a penalização por Wasserstein** são componentes essenciais para o sucesso do modelo, conferindo robustez e maior estabilidade ao ACWGAN, que demonstrou ser a abordagem mais eficaz dentre as avaliadas.
 
-Apesar das limitações, os resultados obtidos reforçam o potencial de modelos generativos na geração de dados sintéticos de PRPD. Com otimizações futuras e investigações mais aprofundadas, espera-se que esse trabalho contribua significativamente para a variabilidade dos dados, promovendo diagnósticos mais precisos e eficientes no contexto de motores elétricos.
+Apesar das limitações, os resultados obtidos reforçam o potencial de modelos generativos na geração de dados sintéticos de PRPD. Com otimizações futuras, como aplicações de pós processamento, e investigações mais aprofundadas, espera-se que esse trabalho contribua significativamente para a variabilidade dos dados, promovendo diagnósticos mais precisos e eficientes no contexto de motores elétricos. 
 
 ## Referências Bibliográficas
 1. Lv, F., Liu, G., Wang, Q., Lu, X., Lei, S., Wang, S., & Ma, K. (2023). Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN. Journal of Electrical Engineering & Technology, 18(2), 829–841. https://doi.org/10.1007/s42835-022-01260-7
