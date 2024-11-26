@@ -392,7 +392,7 @@ Neste trabalho, treinamos e avaliamos três modelos preditivos avançados: um GA
 Project Organization
 ------------
 
-    ├── README.md          <- The top-level README for developers using this project.
+    ├── README.md          <- Relatorio do Projeto.
     ├── data
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
@@ -401,11 +401,7 @@ Project Organization
     │
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
+    ├── notebooks          <- Jupyter notebooks. Para rodar os modelos apresentados neste relatorio.
     │
     ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     │
