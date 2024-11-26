@@ -4,7 +4,10 @@ from gretel_synthetics.timeseries_dgan.dgan import DGAN
 from gretel_synthetics.timeseries_dgan.config import DGANConfig, OutputType
 import os
 import torch
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"  # ou ":16:8"
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 import numpy as np
 import torch
@@ -31,6 +34,14 @@ class DCGANGenerator:
         # Configura o modelo DGAN
         self.model = DGAN(
             DGANConfig(
+                attribute_noise_dim=3,
+                feature_noise_dim=2,
+                attribute_num_units=10,
+                feature_num_layers=2,
+                feature_num_units=24,
+                use_attribute_discriminator=False,
+                discriminator_learning_rate=3e-4,
+                generator_learning_rate=3e-4,
                 max_sequence_len=self.seq_length,
                 apply_feature_scaling=True,
                 apply_example_scaling=False,
@@ -39,21 +50,24 @@ class DCGANGenerator:
                 generator_learning_rate=1e-4,
                 discriminator_learning_rate=1e-4,
                 epochs=self.config["parameters"]["epochs"],
+                cuda=device
             )
         )
-
+        
+        
         # Treina o modelo
-        history=self.model.train_numpy(
+        history = self.model.train_numpy(
             attributes=attributes, features=train_data, attribute_types=[OutputType.DISCRETE]
         )
         print("DGAN model training complete.")
+        return self.model, []
 
     def generate(self, n_samples):
         if self.model is None:
             raise RuntimeError("The model has not been trained yet.")
 
         # Definir semente diferente para a geração
-        torch.manual_seed(np.random.randint(0, 10000))
+        # torch.manual_seed(np.random.randint(0, 10000))
 
         # Gera dados sintéticos
         synthetic_attributes, synthetic_features = self.model.generate_numpy(n_samples)
@@ -62,9 +76,7 @@ class DCGANGenerator:
         )
 
         # Criar DataFrame similar ao original X_train
-        synthetic_df = pd.DataFrame(
-            synthetic_features_flat, columns=self.columns_names
-        )
+        synthetic_df = pd.DataFrame(synthetic_features_flat, columns=self.columns_names)
 
         # Adiciona os atributos (rótulos) como uma coluna separada
         synthetic_df["label"] = synthetic_attributes.flatten()

@@ -58,20 +58,30 @@ datasets:
             gyro
             
 transformations:
-    - name: fft
+  #- name: fft
     - name: None
 
 # Generative models
 generative_models:
 
-  - name: diffusion_unet1d
+  - name: un_diffusion_unet1d
     model: Diffusion
+    is_conditional: False
     parameters:
       in_channel: 6
       out_channel: 6
     n_gen_samples: 3000
     epochs: 500
     folder_save_generate_df: data/synthetic/unconditional_unet
+  - name: cd_diffusion_unet1d
+    model: Diffusion
+    is_conditional: True
+    parameters:
+      in_channel: 6
+      out_channel: 6
+    n_gen_samples: 3000
+    epochs: 250
+    folder_save_generate_df: data/synthetic/conditional_unet
 
 # Evaluations for comparing real and synthetic data
 evaluations:
@@ -89,4 +99,4 @@ evaluations:
           save_html_report: true
           save_pdf_reports: true
           save_csv_metrics: true
-  folder_reports: tests/diffusion/unconditional_1d
+  folder_reports: tests/diffusion/conditional_1d

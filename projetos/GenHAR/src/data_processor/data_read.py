@@ -15,29 +15,31 @@ class DataRead:
             # se o diretorio não existe baixa os arquivos na pasta data
             from data_processor import download_dataset as dw
             dw.download_zenodo_datasets(dataset_config["path"])
-
+            
             try:
                 # Carregar o dataset de treino
-                svd_train = StandardizedViewDataset(
-                    data_folder=dataset_config["path"], type="train"
-                )
-                df_train = svd_train.load_dataset(
-                    dataset_config["name"], dataset_config["sensors"]
-                )
-                self.y_train = df_train["standard activity code"]
-                self.x_train = df_train.drop(columns=["standard activity code"])
-
-                # Carregar o dataset de teste
+                svd_train = StandardizedViewDataset(data_folder=dataset_config["path"], type="train")
+                 # Carregar o dataset de teste
                 svd_test = StandardizedViewDataset(data_folder=dataset_config["path"], type="test")
-                df_test = svd_test.load_dataset(dataset_config["name"], dataset_config["sensors"])
+                # Carregar o dataset de validação
+                svd_val = StandardizedViewDataset(data_folder=dataset_config["path"], type="validation")
+                if(dataset_config['name'] in 'dataset_combination'):
+                    print(dataset_config['name'])
+                    df_train = svd_train.combine_datasets(dataset_config["datasets"], dataset_config["sensors"])
+                    df_test = svd_test.combine_datasets(dataset_config["datasets"], dataset_config["sensors"])
+                    df_val = svd_val.combine_datasets(dataset_config["datasets"], dataset_config["sensors"])
+                else:
+                    df_train = svd_train.load_dataset(dataset_config["name"], dataset_config["sensors"])
+                    df_test = svd_test.load_dataset(dataset_config["name"], dataset_config["sensors"])
+                    df_val = svd_val.load_dataset(dataset_config["name"], dataset_config["sensors"])
+
+
+                self.y_train = df_train["standard activity code"]
+                self.x_train = df_train.drop(columns=["standard activity code"])              
+                
                 self.y_test = df_test["standard activity code"]
                 self.x_test = df_test.drop(columns=["standard activity code"])
-
-                # Carregar o dataset de validação
-                svd_val = StandardizedViewDataset(
-                    data_folder=dataset_config["path"], type="validation"
-                )
-                df_val = svd_val.load_dataset(dataset_config["name"], dataset_config["sensors"])
+                
                 self.y_val = df_val["standard activity code"]
                 self.x_val = df_val.drop(columns=["standard activity code"])
 

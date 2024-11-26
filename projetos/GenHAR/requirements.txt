@@ -4,4 +4,10 @@ gretel-synthetics==0.22.12
 pypdf2==3.0.1
 PyQt5==5.15.11
 seaborn==0.13.2
-eiops==0.8.0
+einops==0.8.0
+tsgm==0.0.7
+reportlab==4.2.5
+umap==0.1.1
+gpuutils==0.0.2
+fastdtw==0.3.4
+dash==2.18.2

@@ -188,6 +188,8 @@ class UNet(nn.Module):
         dropout=0,
         with_noise_level_emb=True,
         seq_length=128,
+        conditional=False,
+        n_conditions=None,
     ):
         super().__init__()
 
@@ -208,6 +210,10 @@ class UNet(nn.Module):
         feat_channels = [pre_channel]
         now_res = seq_length
         down_plus = []
+        self.conditional = conditional
+        if self.conditional:
+            self.cond_embedder = nn.Embedding(default(n_conditions, 6), seq_length)
+        in_channel = in_channel + (1 if conditional else 0)
         downs = [nn.Conv1d(in_channel, inner_channel,
                            kernel_size=3, padding=1)]
         for ind in range(num_mults):
@@ -283,9 +289,15 @@ class UNet(nn.Module):
         self.final_conv = Block(pre_channel, default(
             out_channel, in_channel), groups=norm_groups)
 
-    def forward(self, x, time):
+    def forward(self, x, time, cond=None):
         t = self.noise_level_mlp(time) if exists(
             self.noise_level_mlp) else None
+
+        if self.conditional:
+            cond_embed = self.cond_embedder(cond)
+            assert cond_embed.shape[0] == x.shape[0]
+            assert cond_embed.shape[-1] == x.shape[-1]
+            x = torch.cat((x, cond_embed), dim=1)
 
         feats = []
         for layer in self.downs:
