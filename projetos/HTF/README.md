@@ -30,8 +30,8 @@ Portanto, a motivação para realização deste trabalho surge do desejo de comp
     <em>Figura 1:Exemplo de predição de trajetória humana em ambientes populados. Fonte: *Safety-Compliant Generative Adversarial Networks for Human Trajectory Forecasting (Parth Kothari and Alexandre Alahi, 2023)* [1]..</em>
 </p>
 
-> A seguir consta o link para a apresentação em slides do entregável 2.
-> [Link da Apresentação](https://docs.google.com/presentation/d/1tbUlirsQ-t3RHzTGaomvGAdto6cgHa2D/edit?usp=sharing&ouid=101073047652792710630&rtpof=true&sd=true)
+> A seguir consta o link para a apresentação em slides do entregável 3.
+> [Link da Apresentação](https://docs.google.com/presentation/d/1IUk0dhp06_5loC3pDepGGyKbB31jhNvf/edit?usp=sharing&ouid=101073047652792710630&rtpof=true&sd=true)
 
 ## Objetivo Geral
 
