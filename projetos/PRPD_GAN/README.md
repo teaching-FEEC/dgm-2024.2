@@ -33,6 +33,22 @@ O objetivo principal deste projeto é o desenvolvimento e avaliação de modelos
 
 ## Metodologia
 
+### Informações Computacionais  
+
+Para o desenvolvimento desde projeto, foram utilizados três computadores distintos:
+
+1. Computador 1
+- Processador: AMD Ryzen 9 4900HS 3GHz
+- RAM: 16 GB
+- GPU: Nvidia RTX 2060 Max-Q 6GB
+2. Computador 2
+- n1-standard-1 (1 vCPUs)
+- RAM: 3,75 GB de RAM
+- GPU NVIDIA T4 x 1
+3. Computador 3
+- Processador: Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz (8 CPUs), ~2.0GHz
+- RAM: 16, 384 MB 
+
 ### Bases de Dados e Evolução
 
 Para o desenvolvimento deste projeto, serão geradas imagens sintéticas com base em um conjunto de dados existente. O conjunto selecionado é proveniente do artigo "Dataset of phase-resolved images of internal, corona, and surface partial discharges in electrical generators", que contém imagens relacionadas a três tipos principais de falhas em motores elétricos: Corona, Internal e Surface, além de algumas imagens que representam ruídos. A seguir será apresentada a tabela com as principais informações da base de dados.
@@ -52,11 +68,20 @@ A escolha desse dataset se justifica por sua qualidade e relevância no contexto
 
 A imagem dos dataset possui tamanho de 640 x480 pixels. As anotações são pelo defeito do motor. A seguir é apresentada a quantidade percentual de cada tipo de defeito nos dados. 
 
-![defect](./reports/figures/dataset_distribution_by_class.png)
+<img src="./reports/figures/dataset_distribution_by_class.png" width="50%">
 
 Foi realizada a divisão por tipo de motor anotado. Dessa forma, a representação do mesmo motor não estará no conjunto de teste e treino, evitando *data leakage*. Posteriormente há o gráfico da quantidade de cada motor por defeito analisado. 
 
 ![motor_and_defect](./reports/figures/dataset_distribution_by_motor_and_defect.png)
+
+Adicionalmente, se realizou uma análise de variabilidade intra-classe e inter-classe por meio da métrica MS-SSIM para entender a complexidade do dataset
+
+|            | Corona                | Internal         | Surface       |
+|------------|-----------------------|------------------|----------------
+| Corona     | 0.584                 | 0.495            | 0.393               |
+| Internal   | 0.495                 | 0.444            | 0.404|
+| Surface    | 0.393                 | 0.404            | 0.390|
+
 
 ### Separação de dados
 O dataset será separado em três grupos: treino, validação e teste. O primeiro conjunto será utilizado para treinar as arquiteturas escolhidas, o segundo para otimizar os hiperparâmetros, e o terceiro para avaliar o desempenho dos modelos treinados.
@@ -72,123 +97,274 @@ O *workflow* a seguir apresenta as etapas necessárias para desenvolvimento de m
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-### Exploração estatística do Dataset
+### InfoGAN
 
-Se realizou uma exploração estatística para entender o dataset, especificamente o desafío que poderia aparecer para as redes generativas.
+O InfoGAN (*Information Maximizing Generative Adversarial Network*) é uma variação do modelo GAN (*Generative Adversarial Network*) projetada para descobrir e manipular de forma não supervisionada os fatores latentes interpretáveis de um conjunto de dados. A arquitetura do InfoGAN inclui dois componentes principais: o gerador, responsável por criar imagens sintéticas a partir de um vetor de ruído combinado com 
+𝑐 ; e o discriminador, que, além de diferenciar entre imagens reais e geradas, possui um cabeçalho adicional para estimar o vetor 
+𝑐 das imagens geradas. O objetivo é treinar o sistema para que as imagens geradas não apenas sejam indistinguíveis das reais, mas também sejam condicionadas pelos valores do vetor 
+𝑐. A figura a seguir ilustra a arquitetura do InfoGAN.
 
-#### Análise por Textura
+<figure>
+  <img src="./reports/figures/infogan_architecture.png" alt="infogan1" width="50%" />
+  <figcaption>Fonte: Sik-Ho Tsang  </figcaption>
+</figure>
 
-Se utilizou a matriz de *Gray Level Co-Occurrence Matrix* (GLCM), conhecida por seu uso no contexto de extração de características de textura de imagens, utiliza images em escala de cinza, e se extrairam as seguintes características globais de cada imagen:
+Infelizmente, para o problema proposto, não foi possível gerar imagens com boas resoluções utilizando o InfoGAN. Além disso, o modelo apresentou colapso nas épocas iniciais, comprometendo a convergência do treinamento e a qualidade das imagens produzidas. Como é possível observar nas imagens seguintes.
 
-- Contraste: Mede a intensidade da variação entre pixels em uma imagem. Um contraste alto indica uma grande diferença entre os valores dos pixels adjacentes, enquanto um contraste baixo sugere que os pixels têm valores mais semelhantes.
-- Correlação: Avalia a intensidade da relação entre os valores de pixels em uma imagem. Uma correlação alta indica que pixels próximos tendem a ter valores semelhantes, enquanto uma correlação baixa sugere uma distribuição mais aleatória dos valores.
-- Energia: Refere-se à uniformidade da distribuição dos valores de pixel. Uma alta energia indica que a imagem possui áreas de intensidade semelhante, enquanto uma baixa energia indica uma distribuição mais variada de intensidades.
-- Dissimilaridade: Mede a diferença entre os valores dos pixels adjacentes. Uma alta dissimilaridade indica uma grande diferença entre os valores dos pixels, sugerindo uma imagem mais complexa, enquanto uma baixa dissimilaridade sugere que os pixels adjacentes são mais semelhantes.
+| ***Epoch* 66**                | ***Epoch* 83**                |
+|-----------------------------|-----------------------------|
+| ![Epoch 66](./reports/figures/infogan-epoch66.png) | ![Epoch 83](./reports/figures/infogan-epoch83.png) |
 
-#### Análise por Contornos
 
-Se utilizou uma binarização com o algoritmo de Otsu para extrair os contornos principais das nubes de descargas parciais que apareceram em cada imagen. A continuação, se pode ver um exemplo do processo para cada tipo de defeito.
+Além disso, o modelo apresentou colapso nas épocas iniciais, como observado na Figura abaixo, que mostra a evolução das perdas do gerador e do discriminador durante o treinamento. O aumento instável da perda do gerador por volta da época 40, acompanhado de uma perda quase constante do discriminador, evidencia dificuldades de convergência e a incapacidade do modelo de equilibrar o aprendizado entre os componentes, comprometendo a qualidade das imagens geradas.
 
-![Contours-example](./reports/figures/contours_prpd.png)
+<img src="./reports/figures/loss_infogan.png" alt="infogan2" width="50%" />
 
-Posteriormente se extrairam as seguintes caracteristicas de cada nube:
+### Difussion Model
 
-- Área: Mede a superfície ocupada pela forma, fornecendo uma indicação do tamanho da mesma.
-- Perímetro: Refere-se à soma das distâncias ao longo da borda da forma. Um perímetro maior pode indicar uma forma mais complexa.
-- Razão de aspecto: É a relação entre a largura e a altura da forma. Ajuda a descrever a orientação e a forma da estrutura.
-- Extensão: Representa a proporção da área da forma em relação à área da caixa delimitadora (bounding box). Um valor próximo de 1 indica que a forma ocupa a maior parte da caixa.
-- Solidez: Mede a relação entre a área da forma e a área da sua convexa. Indica o quão "compacta" é a forma; formas mais "oco" têm uma solidez menor.
-- Diâmetro equivalente: É o diâmetro de um círculo que teria a mesma área que a forma. Ajuda a entender o tamanho de uma forma em relação a um círculo.
-- Compactação: Refere-se à relação entre a área da forma e o quadrado do perímetro. Um valor maior indica uma forma mais compacta, enquanto valores mais baixos sugerem formas mais alongadas.
-- Excentricidade: Mede a elongação da forma, com valores que variam de 0 a 1. Um valor de 0 indica uma forma circular, enquanto valores próximos a 1 indicam formas mais alongadas ou elípticas.
+Os Diffusion Models são modelos generativos que aprendem a criar dados a partir de ruído puro. A ideia principal é inverter um processo de difusão: enquanto o processo direto (ou forward process) adiciona ruído progressivamente aos dados, o modelo aprende a reconstruir os dados removendo o ruído passo a passo, no processo inverso.
 
-#### Visualização
+No caso de Conditioned Diffusion Models, o modelo é treinado com condicionamento adicional. No nosso caso, seriam os rótulos das imagens PRPD. Infelizmente, como é possível visualizar na imagem a seguir, os resultados apresentados não foram conforme era esperado.
 
-Apartir da extração de características de cada imagen, se utilizaram técnicas de redução de características e visualização para observar se existem clusters claramente definidos. De tal maneira, a continuação se pode olhar as figuras que foram mais representativas.
+<img src="./reports/figures/Diffusion.png" alt="diffusion" width="50%" />
 
-##### Clusterização por Características de Textura
+O gráfico abaixo mostra a curva de perda (loss) durante o treinamento. Ele ilustra como o modelo reduz gradualmente o erro em cada iteração, demonstrando aprendizado ao longo do tempo.
 
-![GLCM-UMAP](./reports/figures/UMAP_texture.png)
+<img src="./reports/figures/loss_diffusion.png" alt="diffusion" width="50%" />
 
-##### Clusterização por Características dos Contornos
+Como podemos ver, a perda diminui consistentemente, indicando que o modelo está aprendendo a reconstruir os dados a partir do ruído. No entanto, talvez fosse necessário maior poder computacional para conseguir resultados satisfatórios. 
 
-![Contours-tSNE](./reports/figures/tSNE_contours.png)
+### ACWGAN-SN
 
-##### Clusterização por Características de Textura e Contornos
+O modelo que conseguiu obter resultados satisfatórios foi uma versão da ACGAN com penalidade de gradiente de Wasserstein no Discriminador e normalização espectral no Gerador.
 
-![GLCM&Contours-tSNE](./reports/figures/tSNE_texture_contours.png)
+![ACWGAN-SN](./reports/figures/ACGAN_schematic.png)
 
-### Implementação da ACWGAN
+As funções de perda para o gerador e o discriminador foram os seguintes:
 
-Se implementou uma variação da rede generativa condicional conhecida como Auxilliary Classifier Generative Adversarial Network (ACGAN), neste caso se utilizou a penalidade de gradiente de Wasserstein para melhorar a estabilidade de treinamento, assim mesmo, se adiciou normalização espectral nas camadas convolucionais do discriminador.
+![ACWGAN-SN](./reports/figures/losses_formula.jpg)
+
+#### Modelo Original
+
+##### Gerador
+| Component       | Details                                                                                                 |
+|------------------|--------------------------------------------------------------------------------------------------------|
+| Embedding       | Sequential: Embedding(3, 10), GaussianNoise()                                                          |
+| FC Embedding    | Linear(in_features=10, out_features=256, bias=False)                                                   |
+| FC Latent       | Sequential: GaussianNoise(), Linear(in_features=256, out_features=400, bias=False)                     |
+| Block C1        | spectral_norm<br>ConvTranspose2d(400, 256, kernel_size=(4, 4), stride=(4, 4), bias=False)<br>BatchNorm2d(256)<br>ReLU()  |
+| Block C2        | spectral_norm<br>ConvTranspose2d(256, 128, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>BatchNorm2d(128)<br>ReLU() |
+| Block C3        | spectral_norm<br>ConvTranspose2d(128, 64, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>BatchNorm2d(64)<br>ReLU()  |
+| Block C4        | spectral_norm<br>ConvTranspose2d(64, 32, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>BatchNorm2d(32)<br>ReLU()  |
+| Block C5        | spectral_norm<br>ConvTranspose2d(32, 3, kernel_size=(4, 3), stride=(2, 3), padding=(1, 26))<br>Tanh()                   |
+| Parameters      | **4399713**                       
+
+##### Discriminador
+
+| Component       | Details                                                                                                 |
+|------------------|--------------------------------------------------------------------------------------------------------|
+| Block C1        | GaussianNoise()<br>Conv2d(3, 32, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C2        | GaussianNoise()<br>Conv2d(32, 64, kernel_size=(8, 8), stride=(4, 4), padding=(2, 2), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C3        | GaussianNoise()<br>Conv2d(64, 128, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C4        | GaussianNoise()<br>Conv2d(128, 256, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block C5        | GaussianNoise()<br>Conv2d(256, 512, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)<br>LeakyReLU()<br>Dropout2d() |
+| Block Dis       | GaussianNoise()<br>Linear(in_features=2048, out_features=1, bias=True)                                 |
+| Block Aux       | GaussianNoise()<br>Linear(in_features=2048, out_features=3, bias=True)                                 |
+| Parameters      | **2897924**                                                                                            |
+
 
 #### Hiperparâmetros
 
-Os hiperparâmetros usados nesta iteração inícial foram os seguintes:
+Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
-- z_dim = 128
-- n_embedding = 64
-- epochs = 600
-- Gaussian noise std = 0.1
-- Gaussian noise decay = 0.995
-- Batch size = 32
-- Learning rate = 1e-4
 - (&beta;<sub>1</sub>, &beta;<sub>2</sub>) = (0, 0.999)
-- &lambda; = 20
+- batch size = 64
+- epochs = 3000
+- &lambda; = 10
+- $\lambda_{cls}$ = 20 
+- lr = 0.0002
+- n embedding = 10
+- z dimm = 256
+- Gaussian Noise std = 0.1
+- noise decay = 0.995
 - Dropout rate = 0.5
 - Leaky ReLU slope = 0.2
-- Tamanho das imagens = (128, 165, 3)
+- Batch size = 64
+- Tamanho das imagens = (256, 332, 3)
 
-#### Arquiteturas
+#### Ablation Study
 
-##### Generator
+Como foi analisado que o modelo ACWGAN-SN com diversos ruídos apresentou resultados satisfatórios, foi visto que poderíamos melhorá-lo retirando cada um dos componentes em um experimento e avaliando, ao final, qual foi a melhor situação. Esse processo é conhecido como ablation study. Foram estudadas 4 situações:
 
-| Layer                                             | Parameters                           |
-|---------------------------------------------------|--------------------------------------|
-| Embedding / GaussianNoise                          | 3, 128                           |
-| Linear (fc_latent)                                | 128, 400                             |
-| ConvTranspose2d / BatchNorm2d / ReLU | 400, 256, (4, 4), (4, 4) |
-| ConvTranspose2d  / BatchNorm2d  / ReLU  | 256, 128, (8, 8), (4, 4), (2, 2)|
-| ConvTranspose2d / BatchNorm2d / ReLU (block_c3) | 128, 64, (8, 8), (4, 4), (2, 2)|
-| ConvTranspose2d / Tanh     | 64, 3, (4, 4), (2, 3), (1, 14) |
+- Sem Normalização espectral
+- Sem Penalização por Wasserstein
+- Sem Ruído gaussiano no discriminador
+- Sem Ruído gaussiano no gerador
 
-**Número total de parâmetros treináveis:** 4,315,395
+Esses experimentos visaram entender a contribuição de cada componente para o desempenho geral do modelo e verificar se a remoção de algum deles poderia resultar em uma melhoria ou degradação do desempenho.
 
----
+#### Modelo Original
 
-##### Discriminator
+A seguir, apresentamos a visualização dos dados usando t-SNE, que mostra a distribuição global das amostras geradas. Essa visualização ajuda a entender a separação entre as diferentes classes e a qualidade da geração de dados.
 
-| Layer                                              | Parameters                           |
-|---------------------------------------------------|--------------------------------------|
-| GaussianNoise  / Conv2d  / LeakyReLU  / Dropout | 3, 64, (8, 8), (4, 4), (2, 2) |
-| GaussianNoise  / Conv2d  / LeakyReLU / Dropout  | 64, 128, (8, 8), (4, 4), (2, 2) |
-| GaussianNoise  / Conv2d  / LeakyReLU / Dropout  | 128, 256, (4, 4), (2, 2), (1, 1) |
-| GaussianNoise  / Linear  / Sigmoid | 5120, 1                      |
-| GaussianNoise  / Linear / Softmax | 5120, 3                    |
+<img src="./reports/figures/tSNE_ACWGAN_Full.png" width="50%">
 
-**Número total de parâmetros treináveis:** 1,081,348
+Além da visualização global, realizamos o t-SNE individualizado por classe, permitindo uma análise mais detalhada de como o modelo se comporta em relação a cada tipo de dado. Isso é importante para avaliar se o modelo está conseguindo gerar amostras de alta qualidade para cada classe individualmente.
 
-#### Resultados parciais
+<img src="./reports/figures/tSNE_ACWGAN_perClass_Full.png" width="50%">
 
-Se utilizaram as curvas de perdas, acurácias e exemplos de imagens sinteticas para avaliar esta implementação preliminar da ACWGAN.
+A tabela a seguir apresenta as métricas geradas durante os experimentos, com dados de treino, validação e teste. As métricas incluem FID, KID, precisão e recall para cada conjunto de dados e para cada classe. As classes são indicadas por números: 1 para coroa, 2 para interno e 3 para superfície.
 
-##### Curvas de perdas e acurácias
+|    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
+| Train   | 159.71 | 0.105 | (0.0049,0.0000) | 172.674213 | 184.229298 | 207.838089 | 0.135167  | 0.127615  | 0.176035  | (0.0000,0.0000) | (0.0059,0.0000) | (0.0215,0.0000) |      |
+| Val     | 174.95 | 0.094 | (0.5967,0.0000) | 176.923227 | 202.807142 | 240.696508 | 0.128564  | 0.099677  | 0.183579  | (0.7175,0.0000) | (0.8754,0.0000) | (0.7147,0.0000) |      |
+| Test    | 221.68 | 0.179 | (0.0010,0.0000) | 265.188173 | 283.617005 | 266.801814 | 0.344515  | 0.302050  | 0.299347  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0031,0.0000)|      |
 
-![losses](./reports/figures/losses_ACWGAN.png)
+Por fim, apresentamos imagens geradas sinteticamente pelo modelo, uma para cada classe (coroa, interno e superfície). Essas imagens ilustram a capacidade do modelo de gerar dados realistas que correspondem a cada classe específica.
 
-![accuracies](./reports/figures/accuracies_ACWGAN.png)
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_full/synthetic_corona_292.png) | ![Image 2](./reports/figures/syn-ACWGAN_full/synthetic_internal_41.png) | ![Image 3](./reports/figures/syn-ACWGAN_full/synthetic_surface_364.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_full/synthetic_corona_6.png) | ![Image 2](./reports/figures/syn-ACWGAN_full/synthetic_internal_25.png) | ![Image 3](./reports/figures/syn-ACWGAN_full/synthetic_surface_344.png) |
 
-##### Exemplos de imagens sintéticas geradas pela ACWGAN
+#### Penalizaçao por Wasserstein
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
+<img src="./reports/figures/tSNE_ACWGAN_noGP.png" width="50%">
 
-![GLCM&Contours-tSNE](./reports/figures/out_ACWGAN.png)
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
+
+<img src="./reports/figures/tSNE_ACWGAN_perClass_noGP.png" width="50%">
+
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
+|         | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
+| Train   | 290.60     | 0.268    | (0.0000,0.0000) | 280.444725 | 288.940699 | 309.726250 | 0.313640  | 0.282250  | 0.325883  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
+| Val     | 293.99     | 0.265    | (0.0000,0.0000) | 287.282253 | 299.069478 | 313.793774 | 0.333442  | 0.264077  | 0.328807  | (0.6406,0.0000) | (0.9781,0.0345) | (0.7117,0.0714) |      |
+| Test    | 288.49     | 0.302    | (0.0000,0.0000) | 241.880872 | 321.797007 | 316.801898 | 0.365371  | 0.445290  | 0.440961  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
+
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_noGP/synthetic_corona_1.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGP/synthetic_internal_1.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGP/synthetic_surface_1.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_noGP/synthetic_corona_14.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGP/synthetic_internal_34.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGP/synthetic_surface_65.png) |
+
+
+#### Ruído Gaussiano no Discriminador
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
+<img src="./reports/figures/t_SNE_Visualization___With_post_processing___Without_Gaussian_Noise.png" width="50%">
+
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
+
+<img src="./reports/figures/t-SNE_Visualization_per_Class-Without_Gaussian_Noise.png" width="50%">
+
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
+
+|    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
+| Train   | 143.241.037 | 0.086224 | (0.2832,0.0013) | 183.954.051 | 180.917.254 | 163.615.821 | 0.144840 | 0.113382 | 0.124975 | (0.3607,0.0000) | (0.2751,0.0000) | (0.1617,0.0000) |      |
+| Val     | 168.473.768 | 0.084379 | (0.6250,0.0118) | 216.852.641 | 217.768.535 | 194.649.687 | 0.165530 | 0.099961 | 0.118446 | (0.9648,0.0000) | (0.7679,0.0000) | (0.6377,0.0000) |      |
+| Test    | 192.640.402 | 0.134054 | (0.0127,0.0000) | 284.380.472 | 248.441.158 | 212.888.935 | 0.369825 | 0.205304 | 0.214673 | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
+
+Abaixo estão as imagens geradas para cada classe.
+
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_99.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_2.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_114.png) |
+| ![Image 4](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png) | ![Image 5](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png) | ![Image 6](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png) |
+
+#### Ruído Gaussiano no Gerador
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
+<img src="./reports/figures/tSNE_ACWGAN_noGNoise.png" width="50%">
+
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
+<img src="./reports/figures/tSNE_ACWGAN_perClass_noGNoise.png" width="50%">
+
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
+
+|    | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | MOD3 |
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|------|
+| Train   | 164.65 | 0.108 | (0.0020,0.0000) | 159.649909 | 194.616374 | 219.718140 | 0.132975  | 0.139477  | 0.194397  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0199,0.0000) |      |
+| Val     | 183.46 | 0.102 | (0.5410,0.0118) | 178.491791 | 212.824949 | 247.799486 | 0.140242  | 0.112723  | 0.199009  | (0.7049,0.0000) | (0.9045,0.0000) | (0.8046,0.0000) |      |
+| Test    | 224.94 | 0.180 | (0.0000,0.0104) | 258.469314 | 275.457409 | 273.606913 | 0.324978  | 0.305368  | 0.317812  | (0.0000,0.0000) | (0.0000,0.0312) | (0.0000,0.0000) |      |
+
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_noGNoise/synthetic_corona_152.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGNoise/synthetic_internal_7.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGNoise/synthetic_surface_92.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_noGNoise/synthetic_corona_176.png) | ![Image 2](./reports/figures/syn-ACWGAN_noGNoise/synthetic_internal_44.png) | ![Image 3](./reports/figures/syn-ACWGAN_noGNoise/synthetic_surface_105.png) |
+
+#### Normalizaçao Espectral
+A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
+<img src="./reports/figures/t_SNE_Visualization___With_post_processing___Without_Spectral_Norm.png" width="50%">
+
+Após, apresentamos a distribuição das classes individualmente usando t-SNE.
+<img src="./reports/figures/t-SNE_Visualization_per_Class-Without_Spectral_Norm.png" width="50%">
+
+Aqui estão as métricas geradas para as diferentes fases do treinamento, validação e teste.
+|  | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         | 
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|
+| Train   | 170.996.605 | 0,102736 | (0.2812,0.0000) | 293.775.102 | 232.025.363 | 245.501.314 | 0,362067 | 0,203655 | 0,273549 | (0.0000,0.0000) | (0.0031,0.0000) | (0.0000,0.0000) |      
+| Val     | 191.818.868 | 0,100242 | (0.4736,0.0000) | 212.507.233 | 228.128.554 | 238.886.100 | 0,168298 | 0,119335 | 0,175691 | (0.7160,0.0000) | (0.8696,0.0000) | (0.4636,0.0000) |      
+| Test    | 208.008.298 | 0,150208 | (0.0020,0.0000) | 185.499.858 | 201.195.731 | 216.606.640 | 0,153220 | 0,139393 | 0,178365 | (0.5136,0.0000) | (0.2453,0.0000) | (0.0054,0.0000) |      
+
+| Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
+|------------------------|------------------------|------------------------|
+| ![Image 1](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_3.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_2.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_13.png) |
+| ![Image 4](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png) | ![Image 5](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png) | ![Image 6](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png) |
+
+#### Comparação dos modelos
+
+A seguir, serão apresentados os resultados do estudo *ablation* considerando o conjunto de validação. Nesse conjunto, o modelo que obteve o melhor desempenho foi o configurado sem ruído no discriminador. 
+
+Métricas no conjunto de Validação
+
+| Modelo   | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         |
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|
+| Original     | 174.95 | 0.094 | (0.5967,0.0000) | **176.923227** | **202.807142** | 240.696508 | **0.128564**  | **0.099677**  | 0.183579  | (0.7175,0.0000) | (0.8754,0.0000) | (0.7147,0.0000) |      |
+| Sem PG     | 293.99     | 0.265    | (0.0000,0.0000) | 287.282253 | 299.069478 | 313.793774 | 0.333442  | 0.264077  | 0.328807  | (0.6406,0.0000) | (**0.9781**,**0.0345**) | (0.7117,**0.0714**) |      |
+| Sem Ruído no Discriminador     | **168.473768** | **0.084379** | (**0.6250**,**0.0118**) | 216.852.641 | 217.768.535 | **194.649.687** | 0.165530 | **0.099961** | **0.118446** | (**0.9648**,0.0000) | (0.7679,0.0000) | (0.6377,0.0000) |      |
+| Sem Ruído no Gerador    | 183.46 | 0.102 | (0.5410,**0.0118**) | 178.491791 | 212.824949 | 247.799486 | 0.140242  | 0.112723  | 0.199009  | (0.7049,0.0000) | (0.9045,0.0000) | (**0.8046**,0.0000) |      |
+| Sem Normalizaçao Espectral     | 191.818.868 | 0,100242 | (0.4736,0.0000) | 212.507.233 | 228.128.554 | 238.886.100 | 0,168298 | 0,119335 | 0,175691 | (0.7160,0.0000) | (0.8696,0.0000) | (0.4636,0.0000) |      
+
+Por outro lado, ao considerar o conjunto de teste, conforme apresentado na tabela a seguir, os melhores resultados foram alcançados pelo modelo configurado sem ruído no discriminador e sem normalização espectral.
+
+Métricas no conjunto de Teste
+| Modelo   | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         |
+|---------|------------|----------|---------------|------------|------------|------------|-----------|-----------|-----------|---------------|---------------|---------------|
+| Original    | 221.68 | 0.179 | (0.0010,0.0000) | 265.188173 | 283.617005 | 266.801814 | 0.344515  | 0.302050  | 0.299347  | (0.0000,0.0000) | (0.0000,0.0000) | (**0.0031**,0.0000)|      |
+| Sem PG   | 288.49     | 0.302    | (0.0000,0.0000) | 241.880872 | 321.797007 | 316.801898 | 0.365371  | 0.445290  | 0.440961  | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
+| Sem Ruído no Discriminador    | **192.640** | **0.134054** | (**0.0127**,0.0000) | 284.380.472 | 248.441.158 | **212.888.935** | 0.369825 | 0.205304 | 0.214673 | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
+| Sem Ruído no Gerador    | 224.94 | 0.180 | (0.0000,**0.0104**) | 258.469314 | 275.457409 | 273.606913 | 0.324978  | 0.305368  | 0.317812  | (0.0000,0.0000) | (0.0000,**0.0312**) | (0.0000,0.0000) |      |
+| Sem Normalização Espectral    | 208.01 | 0,150 | (0.0020,0.0000) | **185.50** | **201.195731** | 216.606.640 | **0,153220** | **0,139393** | **0,178365** | (**0.5136**,0.0000) | (**0.2453**,0.0000) | (**0.0054**,0.0000) |      
+
+Com isso, podemos considerar que os resultados quantitativos evidenciaram algumas limitações. De acordo com a avaliação qualitativa, embora o modelo sem normalização espectral tenha apresentado problemas na geração, obteve bons resultados nas métricas quantitativas. Isso ressalta a importância de uma avaliação qualitativa complementar para uma análise mais abrangente do desempenho do modelo.
+
+### Pegadas de Carbono
+
+O Wandb foi usado como uma ferramenta de monitoramento para ter um controle sobre as métricas de treinamento e os recursos de computador usados. Para obter uma aproximação do uso total de energia da GPU, a média do uso de energia da GPU por execução de treinamento foi obtida e, em seguida, multiplicada pelo número total de horas de treinamento.
+
+- Uso total de energia da GPU: 5,7 kW
+- Tempo total de treinamento: 241,34 horas
+
+É importante levar em conta que algumas execuções de experimentos não mediram os recursos do computador, de modo que os recursos computacionais necessários mostrados estão na extremidade abaixo da medida real. Em iterações futuras, será dada mais atenção neste detalhe.  
+
 
 ## Conclusão
 
-Em suma, o projeto proposto aborda a geração sintética de imagens de PRPD como uma solução para a escassez de bases de dados com alto volume de dados e de qualidade, necessárias para o treinamento de modelos de deep learning para o diagnóstico de falhas em motores elétricos. A metodologia proposta, se apoia em modelos generativos como GANs e VAEs, visa aumentar a diversidade e quantidade de dados disponíveis. Para isso, é utilizado um conjunto de dados real sobre descargas parciais.
+O projeto proposto aborda a geração sintética de imagens de PRPD como uma solução para a escassez de bases de dados de alta qualidade e volume, essenciais para o treinamento de modelos de deep learning no diagnóstico de falhas em motores elétricos. A metodologia utiliza modelos generativos com o objetivo de aumentar a diversidade e a quantidade de dados disponíveis, tendo como base um conjunto de dados real sobre descargas parciais.
 
-A partir de uma exploração detalhada da base de dados, foram extraídas características relevantes como textura e contornos, evidenciando a complexidade das imagens de PRPD. Se consiguiu implementar uma variante da GAN (ACWGAN) e o modelo foi capaz de gerar imagens sintéticas. No entanto, ainda são necessários ajustes visto que o modelo gerou imagens ruidosas. Por outro lado, a visualização por clusters, por meio da extração de características, permitiu identificar que algumas dessas características são comuns entre distintos tipos de descargas parciais (DP) e que não existem clusters claramente separados. Isso pode impactar a geração de imagens sintéticas, embora ainda não se tenha clareza sobre qual tipo de efeito isso poderá ter.
+Após uma exploração detalhada da base de dados, foram identificadas características relevantes, como textura e contornos, que evidenciam a complexidade das imagens de PRPD. Durante o desenvolvimento, a implementação de uma variante da GAN (ACWGAN-SN) foi bem-sucedida, gerando imagens sintéticas de boa qualidade. No entanto, modelos como InfoGAN e Diffusion apresentaram resultados insatisfatórios. Os principais desafios enfrentados incluíram baixa variabilidade nas imagens geradas, limitações arquiteturais e restrições de poder computacional, o que impactou negativamente os resultados.
 
-Com isso, o projeto está em fase preliminar, ainda serão implemetados modelos como InfoGAN e VAE, além da otimização dos modelos desenvolvidos. Com o progresso contínuo, espera-se que os modelos generativos desenvolvidos possam ser utilizados para aumentar significativamente a variabilidade dos dados de PRPD, contribuindo para diagnósticos mais precisos e eficientes no futuro.
+O estudo de ablação revelou insights fundamentais sobre os fatores que influenciam o desempenho dos modelos. Nesse estudo, componentes específicos foram removidos para avaliar seu impacto nos resultados:
+
+- **Modelo Original**: Apresentou baixa variabilidade na coroa, com todas as classes gerando algumas imagens pretas. Além disso, o modelo frequentemente confundia superfície com coroa.
+- **Sem Normalização Espectral**: O modelo gerou muitas imagens pretas para a classe coroa, indicando que a ausência desse componente prejudica a qualidade e a diversidade das imagens.  
+- **Sem Penalização por Wasserstein**: O modelo sofreu colapso, gerando várias imagens idênticas e apresentando baixa diversidade, o que demonstra a importância dessa penalização para estabilizar o treinamento.  
+- **Sem Ruído Gaussiano no Discriminador**: A ausência desse componente levou a confusões na geração, com imagens internas se assemelhando à classe coroa e imagens da superfície sendo produzidas em baixa quantidade e com resultados inconsistentes.  
+- **Sem Ruído Gaussiano no Gerador**: A remoção do ruído no gerador resultou em um aumento de imagens pretas na classe coroa (menos frequente do que na ausência da normalização espectral). Entretanto, a confusão entre as classes superfície e coroa ainda foi observada.  
+
+Os resultados indicaram que **a normalização espectral** e **a penalização por Wasserstein** são componentes essenciais para o sucesso do modelo, conferindo robustez e maior estabilidade ao ACWGAN, que demonstrou ser a abordagem mais eficaz dentre as avaliadas.
+
+Apesar das limitações, os resultados obtidos reforçam o potencial de modelos generativos na geração de dados sintéticos de PRPD. Com otimizações futuras, como aplicações de pós processamento, e investigações mais aprofundadas, espera-se que esse trabalho contribua significativamente para a variabilidade dos dados, promovendo diagnósticos mais precisos e eficientes no contexto de motores elétricos. 
 
 ## Referências Bibliográficas
 1. Lv, F., Liu, G., Wang, Q., Lu, X., Lei, S., Wang, S., & Ma, K. (2023). Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN. Journal of Electrical Engineering & Technology, 18(2), 829–841. https://doi.org/10.1007/s42835-022-01260-7
