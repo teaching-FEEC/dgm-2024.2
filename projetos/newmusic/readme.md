@@ -49,82 +49,47 @@ Primeiramente, abordou-se uma técnica mais conhecida pela literatura, as CycleG
 Os dados já se encontravam previamente pré-processados no quesito de tempo das notas e com representação *Pianoroll* (auxílio dos pacotes *pretty midi* e *Pypianoroll* do *Python*), em que as músicas são representadas em um formato de matriz bidimensional (tempo x notas), de modo que os valores na matriz indicam a presença ou ausência de notas musicais em um determinado instante. Ainda, foi utilizado uma taxa de amostragem de 16 passos de tempo por compasso (segmento de tempo correspondente a um número específico de batidas), escolha padrão em diversas literaturas, utilizando frases consistindo de 4 barras consecutivas. Como notas de tom abaixo de C1 ou acima de C8 não são muito comuns, os autores do artigo de referência decidiram reter notas apenas entre esse intervalo, que são $p = 84$ notas. Note, então, que a entrada da rede a ser treinada é de $64 \times 84$.
 
 
-Para a problemática em questão, foi proposto o *workflow* da Figura 1, em que foi adicionado mais dois extras geradores (além dos dois do ciclo), $D_{A,m}$ e $D_{B,m}$, com a finalidade de abordar desafios específicos relacionados à qualidade e realismo da música gerada durante a transferência de gênero musical. Esses discriminadores extras, ao serem treinados com dados de múltiplos domínios (não apenas do domínio alvo), ajudam a regularizar o gerador, evitando que este crie apenas músicas que se mantenham dentro do manifold musical, i.e., previne que o gerador produza características superficiais do gênero musical de origem.
+Para a problemática em questão, foi proposto o *workflow* da próxima figura, em que foi adicionado mais dois extras geradores (além dos dois do ciclo), $D_{A,m}$ e $D_{B,m}$, com a finalidade de abordar desafios específicos relacionados à qualidade e realismo da música gerada durante a transferência de gênero musical. Esses discriminadores extras, ao serem treinados com dados de múltiplos domínios (não apenas do domínio alvo), ajudam a regularizar o gerador, evitando que este crie apenas músicas que se mantenham dentro do manifold musical, i.e., previne que o gerador produza características superficiais do gênero musical de origem. Na imagem abaixo, as setas em preto apontam para as funções de perda que serão definidas abaixo; as cores azul e vermelho são referentes aos dois ciclos existentes.
 
-![alt text](dinamica_cyclegan.JPG)
+![alt text](images/dinamica_cyclegan.JPG)
 
-Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes na Equação 1.
+Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes nas duas equações abaixo.
 
-$$
-L_{G_{A \to B}} = \|D_B(\hat{x}_B) - 1\|_2; \\ 
 
-L_{G_{B \to A}} = \|D_A(\hat{x}_A) - 1\|_2.
-$$
+![alt text](images/loss_g.png)
 
-Por sua vez, a função perda do ciclo está na Equação 2.
+Por sua vez, a função perda do ciclo segue:
 
-$$
-L_c = \|\hat{x}_A - x_A\|_1 + \|\hat{x}_B - x_B\|_1.
-$$
+![alt text](images/loss_cycle.png)
 
-Resultando, então, na função perda total dos geradores, Equação 3, em que no treinamento a constante $\lambda$ foi empregada com valor sendo igual a 10.
+Resultando, então, na função perda total dos geradores, equação a seguir, em que no treinamento a constante $\lambda$ foi empregada com valor sendo igual a 10.
 
-$$
-L_G = L_{G_{A \to B}} + L_{G_{B \to A}} + \lambda L_c.
-$$
+![alt text](images/loss_g_total.png)
 
-Agora, na Equação 4 consta as funções de perda para os discriminadores. Para todas as amostras que estes receberam, foi adicionado um ruído com distribuição Normal padrão, servindo para estabilizar o aprendizado do modelo.
+Agora, nas próximas duas equaçãoequações constam as funções de perda para os discriminadores. Para todas as amostras que estes receberam, foi adicionado um ruído com distribuição Normal padrão, servindo para estabilizar o aprendizado do modelo.
 
-$$
-L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right); \\ 
-L_{D_B} = \frac{1}{2} \left( \|D_B(x_B) - 1\|_2^2 + \|D_B(\hat{x}_B)\|_2^2 \right).
-$$
+![alt text](images/loss_d.png)
 
-A Equação 5 representa as duas funções de perda extra dos discriminadores.
+As duas funções de perda extra dos discriminadores são definidas por:
  
-$$
-L_{D_{A,m}} = \frac{1}{2} \left( \|D_{A,m}(x_M) - 1\|_2^2 + \|D_{A,m}(\hat{x}_A)\|_2^2 \right); \\
-L_{D_{B,m}} = \frac{1}{2} \left( \|D_{B,m}(x_M) - 1\|_2^2 + \|D_{B,m}(\hat{x}_B)\|_2^2 \right).
-$$
+![alt text](images/loss_d_mixed.png)
 
-Por fim, a função de perda total é dada pela Equação 6, em que $\gamma$ foi utilizado como sendo fixo e igual a 1.
+Por fim, a função de perda total dos discriminadores é definida conforme a equação abaixo, em que $\gamma$ foi utilizado como sendo fixo e igual a 1.
 
-$$
-L_{D,all} = L_D + \gamma \left( L_{D_{A,m}} + L_{D_{B,m}} \right).
-$$
+![alt text](images/loss_d_total.png)
 
-No que tange ao treinamento do modelo, utilizou-se tamanho dos *batches* igual a $16$, otimizador Adam com taxa de aprendizado de $lr=0,0002$ e taxas de decaimento de $0,5$ e $0,999$, durante $25$ épocas. Nas Tabelas 1 e 2 constam as arquiteturas dos discriminadores e geradores da CycleGAN proposta, respectivamente. Todos os hiperparâmetros fixos citados anteriormente foram mantidos do artigo original, em que foi comentado que estas eram as melhores opções apresentadas na literatura para esse tipo de problemática.
+
+No que tange ao treinamento do modelo, utilizou-se tamanho dos *batches* igual a $16$, otimizador Adam com taxa de aprendizado de $lr=0,0002$ e taxas de decaimento de $0,5$ e $0,999$, durante $25$ épocas. Nas duas tabelas abaixo constam as arquiteturas dos discriminadores e geradores da CycleGAN proposta, respectivamente. Todos os hiperparâmetros fixos citados anteriormente foram mantidos do artigo original, em que foi comentado que estas eram as melhores opções apresentadas na literatura para esse tipo de problemática.
 
 Para o treinamento da CycleGAN, utilizou-se uma máquina com processador Ryzen 7 5800X e GPU RTX4060 de 16GB.
 
 #### Arquitetura do Discriminador - CycleGAN
 
-Entrada: (batchsize = 16) x 64 x 84 x 1
-
-| Camada     | Filtro     | Stride   | Canal | Instance Norm. | Func. Ativação |
-|------------|------------|----------|-------|-----------------|----------------|
-| Conv.      | 4 x 4      | 2 x 2    | 64    | Sim             | LeakyReLU      |
-| Conv.      | 4 x 4      | 2 x 2    | 256   | Não             | LeakyReLU      |
-| Conv.      | 1 x 1      | 2 x 2    | 1     | Sim             | -              |
-
-Saída: (batchsize = 16) x 16 x 21 x 1
+![alt text](images/tbl_arq_discr_cgan.png)
 
 #### Arquitetura do Gerador - CycleGAN
 
-Entrada: (batchsize = 64) x 84 x 1
-
-| Camada            | Filtro     | Stride   | Canal | Instance Norm. | Func. Ativação |
-|-------------------|------------|----------|-------|-----------------|----------------|
-| Conv.             | 7 x 7      | 1 x 1    | 64    | Sim             | ReLU           |
-| Conv.             | 3 x 3      | 2 x 2    | 128   | Sim             | ReLU           |
-| Conv.             | 3 x 3      | 2 x 2    | 256   | Sim             | ReLU           |
-| 10 x ResNet       | 3 x 3      | 1 x 1    | 256   | Sim             | ReLU           |
-| Deconv.           | 3 x 3      | 2 x 2    | 128   | Sim             | ReLU           |
-| Deconv.           | 3 x 3      | 2 x 2    | 64    | Sim             | ReLU           |
-| Deconv.           | 7 x 7      | 1 x 1    | 1     | Não             | Sigmoid        |
-
-Saída: (batchsize = 64) x 84 x 1
-
+![alt text](images/tbl_arq_gen_cgan.png)
 
 
 ### MuseMorphose
@@ -137,29 +102,29 @@ Os Autoencoders Variacionais (VAEs) são uma classe de modelos probabilísticos 
 
 O treinamento do VAE é baseado em duas principais partes da função de perda:
 
-1. **Perda de reconstrução**: Mede a qualidade da reconstrução dos dados originais a partir das amostras latentes. Em termos de máxima verossimilhança é expresso pela fórmula 7, onde $p(x/z)$ é a distribuição de probabilidade de reconstrução, e $q(z/x)$ é a distribuição do espaço latente dada a entrada $x$:
+1. **Perda de reconstrução**: Mede a qualidade da reconstrução dos dados originais a partir das amostras latentes. Em termos de máxima verossimilhança é expresso pela equação abaixo, onde $p(x/z)$ é a distribuição de probabilidade de reconstrução, e $q(z/x)$ é a distribuição do espaço latente dada a entrada $x$:
 
 $$
-\{L}_{\text{reconstruction}} = -\text{E}_{q(z|x)}[\log p(x|z)]
+L_{\text{reconstruction}} = -\mathbb{E}_{q(z|x)}[\log p(x|z)]
 $$
 
-2. **Divergência Kullback-Leibler (KL)**: Mede a diferença entre a distribuição latente aprendida e uma distribuição prior (normal multivariada). A perda KL é dada pela fórmula 8, onde $\mu\_j$ e $\sigma\_j$ são os parâmetros do encoder, e $p(z)$ é a distribuição prior (normal):
+2. **Divergência Kullback-Leibler (KL)**: Mede a diferença entre a distribuição latente aprendida e uma distribuição prior (normal multivariada). A perda KL, em que $\mu\_j$ e $\sigma\_j$ são os parâmetros do encoder, e $p(z)$ é a distribuição prior (normal), é definida como:
 
 $$
-\{L}_{\text{KL}} = D_{\text{KL}}(q(z|x) || p(z)) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log(\sigma_j^2) - \mu_j^2 - \sigma_j^2 \right)
+L_{\text{KL}} = D_{\text{KL}}(q(z|x) \parallel p(z)) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log(\sigma_j^2) - \mu_j^2 - \sigma_j^2 \right)
 $$
 
 A função de perda total é a soma das duas perdas mencionadas, e o VAE aprende a balancea-las durante o treinamento, gerando representações latentes que são ao mesmo tempo precisas e bem comportadas.
 
 $$
-\{L}_{\text{total}} = \{L}_{\text{reconstruction}} + \{L}_{\text{KL}}
+L_{\text{total}} = L_{\text{reconstruction}} + L_{\text{KL}}
 $$
 
 A arquitetura proposta (chamada de [*MuseMorphose*](https://arxiv.org/pdf/2105.04090)) para a geração de música trata o problema de geração musical como uma tarefa de modelagem autoregressiva condicionada. O modelo considera segmentos da música como a unidade de geração, permitindo que o decoder modele de forma mais flexível e dinâmica a estrutura da música ao longo do tempo. Uma característica importante é o uso da "atenção auto-regressiva", onde cada token de entrada afeta diretamente a geração do token seguinte, permitindo capturar dependências de longo alcance dentro da sequência de música, como pode ser visto na figura abaixo.
 
-![alt text](aqr_vae.png)
+![alt text](images/tbl_arq_vae.png)
 
-A arquitetura é baseado em um VAE (Autoencoder Variacional, apresentado acima também), no qual as entradas de música e controles são passados por um encoder para gerar uma representação latente que é utilizada pelo decoder para gerar a música. A arquitetura está apresentada na tabela 3 em detalhes. Os controles que os autores fazem são da Intensidade rítmica e polifonia, que são dois atributos musicais que têm impacto direto na percepção emocional da música. A intensidade rítmica refere-se à força ou ênfase dos ritmos em uma peça musical, enquanto a polifonia se refere à presença de múltiplas linhas melódicas independentes na música, como em uma composição com vários instrumentos tocando simultaneamente em diferentes registros.
+A arquitetura é baseado em um VAE (Autoencoder Variacional, apresentado acima também), no qual as entradas de música e controles são passados por um encoder para gerar uma representação latente que é utilizada pelo decoder para gerar a música. A arquitetura está apresentada na tabela abaixo em detalhes. Os controles que os autores fazem são da Intensidade rítmica e polifonia, que são dois atributos musicais que têm impacto direto na percepção emocional da música. A intensidade rítmica refere-se à força ou ênfase dos ritmos em uma peça musical, enquanto a polifonia se refere à presença de múltiplas linhas melódicas independentes na música, como em uma composição com vários instrumentos tocando simultaneamente em diferentes registros.
 
 Outros hiperparâmetros de interesse do modelo foram:
 
@@ -185,33 +150,7 @@ Os resultados que os autores apresentam foram obtidos após treinar o modelo por
 
 #### Arquitetura do Modelo MuseMorphose: Encoder e Decoder
 
-##### Encoder: Entrada: (batchsize = 64) x 84 x 1
-
-| Camada  | Filtro  | Stride   | Canal | Normalização  | Func. Ativação |
-|---------|---------|----------|-------|---------------|----------------|
-| Conv.   | 4 x 4   | 2 x 2    | 64    | Instance Norm.| LeakyReLU      |
-| Conv.   | 4 x 4   | 2 x 2    | 64    | Não           | ReLU           |
-| Conv.   | 3 x 3   | 1 x 1    | 128   | Instance Norm.| LeakyReLU      |
-| Conv.   | 3 x 3   | 1 x 1    | 128   | Instance Norm.| LeakyReLU      |
-
-**Transformer Encoder (12 camadas)**
-
-| Camada | - | - | - | Layer Norm. | - |
-|--------|---|---|---|-------------|---|
-
-##### Decoder: Entrada: (batchsize = 64) x 84 x 1
-
-| Camada  | Filtro  | Stride   | Canal | Normalização  | Func. Ativação |
-|---------|---------|----------|-------|---------------|----------------|
-| Deconv. | 4 x 4   | 2 x 2    | 128   | Não           | ReLU           |
-| Deconv. | 4 x 4   | 2 x 2    | 64    | Não           | ReLU           |
-| Deconv. | 7 x 7   | 1 x 1    | 1     | Não           | Softmax        |
-
-**Transformer Decoder (12 camadas)**
-
-| Camada | - | - | - | Layer Norm. | - |
-|--------|---|---|---|-------------|---|
-
+![alt text](images/tbl_arq_vae.png) 
 
 
 ## Métricas de Avaliação
@@ -227,29 +166,29 @@ Por fim, a relação sinal-ruído (SNR) é uma métrica que quantifica a relaç�
 
 ### CycleGAN
 
-Os resultados utilizando a CycleGAN foram bastante distantes do esperado, tendo como *benchamark* os áudios gerados pelo artigo de referência. Dos mais de 1.000 áudios originais de teste, menos de $5\%$ produziram sons de notas de piano factíveis e, quando isso acontecia, as notas eram muito espaçadas, não apresentando uma fluidez no áudio em que houve transferência de gênero musical. Esse último fato fica evidente ao se analisar as Figuras 3 (áudio original no gênero Jazz) e 4 (áudio transferido para o gênero Pop), em que no eixo horizontal está os compassos musicais (tempo em segundo) dentro de cada compasso e o eixo vertical as notas, então o comprimento da linha verde se refere a duração da nota tocada. Note que na primeira Figura 3 há uma sintonia melódica e há poucas notas esparsas, ao contrário da Figura 4.
+Os resultados utilizando a CycleGAN foram bastante distantes do esperado, tendo como *benchamark* os áudios gerados pelo artigo de referência. Dos mais de 1.000 áudios originais de teste, menos de $5\%$ produziram sons de notas de piano factíveis e, quando isso acontecia, as notas eram muito espaçadas, não apresentando uma fluidez no áudio em que houve transferência de gênero musical. Esse último fato fica evidente ao se analisar as duas próximas figuras (primeira referente ao áudio original no gênero Jazz e a segunda ao áudio transferido para o gênero Pop), em que no eixo horizontal está os compassos musicais (tempo em segundo) dentro de cada compasso e o eixo vertical as notas, então o comprimento da linha verde se refere a duração da nota tocada. Note que nesta primeira imagem há uma sintonia melódica e há poucas notas esparsas, ao contrário da segunda.
 
-![alt text](musica_original.jpg)
+![alt text](images/musica_original.jpg)
 
-![alt text](musica_transformada.jpg)
+![alt text](images/musica_transformada.jpg)
 
 
 Ainda, utilizou-se a métrica *Pitch Histogram Similarity*, que mede a similaridade entre os histogramas de *pitch* (frequências fundamentais) das músicas original e transformada, ficando na faixa $[0,15; 0,25]$ o que indica baixa similaridade, provavelmente por ter alterado significativamente os *pitch* dominantes, como melodias ou harmônicos importantes. Também, foi utilizado a métrica *signal-to-noise ratio* (SNR), que mede relação entre o sinal útil e o ruído introduzido pela transformação, é desejável que os valores sejam positivos, no entanto, os obtidos ficaram na faixa $[-2,50; -2,45]$, sinalizando que houve muito ruído presente.
 
 ### MuseMorphose
 
-Conseguimos treinar a arquitetura por 7 épocas, que durou quase dois dias inteiros. Os resultados das perdas do modelo estão ilustrados na figura 5. São poucas épocas para conslusões estatisticamente válidas, mas é possível ver que a perda de reconstrução (RC) diminui ao longo das épocas, o que pode indicar que o modelo está melhorando sua capacidade em reconstruir e gerar músicas. Já a perda KL (da divergência de Kullback-Leibler) mede a distribuição latente aprendida pelo modelo e ela parece aumentar nas primeiras épocas, indicando que a distribuição que está sendo aprendida ainda não é satisfatória (provavelmente por uma não convergencia).
+Conseguimos treinar a arquitetura por 7 épocas, que durou quase dois dias inteiros. Os resultados das perdas do modelo estão ilustrados na figura a seguir, embora sejam poucas épocas para conslusões estatisticamente válidas, é possível ver que a perda de reconstrução (RC) diminui ao longo das épocas, o que pode indicar que o modelo está melhorando sua capacidade em reconstruir e gerar músicas. Já a perda KL (da divergência de Kullback-Leibler) mede a distribuição latente aprendida pelo modelo e ela parece aumentar nas primeiras épocas, indicando que a distribuição que está sendo aprendida ainda não é satisfatória (provavelmente por uma não convergencia).
 
-![alt text](loss_curves.png)
+![alt text](images/loss_curves.png)
 
-Após o treinamento do modelo, gerou-se 5 amostras distintas a partir de um áudio original de entrada. As amostras foram geradas variando o coeficiente de mudança do ritmo e da polifonia. O gráfico da figura 6 é o mesmo apresentado para a CycleGAN (no eixo horizontal estão os compassos - tempos em segundo e no eixo vertical as notas - o tamanho da barra corresponde a duração da nota tocada). É possível ver que a amostra 1 é a mais condizente com o áudio original, pois não geramos o áudio com muitas mudanças. Também, esta amostra é o que apresenta menos notas esparças, em comparação com as amostras 2 e 4, por exemplo.
+Após o treinamento do modelo, gerou-se 5 amostras distintas a partir de um áudio original de entrada. As amostras foram geradas variando o coeficiente de mudança do ritmo e da polifonia. Os gráficos a seguir são os mesmos que os apresentados para a CycleGAN (no eixo horizontal estão os compassos - tempos em segundo e no eixo vertical as notas - o tamanho da barra corresponde a duração da nota tocada). É possível ver que a amostra 1 é a mais condizente com o áudio original, pois não geramos o áudio com muitas mudanças. Também, esta amostra é o que apresenta menos notas esparças, em comparação com as amostras 2 e 4, por exemplo.
 
-![alt text](grafico_audio_orig.png)
-![alt text](graf_sample1.png) 
-![alt text](graf_sample2.png) 
-![alt text](graf_sample3.png) 
-![alt text](graf_sample4.png) 
-![alt text](graf_sample5.png) 
+![alt text](images/grafico_audio_orig.png)
+![alt text](images/graf_sample1.png) 
+![alt text](images/graf_sample2.png) 
+![alt text](images/graf_sample3.png) 
+![alt text](images/graf_sample4.png) 
+![alt text](images/graf_sample5.png) 
 
 Também calculamos as métricas de *Histogram Similarity* e *signal-to-noise ratio (SNR)* para cada uma das amostras em relação ao áudio original, que estão apresentadas na tabela 4. Pode-se ver que o maior valor de similaridade de pitch foi para a amostra 1, que pelo gráfico das notas estava mais similar com o áudio original. Já pela métrica de ruído, todos os áudios são ruídosos quando comparados com o original, provavelmente puxados pelas notas esparsas.
 
