@@ -19,8 +19,7 @@ Link para os slides de apresentação da Entrega 3 [aqui](https://docs.google.co
 ## Resumo (Abstract)
 
 Este trabalho explora a aplicação de um modelo de síntese text-to-speech (TTS) com o objetivo de gerar fala sintética em português brasileiro com variação de sotaque das regiões de Minas Gerais e Pernambuco. A abordagem adotada baseia-se no fine-tuning, a partir de um corpus de fala espontânea, de um modelo TTS do tipo end-to-end pré-treinado. A fim de avaliar a qualidade das amostras geradas, calculamos métricas objetivas associadas à prosódia e à representação mel-cepstral dos áudios. Analisamos, a partir dessas métricas e de observações qualitativas, o efeito do uso da função de perda speaker contrastive loss e da realização de um procedimento de remoção de ruído das amostras originais de treinamento.
-
-> TODO: Adicionar resultados
+Os resultados obtidos sugerem maior qualidade de amostras geradas quando é realizada remoção de ruído das amostras de treino e é feito uso de função de perda speaker contrastive loss, porém análises de estatística inferencial revelam casos em que essas métricas não apresentam resultados significativos para diferenciar amostras sintéticas geradas por diferentes configurações de fine-tuning.
 
 ## Descrição do Problema/Motivação
 
@@ -56,8 +55,6 @@ Os dados de treinamento foram extraídos da base CORAA **[3]**, que agrega amost
 
 Para cálculo das métricas, foram selecionadas 100 amostras de um falante de Recife e 31 amostras de um falante mineiro de acordo com um único critério: ter duração acima 3 segundos. As transcrições das amostras selecionadas foram, então, utilizadas para gerar as amostras sintéticas correspondentes a partir de cada uma das versões dos modelos treinados e o cálculo das métricas foi realizado para cada par (real/sintético) de áudios.
 
-> TODO: mencionar a análise estatística
-
 ### Bases de Dados e Evolução
 
 |Base de Dados | Endereço na Web | Resumo descritivo|
@@ -78,8 +75,6 @@ A distribuição do volume total de amostras disponíveis pode ser observado na 
 * Todos os áudios foram amostrados a 16kHz e normalizados para -27dB (configuração do SYNTACC)
 * As transcrições devem passar por um tratamento a fim de converter caracteres especiais e numerais para grafemas (ex.: R$2 -> dois reais). Coqui implementa isso nos argumentos do modelo.
 * Para usar os formatadores de dataset existentes no Coqui, é necessário organizar os diretórios do dataset da maneira exigida por cada formatador. A estrutura adotada foi a seguinte, apropriada para utilização com o formatador `vctk_old`:
-
-> TODO: referenciar o script que faz o arranjo dos dados
 
 ```
 root_path/
@@ -123,9 +118,77 @@ Assim, realizamos 4 treinamentos diferentes, de acordo com as seguintes especifi
 | 03 | NEG + PSP + HES + DLG + DNS|
 | 04 | NEG + PSP + HES + DLG + DNS + SCL |
 
->TODO: resultados
+Nessas configurações, foram avaliadas métricas importantes para análise de áudio. O **Dynamic Time Warping** (DTW) mede a similaridade entre sequências temporais com variações no tempo, enquanto o **F0 Frame Error** (FFE) e o **Gross Pitch Error** (GPE) avaliam a precisão e os erros significativos na estimativa do pitch. A **Mel-Cepstral Distortion** (MCD) quantifica diferenças entre espectros mel-cepstrais para avaliar qualidade ou similaridade, e o **Mel Spectral Distortion** (MSD) calcula a mede a diferença entre os espectros Mel de dois sinais. Já o **Voicing Decision Error** (VDE) analisa erros na classificação de frames como sonoros ou não sonoros, fornecendo uma visão abrangente sobre o desempenho dos modelos.
+
+Os resultados para cada região (Recife e Minas Gerais) foram analisados utilizando análises estatísticas adequadas para identificar diferenças significativas entre os treinamentos (runs).
+
+O teste de **Kruskal-Wallis** é um método não paramétrico utilizado para comparar três ou mais grupos independentes, verificando se pelo menos um deles apresenta uma diferença estatisticamente significativa. Esse teste é útil quando os dados não atendem aos pressupostos de normalidade exigidos por testes paramétricos, como ANOVA. Quando o teste de Kruskal-Wallis detecta diferenças significativas, é necessário identificar quais pares de grupos apresentam essas diferenças. Para isso, foi aplicado o teste de **Mann-Whitney U**, também conhecido como teste U de Wilcoxon. Este é um teste não paramétrico que compara dois grupos independentes e verifica se há diferença significativa entre as distribuições dos dois grupos, avaliando se um grupo tende a apresentar valores consistentemente maiores ou menores do que o outro.
+
+Os valores das métricas são calculados para cada trecho de áudio separadamente. Observe as médias desses valores para os treinamentos com a variação de Minas Gerais (MG) na Tabela abaixo.
+
+|Run|DTW|FFE|GPE|MCD|MSD|VDE|
+|---|---|---|---|---|---|---|
+|1|6\.3454|0\.3357|NaN|5\.8281|2\.7281|0\.3154|
+|2|6\.0655|0\.3442|NaN|6\.0075|2\.7878|0\.3256|
+|3|5\.8944|0\.3465|NaN|5\.9435|2\.7818|0\.3211|
+|4|5\.6374|0\.3479|NaN|5\.8143|2\.7323|0\.3302|
+
+A partir da análise das métricas, o treinamento (run) de número 4 destacou-se como o melhor treinamento geral. Essa run apresentou o melhor desempenho em DTW e MCD e manteve desempenho consistente em outras métricas, como FFE e MSD. Esse resultado evidencia que a configuração associada à run 4 foi a mais eficaz para preservar características relevantes de fala, como similaridade temporal e redução de distorções.
+
+Não foi possível calcular a média dos valores de GPE devido a valores ausentes (NaN), portanto, essa métrica foi considerada na avaliação comparativa.
+
+<div style="display: flex; justify-content: space-around;">
+
+<img src="https://drive.google.com/uc?export=view&id=1Tr0lxJug-Pv2xImsNrF-FPklyBBCzJq-" alt="Imagem 1" width="300"/>
+<img src="https://drive.google.com/uc?export=view&id=1PNePxQejVC8UNLNclD3fQao8Wdz4Cq5I" alt="Imagem 2" width="300"/>
+<img src="https://drive.google.com/uc?export=view&id=1DtF7etFVcRLbxZoXxadqZHNj9d4ox1Se" alt="Imagem 3" width="300"/>
+<img src="https://drive.google.com/uc?export=view&id=1uVK5fB43eJZGTHsObym6Iq-xodGfKBsP" alt="Imagem 4" width="300"/>
+<img src="https://drive.google.com/uc?export=view&id=1rOFKj56TcVoG80-2EaOVLIVLwOZIno1w" alt="Imagem 5" width="300"/>
 
 
+</div>
+
+Para avaliar se as diferenças observadas entre as runs são estatisticamente significativas, foi aplicado o teste não paramétrico de Kruskal-Wallis para cada métrica. Porém, os p-values para todas as métricas são maiores que o nível de significância (0.05), indicando que não há evidências estatísticas de diferenças significativas entre as runs para nenhuma das métricas analisadas (Vide também os boxplots acima que demonstram poucas variações nas distribuições entre as runs). Isso significa que, mesmo que a run 4 aparente ser a melhor, não é possível afirmar com confiança que ela supera as demais em termos de desempenho.
+
+Observe as métricas para os diferentes treinamentos, agora com a variação de Recife.
+
+|Run|DTW|FFE|GPE|MCD|MSD|VDE|
+|---|---|---|---|---|---|---|
+|1|4\.8212|0\.3671|NaN|6\.7307|3\.0882|0\.3486|
+|2|4\.8101|0\.3629|0\.2822|6\.9365|3\.1813|0\.3452|
+|3|5\.0731|0\.3793|0\.3225|6\.1302|2\.8641|0\.3569|
+|4|5\.3548|0\.3543|NaN|6\.0526|2\.8319|0\.3351|
+
+Os resultados obtidos para a variação de Recife (RE) indicam que os diferentes treinamentos (runs) apresentam desempenhos variados entre as métricas analisadas. A Run de número 4 destacou-se como a melhor execução para a maioria das métricas, incluindo **FFE** (0.3543), **MCD** (6.0526), **MSD** (2.8319) e **VDE** (0.3351). Esses resultados indicam maior precisão na frequência fundamental e menor distorção espectral e cepstral, além de maior exatidão na identificação de segmentos vozeados, evidenciando a qualidade do modelo ajustado nesta execução para preservar as características acústicas do áudio sintetizado. Em relação à métrica **DTW**, a Run 2 apresentou o menor valor médio (4.8101), sugerindo maior similaridade temporal entre os sinais de fala reais e os sintetizados. Por outro lado, a métrica **GPE** esteve ausente (`NaN`) em algumas runs, limitando uma análise completa.
+
+Embora a Run 4 tenha apresentado o melhor desempenho em diversas métricas específicas, a Run 3 foi identificada como a melhor execução geral. Esse treinamento apresentou um equilíbrio entre as métricas avaliadas, destacando-se particularmente em **MCD** (6.1302) e **MSD** (2.8641). Essa combinação de valores sugere que esse treinamento mantém um desempenho consistente em termos de redução de distorções acústicas e similaridade espectral com os áudios reais, enquanto apresenta resultados adequados nas demais métricas. 
+
+Além disso, os resultados do teste de Kruskal-Wallis para a variação de Recife (RE) indicam que, diferentemente do observado para Minas Gerais (MG), algumas métricas apresentam diferenças estatisticamente significativas entre as execuções. Em particular, as métricas MSD (Mel Spectral Distortion) e MCD (Mel Cepstral Distortion) destacaram-se com valores de p-value extremamente baixos, de 1.77e-18 e 1.34e-20, respectivamente, evidenciando que as diferenças observadas entre as runs para essas métricas são estatisticamente significativas ao nível de significância (0.05). Esses resultados indicam que as configurações experimentais impactaram de forma substancial a preservação espectral e cepstral nas execuções realizadas.
+
+Para avaliar as diferenças estatísticas entre as execuções (runs) em relação às métricas MSD e MCD, foi realizado o teste não paramétrico de Mann-Whitney U para todas as combinações de pares de runs. 
+
+Os resultados indicaram que:
+
+- Para a métrica MSD, foram encontradas diferenças estatisticamente significativas entre quase todos os pares de runs, com exceção de Run 3 vs Run 4 (p = 0.4307) e Run 1 vs Run 2 (p = 0.0516, próximo ao limiar de significância). Isso sugere que as configurações das runs influenciaram substancialmente a distorção espectral em grande parte das comparações.
+- Para a métrica MCD, também foram identificadas diferenças significativas entre a maioria dos pares de runs, exceto para Run 3 vs Run 4 (p = 0.5308) e Run 1 vs Run 2 (p = 0.0660). Esses resultados destacam que as alterações nas configurações experimentais impactaram de forma relevante a distorção cepstral em grande parte das execuções.
+
+Note que, nesse caso, ambas as representações gráficas abaixo corroboram os resultados estatísticos, que apontaram diferenças significativas na métrica MCD entre as runs, destacando especialmente a superioridade de Run3 e Run4 sobre as demais.
+
+<div style="display: flex; justify-content: space-around;">
+
+<img src="https://drive.google.com/uc?export=view&id=1Y5_ArMvnwq5QjoehDoBTrM5QkKapG8Xh" alt="MCD BOXPLOT" width="400"/>
+<img src="https://drive.google.com/uc?export=view&id=197gjZdtOjmypZuhrCI7EXJtLpeh_UUnY" alt="MCD HISTOGRAM" width="400"/>
+
+</div>
+
+A análise da métrica MSD (Vide gráficos abaixo) corrobora com as diferenças significativas entre as runs, com a Run 4 apresentando o melhor desempenho (menor mediana e concentração de valores baixos) e a Run 3 também consistente. Já a Run 2 mostrou maior variabilidade e pior desempenho.
+
+<div style="display: flex; justify-content: space-around;">
+
+<img src="https://drive.google.com/uc?export=view&id=1CpwXZQf05foAgA1BktgaWahDn3TCkOAJ" alt="MSD BOXPLOT" width="400"/>
+<img src="https://drive.google.com/uc?export=view&id=1mfH0bOZr_jQxCGa2sGL894PQHXyyEiT3" alt="MSD HISTOGRAM" width="400"/>
+
+</div>
 ## Conclusão
 
 >TODO: conclusão
