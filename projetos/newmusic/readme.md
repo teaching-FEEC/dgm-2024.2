@@ -53,12 +53,12 @@ Para a problemática em questão, foi proposto o *workflow* da próxima figura, 
 
 ![alt text](dinamica_cyclegan.JPG)
 
-Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes na equação abaixo.
+Assim, sejam A e B os conjuntos musicais (Jazz ou Pop), detona-se $X_K$, $K \in \{A, B\}$, as amostras reais de tais conjuntos, $X_{\hat{K}}$ a amostra transferida para o gênero musical $K$ e $X_{\tilde{K}}$ a amostra retornada ao seu gênero musical de origem. Portanto, as equações das funções de perda para os geradores estão presentes nas duas equações abaixo.
 
-$$\begin{aligned}
-L_{G_{A \to B}} &= \|D_B(\hat{x}_B) - 1\|_2; \\
-L_{G_{B \to A}} &= \|D_A(\hat{x}_A) - 1\|_2.
-\end{aligned}$$
+$$
+L_{G_{A \to B}} = \|D_B(\hat{x}_B) - 1\|_2; \\
+L_{G_{B \to A}} = \|D_A(\hat{x}_A) - 1\|_2.
+$$
 
 Por sua vez, a função perda do ciclo segue:
 
@@ -74,17 +74,17 @@ $$
 
 Agora, nas próximas duas equaçãoequações constam as funções de perda para os discriminadores. Para todas as amostras que estes receberam, foi adicionado um ruído com distribuição Normal padrão, servindo para estabilizar o aprendizado do modelo.
 
-$$\begin{aligned}
+$$
 L_{D_A} = \frac{1}{2} \left( \|D_A(x_A) - 1\|_2^2 + \|D_A(\hat{x}_A)\|_2^2 \right); \\
 L_{D_B} = \frac{1}{2} \left( \|D_B(x_B) - 1\|_2^2 + \|D_B(\hat{x}_B)\|_2^2 \right).
-\end{aligned}$$
+$$
 
 As duas funções de perda extra dos discriminadores são definidas por:
  
-$$\begin{aligned}
+$$
 L_{D_{A,m}} = \frac{1}{2} \left( \left\| D_{A,m}(x_M) - 1 \right\|_2^2 + \left\| D_{A,m}(\hat{x}_A) \right\|_2^2 \right); \\
 L_{D_{B,m}} = \frac{1}{2} \left( \left\| D_{B,m}(x_M) - 1 \right\|_2^2 + \left\| D_{B,m}(\hat{x}_B) \right\|_2^2 \right).
-\end{aligned}$$
+$$
 
 
 Por fim, a função de perda total é definida conforme a equação abaixo, em que $\gamma$ foi utilizado como sendo fixo e igual a 1.
