@@ -33,6 +33,22 @@ O objetivo principal deste projeto é o desenvolvimento e avaliação de modelos
 
 ## Metodologia
 
+### Informações Computacionais  
+
+Para o desenvolvimento desde projeto, foram utilizados três computadores distintos:
+
+1. Computador 1
+- Processador: AMD Ryzen 9 4900HS 3GHz
+- RAM: 16 GB
+- GPU: Nvidia RTX 2060 Max-Q 6GB
+2. Computador 2
+- n1-standard-1 (1 vCPUs)
+- RAM: 3,75 GB de RAM
+- GPU NVIDIA T4 x 1
+3. Computador 3
+- Processador: Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz (8 CPUs), ~2.0GHz
+- RAM: 16, 384 MB 
+
 ### Bases de Dados e Evolução
 
 Para o desenvolvimento deste projeto, serão geradas imagens sintéticas com base em um conjunto de dados existente. O conjunto selecionado é proveniente do artigo "Dataset of phase-resolved images of internal, corona, and surface partial discharges in electrical generators", que contém imagens relacionadas a três tipos principais de falhas em motores elétricos: Corona, Internal e Surface, além de algumas imagens que representam ruídos. A seguir será apresentada a tabela com as principais informações da base de dados.
