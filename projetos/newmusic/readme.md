@@ -87,13 +87,10 @@ $$
 
 A Equação 5 representa as duas funções de perda extra dos discriminadores.
  
-$$
-L_{D_{A,m}} = \frac{1}{2} \left( \|D_{A,m}(x_M) - 1\|_2^2 + \|D_{A,m}(\hat{x}_A)\|_2^2 \right).
-$$
+$$ L_{D_{A,m}} = \frac{1}{2} \left( \left| D_{A,m}(x_M) - 1 \right|_2^2 + \left| D_{A,m}(\hat{x}_A) \right|_2^2 \right) $$
 
-$$
-L_{D_{B,m}} = \frac{1}{2} \left( \|D_{B,m}(x_M) - 1\|_2^2 + \|D_{B,m}(\hat{x}_B)\|_2^2 \right).
-$$
+$$ L_{D_{B,m}} = \frac{1}{2} \left( \left| D_{B,m}(x_M) - 1 \right|_2^2 + \left| D_{B,m}(\hat{x}_B) \right|_2^2 \right) $$
+
 
 Por fim, a função de perda total é dada pela Equação 6, em que $\gamma$ foi utilizado como sendo fixo e igual a 1.
 
@@ -148,19 +145,19 @@ O treinamento do VAE é baseado em duas principais partes da função de perda:
 1. **Perda de reconstrução**: Mede a qualidade da reconstrução dos dados originais a partir das amostras latentes. Em termos de máxima verossimilhança é expresso pela fórmula 7, onde $p(x/z)$ é a distribuição de probabilidade de reconstrução, e $q(z/x)$ é a distribuição do espaço latente dada a entrada $x$:
 
 $$
-\{L}_{\text{reconstruction}} = -\text{E}_{q(z|x)}[\log p(x|z)]
+L_{\text{reconstruction}} = -\mathbb{E}_{q(z|x)}[\log p(x|z)]
 $$
 
 2. **Divergência Kullback-Leibler (KL)**: Mede a diferença entre a distribuição latente aprendida e uma distribuição prior (normal multivariada). A perda KL é dada pela fórmula 8, onde $\mu\_j$ e $\sigma\_j$ são os parâmetros do encoder, e $p(z)$ é a distribuição prior (normal):
 
 $$
-\{L}_{\text{KL}} = D_{\text{KL}}(q(z|x) || p(z)) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log(\sigma_j^2) - \mu_j^2 - \sigma_j^2 \right)
+L_{\text{KL}} = D_{\text{KL}}(q(z|x) \parallel p(z)) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log(\sigma_j^2) - \mu_j^2 - \sigma_j^2 \right)
 $$
 
 A função de perda total é a soma das duas perdas mencionadas, e o VAE aprende a balancea-las durante o treinamento, gerando representações latentes que são ao mesmo tempo precisas e bem comportadas.
 
 $$
-\{L}_{\text{total}} = \{L}_{\text{reconstruction}} + \{L}_{\text{KL}}
+L_{\text{total}} = L_{\text{reconstruction}} + L_{\text{KL}}
 $$
 
 A arquitetura proposta (chamada de [*MuseMorphose*](https://arxiv.org/pdf/2105.04090)) para a geração de música trata o problema de geração musical como uma tarefa de modelagem autoregressiva condicionada. O modelo considera segmentos da música como a unidade de geração, permitindo que o decoder modele de forma mais flexível e dinâmica a estrutura da música ao longo do tempo. Uma característica importante é o uso da "atenção auto-regressiva", onde cada token de entrada afeta diretamente a geração do token seguinte, permitindo capturar dependências de longo alcance dentro da sequência de música, como pode ser visto na figura abaixo.
