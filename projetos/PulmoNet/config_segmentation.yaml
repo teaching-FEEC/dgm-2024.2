@@ -1,26 +1,25 @@
 model:
-  name_model: "gen_train"
-  dir_save_results: "./gen_train/"
+  name_model: "model_test_unet"
+  dir_save_results: "./model_test_unet/"
   new_model: True
-  path_to_saved_model: "./gen_train/models/gen_train_best.pt"
-  fine_tunning: True
-  freeze_layers: True
-  trained_gen_path: "./sweep_10/models/sweep_10_gen_best.pt"
-
+  fine_tunning: False
+  freeze_layers: False
+  path_to_saved_model: ""
+  
 
 data:
-  processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"
+  processed_data_folder: "/mnt/shared/divided_data/"
   dataset: "processedCTData"
   start_point_train_data: 0
-  end_point_train_data: 4600
+  end_point_train_data: 10
   start_point_validation_data: 0
-  end_point_validation_data: 2000
+  end_point_validation_data: 8
 
 
 training:
   batch_size_train: 20
   batch_size_validation: 8
-  n_epochs: 50
+  n_epochs: 6
   early_stopping : True
   patience : 5
   delta : 0.01

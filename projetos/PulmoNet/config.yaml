@@ -1,25 +1,25 @@
 model:
-  name_model: "model_sweep412_inspired_generateAirway"
-  dir_save_results: "./model_sweep412_inspired_generateAirway/"
+  name_model: "model_test"
+  dir_save_results: "./model_test/"
   new_model: True
   use_pretrained_model: False
-  generate_airway_segmentation: True
+  generate_airway_segmentation: False
   path_to_saved_model_gen: ""
   path_to_saved_model_disc: ""
 
 data:
   processed_data_folder: "/mnt/shared/divided_data/"
-  dataset: "processedCTData"
+  dataset: "lungCTData"
   start_point_train_data: 0
-  end_point_train_data: 20000
+  end_point_train_data: 10
   start_point_validation_data: 0
-  end_point_validation_data: 800
+  end_point_validation_data: 8
 
 
 training:
   batch_size_train: 15
   batch_size_validation: 8
-  n_epochs: 40
+  n_epochs: 6
   steps_to_complete_bfr_upd_disc: 1
   steps_to_complete_bfr_upd_gen: 1
   transformations: 
@@ -43,7 +43,7 @@ optimizer:
   type: "Adam"
   lr: 0.0002
   info:
-    betas: [0.8811316699367162, 0.999]
+    betas: [0.88, 0.999]
   path_to_saved_gen_optimizer: ""
   path_to_saved_disc_optimizer: ""
 

@@ -1,9 +1,10 @@
 model:
-  name_model: "sweep_10"
+  name_model: "model_test"
+  dir__trained_model: "./model_test/"
   use_best_version: True
 
 data:
-  processed_data_folder: "C:/Users/julia/OneDrive/Dados_escolinha/data_unet/"
+  processed_data_folder: "/mnt/shared/divided_data/"
   dataset: "lungCTData"
   batch_size: 10
   transformations: 

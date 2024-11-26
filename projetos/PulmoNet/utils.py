@@ -26,6 +26,7 @@ def plot_img_label(img, label):
     axarr[0].imshow(img, cmap='gray')
     axarr[1].imshow(label, cmap='gray')
     plt.show()
+    plt.close()
 
 
 def test_lung_segmentator(data):
@@ -97,6 +98,7 @@ def test_processed_data(processed_data_folder):
     axarr[0].imshow(ct_sample, cmap='gray')
     axarr[1].imshow(lung_sample, cmap='gray')
     plt.show()
+    plt.close()
 
 
 def test_lung_dataset(processed_data_folder):
@@ -135,6 +137,7 @@ def plt_save_example_synth_img(input_img_ref, input_mask_ref, gen_img_ref, disc_
     ax.flat[3].set_title('Disc Output')
     fig.colorbar(im, ax=ax[3])
     plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+    plt.close()
 
 def plt_save_example_synth_img_with_airway(input_img_ref, input_mask_ref, input_airway_ref, gen_img_ref, gen_airway_ref, disc_ans, epoch, save_dir): 
     fig, ax = plt.subplots(2, 3, figsize=(18, 10))
@@ -152,6 +155,7 @@ def plt_save_example_synth_img_with_airway(input_img_ref, input_mask_ref, input_
     ax[1,1].set_title('Generated')
     ax[1,2].set_title('Genereated Airway')
     plt.savefig(save_dir+'example_generated_epoch_'+str(epoch)+'.png')
+    plt.close()
 
 
 def plt_save_example_synth_during_test(input_img_ref, input_mask_ref, gen_img_ref, save_dir, img_idx):
@@ -175,6 +179,7 @@ def plt_save_example_airways_img(input_img_ref, input_airway_ref, gen_seg_ref, s
     ax.flat[1].set_title('Expected Airway')
     ax.flat[2].set_title('Generated Airway')
     plt.savefig(save_dir+'example_generated_epoch_'+str(img_idx)+'.png')
+    plt.close()
 
 
 def save_quantitative_results(fid, ssim_complete, luminance_complete, contrast_complete, struct_sim_complete,
@@ -229,6 +234,7 @@ def plot_training_evolution(path, mean_loss_train_gen_list, mean_loss_validation
     ax[0].set_xlabel('Epochs')
     ax[1].set_xlabel('Epochs')
     plt.savefig(path+'losses_evolution.png')
+    plt.close()
 
 
 def plot_training_evolution_unet(path, mean_loss_train_unet_list, mean_loss_validation_unet_list):
@@ -239,6 +245,7 @@ def plot_training_evolution_unet(path, mean_loss_train_unet_list, mean_loss_vali
     ax.set_title('U-Net')
     ax.set_xlabel('Epochs')
     plt.savefig(path+'losses_evolution.png')
+    plt.close()
 
 
 def prepare_environment_for_new_model(new_model, dir_save_results,dir_save_models,dir_save_example):
