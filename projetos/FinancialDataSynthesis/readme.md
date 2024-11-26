@@ -6,6 +6,10 @@
 ## Link dos slides:
 https://docs.google.com/presentation/d/1eOmgRpkQeXU1htM_7Gq66HRcn2CPZ7iB/edit?pli=1#slide=id.p1
 
+## Notebooks
+
+- [GANs Notebook](https://github.com/byronacunia/dgm-2024.2/blob/main/projetos/FinancialDataSynthesis/notebooks/GANs.ipynb): Modelo baseado em Redes Adversariais Gerativas (GAN) implementado para síntese de dados financeiros.
+
 Apresentação
 ==============================
 <p align="justify">
