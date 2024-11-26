@@ -31,7 +31,7 @@ Portanto, a motivação para realização deste trabalho surge do desejo de comp
 </p>
 
 > A seguir consta o link para a apresentação em slides do entregável 3.
-> [Link da Apresentação](https://docs.google.com/presentation/d/1IUk0dhp06_5loC3pDepGGyKbB31jhNvf/edit?usp=sharing&ouid=101073047652792710630&rtpof=true&sd=true)
+> [Link da Apresentação](https://docs.google.com/presentation/d/1u-9f3ci5M8tBcXHDIArS7jbCyo6WMUfC/edit#slide=id.p1)
 
 ## Objetivo Geral
 
