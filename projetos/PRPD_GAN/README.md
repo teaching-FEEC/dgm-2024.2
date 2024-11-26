@@ -136,7 +136,7 @@ Como podemos ver, a perda diminui consistentemente, indicando que o modelo está
 
 ### ACWGAN-SN
 
-O modelo que consiguiu obter resultados satisfatórios foi uma versão da ACGAN com penalidade de gradiente de Wasserstein no Discriminador e normalização espectral no Gerador.
+O modelo que conseguiu obter resultados satisfatórios foi uma versão da ACGAN com penalidade de gradiente de Wasserstein no Discriminador e normalização espectral no Gerador.
 
 ![ACWGAN-SN](./reports/figures/ACGAN_schematic.png)
 
@@ -201,10 +201,10 @@ Os hiperparâmetros que foram usados durante o treinamento são os seguintes:
 
 Como foi analisado que o modelo ACWGAN-SN com diversos ruídos apresentou resultados satisfatórios, foi visto que poderíamos melhorá-lo retirando cada um dos componentes em um experimento e avaliando, ao final, qual foi a melhor situação. Esse processo é conhecido como ablation study. Foram estudadas 4 situações:
 
-- Normalização espectral
-- Penalização por Wasserstein
-- Ruído gaussiano no discriminador
-- Ruído gaussiano no gerador
+- Sem Normalização espectral
+- Sem Penalização por Wasserstein
+- Sem Ruído gaussiano no discriminador
+- Sem Ruído gaussiano no gerador
 
 Esses experimentos visaram entender a contribuição de cada componente para o desempenho geral do modelo e verificar se a remoção de algum deles poderia resultar em uma melhoria ou degradação do desempenho.
 
