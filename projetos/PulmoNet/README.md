@@ -360,25 +360,25 @@ Visualmente, dentre os três modelos considerados, o Sweep10 se mostra o modelo 
 ![](figs/ezgif.com-animated-gif-maker.gif?raw=true)
 *Animação 1: Animação das imagens geradas pelos modelos Sweep10, 205 e 412.*
 
-
+****
 **Análise Quantitativa**
 
 Para a análise quantitativa, os três melhores modelos obtidos foram comparados por meio da FID e do SSIM, comparando os treinamentos feitos com apenas 10 mil dados e o treinamento feito com os 60 mil. 
 
-É possível notar que a utilização de uma maior quantidade de dados reduziu o valor da FID nos três modelos apresentados, demonstrando que as imagens passaram a ter mais qualidade, mas os resultados se mantiveram elevados para os três. A SSIM various entre os modelos: enquanto no Sweep10 ela se elevou ao utilizar mais dados, ela caiu para o Sweep205 e para o 412. Num geral, os valores de SSIM tiveram resultados similares, com a Sweep10 gerando resultados mais similares em relação aos dados reais, enquanto os outros modelos apresentaram resultados mais "criativos", no entanto, é difícil confirmar a qualidade dessa informação devido a elevada FID dos três modelos em conjunto com a proximidade dos valores obtidos da SSIM. 
+É possível notar que a utilização de uma maior quantidade de dados reduziu o valor da FID nos três modelos apresentados, demonstrando que as imagens passaram a ter mais qualidade, mas os resultados se mantiveram elevados para os três. A SSIM various entre os modelos: enquanto no Sweep10 ela se elevou ao utilizar mais dados, ela caiu para o Sweep205 e para o 412. Em geral, os valores de SSIM tiveram resultados similares, com a Sweep10 gerando resultados mais similares em relação aos dados reais, enquanto os outros modelos apresentaram resultados mais "criativos", no entanto, é difícil confirmar a qualidade dessa informação devido a elevada FID dos três modelos em conjunto com a proximidade dos valores obtidos da SSIM. 
 
 Também é possível notar que a SSIM realizada na imagem total obteve valores maiores do que a realizada apenas no centro da imagem gerada. Considerar todo o pulmão reduziu a similaridades das imagens nos três modelos analisados em comparação com as reais, demonstrando que a região central, onde deviam ser geradas as vias aéreas, teve uma baixa variação, confirmando a dificuldade em gerar dados relativos a elas.
 
+*Tabela 4: Resultados para os modelos treinados com 60 mil dados.*
 | Modelo | FID (10k) | FID (60k) | SSIM completo (10k) | SSIM completo (60k) | SSIM central (10k) | SSIM central (60k) |
 | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
 | Sweep10 | $335.24$ | $293.99$ | $0.62 \pm 0.24$ | $0.68 \pm 0.23$ | $0.70 \pm 0.21$ | $0.77 \pm 0.18$ |
 | Sweep205 | $327.52$ | $311.54$ | $0.64 \pm 0.23$ | $0.63 \pm 0.23$ | $0.74 \pm 0.19$ | $0.72 \pm 0.18$ |
 | Sweep412 | $320.07$ | $304.82$ | $0.69 \pm 0.23$ | $0.61 \pm 0.23$ | $0.78 \pm 0.17$ | $0.70 \pm 0.19$ |
 
-A comparação com a literatura base é incerta por não estarem sendo utilizados os mesmos conjuntos de dados e por terem objetivos diferentes: o artigo [[1]](#1)gera apenas o conteúdo interior do pulmão, enquanto a metodologia proposta gera a tomografia como um todo. Mesmo assim, a comparação de FID e SSIM podem ser vistas nas tabelas abaixo, onde o FID mostrou a maior divergência, com a literatura atingindo valores muito inferiores aos alcançados no projeto, enquanto a SSIM foi mais similar, com a literatura tendo resultados maiores/mais similaridade para a imagem completa, o que faz sentido considerando que não ela não foca em gerar conteúdo externo ao pulmão, enquanto para a região central o resultado da SSIM foi inferior ao alcançado neste trabalho, mostrando que os resultados da literatura foram mais criativos e menos similares ao conjunto original na geração das vias aéreas.
+A comparação com a literatura base é incerta por não estarem sendo utilizados os mesmos conjuntos de dados e por terem objetivos diferentes: o artigo [[1]](#1) gera apenas o conteúdo interior do pulmão, enquanto a metodologia proposta gera a tomografia como um todo. Mesmo assim, a comparação de FID e SSIM podem ser vistas nas tabelas abaixo, onde o FID mostrou a maior divergência, com a literatura atingindo valores muito inferiores aos alcançados no projeto, enquanto a SSIM foi mais similar, com a literatura tendo resultados maiores/mais similaridade para a imagem completa, o que faz sentido considerando que não ela não foca em gerar conteúdo externo ao pulmão, enquanto para a região central o resultado da SSIM foi inferior ao alcançado neste trabalho, mostrando que os resultados da literatura foram mais criativos e menos similares ao conjunto original na geração das vias aéreas.
 
-Comparação da FID obtida em comparação com o artigo de referência:
-
+*Tabela 5: Comparação da FID obtida em comparação com o artigo de referência.*
 | Modelo | $FID_{InceptionV3}$ |
 | ------- | ------- |
 | $Sweep10$ | 293.994 |
@@ -387,7 +387,7 @@ Comparação da FID obtida em comparação com o artigo de referência:
 | $P2P_{𝐿𝐼𝐷𝐶}$ (Mendes et al., 2023) | 12.82 |
 
 
-Comparação da SSIM para as imagens completas(512x512) e com o corte centralizado (256x256):
+*Tabela 7: Comparação da SSIM para as imagens completas(512x512) e com o corte centralizado (256x256).*
 | Modelo | $ SSIM_{512} $ | $ SSIM_{256} $ |
 | ------- | ------- | ------- |
 | | $𝜇 \pm 𝜎$ | $𝜇 \pm 𝜎$ |
@@ -400,11 +400,11 @@ Comparação da SSIM para as imagens completas(512x512) e com o corte centraliza
 **Teste de Utilidade**
 
 A arquitetura do gerador descrito na seção [Modelo Proposto](#modelo-proposto) é utilizada para a tarefa de segmentação de vias aéreas em duas etapas: inicialização aleatória dos pesos de aprendizado da rede neural e aplicação da técnica de *transfer learning* a partir da melhor versão da PulmoNet.
-Em ambas as estratégias, foram encontradas dificuldades em gerar segmentações de qualidade, de modo que frequemente os modelos passam a reproduzir imagens complemente pretas, não apresentando nenhuma via aérea.
+Em ambas as estratégias, foram encontradas dificuldades em gerar segmentações de qualidade, de modo que frequentemente os modelos passam a reproduzir imagens complemente pretas, não apresentando nenhuma via aérea.
 Apesar de testes não formais terem sido implementados para tentar aprimorar os parâmetros da nossa arquitetura, este comportamento já era esperado, dado que a tarefa de segmentação é extremamente complexa e seria necessário uma alocação de recursos e esforços mais dedicados na compreensão e busca de aprimoramento desta tarefa, do que simplesmente aplicar a arquitetura do gerador da PulmoNet.
 Ainda assim, foi possível treinar e testar modelos para a segmentação das vias aéreas, conforme será descrito nos próximos parágrafos.
 
-A rede treinada com pesos iniciais aleatórios atingiu uma *loss* de validação mínima de 0.9899 e teve mudanças na arquitetura original do gerador em termos de camadas de dropout (foram removidas).
+A rede treinada com pesos iniciais aleatórios (sem as camadas de dropout na arquitetura do gerador) atingiu uma *loss* de validação mínima de 0.9899.
 Nas figuras abaixo, apresenta-se alguns exemplos de vias aéreas segmentadas durante a etapa de testes deste modelo.
 Nota-se que parte das vias aéras está presente nas imagens geradas, mas também há uma região considerável de alucinação, isto é, a rede cria vias aéreas que não existem de fato.
 
@@ -430,8 +430,9 @@ Isto é, em uma análise qualitativa, a rede não teve bons resultados quando ap
 
 *Figura 21: Exemplos de saídas da rede de segmentação, treinada via tranfer learning do modelo Sweep412.*
 
-Calculando a métrica DICE para ambos os modelos, tem-se os resultados da tabela abaixo.
+Por fim, calculando a métrica DICE para ambos os modelos, tem-se os resultados da tabela abaixo.
 
+*Tabela 7: Resultados para o teste de utilidade.*
 | Modelo | Melhor época | Dice |
 | ------ | ------------ | ---- |
 | Modelo com pesos inciais aleatórios | 1 | 0.02|
@@ -439,7 +440,7 @@ Calculando a métrica DICE para ambos os modelos, tem-se os resultados da tabela
 
 Fica evidente que o método de *transfer learning* não teve impacto positivo significativo na tarefa de segmentação, retornando um Dice próximo à U-Net inicializada com pesos aleatórios.
 Este comportamento pode ter ocorrido devido ao baixo preenchimento da região interna pulmonar por parte da PulmoNet, conforme já comentado anteriormente neste relatório.
-Em outras palavras, como o gerador do nosso modelo não preencheu detalhadamente a área interna do pulmão, onde ficam as vias aéreas, é possível que a rede codificadora do gerador não tenha aprendido tão bem como codificar as vias aéreas e, portanto, não contribua com a tarefa de segmentação.
+Em outras palavras, como o gerador do nosso modelo não preencheu detalhadamente a área interna do pulmão, onde ficam as vias aéreas, é possível que a rede codificadora do gerador não tenha aprendido tão bem como codificar essa região anatômica e, portanto, não contribua com a tarefa de segmentação.
 
 ## Conclusão
 O projeto da PulmoNet busca a geração de fatias de CTs pulmonares a partir de máscaras binárias, em duas dimensões, baseada em GANs. Esta rede utiliza uma arquitetura Pix2Pix para o gerador e uma PatchGAN para o discriminador. São usados dados da base pública ATM'22, cujos dados correspondem a volumes pulmonares de tomografias e segmentações das vias aéreas feitas por especialistas. Para a avaliação da qualidade da rede, propõe-se métodos qualitativos, quantitativos e análises de utilidade.
@@ -480,8 +481,7 @@ Novos estudos poderão ser elaborados a partir da nossa pesquisa, tais como:
 
 <a id="12">[12]</a> : A. Keshavarzi and E. Angelini, "Few-Shot Airway-Tree Modeling Using Data-Driven Sparse Priors," 2024 IEEE International Symposium on Biomedical Imaging (ISBI), Athens, Greece, 2024, pp. 1-5, doi: 10.1109/ISBI56570.2024.10635527.
 
-> TODO: Substituir por pdf ou remover? --->>>
-Documento com as referências extras identificadas: https://docs.google.com/document/d/1uatPj6byVIEVrvMuvbII6J6-5usOjf8RLrSxLHJ8u58/edit?usp=sharing
+Documento com as referências extras identificadas: [Artigos](docs/Artigos%20Projeto%20Redes%20Generativas.pdf?raw=true).
 
 
 # Anexos
