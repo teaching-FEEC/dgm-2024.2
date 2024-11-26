@@ -12,175 +12,307 @@ oferecida no segundo semestre de 2024, na Unicamp, sob supervisão da Profa. Dra
 > | Antonio César de Andrade Júnior  | 245628  | Eng. de Computação |
 > | Eduardo Nunes Velloso  | 290885  | Eng. Elétrica |
 
+### Uso
+
+1. Clonar o repositório:
+
+```
+git clone https://github.com/dioph/dgm-2024.2.git
+cd projetos/Semantic-Compression
+```
+
+2. Instalar os requisitos:
+
+```
+pip install -r requirements.txt
+```
+
+3. Preparar o dataset:
+
+```
+make data/city
+make data/coco
+```
+
+4. Editar `config.py` com os parâmetros desejados.
+
+5. Treinar no conjunto de dados escolhido:
+
+```
+cd semantic-commpression
+python -m modeling.train
+```
+
+6. Avaliar no conjunto de teste escolhido:
+
+```
+python -m modeling.predict
+```
 
 ## Resumo (Abstract)
 
-A compressão semântica é uma operação de crescente importância no contexto de comunicações orientadas a tarefa, selecionando os aspectos mais relevantes de uma mensagem. Em se tratando de imagens, modelos gerativos possiblitam reconstruções sintéticas que preservam o conteúdo semântico da imagem original. Nesse trabalho propomos estudar o comportamento de modelos gerativos baseados em GAN. Serão avaliados os desempenhos de variações da formulação original em termos de MS-SSIM (distorção sintática) e intersection-over-union (IoU; distorção semântica). Os resultados parciais obtidos até então revelam que é possível reconstruir imagens urbanas sem alimentar a GAN com nenhuma segmentação semântica, mas com distorções sintáticas significativas.
-
+A compressão semântica é uma operação de crescente importância no contexto de comunicações orientadas a tarefa, selecionando os aspectos mais relevantes de uma mensagem.
+Em se tratando de imagens, modelos gerativos possiblitam reconstruções sintéticas que preservam o conteúdo semântico da imagem original.
+Nesse trabalho propomos estudar o comportamento de modelos gerativos baseados em GAN.
+Foram avaliados os desempenhos de variações da formulação original em termos de distorção sintática, distorção semântica, e percepção.
+Os resultados obtidos revelam que o modelo resultante é fortemente enviesado pelas características do conjunto de dados utilizado para treinamento, e que a qualidade da rede de segmentação pode limitar a obtenção de mapas semânticos significativos após a reconstrução.
 
 
 ## Descrição do Problema/Motivação
 
-A compressão de dados, e em particular a compressão de imagens, é um componente fundamental para as novas gerações de comunicação móvel.
+A compressão de dados (e, em particular, a compressão de imagens) é um componente fundamental para as novas gerações de comunicação móvel.
 Aplicações de natureza crítica, como a telemedicina e os carros autônomos, envolvem decisões que precisam ser tomadas imediatamente com base em uma transmissão de imagens contínua, proveniente de vários sensores simultâneamente.
 Para viabilizar essas aplicações, uma compressão a taxas extremamente baixas (menos de 0.1 bit por pixel ou bpp) se faz necessária.
-Embora nesse caso já não seja possível preservar o conteúdo estrutural das imagens, essas tarefas estão interessadas somente em certos atributos da imagem, os quais constituem o valor semântico embutido na imagem.
 
-A tarefa da compressão semântica, portanto, é a de projetar um codificador capaz de extrair essa informação semântica e um decodificador capaz de gerar uma imagem reconstruída com o mesmo conteúdo essencial.
-O projeto de tais decodificadores pode ser desenvolvido por meio de modelos generativos.
+O problema da compressáo de dados pode ser formalizado como o projeto de um **codificador** $f:\mathcal{X}\rightarrow[1,2^R]$ e um **decodificador** $g:[1,2^R]\rightarrow\mathcal{X}$ de tal forma a garantir que a **distorção** média $\mathbb{E}d(x,g(f(x)))$ seja inferior a uma dada tolerância $D_x$.
+Shannon [[1]](#1) demonstra que a **taxa de compressão** $R$ mínima que possibilita a existência de uma solução é dada pelo problema de otimização da informação mútua:
 
-Em [[1]](#1), os autores introduziram uma proposta inicial da utilização de GANs para compressão semântica, tanto utilizando segmentação semântica para sintetizar regiões de interesse (por exemplo, para sintetizar fundos de videochamadas) quanto comprimindo apenas uma sequência de bits (por exemplo, para sintetizar detalhes de partes da imagem).
-O trabalho de [[2]](#2) propôs uma arquitetura chamada DSSLIC, também utilizando GANs, que combina a utilização dos mapas semânticos com os resíduos da própria compressão como entradas da rede decodificadora.
-Já em [[3]](#3), é utilizado um modelo de difusão latente (LDM), codificando um colormap quantizado da imagem original para auxiliar na reconstrução a partir do vetor semântico extraído.
+$$R=\sup_{f,g} I(X;\hat{X}) = \sup_{q}\mathbb{E}\log\left(\dfrac{q(\hat{x}|x)}{\sum_x p(x)q(\hat{x}|x)}\right),$$
+sujeito a restrição $\mathbb{E}d(x,\hat{x})\leq D_x$.
 
-Este projeto tem como objetivo realizar um estudo comparativo de modelos de compressão semântica baseados nos mencionados acima.
+O problema da **compressão semântica** surge da constatação que, para a maioria das tarefas de interesse, é suficiente a reconstrução de um estado intrínseco $S$ contido na observação extrínseca $X$. Isso permite obter codificadores viáveis com taxas $R$ extremamente baixas, a partir de uma restrição sobre a distorção semântica $\mathbb{E}d(s,\hat{s})\leq D_s$. 
 
-[Link para apresentação de slides](https://www.canva.com/design/DAFLAnYRo_I/-onPe1fuMSMTnykgfkM3zg/edit?utm_content=DAFLAnYRo_I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+Seja $\varphi:\mathcal{X}\rightarrow\mathcal{S}$ uma função **segmentadora** que representa a distribuição condicional $p(s|x)$, e seja $h:\mathcal{S}\rightarrow[1,2^R]$ um **extrator de características** para o espaço de estados semânticos, análogo ao codificador.
+Então $\hat{w}=f(x,s)$, $\hat{v}=h(s)$, e $\hat{x}=g(\hat{w},\hat{v})$ constituem um modelo de compressão condicionado à variável $S$.
+O objetivo passa a ser projetar $f$, $g$ e $h$ sob uma dada tolerância de **distorção semântica** $\mathbb{E}d(\varphi(x),\varphi(\hat{x}))$ de maneira a minimizar a taxa de compressão $R$.
+Uma vez que os pixels de uma imagem não são variáveis independentes, uma baixa distorção média entre pixels não necessariamente garante uma baixa distorção semântica, e vice-versa.
+
+O projeto dos modelos de compressão de imagens pode ser realizado por redes neurais.
+Mentzer et al. [[2]](#2) propuseram um autoencoder que também aprende um "mapa de importância" associado à entropia de cada subconjunto de pixels nas imagens originais, determinando assim quais regiões tem maior prioridade durante a reconstrução.
+A partir dessa proposta, Agustsson et al. [[3]](#3) incluíram um treinamento adversarial ao autoencoder com o objetivo de tornar as imagens reconstruídas visualmente mais realistas.
+Outra proposta que utilizou redes adversariais (GANs) foi a DSSLIC [[4]](#4), incluindo resíduos da compressão como entradas para a rede decodificadora.
+Já em [[5]](#5), é utilizado um modelo de difusão latente (LDM), codificando um colormap quantizado da imagem original para auxiliar na reconstrução a partir do vetor semântico extraído.
+
+Neste projeto realizamos um estudo de modelos generativos de compressão semântica baseados nos mencionados acima.
+
+[Link para apresentação de slides](https://www.canva.com/design/DAGXPszR-uE/QFLI4NdCQgBdT4qFYjf_HA/edit?utm_content=DAGXPszR-uE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ## Objetivo
 
-### Objetivo geral
-
-Contruir e comparar modelos gerativos voltados para compressão semântica de dados.
-
-### Objetivos específicos
-
-* Montar e treinar uma GAN simples que reconstrua uma imagem a partir do espaço latente da original;
-* Montar e treinar uma GAN/cGAN que construa uma imagem semanticamente parecida com a imagem original;
-* Comparar o comportamento e desempenho dos modelos implementados ao variar a função de distorção e a codificação semântica.
+Diante do contexto apresentado, o objetivo desse projeto é desenvolver modelos gerativos baseados em autoencoders e GANs condicionais para compressão semântica de imagens.
+Especificamente, dado uma taxa de compressão fixa $R$, queremos projetar as funções $f$, $g$ e $h$ que minimizem a distorção semântica $d(\varphi(x),\varphi(\hat{x}))$, gerando imagens próximas das originais e visualmente realistas.
 
 ## Metodologia
 
-> Descrever de maneira clara e objetiva, citando referências, a metodologia proposta para se alcançar os objetivos do projeto.
-> Citar algoritmos de referência.
-> Justificar os porquês dos métodos escolhidos.
-> Apontar ferramentas relevantes.
-> Descrever metodologia de avaliação (como se avalia se os objetivos foram cumpridos ou não?).
+Os objetivos apresentados foram abordados da seguinte forma.
+Definimos como "estado intrínseco" $S$ o mapa semântico de instâncias segmentadas e classificadas nas imagens correspondentes.
+Essa variável contempla simultaneamente o conteúdo (quais classes estão presentes) e a organização (qual a posição das classes presentes) das imagens.
+O espaço $\mathcal{S} \subset \mathcal{C}^{H\times W}$, em que $\mathcal{C}$ é o conjunto de possíveis classes observadas nas imagens, e $H$ e $W$ são as suas dimensões em pixels.
 
-Diante do contexto apresentado, a proposta deste projeto será implementar diferentes abordagens de redes generativas e compará-las de maneira padronizada com um modelo de referência de compressão tradicional e entre si.
+Dada uma imagem de entrada $x \in \mathcal{X} \subset [0,255]^{H\times W}$, a função segmentadora $\varphi$ é simplesmente uma rede neural segmentadora *off-the-shelf* pré-treinada para um determinado conjunto de classes $\mathcal{C}$.
+No nosso caso, utilizamos a Pyramid Scene Parsing Network (PSPNet) [[6]](#6) e a DeepLab [[7]](#7), conforme detalhado nas seções subsequentes.
 
-Para isso, será primeiramente analisado um modelo simples baseado em GAN sem rede de segmentação e um modelo mais sofisticado baseado em GANs condicionais (cGANs) para síntese de regiões de interesse da imagem original, como em [[1]](#1).
-A extração de informação semântica se dará por uma modificação da arquitetura ResNet de identificação de objetos em cenas, como foi feito pelo CLIP [[4]](#4) e pela PSPNet [[5]](#5).
-Além disso, como modelo de referência, será usado um codec de compressão WebP.
+O modelo de compressão neural utilizado foi baseado em redes completamente convolucionais (FCNs), cujas arquiteturas são detalhadas na subseção do Workflow.
+1. O **encoder** $f$ realiza um downsample da imagem original concatenada ao seu mapa semântico para um tensor $w$ com $C$ canais de dimensões $\left(\dfrac{H}{2^{N_\mathrm{conv}}},\dfrac{W}{2^{N_\mathrm{conv}}}\right)$, em que $N_\mathrm{conv}$ corresponde ao número de camadas convolucionais.
+2. O **extrator de características** $h$ realiza uma operação análoga no mapa semântico $s=\varphi(x)$, gerando um tensor $v$ com as mesmas dimensões de $w$.
+3. Em seguida, o **quantizador** realiza uma operação diferenciável para obter $\hat{w}$ e $\hat{v}$ a partir de $w$ e $v$, utilizando $L$ níveis de quantização fixos e igualmente espaçados.
+4. O **gerador** $g$ utiliza uma rede ResNet [[8]](#8) com $N_b$ blocos residuais seguida  por $N_\mathrm{conv}$ camadas convolucionais transpostas para realizar o upsample da concatenação de $\hat{w}$ e $\hat{v}$ para uma imagem reconstruída $\hat{x}$, com uma função de ativação $\tanh$ que mantém a saída entre -1 e 1.
+5. O **discriminador** $D:\mathcal{X}\times\mathcal{S}\rightarrow[0,1]$ realiza um downsample análogo ao encoder, com uma função de ativação sigmoide na saída, sendo treinado para classificar imagens entre reais e sintéticas.
 
-Finalmente, a avaliação se dará de maneira quantitativa através de dois grupos de métricas.
-Isso se deve ao compromisso matemático existente entre a **distorção** observada entre valores de pixels individuais e a **percepção** da qualidade da imagem [[8]](#8).
-Para medir a distorção entre as imagens reconstruídas e as imagens originais, serão usadas as métricas usuais de PSNR (peak signal-to-noise ratio) e MS-SSIM (multi-scale structural similarity).
-Já no caso da percepção, será comparada a representação semântica obtida nas imagens reconstruídas pelo reuso do codificador com a representação semântica da imagem original, através da relação IoU (intersection-over-union) dos vetores latentes encontrados.
-Também serão usadas métricas adversárias (e.g. Feature Matching) e a rede MUSIQ [[9]](#9), que computa uma métrica de qualidade da imagem reconstruída.
+A taxa de compressão é portanto limitada por $$R \leq \dfrac{H}{2^{N_\mathrm{conv}}}\times\dfrac{W}{2^{N_\mathrm{conv}}}\times C \times \log_2(L),$$
+de forma que $\mathrm{bpp}\leq \log_2{L}\times C/4^{N_\mathrm{conv}}$.
 
-* A métrica PSNR é uma medida utilizada na avaliação da qualidade de imagens e vídeos comprimidos ou processados. Ela compara a similaridade entre uma imagem ou vídeo original e sua versão comprimida ou modificada. É definida como $10*log _{10}\Big(\frac{MAX^2}{MSE}\Big)$, onde $MAX$ é máximo valor que um pixel pode ter;
+O treinamento se deu através do uso de dois otimizadores AdamW [[9]](#9) em paralelo, um responsável pelo ajuste de parâmetros do autoencoder e o outro pelos parâmetros do discriminador.
+As respectivas funções custo utilizadas foram:
 
-* O MS-SSIM expande o SSIM ao calcular a similaridade estrutural em diferentes escalas, obtidas através de um processo de subamostragem ou redimensionamento da imagem em várias resoluções. O objetivo é capturar as informações tanto de detalhes finos quanto de padrões globais da imagem. É definido como $`MS-SSIM(x,y) = \prod_{j=1}^M [l(x,y)]^{\alpha_j}*[c(x,y)]^{\beta_j}*[s(x,y)]^{\gamma_j}`$, onde $l(x,y)$, $c(x,y)$ e $s(x,y)$ são luminância, contraste e estrutura, respectivamente, e $\alpha_j$, $\beta_j$ e $\gamma_j$ são os pesos para cada escala. O range é 0-1;
+$$\begin{cases}\mathcal{L}_\mathrm{AE} &=  \mathbb{E}(\lambda ||x-\hat{x}||^2 + \ell(D(\hat{x},s),\mathrm{REAL})) \\ \mathcal{L}_\mathrm{D} &= \mathbb{E}(\ell(D(x,s),\mathrm{REAL}) + \ell(D(\hat{x},s),\mathrm{FAKE}))\end{cases},$$
+em que $\ell(\cdot,\cdot):[0,1]\times[0,1]\rightarrow\mathbb{R}$ é alguma medida de divergência baseada nos rótulos $\mathrm{REAL},\mathrm{FAKE}\in[0,1]$ e $\lambda>0$ é um termo de regularização que pondera a relevância da distorção sintática na reconstrução. 
 
-* O IoU é uma métrica utilizada para avaliar a precisão de modelos de detecção e segmentação de objetos em visão computacional. Ela mede a sobreposição entre a área prevista pelo modelo e a área real do objeto, sendo um indicador de quão bem o modelo localizou ou delimitou o objeto. É definido como $IoU=\frac{Área \_ de \_ Interseção}{Área \_ de \_ União}$. O range é 0-1;
+O treinamento descrito pode ser interpretado das seguintes formas: por um lado, trata-se de um simples autoencoder que minimiza a distorção das imagens recontruídas, ao qual é concatenado um discriminador responsável por aproximar as distribuições de probabilidade observadas nas imagens de entrada e saída, melhorando a **percepção** das reconstruções; por outro lado, trata-se de uma DCGAN [[10]](#10) cuja amostragem do espaço latente não é aleatória, mas sim baseada na codificação de imagens reais, e o termo de distorção estabiliza o treinamento evitando colapso de modos.
 
-* A métrica MUSIQ é um método mais recente para avaliar a qualidade perceptiva de imagens. Diferente de métricas tradicionais como PSNR e SSIM, que calculam a qualidade com base em medidas objetivas de diferenças entre pixels, o MUSIQ é um modelo baseado em aprendizado profundo que captura a percepção de qualidade visual de forma mais próxima ao que os humanos experimentam. Ele foi treinado em grandes conjuntos de dados contendo anotações de qualidade de imagens fornecidas por observadores humanos, permitindo uma avaliação mais precisa da qualidade subjetiva. O range é 0-100;
+Também diferenciamos dois cenários de operação segundo o uso dos mapas semânticos verdadeiros como informação lateral: a **compressão seletiva** (SC), na qual $f$, $g$ e $D$ têm acesso a $s=\varphi(x)$, e a **compressão gerativa** (GC), na qual passamos $s=0$ em todos os blocos. Enquanto o modo SC possibilita o condicionamento da reconstrução a semântica desejada, o modo GC possibilita a aplicação do compressor a qualquer imagem externa ao conjunto de dados, para a qual $\varphi$ pode não ser bem definido.
 
-Em uma avaliação de ordem qualitativa para teste inicial do conceito também serão consideradas imagens da base de dados da Kodak, comumente utilizada para benchmarks de compressão de imagens.
+Os modelos treinados foram avaliados segundo as seguintes métricas:
 
+1. **PSNR**
+
+    Nada mais é que $10\log_{10}(||x-\hat{x}||^{-2})$, uma medida do inverso do erro médio quadrático em decibel. Útil para verificar o funcionamento adequado do autoencoder.
+
+2. **MS-SSIM**
+
+    Multi-Scale Structural Similarity, uma medida de distorção sintática $d(x,\hat{x})$ que leva em conta a dependência estrutural dos pixels, sendo assim mais correlacionada com o desempenho da tarefa *downstream* de interesse.
+
+3. **IoU**
+
+    Intersection-over-Union, uma medida de distorção semântica $d(s,\hat{s})$ que mede a taxa percentual de acertos da segmentação da reconstrução em relação a original.
+
+4. **MUSIQ** [[11]](#11)
+
+    Uma medida da percepção $\Psi(\hat{x})$, a qual tem uma relação de compromisso matemático com a distorção [[12]](#12). É determinada a partir de uma rede neural treinada sobre dados de avaliação perceptual humana.
+
+Além disso, várias técnicas de treinamento foram consideradas e seu efeito no desempenho final foi avaliado por um estudo de ablação:
+
+1. **Pré-treino**
+
+    Considera a possibilidade de treinar exclusivamente o autoencoder apenas com relação ao custo de reconstrução $||x-\hat{x}||^2$ durante metade do número total de épocas de treinamento, buscando obter uma inicialização mais adequada ao processo de treinamento global.
+
+2. **Divergência adversarial $\ell$**
+
+    Considera a utilização do erro médio quadrático (MSE) e da entropia cruzada binária (BCE).
+
+3. **Dropout**
+
+    Considera a inclusão de camadas de dropout com probabilidade 30\% para regularizar o treinamento do discriminador.
+
+4. **Rótulos adversariais suaves**
+
+    Considera o uso dos rótulos $\mathrm{REAL}=0.95$ e $\mathrm{FAKE}=0.10$ em vez de $\mathrm{REAL}=1$ e $\mathrm{FAKE}=0$, para estabilizar os valores do contradomínio de $\ell$ e seus respectivos gradientes.
+
+5. **Adição de ruído**
+
+    Considera ruído aditivo gaussiano de variância $0.01$ na entrada do discriminador.
+
+6. **Modo GC+**
+
+    Para o cenário de compressão gerativa (GC), considera fornecer os mapas semânticos verdadeiros $s=\varphi(x)$ somente para o discriminador, de forma que a operação durante a inferência permanece independente de $\varphi$.
+
+7. **Redução de $\lambda$**
+
+    Considera usar $\lambda=5$ em vez de $\lambda=10$ como regularizador.
 
 ### Bases de Dados e Evolução
 |Base de Dados | Endereço na Web | Resumo descritivo|
 |----- | ----- | -----|
-|Cityscapes [[6]](#6) | https://www.cityscapes-dataset.com/ | 5 mil imagens urbanas contendo objetos de 30 classes e respectivas segmentações |
-| COCO-Stuff 10K v1.1 [[7]](#7) | https://github.com/nightrome/cocostuff10k | 10 mil imagens contendo objetos de 182 classes e respectivas segmentações |
+|Cityscapes [[13]](#13) | https://www.cityscapes-dataset.com/ | 5 mil imagens urbanas contendo objetos de 30 classes e respectivas segmentações |
+| COCO-Stuff 10K v1.1 [[14]](#14) | https://github.com/nightrome/cocostuff10k | 10 mil imagens contendo objetos de 182 classes e respectivas segmentações |
 
-As imagens da base Cityscapes possuem todas as mesmas dimensões em pixels (2048x1024) e são subdivididas em 2975 imagens de treino, 1525 de validação e 500 de teste.
-Como pré-processamento, estas foram redimensionadas para 256x128.
-A média e variância do conjunto de imagens de treino foi determinada para cada canal de cor, e o resultado foi utilizado para normalizar as imagens de entrada para distribuições gaussianas aproximadamente unitárias.
+Todas as imagens da base Cityscapes possuem as mesmas dimensões em pixels (1024x2048), enquanto as imagens da base COCO-Stuff possuem dimensões variadas.
+Durante a preparação de dados, ambas as bases são divididas entre um conjunto de treino com 90\% do total de imagens e um conjunto de teste com os demais 10\%.
+Além disso, as imagens do COCO-Stuff são recortadas com base no quadrado central de maneira a padronizar os aspectos, e em seguida todas as imagens de ambas as bases são redimensionadas de forma a seu menor lado ter 384 pixels de comprimento (384x768 no caso do Cityscapes, 384x384 no caso do COCO-Stuff).
+
+O treinamento é realizado com apenas uma das bases, de acordo com a configuração escolhida.
+Durante o treinamento, foram realizadas transformações sobre os dados de maneira a diversificar as imagens encontradas pela rede a cada época; é feita uma variação de brilho aleatória de até 50\% seguida de uma reflexão horizontal com probabilidade 50\%.
+As imagens de entrada também são normalizadas uniformemente para o intervalo $[-1,1]$ antes do treinamento.
+
+No caso da base Cityscapes, o segmentador utilizado foi a PSPNet com 101 camadas de ResNet pré-treinada nesse mesmo conjunto de dados.
+Já no caso do COCO-Stuff, o segmentador utilizado foi a DeepLab com 101 camadas de ResNet, também pré-treinada nessa mesma base.
+Em outras palavras, não foi necessário nenhum treinamento adicional dos pesos das redes segmentadores utilizadas em ambos os cenários.  
+
+As características particulares de cada base de dados trazem consigo vantagens e desvantagens.
+As imagens do Cityscapes são mais uniformes, o que facilita a segmentação, mas também significa que errar pequenos detalhes pode ter um impacto significativo.
 O acesso foi obtido gratuitamente por meio de cadastro, embora a licença não permita a redistribuição pública das imagens utilizadas.
-
-As imagens da base pública COCO-Stuff serão utilizadas posteriormente no trabalho.
-As imagens são de dimensões e aspectos variados, e o pré-processamento delas incluiu uma etapa de cropping para permitir a redução padronizada a 256x256.
-Sendo uma base mais diversa em termos de tipos de cenas, traz com isso vantagens e desvantagens: permite potencialmente uma melhor generalização do modelo treinado, mas também dificulta mais o processo de treinamento.
+Já no caso do COCO-Stuff, sendo uma base mais diversa em termos de tipos de cenas, permite potencialmente uma melhor generalização do modelo treinado, mas também dificulta o processo de treinamento.
 
 
 ### Workflow
-Na figura abaixo, mostramos a visão geral do modelo baseado em GAN implementado, ainda sem utilização de informações semânticas:
 
-![Visão Geral](figs/overview.jpeg)
+Conforme mencionado anteriormente, a arquitetura proposta é baseada em FCNs, nas quais utilizamos $N_\mathrm{conv}=4$ blocos convolucionais em cada processo de downsample/upsample e $N_b=6$ blocos residuais na ResNet do gerador.
+Cada bloco convolucional consiste em uma camada convolucional seguida por uma normalização por instância e uma ativação ReLU.
 
-Trata-se de um autoencoder no qual o decoder consiste em uma GAN.
-Além disso, um quantizador permite o controle da taxa de bits utilizada na representação latente da imagem comprimida.
+Especificamente, a arquitetura proposta é detalhada abaixo:
+* Encoder $f$: `c7s1-(F/16) d-(F/8) d-(F/4) d-(F/2) d-F c3s1-C q`
+* Extrator de características $h$: `c7s1-(F/16) d-(F/8) d-(F/4) d-(F/2) d-F c3s1-C q`
+* Gerador $g$: `c3s1-F R-F R-F R-F R-F R-F R-F u-(F/2) u-(F/4) u-(F/8) u-(F/16) c7s1-3`
+* Discriminador $D$: `c7s1-(F/16) d-(F/8) d-(F/4) d-(F/2) d-F c3s1-1`
 
-Mais especificamente, um vetor latente $w = E(x)$ é gerado a partir do encoder $E$; esse vetor é quantizado em $L$ níveis de quantização pelo quantizador $Q$, a partir da qual o gerador G gera uma imagem reconstruída $\hat{x}=G(\hat{w})$. 
-Os níveis do quantizador são fixos a priori e seu gradiente é ignorado durante a retropropagação, já que não é uma operação diferenciável.
-Durante o treinamento, o discriminador $D$ busca maximizar os acertos no discernimento entre imagens reais e geradas, enquanto o autoencoder minimiza esse mesmo objetivo somado a uma distorção entre as imagens de entrada e saída.
-De fato, o problema de otimização característico pode ser escrito na forma:
+Na notação utilizada acima, `cKs1` indica um bloco convolucional que não altera o tamanho da imagem de entrada (passo 1) e cujo kernel é quadrado com tamanho $K$; `d` indica um bloco de downsample (passo 2); `u` indica um bloco de upsample (convolucional transposta com passo 2); `R` indica um bloco residual com 6 camadas convolucionais; o sufixoi `-N` indica que a saída do bloco tem $N$ canais ($N$ filtros); e `q` representa o quantizador diferenciável.
 
-$$\min_{E,G} \max_{D} \mathbb{E}[(D(x)-1)^2] + \mathbb{E}[D(\hat{x})^2] + \lambda d(x,\hat{x})$$
+O autoencoder resultante da combinação de $f$ e $g$ acima é ilustrado esquematicamente na Figura 1 abaixo:
 
-As arquiteturas utilizadas para o autoencoder são baseadas em blocos residuais da ResNet, como ilustram os diagramas a seguir:
+![](figs/auto.png)
 
-![](figs/e.jpeg)
-![](figs/g.jpeg)
+A variação de altura dos blocos representa as variações nas dimensões das imagens, enquanto a variação de largura representa o número de canais após cada etapa.
 
-O número de filtros $F$ e o número de blocos residuais $N$ constituem hiperparâmetros que definem a complexidade do modelo a ser treinado.
-Além destes, as taxas de aprendizado, o número $C$ de canais de saída do encoder, e o número $L$ de níveis de quantização também são hiperparâmetros a serem otimizados.
+A visão geral do workflow completo do projeto é ilustrada na Figura 2 abaixo:
 
-A entropia das possíveis entradas latentes da GAN, isto é, o número de bits necessários para representar as imagens comprimidas, é limitada pelas dimensões da imagem:
+![](figs/workflow.png)
 
-$$\mathcal{H}(\hat{w}) \leq \dfrac{H}{8} \times \dfrac{W}{8} \times C \times \log_2(L),$$
-em que $H,W$ são as dimensões da imagem original e o fator 8 vem da redução introduzida pelas convoluções no encoder.
-A partir dessa entropia máxima é possível estimar a taxa de compressão em bits por pixel.
+Na parte superior esquerda, em laranja, temos a etapa de preparação dos dados e pré-processamento, conforme descrita na subseção anterior. Em seguida, em amarelo, temos o restante do processo de data augmentation aplicado separadamente às imagens $x$ e seus mapas $s$.
+Ao lado direito, os 3 diagramas representam o treinamento da rede nos cenários de operação GC, GC+ e SC. Por fim, o processo de inferência e cálculo das métricas de avaliação nos conjuntos de teste é ilustrado na parte inferior esquerda para os cenários GC e SC (note que não há diferença entre GC e GC+ durante a inferência).
 
 ## Experimentos, Resultados e Discussão dos Resultados
 
-A arquitetura descrita na seção anterior foi implementada por meio do framework Keras. Os hiperparâmetros relativos a complexidade da rede foram variados entre 3 configurações: pequena (32 filtros, 3 blocos), média (64 filtros, 4 blocos) e grande (128 filtros, 5 blocos). A taxa de aprendizado de cada otimizador foi variada entre duas opções: 1E-3 ou 1E-4. Os treinamentos foram realizados durante 100 épocas, e as funções custo referentes ao discriminador e ao autoencoder foram registradas separadamente para cada caso.
+Para o estudo de ablação, foram fixados os hiperparâmetros $F=240$ filtros, $\beta_1=0.5$, $\beta_2=0.999$ e $\eta_\mathrm{AE}=\eta_D=0.0003$ para os otimizadores, além dos valores de $N_b=6$ blocos residuais e $N_\mathrm{conv}=4$ blocos convolucionais mencionados anteriormente.
+Os modelos foram treinados no dataset COCO-Stuff com redimensionamento para 192x192 pixels, $C=4$ canais no gargalo, e operação no modo SC.
+O quantizador foi projetado com $L=8$ níveis de quantização igualmente espaçados entre -2.1 e +2.1. Isso corresponde a um controle da taxa de compressão para $R=1728$ bits (216 bytes) ou cerca de 0.047 bpp. Para esse teste, o treinamento foi feito por 80 épocas com tamanho de batch igual a 200. 
 
-Observamos que quando o otimizador do discriminador tem uma taxa de aprendizado mais rápida, ele tende a convergir sua função custo para um dos dois extremos no qual sua saída é independente da imagem gerada.
-O aumento da complexidade da rede também levantou comportamentos indesejados no treinamento, levando ao sobreajuste do conjunto de treino.
 
-Dentre as opções analisadas, o modelo pequeno com taxas 1E-4 para o discriminador e 1E-3 para o autoencoder se mostrou com melhor desempenho.
-A figura abaixo mostra a evolução de suas funções custo, com o discriminador convergindo para um equilíbrio em torno de 0.25 e o autoencoder sendo capaz de reduzir quase monotonicamente a distorção (foi utilizado fator $\lambda=10$). 
-No lado direito, mostramos também um exemplo de reconstrução para uma imagem do conjunto de teste do Cityscapes, ilustrando qualitativamente a significância desse nível de distorção 
+<style>
+    .heatMap {
+        width: 70%;
+        text-align: center;
+    }
+    .heatMap th {
+        background: grey;
+        word-wrap: break-word;
+        text-align: center;
+    }
+    .heatMap tr:nth-child(2) { background: #C6EDC3; }
+    .heatMap tr:nth-child(3) { background: #C6EDC3; }
+    .heatMap tr:nth-child(4) { background: #ff8080; }
+    .heatMap tr:nth-child(5) { background: #ff8080; }
+    .heatMap tr:nth-child(6) { background: #C6EDC3; }
+    .heatMap tr:nth-child(7) { background: #ff8080; }
 
-![](figs/plot_01280256032032560001000100.png)
+</style>
+
+<div class="heatMap">
+
+| pré-treino | $\ell$ | dropout | rótulo suave | ruído | $\lambda$ | PSNR | MS-SSIM | IoU | MUSIQ |
+|----- | ----- | -----| -----| -----| -----| -----| -----| -----|-----|
+| :x:   | BCE   | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  | 5 | 18.6323 | 0.6840 | 0.0609 | 20.9435 |
+| :x:   | BCE   | :white_check_mark:  | :white_check_mark:  | :white_check_mark:   | 10 | 18.5691 | 0.7015 | 0.0767 | 14.3494 |
+| :x:   | BCE   | :white_check_mark:  | :white_check_mark:  | :x:  | 10 |  18.8568 | 0.7039 | 0.0741 | 23.4123 |
+| :x:  | BCE   | :white_check_mark:  | :x:  | :x:  |  10 | 18.0193 | 0.6771 | 0.0492 | 25.5737 |
+| :x:   | BCE   | :x:  | :x:  | :x:  | 10 | 17.7700 | 0.6474 | 0.0588 | 24.9416 |
+| :x:   | MSE   | :x:  | :x:  | :x:  | 10 | 18.5598 | 0.6911 | 0.0775 | 26.7606 |
+| :white_check_mark:  | MSE   | :x:  | :x:  | :x:  |  10 | 18.6989 | 0.6984 | 0.0583 | 23.4893 |
+
+</div>
+
+A tabela acima mostra os resultados obtidos para cada configuração testada no estudo.
+As linhas verdes indicam uma melhora em relação a configuração anterior, e as linhas vermelhas indicam um desempenho pior.
+Diante desses resultados, utilizamos o dropout e os rótulos suaves, com $\lambda=10$ e divergência de erro médio quadrático, sem pré-treino e sem adição de ruído.
+
+Treinamos a rede nessa configuração ideal por 160 épocas, em ambos os conjuntos de dados.
+Os resultados obtidos pela reconstrução são mostrados abaixo para um subconjunto de 8 imagens de cada dataset. As duas primeiras linhas correspondem às imagens originais e as duas linhas de baixo são as reconstruções correspondentes.
+
+![](figs/COCO-SC-DEF_240-4-10-S-D-MSE_03-3-200-400_test.jpg)
+
+![](figs/CITY-SC-DEF_240-4-10-S-D-MSE_03-3-100_test.jpg)
+
+
+Observamos que os resultados no Cityscapes tendem a alcançar distorções sintáticas mais baixas, devido a maior monotonia das imagens presentes em torno da média. No entanto, o modelo tende a desconsiderar detalhes importantes, como a presença de carros em perspectiva.
+Já no COCO-Stuff o modelo tem uma maior dificuldade devido à diversidade de cenas presentes nos dados, e o efeito da GAN no modelo é mais fortemente observado pela presença de artefatos.
 
 
 ## Conclusão
 
-Estando implementada a base da arquitetura do compressor (autoencoder com discriminador), a perspectiva para o restante do trabalho envolve seguir os seguintes passos:
+Foi desenvolvido um modelo de compressão semântica de imagens baseado em autoencoder + GAN condicional.
+O efeito de diferentes técnicas de treinamento foram comparadas entre si por meio de um estudo de ablação.
+Os resultados obtidos pelos melhores modelos ainda não são capazes de ultrapassar 10\% de IoU (distorção semântica), indicando uma limitação de complexidade da arquitetura e também um limite fundamental introduzido pelo gargalo de entropia.
 
-1. Avaliar o efeito de alimentar o discriminador com a informação semântica durante o treinamento (permanece desnecessária ao uso do autoencoder);
-2. Alimentar o gerador com a informação semântica (condicionando a GAN);
-3. Implementar e treinar um rede de segmentação semântica baseada na arquitetura pre-existente da PSPnet [[5]](#5);
-4. Treinar as mesmas arquiteturas a partir de uma função de distorção semântica;
-5. Aplicar as métricas de avaliação aos resultados obtidos em cada cenário.
-
-
-
-### Cronograma
->| Tarefa          | Data de Finalização     | Número de Semanas| Progresso  |
->|-----------------|------------|-----------|------------|
->| Revisão bibliográfica        | 17/09/2024 | 2 | ██████████ 100% |
->| Webp | 24/09/2024 | 1 | ██████████ 100% |
->| Desenvolvimento GAN | 08/10/2024 | 2 | █████████░ 90%  
->| Entrega 2          | 08/10/2024 | 0 | ██████████ 100% |
->| Rede de segmentação semântica | 15/10/2024 | 1 | ░░░░░░░░░░ 0% |
->| Desenvolvimento cGAN    | 29/10/2024 | 2 | ░░░░░░░░░░ 0%  |
->| GAN/cGAN com distoção semântica    | 12/11/2024 | 2 | ░░░░░░░░░░ 0%  |
->| Análise dos resultados    | 25/11/2024 | 2 | ░░░░░░░░░░ 0%  |
->| Montar entrega 3   | 25/11/2024 | 0 | ░░░░░░░░░░ 0%  |
+Trabalhos futuros poderão investigar os possíveis benefícios introduzidos pela separação da senântica de conteúdo e de organização na forma de embeddings obtidos por modelos fundacionais.
+Além disso, modelos de difusão são opções atraentes para avaliar a capacidade de decodificaçào generativa a partir desses embeddings.
 
 
 ## Referências Bibliográficas
 
-<a id="1">[1]</a> E. Agustsson, M. Tschannen, F. Mentzer, R. Timofte, and L. Van Gool, “Generative adversarial networks for extreme learned image compression,” in Proc. IEEE/CVF Int. Conf. Comput. Vis. (ICCV), Oct. 2019, pp. 221–231, https://ieeexplore.ieee.org/document/9010721
+<a id="1">[1]</a> C. Shannon, "Coding Theorems for a Discrete Source with a Fidelity Criterion," IRE International Convention Record, 1959.
 
-<a id="2">[2]</a> M. Akbari, J. Liang, and J. Han, “DSSLIC: Deep semantic segmentation-based layered image compression,” in Proc. IEEE Int. Conf. Acoust., Speech Signal Process. (ICASSP), May 2019, pp. 2042–2046, https://ieeexplore.ieee.org/document/8683541
+<a id="2">[2]</a> F. Mentzer, et al. "Conditional Probability Models for Deep Image Compression," Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018.
 
-<a id="3">[3]</a> : T. Bachard, T. Bordin and T. Maugey, "CoCliCo: Extremely Low Bitrate Image Compression Based on CLIP Semantic and Tiny Color Map," 2024 Picture Coding Symposium (PCS), Taichung, Taiwan, 2024, pp. 1-5, doi: 10.1109/PCS60826.2024.10566358., https://ieeexplore.ieee.org/document/10566358
+<a id="3">[3]</a> E. Agustsson, M. Tschannen, F. Mentzer, R. Timofte, and L. Van Gool, "Generative Adversarial Networks for Extreme Learned Image Compression," Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV), Oct. 2019, pp. 221–231, https://ieeexplore.ieee.org/document/9010721
 
-<a id="4">[4]</a> : T. Bachard and T. Maugey, "Can Image Compression Rely on CLIP?," in IEEE Access, vol. 12, pp. 78922-78938, 2024, doi: 10.1109/ACCESS.2024.3408651., https://ieeexplore.ieee.org/abstract/document/10545425
+<a id="4">[4]</a> M. Akbari, J. Liang, and J. Han, "DSSLIC: Deep Semantic Segmentation-based Layered Image Compression," Proceedings of the IEEE International Conferenece on Acoustic, Speech and Signal Processing (ICASSP), May 2019, pp. 2042–2046, https://ieeexplore.ieee.org/document/8683541
 
-<a id="5">[5]</a> H. Zhao, J. Shi, X. Qi, X. Wang, and J. Jia, “Pyramid scene parsing network,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR), Jul. 2017, pp. 2881–2890
+<a id="5">[5]</a> : T. Bachard, T. Bordin and T. Maugey, "CoCliCo: Extremely Low Bitrate Image Compression Based on CLIP Semantic and Tiny Color Map," Picture Coding Symposium (PCS), Taiwan, 2024, pp. 1-5, doi: 10.1109/PCS60826.2024.10566358., https://ieeexplore.ieee.org/document/10566358
 
-<a id="6">[6]</a> M. Cordts, M. Omran, S. Ramos, T. Rehfeld, M. Enzweiler, R. Benenson, U. Franke, S. Roth, and B. Schiele, "The cityscapes dataset for semantic urban scene understanding," in Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR), 2016, pp. 3213–3223, https://ieeexplore.ieee.org/document/7780719
+<a id="6">[6]</a> H. Zhao, J. Shi, X. Qi, X. Wang, and J. Jia, "Pyramid Scene Parsing Network," Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), Jul. 2017, pp. 2881–2890.
 
-<a id="7">[7]</a> H. Caesar, J. Uijlings, and V. Ferrari, "COCO-Stuff: Thing and stuff classes in context," in Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR), 2018, https://ieeexplore.ieee.org/document/8578230
+<a id="7">[7]</a> L. Chen, et al. "Deeplab: Semantic Image Segmentation with Deep Convolutional Nets, Atrous Convolution, and Fully Connected CRFs," IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI), 2017.
 
-<a id="8">[8]</a> Y. Blau and T. Michaeli, “Rethinking lossy compression: The rate-distortion-perception tradeoff,” in Proc. Int. Conf. Mach. Learn., vol. 97, Jun. 2019, pp. 675–685, 
+<a id="8">[8]</a> K. He, et al. "Deep Residual Learning for Image Recognition," Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016.
 
-<a id="9">[9]</a> J. Ke, Q. Wang, Y. Wang, P. Milanfar, and F. Yang, “Musiq: Multi-scale image quality transformer,” in Proceedings of the IEEE/CVF International Conference on Computer Vision, 2021, pp. 5148–5157, https://ieeexplore.ieee.org/document/9710973
+<a id="9">[9]</a> I. Loshchilov, "Decoupled Weight Decay Regularization," arXiv preprint arXiv:1711.05101, 2017.
+
+<a id="10">[10]</a> A, Radford, "Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks." arXiv preprint arXiv:1511.06434, 2015.
+
+<a id="11">[11]</a> J. Ke, Q. Wang, Y. Wang, P. Milanfar, and F. Yang, "Musiq: Multi-scale image quality transformer," Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV), 2021, pp. 5148–5157, https://ieeexplore.ieee.org/document/9710973
+
+<a id="12">[12]</a> Y. Blau and T. Michaeli, "Rethinking Lossy Compression: The Rate-Distortion-Perception Tradeoff," Proceedings of the International Conference on Machine Learning (ICML), vol. 97, Jun. 2019, pp. 675–685.
+
+<a id="13">[13]</a> M. Cordts, M. Omran, S. Ramos, T. Rehfeld, M. Enzweiler, R. Benenson, U. Franke, S. Roth, and B. Schiele, "The Cityscapes Dataset for Semantic Urban Scene Understanding," Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016, pp. 3213–3223, https://ieeexplore.ieee.org/document/7780719
+
+<a id="14">[14]</a> H. Caesar, J. Uijlings, and V. Ferrari, "COCO-Stuff: Thing and Stuff Classes in Context," Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018, https://ieeexplore.ieee.org/document/8578230
+

@@ -257,7 +257,7 @@ class CGAN(nn.Module):
 
     def train_step(self, batch):
         x_batch = batch['x'].to(self.device)
-        s_batch = batch['s'].to(self.device)
+        s_batch = batch['s'].to(self.device).float() / 255.
         noise = self.input_noise * torch.randn(x_batch.shape, device=self.device, dtype=x_batch.dtype)
         x0_batch = x_batch + noise
         # treinamento discriminador
@@ -294,7 +294,7 @@ class CGAN(nn.Module):
 
     def pre_train_step(self, batch):
         x_batch = batch['x'].to(self.device)
-        s_batch = batch['s'].to(self.device)
+        s_batch = batch['s'].to(self.device).float() / 255.
         # with torch.autocast(device_type=self.device):
         if self.c_mode == 2:
             x_hat = self.autoencoder(x_batch, s_batch)

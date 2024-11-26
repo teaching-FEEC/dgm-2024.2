@@ -210,7 +210,7 @@ def psp(model, x):
     x: uint8 ndarray[H, W, 3]
 
     returns:
-    s: int64 ndarray[H, W]
+    s: uint8 ndarray[H, W]
     """
     crop_h = crop_w = 713 # 713, 473
     classes = 19 # 19, 150
@@ -261,7 +261,7 @@ def psp(model, x):
     prediction_crop /= np.expand_dims(count_crop, 2)
     prediction = prediction_crop[pad_h_half:pad_h_half+ori_h, pad_w_half:pad_w_half+ori_w]
     s = np.argmax(prediction, axis=2)
-    return s
+    return np.uint8(s)
 
 def deeplab(model, x):
     """
@@ -269,7 +269,7 @@ def deeplab(model, x):
     x: uint8 ndarray[H, W, 3]
 
     returns:
-    s: int64 ndarray[H, W]
+    s: uint8 ndarray[H, W]
     """
     size = 513
     scale = size / max(x.shape[:2])
@@ -284,17 +284,17 @@ def deeplab(model, x):
     probs = nn.functional.softmax(logits, dim=1)[0]
     probs = probs.cpu().numpy()
     s = np.argmax(probs, axis=0)
-    return s
+    return np.uint8(s)
 
-def get_maps(path, dset=None):
+def get_maps(path, dset=None, psp_path=None):
     if dset == "coco":
         model = torch.hub.load("kazuto1011/deeplab-pytorch", "deeplabv2_resnet101", pretrained="cocostuff10k", n_classes=182)
         model = model.to('cuda')
         phi = deeplab
     elif dset == "city":
         model = PSPNet(layers=101, classes=19, zoom_factor=8, pretrained=False)
-        model = model.to('cuda')
-        checkpoint = torch.load("models/pspnet_city.pth")
+        model = nn.DataParallel(model).cuda()
+        checkpoint = torch.load(psp_path)
         model.load_state_dict(checkpoint['state_dict'], strict=False)
         phi = psp
     else:

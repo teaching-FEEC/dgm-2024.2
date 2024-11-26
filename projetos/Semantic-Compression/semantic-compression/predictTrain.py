@@ -75,36 +75,17 @@ def compute_metrics(x_test, s_test, x_hat, s_hat):
         ious.append(iou(s0, s))
     return psnr(x_test, x_hat), d(x_test, x_hat), ious, psi(x_hat)
 
-def main():
-    # test dataset
-    test_set = SemanticData(
-        PATH_TEST, CROP_SHAPE,
-        transform=v2.Compose([
-            v2.ToImage(),
-            SemanticResize(size=SHORT_SIZE),
-        ]),
-        x_transform=v2.Compose([
-            v2.ToDtype(torch.float32, scale=True),
-            v2.Normalize((0.5,), (0.5,)),
-        ]),
-        s_transform=v2.Compose([
-            v2.ToDtype(torch.uint8),
-        ]),
-    )
-    test_loader = data.DataLoader(test_set,
-                                  batch_size=BATCH_SIZE,
-                                  shuffle=True,
-                                  num_workers=4,
-                                  pin_memory=True)
-    # load trained model
+def predict(test_loader, epoch):
+
     model = CGAN(FILTERS, N_BLOCKS, CHANNELS, N_CONVS, SIGMA, LEVELS, L_MIN, L_MAX,
                  LAMBDA_D, GAN_LOSS, OPTIMIZER_BETAS, AE_LR, DC_LR, DEVICE,
                  DROPOUT, REAL_LABEL, FAKE_LABEL, INPUT_NOISE, C_MODE, RUN_ID)
-    ae_checkpoint = torch.load(os.path.join(PATH_MODELS, f"ae_{RUN_ID}_{PT_EPOCHS+FT_EPOCHS}.pth"))
-    dc_checkpoint = torch.load(os.path.join(PATH_MODELS, f"dc_{RUN_ID}_{PT_EPOCHS+FT_EPOCHS}.pth"))
+    ae_checkpoint = torch.load(os.path.join(PATH_MODELS, f"ae_{RUN_ID}_{epoch}.pth"))
+    dc_checkpoint = torch.load(os.path.join(PATH_MODELS, f"dc_{RUN_ID}_{epoch}.pth"))
     model = model.to(DEVICE)
     model.autoencoder.load_state_dict(ae_checkpoint)
     model.discriminator.load_state_dict(dc_checkpoint)
+  
     model.eval()
     # load segmentation network
     if RUN_ID.lower().startswith("coco"):
@@ -120,11 +101,6 @@ def main():
     seg.eval()
     # compute metrics
     psnrs, ds, ious, psis = evaluate(model.autoencoder, phi, seg, test_loader)
-    np.savetxt(os.path.join(PATH_MODELS, "test_" + model.filename + ".txt"),
-               np.array([psnrs.cpu().numpy(), ds.cpu().numpy(), ious.cpu().numpy(), psis.cpu().numpy()]))
+    np.savetxt(os.path.join(PATH_MODELS, "test_" + model.filename + "_" + str(epoch) + ".txt"),
+               np.array([(psnrs.cpu().numpy()).mean(), (ds.cpu().numpy()).mean(), (ious.cpu().numpy()).mean(), (psis.cpu().numpy()).mean()]))
     print(psnrs.mean(), ds.mean(), ious.mean(), psis.mean())
-    # plot samples
-    plot_reconstruction(model, test_loader, "test", PATH_FIGS, model.filename)
-
-if __name__ == '__main__':
-    main()
