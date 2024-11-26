@@ -9,6 +9,7 @@ https://docs.google.com/presentation/d/1eOmgRpkQeXU1htM_7Gq66HRcn2CPZ7iB/edit?pl
 ## Notebooks
 
 - [GANs Notebook](https://github.com/byronacunia/dgm-2024.2/blob/main/projetos/FinancialDataSynthesis/notebooks/GANs.ipynb): Modelo baseado em Redes Adversariais Gerativas (GAN) implementado para síntese de dados financeiros.
+- [Transformer Notebook](https://github.com/byronacunia/dgm-2024.2/blob/main/projetos/FinancialDataSynthesis/notebooks/Transformer.ipynb): Modelo baseado em Transformer implementado para síntese de dados financeiros.
 
 Apresentação
 ==============================
