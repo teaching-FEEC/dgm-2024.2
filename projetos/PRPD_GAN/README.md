@@ -313,6 +313,8 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 
 #### Comparação dos modelos
 
+A seguir, serão apresentados os resultados do estudo *ablation* considerando o conjunto de validação. Nesse conjunto, o modelo que obteve o melhor desempenho foi o configurado sem ruído no discriminador. 
+
 Métricas no conjunto de Validação
 
 | Modelo   | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         |
@@ -323,6 +325,7 @@ Métricas no conjunto de Validação
 | Sem Ruído no Gerador    | 183.46 | 0.102 | (0.5410,**0.0118**) | 178.491791 | 212.824949 | 247.799486 | 0.140242  | 0.112723  | 0.199009  | (0.7049,0.0000) | (0.9045,0.0000) | (**0.8046**,0.0000) |      |
 | Sem Normalizaçao Espectral     | 191.818.868 | 0,100242 | (0.4736,0.0000) | 212.507.233 | 228.128.554 | 238.886.100 | 0,168298 | 0,119335 | 0,175691 | (0.7160,0.0000) | (0.8696,0.0000) | (0.4636,0.0000) |      
 
+Por outro lado, ao considerar o conjunto de teste, conforme apresentado na tabela a seguir, os melhores resultados foram alcançados pelo modelo configurado sem ruído no discriminador e sem normalização espectral.
 
 Métricas no conjunto de Teste
 | Modelo   | FID        | KID      | P&R           | FID1       | FID2       | FID3       | KID1      | KID2      | KID3      | P&R1         | P&R2         | P&R3         |
@@ -332,6 +335,8 @@ Métricas no conjunto de Teste
 | Sem Ruído no Discriminador    | **192.640** | **0.134054** | (**0.0127**,0.0000) | 284.380.472 | 248.441.158 | **212.888.935** | 0.369825 | 0.205304 | 0.214673 | (0.0000,0.0000) | (0.0000,0.0000) | (0.0000,0.0000) |      |
 | Sem Ruído no Gerador    | 224.94 | 0.180 | (0.0000,**0.0104**) | 258.469314 | 275.457409 | 273.606913 | 0.324978  | 0.305368  | 0.317812  | (0.0000,0.0000) | (0.0000,**0.0312**) | (0.0000,0.0000) |      |
 | Sem Normalização Espectral    | 208.01 | 0,150 | (0.0020,0.0000) | **185.50** | **201.195731** | 216.606.640 | **0,153220** | **0,139393** | **0,178365** | (**0.5136**,0.0000) | (**0.2453**,0.0000) | (**0.0054**,0.0000) |      
+
+Com isso, podemos considerar que os resultados quantitativos evidenciaram algumas limitações. De acordo com a avaliação qualitativa, embora o modelo sem normalização espectral tenha apresentado problemas na geração, obteve bons resultados nas métricas quantitativas. Isso ressalta a importância de uma avaliação qualitativa complementar para uma análise mais abrangente do desempenho do modelo.
 
 ### Pegadas de Carbono
 
@@ -345,13 +350,21 @@ O Wandb foi usado como uma ferramenta de monitoramento para ter um controle sobr
 
 ## Conclusão
 
-O projeto proposto aborda a geração sintética de imagens de PRPD como uma solução para a escassez de bases de dados de alta qualidade e volume, necessárias para o treinamento de modelos de deep learning no diagnóstico de falhas em motores elétricos. A metodologia se apoia em modelos generativos, como GANs e VAEs, com o objetivo de aumentar a diversidade e a quantidade de dados disponíveis. Para isso, utilizou-se um conjunto de dados real sobre descargas parciais.
+O projeto proposto aborda a geração sintética de imagens de PRPD como uma solução para a escassez de bases de dados de alta qualidade e volume, essenciais para o treinamento de modelos de deep learning no diagnóstico de falhas em motores elétricos. A metodologia utiliza modelos generativos, como GANs e VAEs, com o objetivo de aumentar a diversidade e a quantidade de dados disponíveis, tendo como base um conjunto de dados real sobre descargas parciais.
 
-Após uma exploração detalhada da base de dados, identificaram-se características relevantes, como textura e contornos, que evidenciam a complexidade das imagens de PRPD. Durante o desenvolvimento, a implementação de uma variante da GAN (ACWGAN-SN) foi bem-sucedida, gerando imagens sintéticas de boa qualidade. Contudo, os modelos InfoGAN e Diffusion não apresentaram desempenhos satisfatórios. Entre os principais desafios enfrentados por esses modelos, destacam-se a quantidade elevada de dados sintéticos, limitações nas arquiteturas e restrições de poder computacional, que impactaram negativamente os resultados.
+Após uma exploração detalhada da base de dados, foram identificadas características relevantes, como textura e contornos, que evidenciam a complexidade das imagens de PRPD. Durante o desenvolvimento, a implementação de uma variante da GAN (ACWGAN-SN) foi bem-sucedida, gerando imagens sintéticas de boa qualidade. No entanto, modelos como InfoGAN e Diffusion apresentaram resultados insatisfatórios. Os principais desafios enfrentados incluíram baixa variabilidade nas imagens geradas, limitações arquiteturais e restrições de poder computacional, o que impactou negativamente os resultados.
 
-Um dos destaques do projeto foi o estudo de ablação, que trouxe contribuições importantes para a compreensão do desempenho dos modelos. Esse estudo revelou que a configuração Sem Ruído no Discriminador e Sem Normalização Espectral foi determinante para o sucesso do ACWGAN, que se mostrou a abordagem mais robusta e eficaz até o momento.
+O estudo de ablação revelou insights fundamentais sobre os fatores que influenciam o desempenho dos modelos. Nesse estudo, componentes específicos foram removidos para avaliar seu impacto nos resultados:
 
-Embora ainda haja espaço para melhorias e otimizações, os resultados obtidos com o ACWGAN indicam o potencial de modelos generativos na geração de dados sintéticos de PRPD. Assim, espera-se que a continuidade do trabalho permita avanços significativos na variabilidade dos dados, contribuindo para diagnósticos mais precisos e eficientes no futuro.
+- **Modelo Original**: Apresentou baixa variabilidade na coroa, com todas as classes gerando algumas imagens pretas. Além disso, o modelo frequentemente confundia superfície com coroa.
+- **Sem Normalização Espectral**: O modelo gerou muitas imagens pretas para a classe coroa, indicando que a ausência desse componente prejudica a qualidade e a diversidade das imagens.  
+- **Sem Penalização por Wasserstein**: O modelo sofreu colapso, gerando várias imagens idênticas e apresentando baixa diversidade, o que demonstra a importância dessa penalização para estabilizar o treinamento.  
+- **Sem Ruído Gaussiano no Discriminador**: A ausência desse componente levou a confusões na geração, com imagens internas se assemelhando à classe coroa e imagens da superfície sendo produzidas em baixa quantidade e com resultados inconsistentes.  
+- **Sem Ruído Gaussiano no Gerador**: A remoção do ruído no gerador resultou em um aumento de imagens pretas na classe coroa (menos frequente do que na ausência da normalização espectral). Entretanto, a confusão entre as classes superfície e coroa ainda foi observada.  
+
+Os resultados indicaram que **a normalização espectral** e **a penalização por Wasserstein** são componentes essenciais para o sucesso do modelo, conferindo robustez e maior estabilidade ao ACWGAN, que demonstrou ser a abordagem mais eficaz dentre as avaliadas.
+
+Apesar das limitações, os resultados obtidos reforçam o potencial de modelos generativos na geração de dados sintéticos de PRPD. Com otimizações futuras e investigações mais aprofundadas, espera-se que esse trabalho contribua significativamente para a variabilidade dos dados, promovendo diagnósticos mais precisos e eficientes no contexto de motores elétricos.
 
 ## Referências Bibliográficas
 1. Lv, F., Liu, G., Wang, Q., Lu, X., Lei, S., Wang, S., & Ma, K. (2023). Pattern Recognition of Partial Discharge in Power Transformer Based on InfoGAN and CNN. Journal of Electrical Engineering & Technology, 18(2), 829–841. https://doi.org/10.1007/s42835-022-01260-7
