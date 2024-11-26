@@ -274,7 +274,8 @@ Abaixo estão as imagens geradas para cada classe.
 
 | Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
 |------------------------|------------------------|------------------------|
-| ![Image 1](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_99.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_2.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_114.png) |
+| ![Image 4](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/corona/synthetic_corona_220.png) | ![Image 5](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/internal/synthetic_internal_41.png) | ![Image 6](./reports/figures/syn-ACWGAN_no_gaussian_noise_dis/surface/synthetic_surface_205.png) |
 
 #### Ruído Gaussiano no Gerador
 A seguir, mostramos a visualização global das amostras geradas usando t-SNE.
@@ -312,7 +313,8 @@ Aqui estão as métricas geradas para as diferentes fases do treinamento, valida
 
 | Defeito de coroa                | Defeito Interno                | Defeito de Superfície                |
 |------------------------|------------------------|------------------------|
-| ![Image 1](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png) |
+| ![Image 1](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_3.png) | ![Image 2](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_2.png) | ![Image 3](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_13.png) |
+| ![Image 4](./reports/figures/syn-ACWGAN_no_spectral_norm/corona/synthetic_corona_7.png) | ![Image 5](./reports/figures/syn-ACWGAN_no_spectral_norm/internal/synthetic_internal_212.png) | ![Image 6](./reports/figures/syn-ACWGAN_no_spectral_norm/surface/synthetic_surface_212.png) |
 
 #### Comparação dos modelos
 
