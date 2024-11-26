@@ -187,6 +187,7 @@ A análise da métrica MSD (Vide gráficos abaixo) corrobora com as diferenças 
 <img src="https://drive.google.com/uc?export=view&id=1mfH0bOZr_jQxCGa2sGL894PQHXyyEiT3" alt="MSD HISTOGRAM" width="400"/>
 
 </div>
+
 ## Conclusão
 
 Este trabalho observou diferentes configurações experimentais para fine-tuning de um modelo de síntese text-to-speech em um cenário de pouca disponibilidade de dados de qualidade. Observou-se que o uso da função de perda speaker contrastive loss e a realização do procedimento de remoção de ruído dos dados de treinamento podem, de um modo geral, resultar em maior qualidade das amostras geradas, o que pode ser refletido pelas métricas mel cepstral distortion e mel spectral distortion. Contudo, as métricas objetivas observadas não são categóricas em apontar superioridade de desempenho dos modelos treinados sob diferentes configurações experimentais. Em eventuais versões futuras deste trabalho, seria de grande interesse obter maior volume de dados com boa qualidade e desenvolver técnicas de avaliação alinhadas à percepção e à correta realização fonética de segmentos específicos caracterizadores de cada sotaque.
